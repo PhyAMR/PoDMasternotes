@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Bayesian parameter estimation – Bayesian Probability Theory: Applications in the Physical Sciences</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/Chapter_15_Frequentist_parameter_estimation.html" rel="next">
+<link href="../chapters/Chapter_09_Poisson_processes_and_waiting_times.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-46cf542fe7cabf791d008aea1ba490d7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/Chapter_14_Bayesian_parameter_estimation.html">PART III: PARAMETER ESTIMATION</a></li><li class="breadcrumb-item"><a href="../chapters/Chapter_14_Bayesian_parameter_estimation.html"><span class="chapter-title">Bayesian parameter estimation</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bayesian Probability Theory: Applications in the Physical Sciences</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bayesian Probability Theory</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/00_Introduction_to_R.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to R for Bayesian Inference</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: FOUNDATIONS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_01_The_meaning_of_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The meaning of ‘probability’</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_02_Basic_definitions_for_frequentist_statistics_and_Bayesian_in.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic definitions for frequentist statistics and Bayesian inference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_03_Bayesian_inference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bayesian inference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: PROBABILITY DISTRIBUTIONS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_04_Combinatorics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Combinatorics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_05_Random_walks.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Random walks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_06_Limit_theorems.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Limit theorems</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_07_Continuous_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_08_The_central_limit_theorem.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The central limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_09_Poisson_processes_and_waiting_times.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Poisson processes and waiting times</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: PARAMETER ESTIMATION</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_14_Bayesian_parameter_estimation.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Bayesian parameter estimation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_15_Frequentist_parameter_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Frequentist parameter estimation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: HYPOTHESIS TESTING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_17_The_Bayesian_way.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Bayesian way</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_18_The_frequentist_approach.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The frequentist approach</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_19_Sampling_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">19</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_20_Comparison_of_Bayesian_and_frequentist_hypothesis_tests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparison of Bayesian and frequentist hypothesis tests</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART V: MONTE CARLO &amp; MCMC METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_29_Numerical_integration.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Numerical integration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_30_Monte_Carlo_methods.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Monte Carlo methods</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_31_Nested_sampling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Nested sampling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDICES</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Appendix_Discrete_Distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Distributions &amp; Bayesian Inference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#posterior-pdf-of-a-bernoulli-experiment-with-uniform-prior" id="toc-posterior-pdf-of-a-bernoulli-experiment-with-uniform-prior" class="nav-link active" data-scroll-target="#posterior-pdf-of-a-bernoulli-experiment-with-uniform-prior">Posterior PDF of a Bernoulli experiment WITH UNIFORM PRIOR</a></li>
+  <li><a href="#posterior-pdf-for-the-mean-of-a-poisson-distribution-with-jeffreys-scale-prior" id="toc-posterior-pdf-for-the-mean-of-a-poisson-distribution-with-jeffreys-scale-prior" class="nav-link" data-scroll-target="#posterior-pdf-for-the-mean-of-a-poisson-distribution-with-jeffreys-scale-prior">Posterior PDF for the mean of a Poisson distribution WITH Jeffreys’ ScALE PRIOR</a></li>
+  <li><a href="#posterior-pdf-for-the-half-life-with-jeffreys-scale-prior" id="toc-posterior-pdf-for-the-half-life-with-jeffreys-scale-prior" class="nav-link" data-scroll-target="#posterior-pdf-for-the-half-life-with-jeffreys-scale-prior">Posterior PDF for the half-life WITH JEFFREYS’ SCALE PRIOR</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">15</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/Chapter_14_Bayesian_parameter_estimation.html">PART III: PARAMETER ESTIMATION</a></li><li class="breadcrumb-item"><a href="../chapters/Chapter_14_Bayesian_parameter_estimation.html"><span class="chapter-title">Bayesian parameter estimation</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-title">Bayesian parameter estimation</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="the-estimation-problem" class="level3">
+<h3 class="anchored" data-anchor-id="the-estimation-problem">14.1 The estimation problem</h3>
+<p>Bayesian probability theory provides a straightforward approach to estimate a (vectorvalued) parameter <span class="math inline">\(\boldsymbol{a}\)</span> from measured data <span class="math inline">\(\boldsymbol{y}\)</span>. The probability density for <span class="math inline">\(\boldsymbol{a}\)</span>, given the data <span class="math inline">\(\boldsymbol{y}\)</span>, can be expressed using Bayes’ theorem as</p>
+<p><span class="math display">\[
+p(a \mid \boldsymbol{y}, \mathcal{I})=\frac{p(\boldsymbol{y} \mid a, \mathcal{I}) p(a \mid \mathcal{I})}{p(\boldsymbol{y} \mid \mathcal{I})} \propto p(\boldsymbol{y} \mid a, \mathcal{I}) p(a \mid \mathcal{I}) .
+\]</span></p>
+<p>In many cases one wishes to summarize the full probability distribution of <span class="math inline">\(\boldsymbol{a}\)</span> in just a few characteristic values for <span class="math inline">\(\hat{\boldsymbol{a}}\)</span>. Most frequently, the characterization is given by a ‘location parameter’ and a ‘confidence interval’. It depends on the application at hand which characterization is the most appropriate one. In many situations the location parameter is represented by the mode, which is the maximum of the posterior distribution <span class="math inline">\(p(a \mid \boldsymbol{y}, \mathcal{I})\)</span>, often denoted as the MAP solution. If the prior influence is negligible, for example in the case of a large number of informative data, then the MAP solution is identical to the ‘maximum-likelihood’ (ML) estimate. However, besides the mode there are other ways to summarize a probability distribution, which will be discussed in this chapter.</p>
+</section>
+<section id="loss-and-risk-function" class="level3">
+<h3 class="anchored" data-anchor-id="loss-and-risk-function">14.2 Loss and risk function</h3>
+<p>A systematic approach to find the appropriate estimate is provided by a decision-theoretic treatment [12] based on the concept of a ‘utility function’ or ‘cost function’. First we need to define a cost (or loss) function <span class="math inline">\(C(\boldsymbol{a}, \hat{\boldsymbol{a}})\)</span>, which will depend on the true value of the (vector-valued) parameter <span class="math inline">\(\boldsymbol{a}\)</span> and its estimate <span class="math inline">\(\hat{\boldsymbol{a}}\)</span>. The precise form of the cost function depends on the problem and specifies how deviations are penalized. The mean (expected) loss is then given by</p>
+<p><span class="math display">\[
+\langle C\rangle=\int d^{N_{p}} a C(\boldsymbol{a}, \hat{\boldsymbol{a}}) p(a \mid \boldsymbol{y}, \mathcal{I})
+\]</span></p>
+<p>Most cost functions <span class="math inline">\(C\)</span> depend only on the difference <span class="math inline">\(C(\boldsymbol{a}, \hat{\boldsymbol{a}})=C(\boldsymbol{a}-\hat{\boldsymbol{a}})\)</span>. The most common cost functions are:</p>
+<ul>
+<li>Squared error loss</li>
+</ul>
+<p><span class="math display">\[
+\begin{equation*}
+C(\boldsymbol{a}-\hat{\boldsymbol{a}})=\sum_{i}\left(a_{i}-\hat{a}_{i}\right)^{2} . \tag{14.1}
+\end{equation*}
+\]</span></p>
+<p>The ‘squared error loss’ penalizes large deviations more than small ones. The resulting estimate will minimize the mean square deviation, thus being influenced most by the largest deviations.</p>
+<ul>
+<li>Absolute error loss</li>
+</ul>
+<p><span class="math display">\[
+\begin{equation*}
+C(\boldsymbol{a}-\hat{\boldsymbol{a}})=\sum_{i}\left|a_{i}-\hat{a}_{i}\right| . \tag{14.2}
+\end{equation*}
+\]</span></p>
+<p>In many situations the contribution of a deviation shall be proportional to its magnitude. In that case the absolute error loss is appropriate. It is also less susceptible to the influence of ‘outliers’ in the data.</p>
+<ul>
+<li>Box error loss (1-0 loss)</li>
+</ul>
+<p>If deviations are only acceptable within a certain tolerance region then the ‘box error loss’ function is appropriate. A typical situation is the production of products. If certain specifications of a product are within tolerance range it is acceptable and can be sold, otherwise it has to be replaced, resulting in a constant loss. The corresponding loss function reads</p>
+<p><span class="math display">\[
+\begin{equation*}
+C(\boldsymbol{a}-\hat{\boldsymbol{a}})=-\boldsymbol{I}(|\boldsymbol{a}-\hat{\boldsymbol{a}}| \leq \varepsilon):=-\prod_{i=1}^{N_{p}} \boldsymbol{I}\left(\left|a_{i}-\hat{a}_{i}\right| \leq \varepsilon\right) . \tag{14.3}
+\end{equation*}
+\]</span></p>
+<p>This cost function is also referred to as ’ <span class="math inline">\(1-0\)</span> loss’. The best estimator for a given loss function minimizes the expected loss. Therefore, the derivative of the loss function with respect to <span class="math inline">\(\hat{a}_{i}\)</span> has to be zero.</p>
+</section>
+<section id="squared-error-loss" class="level3">
+<h3 class="anchored" data-anchor-id="squared-error-loss">14.2.1 Squared error loss</h3>
+<p>In the case of the squared error loss in equation (14.1), we get</p>
+<p><span class="math display">\[
+\begin{aligned}
+\frac{\partial}{\partial \hat{a}_{i}}\langle C\rangle &amp; =2 \int\left(a_{i}-\hat{a}_{i}\right) p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a \\
+&amp; =2\left(\int a_{i} p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a-\hat{a}_{i}\right) \stackrel{!}{=} 0 \\
+&amp; \Rightarrow \\
+\hat{a}_{i} &amp; =\int a_{i} p(a \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a=\left\langle a_{i}\right\rangle_{\boldsymbol{y}} \\
+\hat{\boldsymbol{a}} &amp; =\hat{\boldsymbol{a}}_{\mathrm{PM}} .
+\end{aligned}
+\]</span></p>
+<p>For the squared error loss the best estimator <span class="math inline">\(\hat{a}\)</span> is given by the ‘posterior mean’, which is the mean of the posterior distribution <span class="math inline">\(p(a \mid y, \mathcal{I})\)</span>.</p>
+</section>
+<section id="absolute-error-loss" class="level3">
+<h3 class="anchored" data-anchor-id="absolute-error-loss">14.2.2 Absolute error loss</h3>
+<p>Now we compute the best estimator for the absolute error loss given in equation (14.2):</p>
+<p><span class="math display">\[
+\begin{aligned}
+\frac{\partial}{\partial \hat{a}_{i}}\langle C\rangle &amp; =\int \sum_{j} \frac{\partial}{\partial \hat{a}_{i}}\left|\hat{a}_{j}-a_{j}\right| p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a \\
+&amp; =\int \operatorname{sgn}\left(\hat{a}_{i}-a_{i}\right) p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a \\
+&amp; =\int d a_{i} \operatorname{sgn}\left(\hat{a}_{i}-a_{i}\right) \underbrace{\int \prod_{j \neq i} d a_{j} p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I})}_{:=p\left(a_{i} \mid \boldsymbol{y}, \mathcal{I}\right)} .
+\end{aligned}
+\]</span></p>
+<p>This implies</p>
+<p><span class="math display">\[
+\begin{aligned}
+\int_{-\infty}^{\hat{a}_{i}} p\left(a_{i} \mid \boldsymbol{y}, \mathcal{I}\right) d a_{i} &amp; =\int_{\hat{a}_{i}}^{\infty} p\left(a_{i} \mid \boldsymbol{y}, \mathcal{I}\right) d a_{i} \\
+\hat{\boldsymbol{a}} &amp; =\hat{\boldsymbol{a}}_{\mathrm{MED}} .
+\end{aligned}
+\]</span></p>
+<p>Consequently, the ‘median’ is the best estimator under absolute error loss.</p>
+</section>
+<section id="box-error-loss" class="level3">
+<h3 class="anchored" data-anchor-id="box-error-loss">14.2.3 Box error loss</h3>
+<p>Finally let us assume a small tolerance region of size <span class="math inline">\(\varepsilon\)</span> in all parameters. Then we derive</p>
+<p><span class="math display">\[
+\begin{aligned}
+\frac{\partial}{\partial \hat{a}_{i}}\langle C\rangle &amp; =-\frac{\partial}{\partial \hat{a}_{i}} \int\left(\prod_{i} \boldsymbol{I}(|\hat{a}-a| \geq \varepsilon)\right) p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a \\
+&amp; =-\frac{\partial}{\partial \hat{a}_{i}} \int_{\hat{a}_{i}-\varepsilon}^{\hat{a}_{i}+\varepsilon} d a_{i} \underbrace{\left(\prod_{j \neq i_{\hat{a}_{j}-\varepsilon}} \int_{j \neq i}^{\hat{a}_{j}+\varepsilon} \prod_{j} d a_{j} p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I})\right)}_{:=X_{i}} .
+\end{aligned}
+\]</span></p>
+<p>Let us analyse the integral in the bracket. Since <span class="math inline">\(\varepsilon\)</span> is small, we can Taylor expand the PDF about <span class="math inline">\(a_{j}=\hat{a}_{j}\)</span> for all <span class="math inline">\(j \neq i\)</span>. In order to simplify notation, we define <span class="math inline">\(\hat{\boldsymbol{a}}_{i}=\left(\hat{a}_{1}, \ldots, \hat{a}_{i-1}\right.\)</span>, <span class="math inline">\(\left.a_{i}, \hat{a}_{i+1}, \ldots, \hat{a}_{N}\right)\)</span> and <span class="math inline">\(\Delta a_{i}=a_{i}-\hat{a}_{i}\)</span>. Then</p>
+<p><span class="math display">\[
+\begin{aligned}
+p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I})= &amp; p\left(\hat{\boldsymbol{a}}_{i} \mid \boldsymbol{y}, \mathcal{I}\right)+\left.\sum_{l}^{l \neq i} \frac{\partial}{\partial a_{l}} p(\hat{a} \mid \boldsymbol{y}, \mathcal{I})\right|_{\boldsymbol{a}=\hat{\boldsymbol{a}}_{i}} \Delta a_{l} \\
+&amp; +\sum_{l, l^{\prime}}^{l \neq i} \underbrace{\left.\frac{1}{2} \frac{\partial^{2}}{\partial a_{l} \partial a_{l^{\prime}}} p(\hat{a} \mid \boldsymbol{y}, \mathcal{I})\right|_{\boldsymbol{a}=\hat{\boldsymbol{a}}_{i}}}_{:=c_{l l^{\prime}}} \Delta a_{l} \Delta a_{l^{\prime}}+\cdots
+\end{aligned}
+\]</span></p>
+<p>Since we integrate <span class="math inline">\(\Delta a_{l}\)</span> over <span class="math inline">\((-\varepsilon, \varepsilon)\)</span>, linear terms in <span class="math inline">\(\Delta a_{l}\)</span> vanish and we obtain</p>
+<p><span class="math display">\[
+\begin{aligned}
+X_{i} &amp; =p\left(\hat{\boldsymbol{a}}_{i} \mid \boldsymbol{y}, \mathcal{I}\right)(2 \varepsilon)^{N_{p}-1}+(2 \varepsilon)^{N_{p}+1} \frac{1}{3} \sum_{l}^{l \neq j} c_{l l} \\
+&amp; =p\left(\hat{\boldsymbol{a}}_{i} \mid \boldsymbol{y}, \mathcal{I}\right)(2 \varepsilon)^{N_{p}-1}\left(1+O\left(\varepsilon^{2}\right)\right)
+\end{aligned}
+\]</span></p>
+<p>The remaining integral has the form</p>
+<p><span class="math display">\[
+0=\frac{\partial}{\partial a_{i}} \int_{a_{i}-\varepsilon}^{a_{i}+\varepsilon} p(a) d a=\frac{\partial}{\partial a_{i}}\left(F\left(a_{i}+\varepsilon\right)-F\left(a_{i}-\varepsilon\right)\right)=p\left(a_{i}+\varepsilon\right)-p\left(a_{i}-\varepsilon\right) .
+\]</span></p>
+<p>Consequently, <span class="math inline">\(\frac{\partial}{\partial a_{i}} p(a)=0\)</span>. For our problem that implies</p>
+<p><span class="math display">\[
+\left.\frac{\partial}{\partial a_{i}} p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I})\right|_{\boldsymbol{a}=\hat{\boldsymbol{a}}}=0 .
+\]</span></p>
+<p>Here the best estimator is given by the maximum posterior solution. It is also referred to as the ‘posterior mode’. As we have already seen, the MAP solution and the ML solution coincide for uniform priors. In this case the ML solution can be considered as the best solution under a box error loss.</p>
+<p>The loss function, averaged over all data and parameter values with the corresponding joint PDF <span class="math inline">\(p(a, y \mid \mathcal{I})\)</span></p>
+<p><span class="math display">\[
+R:=\iint K(\boldsymbol{a}-\hat{\boldsymbol{a}}(\boldsymbol{y})) p(\boldsymbol{a}, \boldsymbol{y} \mid \mathcal{I}) d^{N} y d^{N_{p}} a
+\]</span></p>
+<p>is also termed ‘risk’. The product rule yields</p>
+<p><span class="math display">\[
+R=\int p(y \mid \mathcal{I})\left(\int K(a-\hat{\boldsymbol{a}}(y)) p(a \mid y, \mathcal{I}) d^{N_{p}} a\right) d^{N} y
+\]</span></p>
+<p>The risk is therefore equivalent to the mean loss <span class="math inline">\(\langle C\rangle\)</span> averaged over all data weighted by <span class="math inline">\(p(y \mid \mathcal{I})\)</span>. We are interested in the functional <span class="math inline">\(\hat{a}(y)\)</span>, which minimizes the risk. The root of the functional derivative is given by</p>
+<p><span class="math display">\[
+0=\frac{\delta}{\delta \hat{a}(\boldsymbol{y})} R=\int p(y \mid \mathcal{I})\left(\frac{\delta}{\delta \hat{a}(\boldsymbol{y})} \int K(a-\hat{a}(\boldsymbol{y})) p(a \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a\right) d^{N} y .
+\]</span></p>
+<p>Therefore, the inner bracket has to be zero since <span class="math inline">\(p(y \mid \mathcal{I}) \geq 0\)</span>. This implies that the costminimizing estimators minimize the risk also at the same time.</p>
+</section>
+<section id="confidence-intervals" class="level3">
+<h3 class="anchored" data-anchor-id="confidence-intervals">14.3 Confidence intervals</h3>
+<p>In Bayesian probability theory the confidence interval of a parameter <span class="math inline">\(a_{i}\)</span> is given by the standard deviation of the posterior probability</p>
+<p><span class="math display">\[
+\left\langle\left(\Delta a_{i}\right)^{2}\right\rangle=\int\left(\Delta a_{i}\right)^{2} p(a \mid d, \mathcal{I}) d^{N_{p}} a
+\]</span></p>
+<p>Sometimes, to emphasize the different interpretation of confidence intervals in frequentist and Bayesian probability theory, a Bayesian confidence interval is also termed a ‘credibility interval’. In order to assess correlated uncertainties it is sometimes useful to consider the posterior covariance</p>
+<p><span class="math display">\[
+C_{i j}:=\int \Delta a_{i} \Delta a_{j} p(a \mid d, \mathcal{I}) d^{N_{p}} a
+\]</span></p>
+</section>
+<section id="examples" class="level3">
+<h3 class="anchored" data-anchor-id="examples">14.4 Examples</h3>
+</section>
+<section id="the-bernoulli-problem" class="level3">
+<h3 class="anchored" data-anchor-id="the-bernoulli-problem">14.4.1 The Bernoulli problem</h3>
+<p>The binary Bernoulli problem (which we will consider again in Section 15.3.5 [p.&nbsp;240]) will serve as an example for a typical parameter estimation problem. We consider an urn with red and green balls. Let the relative frequency of green balls be <span class="math inline">\(q\)</span>. Given a sample of size <span class="math inline">\(N, n_{g}\)</span> green balls are found. The probability density <span class="math inline">\(p\left(q \mid N, n_{g}, \mathcal{I}\right)\)</span> based on Bayes’ theorem is:</p>
+<p><span class="math display">\[
+p\left(q \mid N, n_{g}, \mathcal{I}\right)=\frac{1}{Z} q^{n_{g}}(1-q)^{N-n_{g}} p(q \mid \mathcal{I}) .
+\]</span></p>
+<p>Using a flat (uniform) prior for <span class="math inline">\(q\)</span>, i.e.&nbsp;<span class="math inline">\(p(q \mid \mathcal{I})=\mathbb{I}(0 \leq q \leq 1)\)</span>, we end up with a <span class="math inline">\(\beta\)</span> distribution (see equation (7.12a) [p.&nbsp;100]):</p>
+<p><span class="math display">\[
+p\left(q \mid N, n_{g}, \mathcal{I}\right)=\frac{(N+1)!}{n_{g}!\left(N-n_{g}\right)!} q^{n_{g}}(1-q)^{N-n_{g}} .
+\]</span></p>
+<p>Owing to the uniform prior, the MAP solution is identical to the maximum likelihood solution</p>
+<p><span class="math display">\[
+q_{\mathrm{MAP}}=q_{\mathrm{ML}}=\frac{n_{g}}{N}
+\]</span></p>
+<p>The mean of the posterior and the confidence interval are provided by the mean and standard deviation of the <span class="math inline">\(\beta\)</span> distribution (equations (7.12c) and (7.12e) [p.100]):</p>
+<p><span class="math display">\[
+\begin{aligned}
+q_{\mathrm{PM}} &amp; =\langle q\rangle=\frac{n_{g}+1}{N+2} \\
+\sqrt{\operatorname{var}(q)} &amp; =\sqrt{\frac{\langle q\rangle(1-\langle q\rangle)}{N+3}}
+\end{aligned}
+\]</span></p>
+<p>In summary, the posterior of a Bernoulli experiment is</p>
+</section>
+<section id="posterior-pdf-of-a-bernoulli-experiment-with-uniform-prior" class="level2">
+<h2 class="anchored" data-anchor-id="posterior-pdf-of-a-bernoulli-experiment-with-uniform-prior">Posterior PDF of a Bernoulli experiment WITH UNIFORM PRIOR</h2>
+<p><span class="math display">\[
+\begin{array}{rlrl}
+\text { sample: } &amp; N, n_{g} &amp; \\
+\text { posterior PDF: } &amp; \quad p\left(q \mid N, n_{g}, \mathcal{I}\right) &amp; =p_{\beta}(q \mid \alpha, \rho), \\
+\alpha &amp; =n_{g}+1, \quad \rho=N-n_{g}+1, \\
+\langle q\rangle &amp; =\frac{n_{g}+1}{N+2}, \\
+\operatorname{var}(q) &amp; =\frac{\langle q\rangle(1-\langle q\rangle)}{N+3} . \tag{14.4c}
+\end{array}
+\]</span></p>
+<p>The difference between the MAP solution and the posterior mean is of order <span class="math inline">\(O(1 / N)\)</span> (the posterior distribution is almost symmetric). The confidence interval, however, is much larger than the difference between the MAP and the MP solution. It is of order <span class="math inline">\(O(1 / \sqrt{N})\)</span>. Figure 14.1 displays the probability density for <span class="math inline">\(n_{g}=6\)</span> and <span class="math inline">\(N=20\)</span>.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show plot</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter_14_Bayesian_parameter_estimation_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure 14.1 Probability density <span class="math inline">\(p\left(q \mid N, n_{g}, \mathcal{I}\right)\)</span> as a function of <span class="math inline">\(q\)</span> for <span class="math inline">\(n_{g}=6\)</span> and <span class="math inline">\(N=20\)</span>. Depicted are the posterior mean (PM), maximum posterior estimate (MAP) and confidence interval (CI) given by the one-standard-deviation neighbourhood of MP.</p>
+<section id="mean-of-a-poisson-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="mean-of-a-poisson-distribution">14.4.2 Mean of a Poisson distribution</h3>
+<p>Given a Poissonian sample of counts <span class="math inline">\(\boldsymbol{l}=\left\{l_{1}, \ldots, l_{N}\right\}\)</span> that occur in a fixed time window <span class="math inline">\(\Delta t\)</span>, as the individual counts are uncorrelated the likelihood for <span class="math inline">\(l\)</span> is a product</p>
+<p><span class="math display">\[
+\begin{aligned}
+P(l \mid \mu, \mathcal{I}) &amp; =\prod_{i=1}^{N} \ln \left[P\left(l_{i} \mid \mu, \mathcal{I}\right)\right]=\prod_{i=1}^{N}\left\{e^{-\mu} \frac{\mu^{l_{i}}}{l_{i}!}\right\} \\
+&amp; =\frac{1}{Z} e^{-N \mu}+\mu^{\sum_{i} l_{i}}=\frac{1}{Z} e^{-N \mu} \mu^{N \bar{l}}
+\end{aligned}
+\]</span></p>
+<p>where <span class="math inline">\(Z\)</span> contains <span class="math inline">\(\mu\)</span>-independent factors. For the posterior we also need the prior <span class="math inline">\(p(\mu \mid \mathcal{I})\)</span>. Since <span class="math inline">\(\mu\)</span> is the mean count in the time window <span class="math inline">\(\Delta t\)</span>, it is a scale parameter and we use the corresponding Jeffreys’ prior <span class="math inline">\(p(\mu \mid \mathcal{I}) \propto 1 / \mu\)</span>. Then the posterior reads</p>
+<p><span class="math display">\[
+p(\mu \mid l, \mathcal{I}) \propto \mu^{N \bar{l}-1} e^{-N \mu} .
+\]</span></p>
+<p>It is a Gamma distribution with <span class="math inline">\(\alpha=\bar{l}\)</span> and <span class="math inline">\(\beta=N\)</span>. The posterior mean and variance follow from equation (7.14) [p.102]. We summarize the result:</p>
+</section>
+</section>
+<section id="posterior-pdf-for-the-mean-of-a-poisson-distribution-with-jeffreys-scale-prior" class="level2">
+<h2 class="anchored" data-anchor-id="posterior-pdf-for-the-mean-of-a-poisson-distribution-with-jeffreys-scale-prior">Posterior PDF for the mean of a Poisson distribution WITH Jeffreys’ ScALE PRIOR</h2>
+<p>sample of counts:</p>
+<p><span class="math display">\[
+\begin{align*}
+l &amp; =\left\{l_{1}, \ldots, l_{N}\right\}, \\
+p(\mu \mid l, N, \mathcal{I}) &amp; =p_{\Gamma}(\mu \mid \alpha, \beta),  \tag{14.5a}\\
+\alpha &amp; =N \bar{l}, \quad \beta=N, \\
+\langle\mu\rangle &amp; =\bar{l},  \tag{14.5b}\\
+\operatorname{var}(\mu) &amp; =\frac{\bar{l}}{N} . \tag{14.5c}
+\end{align*}
+\]</span></p>
+<section id="estimation-of-half-lives" class="level3">
+<h3 class="anchored" data-anchor-id="estimation-of-half-lives">14.4.3 Estimation of half-lives</h3>
+<p>The estimation of parameters of systems with exponential behaviour is a common task in many areas of engineering and physics. Here we illustrate the approach with the estimation of the decay parameter of a radioactive source. The data set <span class="math inline">\(=\left\{t_{1}, \ldots, t_{N}\right\}\)</span> is a sample of recorded times of decay events, e.g.&nbsp;measured by a Geiger-Müller counter. The probability for a decay event is given by</p>
+<p><span class="math display">\[
+p(t \mid \tau)=\frac{1}{\tau} e^{-t / \tau} .
+\]</span></p>
+<p>We are interested in the probability density <span class="math inline">\(p(\tau \mid t, \mathcal{I})\)</span> of <span class="math inline">\(\tau\)</span>. Bayes’ theorem relates this density to the likelihood</p>
+<p><span class="math display">\[
+p(\tau \mid t, \mathcal{I}) \propto p(t \mid \tau, \mathcal{I}) p(\tau \mid \mathcal{I}) .
+\]</span></p>
+<p>Since all the decay events are uncorrelated, the likelihood is given by the product of the individual PDFs:</p>
+<p><span class="math display">\[
+p(t \mid \tau, \mathcal{I})=\prod_{i=1}^{N}\left(\frac{1}{\tau} e^{-t_{i} / \tau}\right)=\tau^{-N} e^{-N \bar{t} / \tau}
+\]</span></p>
+<p>The symbol <span class="math inline">\(\bar{t}\)</span> stands for the sample mean of the recorded decay times. Next we need to assign the prior for <span class="math inline">\(\tau\)</span>. Without further prior knowledge, <span class="math inline">\(\tau\)</span> is a scale parameter for which Jeffreys’ prior is in most cases appropriate. This finally results in the posterior distribution</p>
+<p><span class="math display">\[
+p(\tau \mid t, \mathcal{I})=\frac{1}{Z} \tau^{-N-1} e^{-N \bar{t} / \tau}
+\]</span></p>
+<p>The computation of the normalization constant and the moments of <span class="math inline">\(\tau\)</span> requires the integral</p>
+<p><span class="math display">\[
+\begin{aligned}
+I_{v} &amp; :=\int_{0}^{\infty} \tau^{-N+v} e^{-N \bar{t} / \tau} \frac{d \tau}{\tau} \\
+&amp; =\int_{0}^{\infty}\left(\frac{x}{N \bar{t}}\right)^{N-v} e^{-x} \frac{d x}{x} \\
+&amp; =(N \bar{t})^{-N+v} \Gamma(N-v)
+\end{aligned}
+\]</span></p>
+<p>Hence, the norm and mean are given by</p>
+<p><span class="math display">\[
+\begin{aligned}
+Z &amp; =I_{0}=(N \bar{t})^{-N} \Gamma(N) \\
+\langle\tau\rangle &amp; =\frac{I_{1}}{I_{0}}=\frac{N}{N-1} \bar{t}
+\end{aligned}
+\]</span></p>
+<p>The variance can be computed analogously:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\operatorname{var}(\tau) &amp; =\frac{I_{2}}{I_{0}}-\langle\tau\rangle^{2}=\frac{N^{2}}{(N-1)(N-2)} \bar{t}^{2}-\frac{N^{2}}{(N-1)(N-1)} \bar{t}^{2} \\
+&amp; =\langle\tau\rangle^{2} \frac{1}{N-2} .
+\end{aligned}
+\]</span></p>
+<p>The confidence interval is therefore <span class="math inline">\(\mathrm{CI}=\bar{t} / \sqrt{N-2}\)</span>. The estimation could be summarized as</p>
+<p><span class="math display">\[
+\tau=\bar{t} \frac{N}{N-1}\left(1 \pm \frac{1}{\sqrt{N-2}}\right)
+\]</span></p>
+<p>Again we find that the difference in the estimators for the location parameter (MAP, PM) is of order <span class="math inline">\(1 / N\)</span>, while the confidence interval (uncertainty) is of order <span class="math inline">\(1 / \sqrt{N}\)</span>. The key result is:</p>
+</section>
+</section>
+<section id="posterior-pdf-for-the-half-life-with-jeffreys-scale-prior" class="level2">
+<h2 class="anchored" data-anchor-id="posterior-pdf-for-the-half-life-with-jeffreys-scale-prior">Posterior PDF for the half-life WITH JEFFREYS’ SCALE PRIOR</h2>
+<p>sample of counts:</p>
+<p><span class="math display">\[
+\begin{align*}
+t &amp; =\left\{t_{1}, \ldots, t_{N}\right\}, \\
+p(\tau \mid t, N, \mathcal{I}) &amp; =\frac{(N \bar{t})^{N}}{\Gamma(N)} e^{-N \bar{t} / \tau},  \tag{14.6a}\\
+\langle\tau\rangle &amp; =\bar{t} \frac{N}{N-1},  \tag{14.6b}\\
+\operatorname{var}(\tau) &amp; =\bar{t}^{2} \frac{1}{N-2} . \tag{14.6c}
+\end{align*}
+\]</span></p>
+</section>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section">15</h2>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/Chapter_09_Poisson_processes_and_waiting_times.html" class="pagination-link" aria-label="Poisson processes and waiting times">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Poisson processes and waiting times</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/Chapter_15_Frequentist_parameter_estimation.html" class="pagination-link" aria-label="Frequentist parameter estimation">
+        <span class="nav-page-text"><span class="chapter-title">Frequentist parameter estimation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bayesian parameter estimation</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.1 The estimation problem</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>Bayesian probability theory provides a straightforward approach to estimate a (vectorvalued) parameter $\boldsymbol{a}$ from measured data $\boldsymbol{y}$. The probability density for $\boldsymbol{a}$, given the data $\boldsymbol{y}$, can be expressed using Bayes' theorem as</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>p(a \mid \boldsymbol{y}, \mathcal{I})=\frac{p(\boldsymbol{y} \mid a, \mathcal{I}) p(a \mid \mathcal{I})}{p(\boldsymbol{y} \mid \mathcal{I})} \propto p(\boldsymbol{y} \mid a, \mathcal{I}) p(a \mid \mathcal{I}) .</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>In many cases one wishes to summarize the full probability distribution of $\boldsymbol{a}$ in just a few characteristic values for $\hat{\boldsymbol{a}}$. Most frequently, the characterization is given by a 'location parameter' and a 'confidence interval'. It depends on the application at hand which characterization is the most appropriate one. In many situations the location parameter is represented by the mode, which is the maximum of the posterior distribution $p(a \mid \boldsymbol{y}, \mathcal{I})$, often denoted as the MAP solution. If the prior influence is negligible, for example in the case of a large number of informative data, then the MAP solution is identical to the 'maximum-likelihood' (ML) estimate. However, besides the mode there are other ways to summarize a probability distribution, which will be discussed in this chapter.</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.2 Loss and risk function</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>A systematic approach to find the appropriate estimate is provided by a decision-theoretic treatment <span class="co">[</span><span class="ot">12</span><span class="co">]</span> based on the concept of a 'utility function' or 'cost function'. First we need to define a cost (or loss) function $C(\boldsymbol{a}, \hat{\boldsymbol{a}})$, which will depend on the true value of the (vector-valued) parameter $\boldsymbol{a}$ and its estimate $\hat{\boldsymbol{a}}$. The precise form of the cost function depends on the problem and specifies how deviations are penalized. The mean (expected) loss is then given by</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>\langle C\rangle=\int d^{N_{p}} a C(\boldsymbol{a}, \hat{\boldsymbol{a}}) p(a \mid \boldsymbol{y}, \mathcal{I})</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>Most cost functions $C$ depend only on the difference $C(\boldsymbol{a}, \hat{\boldsymbol{a}})=C(\boldsymbol{a}-\hat{\boldsymbol{a}})$. The most common cost functions are:</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Squared error loss</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>C(\boldsymbol{a}-\hat{\boldsymbol{a}})=\sum_{i}\left(a_{i}-\hat{a}_{i}\right)^{2} . \tag{14.1}</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>The 'squared error loss' penalizes large deviations more than small ones. The resulting estimate will minimize the mean square deviation, thus being influenced most by the largest deviations.</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Absolute error loss</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>C(\boldsymbol{a}-\hat{\boldsymbol{a}})=\sum_{i}\left|a_{i}-\hat{a}_{i}\right| . \tag{14.2}</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>In many situations the contribution of a deviation shall be proportional to its magnitude. In that case the absolute error loss is appropriate. It is also less susceptible to the influence of 'outliers' in the data.</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Box error loss (1-0 loss)</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>If deviations are only acceptable within a certain tolerance region then the 'box error loss' function is appropriate. A typical situation is the production of products. If certain specifications of a product are within tolerance range it is acceptable and can be sold, otherwise it has to be replaced, resulting in a constant loss. The corresponding loss function reads</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>C(\boldsymbol{a}-\hat{\boldsymbol{a}})=-\boldsymbol{I}(|\boldsymbol{a}-\hat{\boldsymbol{a}}| \leq \varepsilon):=-\prod_{i=1}^{N_{p}} \boldsymbol{I}\left(\left|a_{i}-\hat{a}_{i}\right| \leq \varepsilon\right) . \tag{14.3}</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>This cost function is also referred to as ' $1-0$ loss'.</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>The best estimator for a given loss function minimizes the expected loss. Therefore, the derivative of the loss function with respect to $\hat{a}_{i}$ has to be zero.</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.2.1 Squared error loss</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>In the case of the squared error loss in equation (14.1), we get</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>\frac{\partial}{\partial \hat{a}_{i}}\langle C\rangle &amp; =2 \int\left(a_{i}-\hat{a}_{i}\right) p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a <span class="sc">\\</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>&amp; =2\left(\int a_{i} p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a-\hat{a}_{i}\right) \stackrel{!}{=} 0 <span class="sc">\\</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>&amp; \Rightarrow <span class="sc">\\</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>\hat{a}_{i} &amp; =\int a_{i} p(a \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a=\left\langle a_{i}\right\rangle_{\boldsymbol{y}} <span class="sc">\\</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>\hat{\boldsymbol{a}} &amp; =\hat{\boldsymbol{a}}_{\mathrm{PM}} .</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>For the squared error loss the best estimator $\hat{a}$ is given by the 'posterior mean', which is the mean of the posterior distribution $p(a \mid y, \mathcal{I})$.</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.2.2 Absolute error loss</span></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>Now we compute the best estimator for the absolute error loss given in equation (14.2):</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>\frac{\partial}{\partial \hat{a}_{i}}\langle C\rangle &amp; =\int \sum_{j} \frac{\partial}{\partial \hat{a}_{i}}\left|\hat{a}_{j}-a_{j}\right| p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a <span class="sc">\\</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>&amp; =\int \operatorname{sgn}\left(\hat{a}_{i}-a_{i}\right) p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a <span class="sc">\\</span></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>&amp; =\int d a_{i} \operatorname{sgn}\left(\hat{a}_{i}-a_{i}\right) \underbrace{\int \prod_{j \neq i} d a_{j} p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I})}_{:=p\left(a_{i} \mid \boldsymbol{y}, \mathcal{I}\right)} .</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>This implies</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a>\int_{-\infty}^{\hat{a}_{i}} p\left(a_{i} \mid \boldsymbol{y}, \mathcal{I}\right) d a_{i} &amp; =\int_{\hat{a}_{i}}^{\infty} p\left(a_{i} \mid \boldsymbol{y}, \mathcal{I}\right) d a_{i} <span class="sc">\\</span></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>\hat{\boldsymbol{a}} &amp; =\hat{\boldsymbol{a}}_{\mathrm{MED}} .</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>Consequently, the 'median' is the best estimator under absolute error loss.</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.2.3 Box error loss</span></span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>Finally let us assume a small tolerance region of size $\varepsilon$ in all parameters. Then we derive</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-101"><a href="#cb2-101" aria-hidden="true" tabindex="-1"></a>\frac{\partial}{\partial \hat{a}_{i}}\langle C\rangle &amp; =-\frac{\partial}{\partial \hat{a}_{i}} \int\left(\prod_{i} \boldsymbol{I}(|\hat{a}-a| \geq \varepsilon)\right) p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a <span class="sc">\\</span></span>
+<span id="cb2-102"><a href="#cb2-102" aria-hidden="true" tabindex="-1"></a>&amp; =-\frac{\partial}{\partial \hat{a}_{i}} \int_{\hat{a}_{i}-\varepsilon}^{\hat{a}_{i}+\varepsilon} d a_{i} \underbrace{\left(\prod_{j \neq i_{\hat{a}_{j}-\varepsilon}} \int_{j \neq i}^{\hat{a}_{j}+\varepsilon} \prod_{j} d a_{j} p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I})\right)}_{:=X_{i}} .</span>
+<span id="cb2-103"><a href="#cb2-103" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-104"><a href="#cb2-104" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-105"><a href="#cb2-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-106"><a href="#cb2-106" aria-hidden="true" tabindex="-1"></a>Let us analyse the integral in the bracket. Since $\varepsilon$ is small, we can Taylor expand the PDF about $a_{j}=\hat{a}_{j}$ for all $j \neq i$. In order to simplify notation, we define $\hat{\boldsymbol{a}}_{i}=\left(\hat{a}_{1}, \ldots, \hat{a}_{i-1}\right.$, $\left.a_{i}, \hat{a}_{i+1}, \ldots, \hat{a}_{N}\right)$ and $\Delta a_{i}=a_{i}-\hat{a}_{i}$. Then</span>
+<span id="cb2-107"><a href="#cb2-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-108"><a href="#cb2-108" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-109"><a href="#cb2-109" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-110"><a href="#cb2-110" aria-hidden="true" tabindex="-1"></a>p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I})= &amp; p\left(\hat{\boldsymbol{a}}_{i} \mid \boldsymbol{y}, \mathcal{I}\right)+\left.\sum_{l}^{l \neq i} \frac{\partial}{\partial a_{l}} p(\hat{a} \mid \boldsymbol{y}, \mathcal{I})\right|_{\boldsymbol{a}=\hat{\boldsymbol{a}}_{i}} \Delta a_{l} <span class="sc">\\</span></span>
+<span id="cb2-111"><a href="#cb2-111" aria-hidden="true" tabindex="-1"></a>&amp; +\sum_{l, l^{\prime}}^{l \neq i} \underbrace{\left.\frac{1}{2} \frac{\partial^{2}}{\partial a_{l} \partial a_{l^{\prime}}} p(\hat{a} \mid \boldsymbol{y}, \mathcal{I})\right|_{\boldsymbol{a}=\hat{\boldsymbol{a}}_{i}}}_{:=c_{l l^{\prime}}} \Delta a_{l} \Delta a_{l^{\prime}}+\cdots</span>
+<span id="cb2-112"><a href="#cb2-112" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-113"><a href="#cb2-113" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-114"><a href="#cb2-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-115"><a href="#cb2-115" aria-hidden="true" tabindex="-1"></a>Since we integrate $\Delta a_{l}$ over $(-\varepsilon, \varepsilon)$, linear terms in $\Delta a_{l}$ vanish and we obtain</span>
+<span id="cb2-116"><a href="#cb2-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-117"><a href="#cb2-117" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-118"><a href="#cb2-118" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-119"><a href="#cb2-119" aria-hidden="true" tabindex="-1"></a>X_{i} &amp; =p\left(\hat{\boldsymbol{a}}_{i} \mid \boldsymbol{y}, \mathcal{I}\right)(2 \varepsilon)^{N_{p}-1}+(2 \varepsilon)^{N_{p}+1} \frac{1}{3} \sum_{l}^{l \neq j} c_{l l} <span class="sc">\\</span></span>
+<span id="cb2-120"><a href="#cb2-120" aria-hidden="true" tabindex="-1"></a>&amp; =p\left(\hat{\boldsymbol{a}}_{i} \mid \boldsymbol{y}, \mathcal{I}\right)(2 \varepsilon)^{N_{p}-1}\left(1+O\left(\varepsilon^{2}\right)\right)</span>
+<span id="cb2-121"><a href="#cb2-121" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-122"><a href="#cb2-122" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-123"><a href="#cb2-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-124"><a href="#cb2-124" aria-hidden="true" tabindex="-1"></a>The remaining integral has the form</span>
+<span id="cb2-125"><a href="#cb2-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-126"><a href="#cb2-126" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-127"><a href="#cb2-127" aria-hidden="true" tabindex="-1"></a>0=\frac{\partial}{\partial a_{i}} \int_{a_{i}-\varepsilon}^{a_{i}+\varepsilon} p(a) d a=\frac{\partial}{\partial a_{i}}\left(F\left(a_{i}+\varepsilon\right)-F\left(a_{i}-\varepsilon\right)\right)=p\left(a_{i}+\varepsilon\right)-p\left(a_{i}-\varepsilon\right) .</span>
+<span id="cb2-128"><a href="#cb2-128" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-129"><a href="#cb2-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-130"><a href="#cb2-130" aria-hidden="true" tabindex="-1"></a>Consequently, $\frac{\partial}{\partial a_{i}} p(a)=0$. For our problem that implies</span>
+<span id="cb2-131"><a href="#cb2-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-132"><a href="#cb2-132" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-133"><a href="#cb2-133" aria-hidden="true" tabindex="-1"></a>\left.\frac{\partial}{\partial a_{i}} p(\boldsymbol{a} \mid \boldsymbol{y}, \mathcal{I})\right|_{\boldsymbol{a}=\hat{\boldsymbol{a}}}=0 .</span>
+<span id="cb2-134"><a href="#cb2-134" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-135"><a href="#cb2-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-136"><a href="#cb2-136" aria-hidden="true" tabindex="-1"></a>Here the best estimator is given by the maximum posterior solution. It is also referred to as the 'posterior mode'. As we have already seen, the MAP solution and the ML solution coincide for uniform priors. In this case the ML solution can be considered as the best solution under a box error loss.</span>
+<span id="cb2-137"><a href="#cb2-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-138"><a href="#cb2-138" aria-hidden="true" tabindex="-1"></a>The loss function, averaged over all data and parameter values with the corresponding joint PDF $p(a, y \mid \mathcal{I})$</span>
+<span id="cb2-139"><a href="#cb2-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-140"><a href="#cb2-140" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-141"><a href="#cb2-141" aria-hidden="true" tabindex="-1"></a>R:=\iint K(\boldsymbol{a}-\hat{\boldsymbol{a}}(\boldsymbol{y})) p(\boldsymbol{a}, \boldsymbol{y} \mid \mathcal{I}) d^{N} y d^{N_{p}} a</span>
+<span id="cb2-142"><a href="#cb2-142" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-143"><a href="#cb2-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-144"><a href="#cb2-144" aria-hidden="true" tabindex="-1"></a>is also termed 'risk'. The product rule yields</span>
+<span id="cb2-145"><a href="#cb2-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-146"><a href="#cb2-146" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-147"><a href="#cb2-147" aria-hidden="true" tabindex="-1"></a>R=\int p(y \mid \mathcal{I})\left(\int K(a-\hat{\boldsymbol{a}}(y)) p(a \mid y, \mathcal{I}) d^{N_{p}} a\right) d^{N} y</span>
+<span id="cb2-148"><a href="#cb2-148" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-149"><a href="#cb2-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-150"><a href="#cb2-150" aria-hidden="true" tabindex="-1"></a>The risk is therefore equivalent to the mean loss $\langle C\rangle$ averaged over all data weighted by $p(y \mid \mathcal{I})$. We are interested in the functional $\hat{a}(y)$, which minimizes the risk. The root of the functional derivative is given by</span>
+<span id="cb2-151"><a href="#cb2-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-152"><a href="#cb2-152" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-153"><a href="#cb2-153" aria-hidden="true" tabindex="-1"></a>0=\frac{\delta}{\delta \hat{a}(\boldsymbol{y})} R=\int p(y \mid \mathcal{I})\left(\frac{\delta}{\delta \hat{a}(\boldsymbol{y})} \int K(a-\hat{a}(\boldsymbol{y})) p(a \mid \boldsymbol{y}, \mathcal{I}) d^{N_{p}} a\right) d^{N} y .</span>
+<span id="cb2-154"><a href="#cb2-154" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-155"><a href="#cb2-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-156"><a href="#cb2-156" aria-hidden="true" tabindex="-1"></a>Therefore, the inner bracket has to be zero since $p(y \mid \mathcal{I}) \geq 0$. This implies that the costminimizing estimators minimize the risk also at the same time.</span>
+<span id="cb2-157"><a href="#cb2-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-158"><a href="#cb2-158" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.3 Confidence intervals</span></span>
+<span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a>In Bayesian probability theory the confidence interval of a parameter $a_{i}$ is given by the standard deviation of the posterior probability</span>
+<span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>\left\langle\left(\Delta a_{i}\right)^{2}\right\rangle=\int\left(\Delta a_{i}\right)^{2} p(a \mid d, \mathcal{I}) d^{N_{p}} a</span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>Sometimes, to emphasize the different interpretation of confidence intervals in frequentist and Bayesian probability theory, a Bayesian confidence interval is also termed a 'credibility interval'. In order to assess correlated uncertainties it is sometimes useful to consider the posterior covariance</span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a>C_{i j}:=\int \Delta a_{i} \Delta a_{j} p(a \mid d, \mathcal{I}) d^{N_{p}} a</span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.4 Examples</span></span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.4.1 The Bernoulli problem</span></span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>The binary Bernoulli problem (which we will consider again in Section 15.3.5 <span class="co">[</span><span class="ot">p. 240</span><span class="co">]</span>) will serve as an example for a typical parameter estimation problem. We consider an urn with red and green balls. Let the relative frequency of green balls be $q$. Given a sample of size $N, n_{g}$ green balls are found. The probability density $p\left(q \mid N, n_{g}, \mathcal{I}\right)$ based on Bayes' theorem is:</span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>p\left(q \mid N, n_{g}, \mathcal{I}\right)=\frac{1}{Z} q^{n_{g}}(1-q)^{N-n_{g}} p(q \mid \mathcal{I}) .</span>
+<span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>Using a flat (uniform) prior for $q$, i.e. $p(q \mid \mathcal{I})=\mathbb{I}(0 \leq q \leq 1)$, we end up with a $\beta$ distribution (see equation (7.12a) <span class="co">[</span><span class="ot">p. 100</span><span class="co">]</span>):</span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>p\left(q \mid N, n_{g}, \mathcal{I}\right)=\frac{(N+1)!}{n_{g}!\left(N-n_{g}\right)!} q^{n_{g}}(1-q)^{N-n_{g}} .</span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>Owing to the uniform prior, the MAP solution is identical to the maximum likelihood solution</span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a>q_{\mathrm{MAP}}=q_{\mathrm{ML}}=\frac{n_{g}}{N}</span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>The mean of the posterior and the confidence interval are provided by the mean and standard deviation of the $\beta$ distribution (equations (7.12c) and (7.12e) <span class="co">[</span><span class="ot">p.100</span><span class="co">]</span>):</span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>q_{\mathrm{PM}} &amp; =\langle q\rangle=\frac{n_{g}+1}{N+2} <span class="sc">\\</span></span>
+<span id="cb2-199"><a href="#cb2-199" aria-hidden="true" tabindex="-1"></a>\sqrt{\operatorname{var}(q)} &amp; =\sqrt{\frac{\langle q\rangle(1-\langle q\rangle)}{N+3}}</span>
+<span id="cb2-200"><a href="#cb2-200" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-201"><a href="#cb2-201" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-202"><a href="#cb2-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-203"><a href="#cb2-203" aria-hidden="true" tabindex="-1"></a>In summary, the posterior of a Bernoulli experiment is</span>
+<span id="cb2-204"><a href="#cb2-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-205"><a href="#cb2-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior PDF of a Bernoulli experiment WITH UNIFORM PRIOR</span></span>
+<span id="cb2-206"><a href="#cb2-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-207"><a href="#cb2-207" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-208"><a href="#cb2-208" aria-hidden="true" tabindex="-1"></a>\begin{array}{rlrl}</span>
+<span id="cb2-209"><a href="#cb2-209" aria-hidden="true" tabindex="-1"></a>\text { sample: } &amp; N, n_{g} &amp; <span class="sc">\\</span></span>
+<span id="cb2-210"><a href="#cb2-210" aria-hidden="true" tabindex="-1"></a>\text { posterior PDF: } &amp; \quad p\left(q \mid N, n_{g}, \mathcal{I}\right) &amp; =p_{\beta}(q \mid \alpha, \rho), <span class="sc">\\</span></span>
+<span id="cb2-211"><a href="#cb2-211" aria-hidden="true" tabindex="-1"></a>\alpha &amp; =n_{g}+1, \quad \rho=N-n_{g}+1, <span class="sc">\\</span></span>
+<span id="cb2-212"><a href="#cb2-212" aria-hidden="true" tabindex="-1"></a>\langle q\rangle &amp; =\frac{n_{g}+1}{N+2}, <span class="sc">\\</span></span>
+<span id="cb2-213"><a href="#cb2-213" aria-hidden="true" tabindex="-1"></a>\operatorname{var}(q) &amp; =\frac{\langle q\rangle(1-\langle q\rangle)}{N+3} . \tag{14.4c}</span>
+<span id="cb2-214"><a href="#cb2-214" aria-hidden="true" tabindex="-1"></a>\end{array}</span>
+<span id="cb2-215"><a href="#cb2-215" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-216"><a href="#cb2-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-217"><a href="#cb2-217" aria-hidden="true" tabindex="-1"></a>The difference between the MAP solution and the posterior mean is of order $O(1 / N)$ (the posterior distribution is almost symmetric). The confidence interval, however, is much larger than the difference between the MAP and the MP solution. It is of order $O(1 / \sqrt{N})$. Figure 14.1 displays the probability density for $n_{g}=6$ and $N=20$.</span>
+<span id="cb2-218"><a href="#cb2-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-221"><a href="#cb2-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb2-222"><a href="#cb2-222" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb2-223"><a href="#cb2-223" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Show plot"</span></span>
+<span id="cb2-224"><a href="#cb2-224" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span>
+<span id="cb2-225"><a href="#cb2-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-226"><a href="#cb2-226" aria-hidden="true" tabindex="-1"></a>Figure 14.1 Probability density $p\left(q \mid N, n_{g}, \mathcal{I}\right)$ as a function of $q$ for $n_{g}=6$ and $N=20$. Depicted are the posterior mean (PM), maximum posterior estimate (MAP) and confidence interval (CI) given by the one-standard-deviation neighbourhood of MP.</span>
+<span id="cb2-227"><a href="#cb2-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-228"><a href="#cb2-228" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.4.2 Mean of a Poisson distribution</span></span>
+<span id="cb2-229"><a href="#cb2-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-230"><a href="#cb2-230" aria-hidden="true" tabindex="-1"></a>Given a Poissonian sample of counts $\boldsymbol{l}=\left<span class="sc">\{</span>l_{1}, \ldots, l_{N}\right<span class="sc">\}</span>$ that occur in a fixed time window $\Delta t$, as the individual counts are uncorrelated the likelihood for $l$ is a product</span>
+<span id="cb2-231"><a href="#cb2-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-232"><a href="#cb2-232" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-233"><a href="#cb2-233" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-234"><a href="#cb2-234" aria-hidden="true" tabindex="-1"></a>P(l \mid \mu, \mathcal{I}) &amp; =\prod_{i=1}^{N} \ln \left<span class="co">[</span><span class="ot">P\left(l_{i} \mid \mu, \mathcal{I}\right)\right</span><span class="co">]</span>=\prod_{i=1}^{N}\left<span class="sc">\{</span>e^{-\mu} \frac{\mu^{l_{i}}}{l_{i}!}\right<span class="sc">\}</span> <span class="sc">\\</span></span>
+<span id="cb2-235"><a href="#cb2-235" aria-hidden="true" tabindex="-1"></a>&amp; =\frac{1}{Z} e^{-N \mu}+\mu^{\sum_{i} l_{i}}=\frac{1}{Z} e^{-N \mu} \mu^{N \bar{l}}</span>
+<span id="cb2-236"><a href="#cb2-236" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-237"><a href="#cb2-237" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-238"><a href="#cb2-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-239"><a href="#cb2-239" aria-hidden="true" tabindex="-1"></a>where $Z$ contains $\mu$-independent factors. For the posterior we also need the prior $p(\mu \mid \mathcal{I})$. Since $\mu$ is the mean count in the time window $\Delta t$, it is a scale parameter and we use the corresponding Jeffreys' prior $p(\mu \mid \mathcal{I}) \propto 1 / \mu$. Then the posterior reads</span>
+<span id="cb2-240"><a href="#cb2-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-241"><a href="#cb2-241" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-242"><a href="#cb2-242" aria-hidden="true" tabindex="-1"></a>p(\mu \mid l, \mathcal{I}) \propto \mu^{N \bar{l}-1} e^{-N \mu} .</span>
+<span id="cb2-243"><a href="#cb2-243" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-244"><a href="#cb2-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-245"><a href="#cb2-245" aria-hidden="true" tabindex="-1"></a>It is a Gamma distribution with $\alpha=\bar{l}$ and $\beta=N$. The posterior mean and variance follow from equation (7.14) <span class="co">[</span><span class="ot">p.102</span><span class="co">]</span>. We summarize the result:</span>
+<span id="cb2-246"><a href="#cb2-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-247"><a href="#cb2-247" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior PDF for the mean of a Poisson distribution WITH Jeffreys' ScALE PRIOR</span></span>
+<span id="cb2-248"><a href="#cb2-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-249"><a href="#cb2-249" aria-hidden="true" tabindex="-1"></a>sample of counts:</span>
+<span id="cb2-250"><a href="#cb2-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-251"><a href="#cb2-251" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-252"><a href="#cb2-252" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb2-253"><a href="#cb2-253" aria-hidden="true" tabindex="-1"></a>l &amp; =\left<span class="sc">\{</span>l_{1}, \ldots, l_{N}\right<span class="sc">\}</span>, <span class="sc">\\</span></span>
+<span id="cb2-254"><a href="#cb2-254" aria-hidden="true" tabindex="-1"></a>p(\mu \mid l, N, \mathcal{I}) &amp; =p_{\Gamma}(\mu \mid \alpha, \beta),  \tag{14.5a}<span class="sc">\\</span></span>
+<span id="cb2-255"><a href="#cb2-255" aria-hidden="true" tabindex="-1"></a>\alpha &amp; =N \bar{l}, \quad \beta=N, <span class="sc">\\</span></span>
+<span id="cb2-256"><a href="#cb2-256" aria-hidden="true" tabindex="-1"></a>\langle\mu\rangle &amp; =\bar{l},  \tag{14.5b}<span class="sc">\\</span></span>
+<span id="cb2-257"><a href="#cb2-257" aria-hidden="true" tabindex="-1"></a>\operatorname{var}(\mu) &amp; =\frac{\bar{l}}{N} . \tag{14.5c}</span>
+<span id="cb2-258"><a href="#cb2-258" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb2-259"><a href="#cb2-259" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-260"><a href="#cb2-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-261"><a href="#cb2-261" aria-hidden="true" tabindex="-1"></a><span class="fu">### 14.4.3 Estimation of half-lives</span></span>
+<span id="cb2-262"><a href="#cb2-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-263"><a href="#cb2-263" aria-hidden="true" tabindex="-1"></a>The estimation of parameters of systems with exponential behaviour is a common task in many areas of engineering and physics. Here we illustrate the approach with the estimation of the decay parameter of a radioactive source. The data set $=\left<span class="sc">\{</span>t_{1}, \ldots, t_{N}\right<span class="sc">\}</span>$ is a sample of recorded times of decay events, e.g. measured by a Geiger-Müller counter. The probability for a decay event is given by</span>
+<span id="cb2-264"><a href="#cb2-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-265"><a href="#cb2-265" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-266"><a href="#cb2-266" aria-hidden="true" tabindex="-1"></a>p(t \mid \tau)=\frac{1}{\tau} e^{-t / \tau} .</span>
+<span id="cb2-267"><a href="#cb2-267" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-268"><a href="#cb2-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-269"><a href="#cb2-269" aria-hidden="true" tabindex="-1"></a>We are interested in the probability density $p(\tau \mid t, \mathcal{I})$ of $\tau$. Bayes' theorem relates this density to the likelihood</span>
+<span id="cb2-270"><a href="#cb2-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-271"><a href="#cb2-271" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-272"><a href="#cb2-272" aria-hidden="true" tabindex="-1"></a>p(\tau \mid t, \mathcal{I}) \propto p(t \mid \tau, \mathcal{I}) p(\tau \mid \mathcal{I}) .</span>
+<span id="cb2-273"><a href="#cb2-273" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-274"><a href="#cb2-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-275"><a href="#cb2-275" aria-hidden="true" tabindex="-1"></a>Since all the decay events are uncorrelated, the likelihood is given by the product of the individual PDFs:</span>
+<span id="cb2-276"><a href="#cb2-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-277"><a href="#cb2-277" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-278"><a href="#cb2-278" aria-hidden="true" tabindex="-1"></a>p(t \mid \tau, \mathcal{I})=\prod_{i=1}^{N}\left(\frac{1}{\tau} e^{-t_{i} / \tau}\right)=\tau^{-N} e^{-N \bar{t} / \tau}</span>
+<span id="cb2-279"><a href="#cb2-279" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-280"><a href="#cb2-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-281"><a href="#cb2-281" aria-hidden="true" tabindex="-1"></a>The symbol $\bar{t}$ stands for the sample mean of the recorded decay times. Next we need to assign the prior for $\tau$. Without further prior knowledge, $\tau$ is a scale parameter for which Jeffreys' prior is in most cases appropriate. This finally results in the posterior distribution</span>
+<span id="cb2-282"><a href="#cb2-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-283"><a href="#cb2-283" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-284"><a href="#cb2-284" aria-hidden="true" tabindex="-1"></a>p(\tau \mid t, \mathcal{I})=\frac{1}{Z} \tau^{-N-1} e^{-N \bar{t} / \tau}</span>
+<span id="cb2-285"><a href="#cb2-285" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-286"><a href="#cb2-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-287"><a href="#cb2-287" aria-hidden="true" tabindex="-1"></a>The computation of the normalization constant and the moments of $\tau$ requires the integral</span>
+<span id="cb2-288"><a href="#cb2-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-289"><a href="#cb2-289" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-290"><a href="#cb2-290" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-291"><a href="#cb2-291" aria-hidden="true" tabindex="-1"></a>I_{v} &amp; :=\int_{0}^{\infty} \tau^{-N+v} e^{-N \bar{t} / \tau} \frac{d \tau}{\tau} <span class="sc">\\</span></span>
+<span id="cb2-292"><a href="#cb2-292" aria-hidden="true" tabindex="-1"></a>&amp; =\int_{0}^{\infty}\left(\frac{x}{N \bar{t}}\right)^{N-v} e^{-x} \frac{d x}{x} <span class="sc">\\</span></span>
+<span id="cb2-293"><a href="#cb2-293" aria-hidden="true" tabindex="-1"></a>&amp; =(N \bar{t})^{-N+v} \Gamma(N-v)</span>
+<span id="cb2-294"><a href="#cb2-294" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-295"><a href="#cb2-295" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-296"><a href="#cb2-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-297"><a href="#cb2-297" aria-hidden="true" tabindex="-1"></a>Hence, the norm and mean are given by</span>
+<span id="cb2-298"><a href="#cb2-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-299"><a href="#cb2-299" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-300"><a href="#cb2-300" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-301"><a href="#cb2-301" aria-hidden="true" tabindex="-1"></a>Z &amp; =I_{0}=(N \bar{t})^{-N} \Gamma(N) <span class="sc">\\</span></span>
+<span id="cb2-302"><a href="#cb2-302" aria-hidden="true" tabindex="-1"></a>\langle\tau\rangle &amp; =\frac{I_{1}}{I_{0}}=\frac{N}{N-1} \bar{t}</span>
+<span id="cb2-303"><a href="#cb2-303" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-304"><a href="#cb2-304" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-305"><a href="#cb2-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-306"><a href="#cb2-306" aria-hidden="true" tabindex="-1"></a>The variance can be computed analogously:</span>
+<span id="cb2-307"><a href="#cb2-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-308"><a href="#cb2-308" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-309"><a href="#cb2-309" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb2-310"><a href="#cb2-310" aria-hidden="true" tabindex="-1"></a>\operatorname{var}(\tau) &amp; =\frac{I_{2}}{I_{0}}-\langle\tau\rangle^{2}=\frac{N^{2}}{(N-1)(N-2)} \bar{t}^{2}-\frac{N^{2}}{(N-1)(N-1)} \bar{t}^{2} <span class="sc">\\</span></span>
+<span id="cb2-311"><a href="#cb2-311" aria-hidden="true" tabindex="-1"></a>&amp; =\langle\tau\rangle^{2} \frac{1}{N-2} .</span>
+<span id="cb2-312"><a href="#cb2-312" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb2-313"><a href="#cb2-313" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-314"><a href="#cb2-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-315"><a href="#cb2-315" aria-hidden="true" tabindex="-1"></a>The confidence interval is therefore $\mathrm{CI}=\bar{t} / \sqrt{N-2}$. The estimation could be summarized as</span>
+<span id="cb2-316"><a href="#cb2-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-317"><a href="#cb2-317" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-318"><a href="#cb2-318" aria-hidden="true" tabindex="-1"></a>\tau=\bar{t} \frac{N}{N-1}\left(1 \pm \frac{1}{\sqrt{N-2}}\right)</span>
+<span id="cb2-319"><a href="#cb2-319" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-320"><a href="#cb2-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-321"><a href="#cb2-321" aria-hidden="true" tabindex="-1"></a>Again we find that the difference in the estimators for the location parameter (MAP, PM) is of order $1 / N$, while the confidence interval (uncertainty) is of order $1 / \sqrt{N}$. The key result is:</span>
+<span id="cb2-322"><a href="#cb2-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-323"><a href="#cb2-323" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior PDF for the half-life WITH JEFFREYS' SCALE PRIOR</span></span>
+<span id="cb2-324"><a href="#cb2-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-325"><a href="#cb2-325" aria-hidden="true" tabindex="-1"></a>sample of counts:</span>
+<span id="cb2-326"><a href="#cb2-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-327"><a href="#cb2-327" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-328"><a href="#cb2-328" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb2-329"><a href="#cb2-329" aria-hidden="true" tabindex="-1"></a>t &amp; =\left<span class="sc">\{</span>t_{1}, \ldots, t_{N}\right<span class="sc">\}</span>, <span class="sc">\\</span></span>
+<span id="cb2-330"><a href="#cb2-330" aria-hidden="true" tabindex="-1"></a>p(\tau \mid t, N, \mathcal{I}) &amp; =\frac{(N \bar{t})^{N}}{\Gamma(N)} e^{-N \bar{t} / \tau},  \tag{14.6a}<span class="sc">\\</span></span>
+<span id="cb2-331"><a href="#cb2-331" aria-hidden="true" tabindex="-1"></a>\langle\tau\rangle &amp; =\bar{t} \frac{N}{N-1},  \tag{14.6b}<span class="sc">\\</span></span>
+<span id="cb2-332"><a href="#cb2-332" aria-hidden="true" tabindex="-1"></a>\operatorname{var}(\tau) &amp; =\bar{t}^{2} \frac{1}{N-2} . \tag{14.6c}</span>
+<span id="cb2-333"><a href="#cb2-333" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb2-334"><a href="#cb2-334" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-335"><a href="#cb2-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-336"><a href="#cb2-336" aria-hidden="true" tabindex="-1"></a><span class="fu">## 15</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

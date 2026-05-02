@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Poisson processes and waiting times – Bayesian Probability Theory: Applications in the Physical Sciences</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/Chapter_14_Bayesian_parameter_estimation.html" rel="next">
+<link href="../chapters/Chapter_08_The_central_limit_theorem.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-46cf542fe7cabf791d008aea1ba490d7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/Chapter_04_Combinatorics.html">PART II: PROBABILITY DISTRIBUTIONS</a></li><li class="breadcrumb-item"><a href="../chapters/Chapter_09_Poisson_processes_and_waiting_times.html"><span class="chapter-title">Poisson processes and waiting times</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bayesian Probability Theory: Applications in the Physical Sciences</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bayesian Probability Theory</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/00_Introduction_to_R.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to R for Bayesian Inference</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: FOUNDATIONS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_01_The_meaning_of_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The meaning of ‘probability’</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_02_Basic_definitions_for_frequentist_statistics_and_Bayesian_in.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic definitions for frequentist statistics and Bayesian inference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_03_Bayesian_inference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bayesian inference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: PROBABILITY DISTRIBUTIONS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_04_Combinatorics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Combinatorics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_05_Random_walks.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Random walks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_06_Limit_theorems.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Limit theorems</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_07_Continuous_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_08_The_central_limit_theorem.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The central limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_09_Poisson_processes_and_waiting_times.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Poisson processes and waiting times</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: PARAMETER ESTIMATION</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_14_Bayesian_parameter_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bayesian parameter estimation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_15_Frequentist_parameter_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Frequentist parameter estimation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: HYPOTHESIS TESTING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_17_The_Bayesian_way.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Bayesian way</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_18_The_frequentist_approach.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The frequentist approach</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_19_Sampling_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">19</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_20_Comparison_of_Bayesian_and_frequentist_hypothesis_tests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparison of Bayesian and frequentist hypothesis tests</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART V: MONTE CARLO &amp; MCMC METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_29_Numerical_integration.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Numerical integration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_30_Monte_Carlo_methods.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Monte Carlo methods</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_31_Nested_sampling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Nested sampling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDICES</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Appendix_Discrete_Distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Distributions &amp; Bayesian Inference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#distance-law-of-neighbouring-pps" id="toc-distance-law-of-neighbouring-pps" class="nav-link active" data-scroll-target="#distance-law-of-neighbouring-pps">Distance law of neighbouring PPs</a></li>
+  <li><a href="#distance-law-of-poisson-process" id="toc-distance-law-of-poisson-process" class="nav-link" data-scroll-target="#distance-law-of-poisson-process">Distance law of Poisson process</a></li>
+  <li><a href="#distance-law-of-pps" id="toc-distance-law-of-pps" class="nav-link" data-scroll-target="#distance-law-of-pps">Distance law of PPs</a></li>
+  <li><a href="#erlang-distribution" id="toc-erlang-distribution" class="nav-link" data-scroll-target="#erlang-distribution">Erlang distribution</a></li>
+  <li><a href="#algorithm-to-simulate-the-queueing-problem" id="toc-algorithm-to-simulate-the-queueing-problem" class="nav-link" data-scroll-target="#algorithm-to-simulate-the-queueing-problem">Algorithm to simulate THE QUEUEING PROBLEM</a></li>
+  <li><a href="#mean-waiting-time" id="toc-mean-waiting-time" class="nav-link" data-scroll-target="#mean-waiting-time">Mean waiting time</a></li>
+  <li><a href="#part-ii" id="toc-part-ii" class="nav-link" data-scroll-target="#part-ii">PART II</a></li>
+  <li><a href="#assigning-probabilities" id="toc-assigning-probabilities" class="nav-link" data-scroll-target="#assigning-probabilities">ASSIGNING PROBABILITIES</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">10</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/Chapter_04_Combinatorics.html">PART II: PROBABILITY DISTRIBUTIONS</a></li><li class="breadcrumb-item"><a href="../chapters/Chapter_09_Poisson_processes_and_waiting_times.html"><span class="chapter-title">Poisson processes and waiting times</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-title">Poisson processes and waiting times</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="stochastic-processes" class="level3">
+<h3 class="anchored" data-anchor-id="stochastic-processes">9.1 Stochastic processes</h3>
+<p>If a classical particle moves in an external force field <span class="math inline">\(\boldsymbol{F}(\boldsymbol{x})\)</span> its motion is deterministic and it could be called a ‘deterministic process’. If the particle interacts with randomly distributed obstacles its motion is still deterministic, but the trajectory depends on the random characteristics of the obstacles, and maybe also on the random choice of the initial conditions. Such a motion is an example of a ‘stochastic process’, or rather a ‘random process’.</p>
+<p>In a more abstract generalized definition, a stochastic process is a random variable <span class="math inline">\(X_{\xi}\)</span> that depends on an additional (deterministic) independent variable <span class="math inline">\(\xi\)</span>, which can be discrete or continuous. In most cases it stands for an index <span class="math inline">\(\boldsymbol{\xi} \in \mathbf{N}\)</span> or time <span class="math inline">\(t\)</span>, space <span class="math inline">\(x\)</span> or energy <span class="math inline">\(E\)</span>. An almost trivial ubiquitous stochastic process is given by additive noise <span class="math inline">\(\eta(t)\)</span> on a time-dependent signal <span class="math inline">\(s(t)\)</span>, i.e.&nbsp;<span class="math inline">\(X_{t}=s(t)+\eta(t)\)</span>. As a consequence, <span class="math inline">\(X_{t}\)</span> is no longer continuous. The most apparent applications of stochastic processes are time series of any kind that depend on some random impact. A broad field of applications are time series occurring, for example, in business, finance, engineering, medical applications and of course in physics. Beyond time series analysis, stochastic processes are at the heart of diffusion Langevin dynamics, Feynman’s path integrals [43], as well as Klauder’s stochastic quantization [62], which represents an unconventional approach to quantum mechanics. Here we will give a concise introduction and present a few pedagogical examples. An important example of stochastic processes, which we have encountered already, are random walks as discussed in Section 4.2 [p.&nbsp;57] and Chapter 5 [p.&nbsp;71]. We will have ample opportunity to encounter further examples of stochastic processes in various sections of this book: electron temperature distribution as a function of the laser cord position (Section 23.2), energy dependence of a signal on top of a background (Section 23.3), time dependence of the magnetic flux in a plasma (Section 24.1.2), surface growth as a function of time (Section 24.4), the yearly onset of cherry blossom over time (Section 25.1), and eruptions of Old Faithful geyser as a function of time (Section 25.2.2). There are many more examples of stochastic processes covered in this book, namely all those cases where a function <span class="math inline">\(f(x)\)</span> is measured which is corrupted by (additive) random noise. An important class of stochastic processes are Markov processes. They are introduced in Section 30.3 [p.&nbsp;544] as the basis for a widespread stochastic integration technique, called ‘Markov Chain Monte Carlo’.</p>
+<p>For the sake of clarity we consider only a single random variable <span class="math inline">\(X_{\xi}\)</span> that might, however, depend on an <span class="math inline">\(L\)</span>-component vector <span class="math inline">\(\lambda\)</span> of independent random variables. For fixed <span class="math inline">\(\xi, X_{\xi}(\lambda)\)</span> is an ordinary random variable, for which the CDF and PDF can be defined as usual:</p>
+<p><span class="math display">\[
+\begin{align*}
+F_{\xi}(x) &amp; :=P\left(X_{\xi}(\lambda) \leq x\right)  \tag{9.1a}\\
+p_{\xi}(x) &amp; :=\frac{d}{d x} F_{\xi}(x) \tag{9.1b}
+\end{align*}
+\]</span></p>
+<p>The really new aspects of stochastic processes concern the dependence on the independent variable <span class="math inline">\(\xi\)</span>, which, as said before, typically represents time, space or energy.</p>
+<p>Stochastic processes are referred to as continuous (discrete) stochastic processes if they are based on continuous (discrete) input variables <span class="math inline">\(\lambda\)</span>. That does not, however, imply that <span class="math inline">\(X_{\xi}(\lambda)\)</span> as a function of <span class="math inline">\(\xi\)</span> is necessarily continuous (discrete). As a counterexample consider a (discrete) Bernoulli experiment, whose outcome <span class="math inline">\(o \in\left\{o_{1}, o_{2}\right\}\)</span> defines the global behaviour</p>
+<p><span class="math display">\[
+X_{t}(o):= \begin{cases}\cos (t) &amp; \text { for } o=o_{1} \\ \exp (-t) &amp; \text { for } o=o_{2}\end{cases}
+\]</span></p>
+<p>This is a case of a discrete stochastic process which is continuous in <span class="math inline">\(t\)</span>. The opposite situation is given by the following process:</p>
+<p><span class="math display">\[
+X_{t}(\tau):=\boldsymbol{I}(t \leq \tau),
+\]</span></p>
+<p>with <span class="math inline">\(\tau\)</span> being a (continuous) exponential random variable. Apparently, <span class="math inline">\(X_{t}\)</span> is discontinuous if considered as a function of <span class="math inline">\(t\)</span>, but the process is referred to as continuous.</p>
+<p>Interesting aspects of stochastic processes are the <span class="math inline">\(\xi\)</span>-dependence of individual realizations (samples)</p>
+<p><span class="math display">\[
+X_{\xi}^{*}:=X_{\xi}\left(\lambda^{*}\right)
+\]</span></p>
+<p>for a fixed <span class="math inline">\(\lambda^{*}\)</span>, or the <span class="math inline">\(\xi\)</span>-dependence of the mean, i.e.</p>
+<p><span class="math display">\[
+\begin{aligned}
+E(\xi)=\left\langle X_{\xi}\right\rangle &amp; :=\int d x x p_{\xi}(x) \\
+&amp; =\int d^{L} \lambda p(\lambda) \int d x x \underbrace{p_{\xi}(x \mid \lambda)}_{\delta\left(x-X_{\xi}(\lambda)\right)} \\
+&amp; =\int d^{L} \lambda X_{\xi}(\lambda) p(\lambda)
+\end{aligned}
+\]</span></p>
+<p>In the second line we have introduced the independent random variable <span class="math inline">\(\lambda\)</span> via the marginalization rule and we have utilized the fact that <span class="math inline">\(x\)</span> is uniquely determined if <span class="math inline">\(\xi\)</span> and <span class="math inline">\(\lambda\)</span> are specified. Another interesting aspect of stochastic processes is the autocorrelation in <span class="math inline">\(\xi\)</span>, i.e.</p>
+<p><span class="math display">\[
+A\left(\xi, \xi^{\prime}\right):=\left\langle\Delta X_{\xi^{\prime}} \Delta X_{\xi}\right\rangle=\int d^{L} \lambda X_{\xi^{\prime}}(\lambda) X_{\xi}(\lambda) p(\lambda)-\left\langle X_{\xi^{\prime}}\right\rangle\left\langle X_{\xi}\right\rangle .
+\]</span></p>
+<p>The autocorrelation plays a crucial role in MCMC, as outlined in Section 30.3 [p.&nbsp;544]. As a simple introductory example we consider a one-dimensional random walk on a lattice, with sites <span class="math inline">\(x \in \mathbb{Z}\)</span>. In addition, we assume a parabolic potential <span class="math inline">\(v(x)=x^{2}\)</span>, in order to avoid an increasing variance, which we found for the unrestricted random walk in Section 4.2 [p.&nbsp;57]. Let <span class="math inline">\(X_{t}\)</span> be the position of the walker at discrete time <span class="math inline">\(t\)</span> and in each time step the walker has only three choices: stay or move one step forward or backward. That is, <span class="math inline">\(X_{t+1}=X_{t}+\Delta X\)</span>. A possible choice for the probability <span class="math inline">\(P\left(\Delta X \mid X_{t}, \mathcal{I}\right)\)</span> that the walker will be at site <span class="math inline">\(X_{t+1}\)</span> in the next time step can be defined via the Metropolis-Hastings algorithm (see Section 30.3 [p.&nbsp;544]), resulting in</p>
+<p><span class="math display">\[
+\begin{aligned}
+P\left(\Delta X= \pm 1 \mid X_{t}, \mathcal{I}\right) &amp; =\min \left(\frac{1}{2} \exp \left\{-\beta \mp 2 \beta X_{t}\right\}, 1\right) \\
+P\left(\Delta X=0 \mid X_{t}, \mathcal{I}\right) &amp; =1-P\left(\Delta X=+1 \mid X_{t}, \mathcal{I}\right)-P\left(\Delta X=-1 \mid X_{t}, \mathcal{I}\right)
+\end{aligned}
+\]</span></p>
+<p>This process is actually a ‘Markov process’ as the next step depends on the actual position, but otherwise it has no memory. In Figure 9.1 the time evolution of a few individual random walks <span class="math inline">\(X_{t}\)</span> with <span class="math inline">\(\beta=0.05\)</span> is depicted. The walks always start at <span class="math inline">\(X_{0}=0\)</span>. In addition, the sample mean <span class="math inline">\(\overline{X_{t}}\)</span> and sample variance <span class="math inline">\(\overline{\left(\Delta X_{t}\right)^{2}}\)</span>, obtained from 1000 independent repetitions of such random walks, are displayed. As expected from symmetry, the sample mean is <span class="math inline">\(\bar{X}_{t} \approx 0\)</span>. The sample variance initially increases linearly with time, according to a diffusion process, but then levels off due to the parabolic potential, which prevents the walkers from deviating too far from the origin. In Figure 9.1(b) the autocorrelation is depicted, which has been computed from the same sample of random walks. Here the autocorrelation of a single random walk is defined as</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show plot</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter_09_Poisson_processes_and_waiting_times_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure 9.1 (a) Three individual random walks, all starting at <span class="math inline">\(X_{0}=0\)</span>, are depicted as jagged lines in different shades of grey. The time is expressed in units of the total time <span class="math inline">\(T=1000\)</span>. In addition, the sample mean (thick solid line) and variance (dashed line) of <span class="math inline">\(N=1000\)</span> independent random walks are displayed. (b) The corresponding scaled autocorrelation function <span class="math inline">\(A(\Delta t)\)</span> versus lag size <span class="math inline">\(\Delta t\)</span>.</p>
+<p><span class="math display">\[
+\begin{aligned}
+\tilde{A}(\Delta t) &amp; :=\frac{1}{t_{1}-t_{0}+1} \sum_{t=t_{0}}^{t_{1}} \Delta X_{t+\Delta t} \Delta X_{t} \\
+\Delta X_{t} &amp; :=X_{t}-\overline{X_{t}}
+\end{aligned}
+\]</span></p>
+<p>The autocorrelation is determined in the time window ranging from <span class="math inline">\(t_{0}=100\)</span> to <span class="math inline">\(t_{1}=900\)</span>. The first 100 steps have been discarded, in order to enter the region where <span class="math inline">\(\left\langle X_{t+\Delta t} X_{t}\right\rangle\)</span> is independent of <span class="math inline">\(t\)</span>, then the process is said to be ‘homogeneous’. There are a couple more subtleties to be accounted for in computing autocorrelations numerically, which are, however, immaterial for the basic understanding of this topic. In Figure 9.1 the scaled autocorrelation function <span class="math inline">\(A(\Delta t):=\tilde{A}(\Delta t) / \tilde{A}(0)\)</span>, averaged over the sample, is shown. We see that the autocorrelation decays exponentially, which is a typical behaviour. A fit of <span class="math inline">\(\exp \{\Delta t / \xi\}\)</span> to the data defines the autocorrelation length <span class="math inline">\(\xi\)</span>. We recognize that the random walk has a rather long autocorrelation length <span class="math inline">\(\xi \approx 20\)</span>, i.e.&nbsp;there is a long-range correlation between fluctuations. For a small autocorrelation <span class="math inline">\(A(\Delta t) \approx 0\)</span>, it is necessary that <span class="math inline">\(\left\langle X_{t+\Delta t} X_{t}\right\rangle\)</span> changes sign frequently as a function of <span class="math inline">\(t\)</span>. Apparently, the autocorrelation length defines a typical time window in which the walk is either above or below the mean value. More details on autocorrelation functions of Markov processes are given in Section 30.3 [p.&nbsp;544].</p>
+<p>In the next sections we focus on Poisson processes and various aspects of Poisson points. As mentioned before, we will encounter further examples of stochastic processes later in this book. For additional details on stochastic processes we refer the reader to [8, 159]. Readers particularly interested in mathematically rigorous definitions and properties of stochastic processes may look at [45].</p>
+</section>
+<section id="three-ways-to-generate-poisson-points" class="level3">
+<h3 class="anchored" data-anchor-id="three-ways-to-generate-poisson-points">9.2 Three ways to generate Poisson points</h3>
+<p>We have introduced the Poisson distribution as a limiting case of the binomial distribution by keeping <span class="math inline">\(\mu=p N\)</span> fixed and considering the limit <span class="math inline">\(N \rightarrow \infty\)</span>. We use this situation to generate ‘Poisson points’ as outlined in the next section.</p>
+</section>
+<section id="global-generation-of-poisson-points" class="level3">
+<h3 class="anchored" data-anchor-id="global-generation-of-poisson-points">9.2.1 Global generation of Poisson points</h3>
+<p>We consider a finite interval <span class="math inline">\(\Omega_{L}=(0, L)\)</span> of length <span class="math inline">\(L\)</span>, in which we generate <span class="math inline">\(N\)</span> independent and uniformly distributed points. They are called ‘Poisson points’ (PPs). The point density is</p>
+<p><span class="math display">\[
+\begin{equation*}
+\rho:=\frac{N}{L} . \tag{9.2}
+\end{equation*}
+\]</span></p>
+<p>We now select an arbitrary interval <span class="math inline">\(I_{x} \subset \Omega_{L}\)</span> of length <span class="math inline">\(x\)</span>. The probability for an individual point to appear in <span class="math inline">\(I_{x}\)</span> is, according to the classic definition,</p>
+<p><span class="math display">\[
+p=\frac{x}{L} .
+\]</span></p>
+<p>The probability that <span class="math inline">\(n\)</span> PPs land in <span class="math inline">\(I_{x}\)</span> is therefore binomial. The mean number of points generated on <span class="math inline">\(I_{x}\)</span> is</p>
+<p><span class="math display">\[
+\begin{equation*}
+\mu=p N=x \rho . \tag{9.3}
+\end{equation*}
+\]</span></p>
+<p>Next we erase these PPs and start afresh, but this time we double both the length <span class="math inline">\(L\)</span> and the number of points <span class="math inline">\(N\)</span>. We retain the interval <span class="math inline">\(I_{x}\)</span>. As the point density is the same, the mean number ( <span class="math inline">\(\mu\)</span> ) of points in <span class="math inline">\(I_{x}\)</span> is also the same. Upon repeating the doubling process we fulfil the requirements of the Poisson theorem ( <span class="math inline">\(\mu=p N=\)</span> fixed and <span class="math inline">\(N \rightarrow \infty\)</span> ). Hence, in the limit of <span class="math inline">\(N \rightarrow \infty,{ }^{1}\)</span> we obtain a Poisson distribution</p>
+<p><span class="math display">\[
+\begin{equation*}
+P(n \mid x, \rho, \mathcal{I}):=e^{-\rho x} \frac{(\rho x)^{n}}{n!} . \tag{9.4}
+\end{equation*}
+\]</span></p>
+</section>
+<section id="distance-law-of-neighbouring-pps" class="level2">
+<h2 class="anchored" data-anchor-id="distance-law-of-neighbouring-pps">Distance law of neighbouring PPs</h2>
+<p>Next, we are interested in the PDF of the distances between Poisson points <span class="math inline">\(p(\xi \mid \rho, \mathcal{I})\)</span>, where <span class="math inline">\(\xi\)</span> stands for the proposition <span class="math inline">\(\xi\)</span> : The distance to the next Poisson point is within <span class="math inline">\([\xi, \xi+d \xi)\)</span>. The proposition requires that there is no Poisson point in the interval <span class="math inline">\([0, \xi)\)</span>, and there must be a Poisson point in the following interval <span class="math inline">\(d \xi\)</span>. Both events are logically independent. Both probabilities follow from the Poisson distribution <span class="math inline">\(P(n \mid x, \rho, \mathcal{I})\)</span> given in equation (9.4) with <span class="math inline">\((n=0 ; x=\xi)\)</span> and <span class="math inline">\((n=1 ; x=d \xi)\)</span>, respectively. This yields the sought-for probability</p>
+<p><span class="math display">\[
+P(\xi \mid \rho, \mathcal{I})=P(n=0 \mid \xi, \rho, \mathcal{I}) P(n=1 \mid d \xi, \rho, \mathcal{I})=e^{-\rho \xi} \rho d \xi
+\]</span></p>
+<p>and the corresponding PDF is exponential.</p>
+</section>
+<section id="distance-law-of-poisson-process" class="level2">
+<h2 class="anchored" data-anchor-id="distance-law-of-poisson-process">Distance law of Poisson process</h2>
+<p><span class="math display">\[
+\begin{equation*}
+p(\xi \mid \rho, \mathcal{I})=\rho e^{-\rho \xi} . \tag{9.5}
+\end{equation*}
+\]</span></p>
+<p>Its mean value is <span class="math inline">\(1 / \rho\)</span>, in accordance with the mean density of <span class="math inline">\(\rho\)</span>.</p>
+</section>
+<section id="distance-law-of-pps" class="level2">
+<h2 class="anchored" data-anchor-id="distance-law-of-pps">Distance law of PPs</h2>
+<p>The distances between neighbouring PPs are exponentially distributed. Next we want to consider the distribution of the distance <span class="math inline">\(d_{n}\)</span> between Poisson point <span class="math inline">\(m\)</span> and <span class="math inline">\(m+n\)</span>. As the individual intervals are independent, the distances are independent of <span class="math inline">\(m\)</span> and they are a sum of <span class="math inline">\(n\)</span> independent and exponentially distributed random numbers. According to equation (7.68) [p.&nbsp;130], such a sum is Gamma distributed.</p>
+<p>[^5] ## Distance distribution of Poisson points</p>
+<p><span class="math display">\[
+\begin{equation*}
+p\left(p\left(d_{n} \mid \rho, \mathcal{I}\right)\right)=p_{\Gamma}\left(d_{n} \mid n, \rho\right)=\frac{\rho}{\Gamma(n)}\left(\rho d_{n}\right)^{n-1} e^{-\rho d_{n}} \tag{9.6}
+\end{equation*}
+\]</span></p>
+<section id="successive-generation-of-poisson-points" class="level3">
+<h3 class="anchored" data-anchor-id="successive-generation-of-poisson-points">9.2.2 Successive generation of Poisson points</h3>
+<p>The derived exponential distribution suggests an alternative view of the generation process. So far the Poisson points have been generated by distributing the points homogeneously on an interval. In this way it is warranted that the points are independent of each other. Similarly, the distances between the points are i.i.d. For this reason also a sequential generation process can be used. We start at <span class="math inline">\(x=0\)</span> and determine the next Poisson point <span class="math inline">\(x_{1}\)</span> at a distance of <span class="math inline">\(\xi_{1}\)</span> according to the exponential distribution equation (9.5). Then the next point <span class="math inline">\(x_{2}\)</span> is generated at a distance <span class="math inline">\(\xi_{2}\)</span>, again derived from <span class="math inline">\(p(\xi \mid \rho, \mathcal{I})\)</span>, and so on. The Poisson points are then located at</p>
+<p><span class="math display">\[
+x_{n}=\sum_{i=1}^{n} \xi_{i} .
+\]</span></p>
+<p>The PDF implies that the probability for the next PP being at a distance <span class="math inline">\(d \xi\)</span> is given by</p>
+<p><span class="math display">\[
+p(d \xi \mid \rho, \mathcal{I}) d \xi=(1-\rho d \xi) \cdot \rho d \xi
+\]</span></p>
+<p>This expression can be interpreted as the probability for no event <span class="math inline">\((1-\rho d \xi)\)</span> in <span class="math inline">\(d \xi\)</span> times the probability for one event <span class="math inline">\(\rho d \xi\)</span> in the following infinitesimal interval <span class="math inline">\(d \xi\)</span>. In other words, the events in infinitesimal intervals are uncorrelated and the probability <span class="math inline">\(P_{d \xi}\)</span> for an event in <span class="math inline">\(d \xi\)</span> is analytic in <span class="math inline">\(d \xi\)</span> :</p>
+<p><span class="math display">\[
+P_{d \xi}=\rho d \xi
+\]</span></p>
+<p>As we will see in the next section, these features entail the Poisson distribution.</p>
+</section>
+<section id="local-generation-of-poisson-processes" class="level3">
+<h3 class="anchored" data-anchor-id="local-generation-of-poisson-processes">9.2.3 Local generation of Poisson processes</h3>
+<p>The Poisson process can also be defined by the two axioms derived before.</p>
+<ul>
+<li>The probability for an event happening in an infinitesimal interval <span class="math inline">\(d \xi\)</span> is independent of previous PPs.</li>
+<li>The probability is analytic in <span class="math inline">\(d \xi\)</span>, i.e.&nbsp;<span class="math inline">\(P\)</span> (event in <span class="math inline">\(d \xi \mid \rho, \mathcal{I})=\rho d \xi\)</span>.</li>
+</ul>
+<p>It would be straightforward to identify the underlying Bernoulli experiment and to derive the Poisson distribution as a limiting case. Here, however, we want to present a different approach, that is over the top for the present problem but turns out to be very useful in more complex situations. For instance, the same approach can be used to derive the ‘FokkerPlanck equation’ for drift-diffusion processes from random walks. The present problem is nicely suited to illustrate this idea. To begin with, we notice that the axioms imply</p>
+<ul>
+<li>The probability for two events happening in <span class="math inline">\(d \xi\)</span> is negligible <span class="math inline">\(\left(O\left(d \xi^{2}\right)\right)\)</span>.</li>
+<li>The probability for no event in <span class="math inline">\(d \xi\)</span> is therefore <span class="math inline">\(1-\rho d \xi\)</span>.</li>
+</ul>
+<p>Next, we define the proposition</p>
+<p><span class="math display">\[
+A(n, x) \text { : The number of events in an interval of length } x \text { is } n \text {. }
+\]</span></p>
+<p>The goal is the probability <span class="math inline">\(P(A(n, x) \mid \mathcal{I})\)</span> for <span class="math inline">\(n\)</span> Poisson points in the interval of length <span class="math inline">\(x\)</span>. The basic idea of the present approach is to derive a differential equation for the sought-for probability. To this end, we compute the probability for the interval of length <span class="math inline">\(x+d x\)</span> by marginalization over all propositions <span class="math inline">\(A(m, x)\)</span> for the interval of length <span class="math inline">\(x\)</span> :</p>
+<p><span class="math display">\[
+P(A(n, x+d x) \mid \mathcal{I})=\sum_{m=0}^{\infty} P(A(n, x+d x) \mid A(m, x), \mathcal{I}) P(A(m, x) \mid \mathcal{I}) .
+\]</span></p>
+<p>We can simplify this expression by taking advantage of the fact that only zero or one events can happen within the infinitesimal interval <span class="math inline">\(d x\)</span>. Hence, only two terms of the summation over <span class="math inline">\(m\)</span> remain: <span class="math inline">\(m=n\)</span> and <span class="math inline">\(m=n-1\)</span>. Contributions of higher order <span class="math inline">\(\left(O\left(d x^{2}\right)\right)\)</span> can be neglected. Then</p>
+<p><span class="math display">\[
+\begin{aligned}
+P(A(n, x+d x) \mid \mathcal{I})= &amp; P(A(n, x+d x) \mid A(n, x), \mathcal{I}) P(A(n, x) \mid \mathcal{I}) \\
+&amp; +P(A(n, x+d x) \mid A(n-1, x), \mathcal{I}) P(A(n-1, x) \mid \mathcal{I}) \\
+= &amp; (1-\rho d x) P(A(n, x) \mid \mathcal{I})+\rho d x P(A(n-1, x) \mid \mathcal{I})
+\end{aligned}
+\]</span></p>
+<p>So we obtain the desired differential equation</p>
+<p><span class="math display">\[
+\frac{d}{d x} P(A(n, x) \mid \mathcal{I})=\rho(P(A(n-1, x) \mid \mathcal{I})-P(A(n, x) \mid \mathcal{I})) .
+\]</span></p>
+<p>Next we introduce a simplified notation <span class="math inline">\(P_{n}(x):=P(A(n, x) \mid \mathcal{I})\)</span> and define <span class="math inline">\(P_{-1}(x)=0\)</span>, then the differential equation reads</p>
+<p><span class="math display">\[
+\begin{equation*}
+\frac{d}{d x} P_{n}(x)=\rho\left(P_{n-1}(x)-P_{n}(x)\right) \tag{9.7}
+\end{equation*}
+\]</span></p>
+<p>The initial condition is given by</p>
+<p><span class="math display">\[
+\begin{equation*}
+P_{n}(0)=\delta_{n, 0} \tag{9.8}
+\end{equation*}
+\]</span></p>
+<p>because there is no PP in an interval of zero size. This is actually a difference-differential equation, which can be solved by various means. Here we proceed using ‘generating functions’ because of their importance in many problems of probability theory: We define the generating function <span class="math inline">\(\phi(x, z)\)</span> via the following series expansion:</p>
+<p>Generating function</p>
+<p><span class="math display">\[
+\begin{equation*}
+\phi(x, z):=\sum_{n=0}^{\infty} P_{n}(x) z^{n} . \tag{9.9}
+\end{equation*}
+\]</span></p>
+<p>Apart from the presence of the additional variable <span class="math inline">\(x\)</span>, it is the same object introduced in Section 2.1.3 [p.&nbsp;21]. For arbitrary but fixed <span class="math inline">\(x, P_{n}(x)\)</span> represent the coefficients of a Taylor expansion. The representation by <span class="math inline">\(\phi(x, z)\)</span> has the same information as <span class="math inline">\(P_{n}(x)\)</span> but certain advantages, as we have seen in Section 2.1.3 [p.&nbsp;21] already. In particular, the probabilities <span class="math inline">\(P_{n}(x)\)</span> are given by</p>
+<p><span class="math display">\[
+\begin{equation*}
+P_{\nu}(x)=\left.\frac{1}{v!} \frac{d^{v}}{d z^{v}} \phi(x, z)\right|_{z=0} . \tag{9.10}
+\end{equation*}
+\]</span></p>
+<p>In order to obtain the differential equation for the generating function, we multiply equation (9.7) by <span class="math inline">\(z^{n}\)</span> summed over <span class="math inline">\(n\)</span>. The result is</p>
+<p><span class="math display">\[
+\begin{align*}
+\frac{d}{d x} \underbrace{\sum_{n=0}^{\infty} P_{n}(x) z^{n}}_{\phi(x, z)} &amp; =\rho(\underbrace{\sum_{n=0}^{\infty} P_{n-1}(x) z^{n}}_{z \phi(x, z)}-\underbrace{\sum_{n=0}^{\infty} P_{n}(x) z^{n}}_{\phi(x, z)}) \\
+\frac{d}{d x} \phi(x, z) &amp; =\rho(z-1) \phi(x, z) . \tag{9.11}
+\end{align*}
+\]</span></p>
+<p>Along with the initial condition equation (9.8), which implies <span class="math inline">\(\phi(x, 0)=1\)</span>, the solution of the differential equation (9.11) reads</p>
+<p><span class="math display">\[
+\phi(x, z)=e^{\rho(x-1) z}
+\]</span></p>
+<p>Eventually we obtain the sought-for probabilities <span class="math inline">\(P_{n}(x)\)</span> via equation (9.10):</p>
+<p><span class="math display">\[
+P_{n}(t)=\left.\frac{1}{n!} \frac{d^{n}}{d x^{n}} e^{\rho(x-1) t}\right|_{x=0}=\frac{1}{n!}(\rho t)^{n} e^{-\rho t} .
+\]</span></p>
+<p>This is - as expected - the Poisson distribution. We see that the Poisson distribution follows from very general assumptions. For that reason the distribution is ubiquitous in physics.</p>
+</section>
+<section id="waiting-time-paradox" class="level3">
+<h3 class="anchored" data-anchor-id="waiting-time-paradox">9.3 Waiting time paradox</h3>
+<p>If we interpret the distance between neighbouring PPs <span class="math inline">\(t\)</span> in a temporal way we have</p>
+<p><span class="math display">\[
+\begin{equation*}
+p(t \mid \tau)=\frac{1}{\tau} e^{-\frac{t}{\tau}}, \tag{9.12}
+\end{equation*}
+\]</span></p>
+<p>with <span class="math inline">\(\tau\)</span> being the mean ‘waiting time’. Let us assume a Poisson-distributed arrival time of buses at a bus stop. What is the mean waiting time for the next bus, when we are at the bus stop at a random instant of time? We could likewise ask: If we switch on a Geiger counter, how long does it take to the next signal, triggered by an alpha particle? Since the mean time between arrivals is <span class="math inline">\(\tau\)</span>, it seems reasonable to assume that the mean waiting time should be <span class="math inline">\(\tau / 2\)</span>. The correct answer, however, is <span class="math inline">\(\tau\)</span>, which may appear paradoxical since the remaining time to the next bus should be shorter than the entire interval between successive buses.</p>
+<p>In the following, we will see how Bayesian probability theory provides the correct answer. The quantity to be determined is the probability density <span class="math inline">\(p\left(t \mid R_{I}, \tau, \mathcal{I}\right)\)</span> for the waiting time <span class="math inline">\(t\)</span>, given that we arrived at a random instant <span class="math inline">\(t^{*}\)</span> in time. The time <span class="math inline">\(t^{*}\)</span> falls into a time interval <span class="math inline">\(I\)</span> between successive buses. This is denoted by the proposition <span class="math inline">\(I_{t^{*}}\)</span> : The time interval <span class="math inline">\(I\)</span> of our arrival is determined by <span class="math inline">\(t^{*} \in I\)</span>. We proceed by introducing the length <span class="math inline">\(L\)</span> of the arrival interval <span class="math inline">\(I\)</span> via the marginalization rule</p>
+<p><span class="math display">\[
+\begin{align*}
+p\left(t \mid R_{I}, \tau, \mathcal{I}\right) &amp; =\int_{0}^{\infty} \underbrace{p\left(t \mid L_{I}=L, I_{t^{*}}, \mathcal{I}\right)}_{\frac{1}{L} 1(0&lt;t \leq L)}, p\left(L \mid I_{t^{*}}, \tau, \mathcal{I}\right) d L \\
+p\left(t \mid I_{t^{*}}, \tau, \mathcal{I}\right) &amp; =\int_{t}^{\infty} \frac{1}{L} p\left(L \mid I_{t^{*}}, \tau, \mathcal{I}\right) d L \tag{9.13}
+\end{align*}
+\]</span></p>
+<p>Here we exploited the random arrival time <span class="math inline">\(t\)</span>, resulting in a uniform PDF within the interval <span class="math inline">\(I\)</span>. The quantity <span class="math inline">\(p\left(L \mid I_{t^{*}}, \tau, \mathcal{I}\right)\)</span> is the PDF for the length of the interval selected as specified in <span class="math inline">\(I_{t^{*}}\)</span>. We proceed with Bayes’ theorem:</p>
+<p><span class="math display">\[
+p\left(L \mid I_{t^{*}}, \tau, \mathcal{I}\right)=\frac{p\left(I_{t^{*}} \mid L, \tau, \mathcal{I}\right) p(L \mid \tau, \mathcal{I})}{p\left(I_{t^{*}} \mid \tau, \mathcal{I}\right)}
+\]</span></p>
+<p>The probability to arrive in an interval of length <span class="math inline">\(L\)</span> is, according to the classical definition and in analogy with the dart problem of Section 7.2.1 [p.&nbsp;94], proportional to its length <span class="math inline">\(L\)</span></p>
+<p><span class="math display">\[
+p\left(I_{t^{*}} \mid L, \tau, \mathcal{I}\right)=\kappa L
+\]</span></p>
+<p>with an unknown parameter <span class="math inline">\(\kappa\)</span>. The PDF <span class="math inline">\(p(L \mid \tau, \mathcal{I})\)</span> is the exponential distribution of neighbouring PPs. The expression in the denominator is a constant that can be combined with <span class="math inline">\(\kappa\)</span> into a constant that is determined by the normalization, resulting in</p>
+<p><span class="math display">\[
+p\left(L \mid I_{t^{*}}, \tau, \mathcal{I}\right)=\frac{L}{\tau^{2}} e^{-\frac{L}{\tau}}
+\]</span></p>
+<p>This is a special case of a Gamma distribution with <span class="math inline">\(\alpha=2\)</span> and <span class="math inline">\(\beta=1 / \tau\)</span>. Hence, the mean interval length <span class="math inline">\(L\)</span> is therefore</p>
+<p><span class="math display">\[
+\langle L\rangle=2 \tau .
+\]</span></p>
+<p>Apparently, intervals selected by <span class="math inline">\(I_{t}\)</span> * are longer than average.</p>
+<p>Now, we proceed with equation (9.13):</p>
+<p><span class="math display">\[
+p\left(t \mid I_{t^{*}}, \tau, \mathcal{I}\right)=\frac{1}{\tau^{2}} \int_{t}^{\infty} e^{-\frac{L}{\tau}} d L=\frac{1}{\tau} e^{-\frac{t}{\tau}}
+\]</span></p>
+<p>This proves that the waiting time has the same PDF as the interval length between successive buses. As we have seen, this counterintuitive result is due to the larger probability for an arrival in a long interval. This also clarifies why the first interval from an arbitrarily chosen point in time to the first event also has a mean duration of <span class="math inline">\(\tau\)</span>.</p>
+</section>
+<section id="order-statistic-of-poisson-processes" class="level3">
+<h3 class="anchored" data-anchor-id="order-statistic-of-poisson-processes">9.4 Order statistic of Poisson processes</h3>
+<p>Assume <span class="math inline">\(\left\{t_{n}\right\}\)</span> are Poisson points, obeying equation (9.12), and let <span class="math inline">\(N(t)\)</span> denote the stochastic process which provides the number of Poisson points up to time <span class="math inline">\(t\)</span> :</p>
+<p><span class="math display">\[
+N(t)=\sum_{n=0}^{\infty} \mathbb{I}\left(t \geq t_{n}\right) .
+\]</span></p>
+<p>The probability for <span class="math inline">\(N(t)=n\)</span> is of course given by the Poisson distribution. A representative result is depicted in Figure 9.2. Next we want to estimate the PDF for position <span class="math inline">\(x\)</span> of the <span class="math inline">\(n\)</span>th Poisson point. We can use the general considerations on order statistics derived in Section 7.6 [p.&nbsp;118]. In order to find the <span class="math inline">\(n\)</span>th Poisson point in <span class="math inline">\([t, t+d t), n-1\)</span> PPs have to be located in the interval <span class="math inline">\([0, t)\)</span>. The corresponding probability is</p>
+<p><span class="math display">\[
+p(n-1 \mid t, \tau, \mathcal{I})=e^{-t / \tau} \frac{(t / \tau)^{n-1}}{(n-1)!} .
+\]</span></p>
+<p>The probability for the next point being located in <span class="math inline">\([t, t+d t)\)</span> is given by <span class="math inline">\(d t / \tau\)</span>. The product of the two independent probabilities results in a special Gamma distribution, which is also called the ‘Erlang distribution’ in the present context.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show plot</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter_09_Poisson_processes_and_waiting_times_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure 9.2 Poisson points (crosses) and Poisson process <span class="math inline">\(N(t)\)</span> for <span class="math inline">\(\tau=1\)</span>.</p>
+</section>
+</section>
+<section id="erlang-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="erlang-distribution">Erlang distribution</h2>
+<p><span class="math display">\[
+\begin{equation*}
+p\left(t_{n}=t \mid \tau, \mathcal{I}\right)=\frac{\tau^{-n}}{\Gamma(n)} t^{n-1} e^{-t / \tau} . \tag{9.14}
+\end{equation*}
+\]</span></p>
+<p>The expectation value of this position is</p>
+<p><span class="math display">\[
+\left\langle t_{n}\right\rangle=n \tau .
+\]</span></p>
+<p>This result is in agreement with the expectations, since the mean distance of the points is given by <span class="math inline">\(\tau\)</span>. The Erlang distribution has been introduced in studies of the frequency of phone calls and is important for various types of queueing problems.</p>
+<section id="various-examples" class="level3">
+<h3 class="anchored" data-anchor-id="various-examples">9.5 Various examples</h3>
+<p>Next we will give some simple pedagogical examples. Realistic applications will follow in Part V [p.&nbsp;333].</p>
+</section>
+<section id="shot-noise" class="level3">
+<h3 class="anchored" data-anchor-id="shot-noise">9.5.1 Shot noise</h3>
+<p>As a first example we consider shot noise, which is relevant in the measurement of individual photons. Suppose a light source emits photons with a mean rate of <span class="math inline">\(\lambda\)</span> photons per time interval. The emission of the photons shall be uncorrelated and within an infinitesimal time interval at most one photon is being emitted. Therefore, the probability for the emission of a photon within <span class="math inline">\(d t\)</span> is given by</p>
+<p><span class="math display">\[
+p=\lambda d t .
+\]</span></p>
+<p>These are precisely the conditions for a Poisson process, and the probability to find <span class="math inline">\(k\)</span> photons within a finite interval of length <span class="math inline">\(t\)</span> is therefore</p>
+<p><span class="math display">\[
+P(n \mid N=t / d t, p=\lambda d t) \underset{d t \rightarrow 0}{\longrightarrow} e^{-\lambda t} \frac{(\lambda t)^{n}}{n!} .
+\]</span></p>
+<p>Hence, shot noise obeys a Poisson distribution.</p>
+</section>
+<section id="the-stickiness-of-bad-luck" class="level3">
+<h3 class="anchored" data-anchor-id="the-stickiness-of-bad-luck">9.5.2 The stickiness of bad luck</h3>
+<p>It is a common impression that all waiting queues proceed faster than our own. Is this just a distorted perception? Let us analyse the problem.</p>
+<p>Let <span class="math inline">\(t_{0}\)</span> denote our waiting time and <span class="math inline">\(t_{i}(i=1, \ldots)\)</span> the waiting times in other queues. Let us assume that nobody experiences preferred treatment and that hence all <span class="math inline">\(t_{i}\)</span> are subject to the same statistical fluctuations and are hence i.i.d.-distributed random variables with probability density <span class="math inline">\(p(t \mid \mathcal{I})\)</span>. We are interested in the probability that only the <span class="math inline">\(n\)</span>th waiting time <span class="math inline">\(\left(t_{n}\right)\)</span> is larger than ours <span class="math inline">\(\left(t_{0}\right)\)</span>. For a systematic treatment we define the following proposition. <span class="math inline">\(A_{n}\)</span> : Only the <span class="math inline">\(n\)</span>th waiting time <span class="math inline">\(\left\{t_{n}\right\}\)</span> is greater than ours.</p>
+<p>In order to compute the probability <span class="math inline">\(P\left(A_{n} \mid \mathcal{I}\right)\)</span>, we employ the marginalization rule to introduce the value <span class="math inline">\(t_{0}\)</span> of our waiting time:</p>
+<p><span class="math display">\[
+P\left(A_{n} \mid \mathcal{I}\right)=\int P\left(A_{n} \mid t_{0}, \mathcal{I}\right) p\left(t_{0} \mid \mathcal{I}\right) d t_{0}
+\]</span></p>
+<p>The expression <span class="math inline">\(A_{n}\)</span> implies that the waiting times of the queues <span class="math inline">\(1-(n-1)\)</span> are smaller than <span class="math inline">\(t_{0}\)</span> and that <span class="math inline">\(t_{n}&gt;t_{0}\)</span>. Since the waiting times are uncorrelated, we obtain</p>
+<p><span class="math display">\[
+P\left(A_{n} \mid \mathcal{I}\right)=\int \prod_{i=1}^{n-1} \underbrace{P\left(t_{i}&lt;t_{0} \mid \mathcal{I}\right)}_{:=q\left(t_{0}\right) ; \text { independent of } i} \underbrace{P\left(t_{n}&gt;t_{0} \mid \mathcal{I}\right)}_{=\left(1-q\left(t_{0}\right)\right)} p\left(t_{0} \mid \mathcal{I}\right) d t_{0} .
+\]</span></p>
+<p>Now, <span class="math inline">\(q(t)\)</span> is the CDF corresponding to <span class="math inline">\(p(t \mid \mathcal{I})\)</span> and therefore <span class="math inline">\(p\left(t_{0} \mid \mathcal{I}\right) d t_{0}=d q\left(t_{0}\right)\)</span>. So, the integral simplifies significantly as</p>
+<p><span class="math display">\[
+P\left(A_{n} \mid \mathcal{I}\right)=\int q^{n-1}(1-q) d q=\frac{\Gamma(n) \Gamma(2)}{\Gamma(n+2)}=\frac{(n-1)!}{(n+1)!}=\frac{1}{n(n+1)} .
+\]</span></p>
+<p>It is straightforward to verify the correct normalization:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\sum_{n=1}^{\infty} P\left(A_{n} \mid \mathcal{I}\right) &amp; =\sum_{n=1}^{\infty} \frac{1}{n(n+1)}=\lim _{L \rightarrow \infty} \sum_{n=1}^{L}\left(\frac{1}{n}-\frac{1}{n+1}\right) \\
+&amp; =\lim _{L \rightarrow \infty}\left(\sum_{n=1}^{L} \frac{1}{n}-\sum_{n=2}^{L+1} \frac{1}{n}\right)=\lim _{L \rightarrow \infty}\left(1-\frac{1}{L+1}\right)=1 .
+\end{aligned}
+\]</span></p>
+<p>The surprising aspects of the result are:</p>
+<ul>
+<li>it is independent of the distribution <span class="math inline">\(p(t \mid \mathcal{I})\)</span>;</li>
+<li>the mean value does not exist, <span class="math inline">\(\langle n\rangle=\infty\)</span>.</li>
+</ul>
+<p>This implies that on average, endless many queues are faster than ours. However, the mean is dominated by the tail of the distribution, because the median is only <span class="math inline">\(n\)</span>. <span class="math inline">\(=1.5\)</span> since <span class="math inline">\(P\left(A_{1} \mid \mathcal{I}\right)=\frac{1}{2}\)</span>.</p>
+<p>In conclusion, we want to simulate this queueing problem. As PDF for the waiting times we use uniform random numbers on the unit interval. The algorithm is as follows:</p>
+</section>
+</section>
+<section id="algorithm-to-simulate-the-queueing-problem" class="level2">
+<h2 class="anchored" data-anchor-id="algorithm-to-simulate-the-queueing-problem">Algorithm to simulate THE QUEUEING PROBLEM</h2>
+<blockquote class="blockquote">
+<p>Generate a reference random number <span class="math inline">\(t_{0}\)</span>. Generate random numbers <span class="math inline">\(t_{n}\)</span> until <span class="math inline">\(t_{n}&gt;t_{0}\)</span> and record <span class="math inline">\(n\)</span>. Repeat the experiment <span class="math inline">\(L\)</span> times. Compute the mean and standard deviation of <span class="math inline">\(n\)</span>.</p>
+</blockquote>
+<p>The result of a simulation run up to a maximum length <span class="math inline">\(L=1000\)</span> is shown in Figure 9.3. Neither the mean value nor the standard deviation converge with increasing simulation length. This is to be expected, since both values diverge for <span class="math inline">\(L \rightarrow \infty\)</span>. Despite the high probability of <span class="math inline">\(2 / 3\)</span> that the next or second next element already exceeds the value of the reference element, there is a non-negligible probability for the occurrence of very long waiting times (please note the logarithmic scale of the ordinate in Figure 9.3). In the present example the arithmetic mean at the end of the simulation is 548 and the standard deviation is 17151,30 times the mean value!</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show plot</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter_09_Poisson_processes_and_waiting_times_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure 9.3 Computer simulation of the queueing problem according to algorithm in equation (9.15). The number <span class="math inline">\(n(L)\)</span> of faster queues is marked by dots. The running mean (solid line) and standard deviation (dashed line) are plotted versus the number of repetitions <span class="math inline">\(L\)</span>.</p>
+<section id="pedestrian-delay-problem" class="level3">
+<h3 class="anchored" data-anchor-id="pedestrian-delay-problem">9.5.3 Pedestrian delay problem</h3>
+<p>In its simplest form the pedestrian delay problem considers pedestrians arriving at random at a street with the goal of crossing it. The traffic is described by a Poisson process, where any structures due to traffic lights or the like are ignored. The central question is how long the pedestrian has to wait on average until the time gap between cars is big enough.</p>
+<p>To be more specific, let <span class="math inline">\(\Delta T\)</span> be the time the pedestrian needs to traverse the street and <span class="math inline">\(\tau\)</span> the mean time gap between the Poisson events, i.e.&nbsp;the PDF for the Poisson events reads</p>
+<p><span class="math display">\[
+p(t \mid \tau, \mathcal{I})=\frac{1}{\tau} e^{-\frac{t}{\tau}} .
+\]</span></p>
+<p>It is expedient to express all times in units of <span class="math inline">\(\tau\)</span>. Then the PDF reads</p>
+<p><span class="math display">\[
+p(t \mid \tau, \mathcal{I})=e^{-t} .
+\]</span></p>
+<p>We seek to determine the PDF <span class="math inline">\(p(T \mid \mathcal{I})\)</span> for <span class="math inline">\(T\)</span>, the waiting time of the pedestrian. To begin with, we introduce the proposition <span class="math inline">\(A_{n}\)</span> : The first <span class="math inline">\(n\)</span> intervals are too short and the interval <span class="math inline">\(n+1\)</span> is long enough.</p>
+<p>This proposition implies that the first time intervals <span class="math inline">\(t_{1}, \ldots, t_{n}\)</span> are all smaller than <span class="math inline">\(\Delta T\)</span> and for the last one we have <span class="math inline">\(t_{n+1} \geq \Delta T\)</span>. We will first determine the probability for <span class="math inline">\(A_{n}\)</span> :</p>
+<p><span class="math display">\[
+\begin{aligned}
+P_{n}:=P\left(A_{n} \mid \Delta T, \mathcal{I}\right) &amp; =\prod_{\nu=1}^{n} P\left(t_{\nu}&lt;\Delta T \mid \mathcal{I}\right) P\left(t_{n+1} \geq \Delta T \mid \mathcal{I}\right), \\
+P(t&lt;\Delta T \mid \mathcal{I}) &amp; =\int_{0}^{\Delta T} e^{-t} d t=1-e^{-\Delta T}:=F, \\
+P(t \geq \Delta T \mid \mathcal{I}) &amp; =1-F, \\
+P_{n} &amp; =F^{n}(1-F) .
+\end{aligned}
+\]</span></p>
+<p>This is the geometric distribution. The mean and variance of the number of initially wrong intervals are therefore, according to equations (4.25b) and (4.25c) [p.&nbsp;63] ,</p>
+<p><span class="math display">\[
+\begin{align*}
+\langle n\rangle &amp; =\frac{F}{(1-F)}=e^{\Delta T}-1,  \tag{9.16a}\\
+\left\langle(\Delta n)^{2}\right\rangle &amp; =\frac{F}{(1-F)^{2}}=e^{\Delta T}\left(e^{\Delta T}-1\right) . \tag{9.16b}
+\end{align*}
+\]</span></p>
+<p>Next we determine the PDF for the waiting time <span class="math inline">\(T\)</span> :</p>
+<p><span class="math display">\[
+p(T \mid \Delta T, \mathcal{I})=\sum_{n=0}^{\infty} p\left(T \mid \Delta T, A_{n}, \mathcal{I}\right) P_{n} .
+\]</span></p>
+<p>We introduce the <span class="math inline">\(n\)</span> random variables <span class="math inline">\(t=\left\{t_{1}, \ldots, t_{n}\right\}\)</span>, corresponding to the interval lengths, by the marginalization rule</p>
+<p><span class="math display">\[
+\begin{aligned}
+p\left(T \mid A_{n}, \Delta T, \mathcal{I}\right) &amp; =\int_{0}^{\infty} \cdots \int_{0}^{\infty} d t^{n} p\left(T \mid t, \not A_{n}, \Delta T, \mathcal{I}\right) p\left(t \mid A_{n}, \Delta T, \mathcal{I}\right) \\
+p(T \mid t, \mathcal{I}) &amp; =\delta\left(T-\sum_{\nu=1}^{n} t_{\nu}\right) \\
+p\left(t \mid A_{n}, \Delta T, \mathcal{I}\right) &amp; =\prod_{\nu=1}^{n} p\left(t_{\nu} \mid t_{\nu}&lt;\Delta T\right)
+\end{aligned}
+\]</span></p>
+<p>Hence</p>
+<p><span class="math display">\[
+p\left(T \mid A_{n}, \mathcal{I}\right)=\int_{0}^{\Delta T} \ldots \int_{0}^{\Delta T} d t^{n} \delta\left(T-\sum_{\nu=1}^{n} t_{\nu}\right) \prod_{\nu=1}^{n} p\left(t_{\nu} \mid t_{\nu}&lt;\Delta T, \mathcal{I}\right) .
+\]</span></p>
+<p>We will not compute the PDF for T in full, but rather only the mean:</p>
+<p><span class="math display">\[
+\langle T\rangle=\sum_{n=0}^{\infty} \underbrace{\int_{0}^{\infty} T P\left(T \mid A_{n}, \Delta T, \mathcal{I}\right) d T}_{:=\langle T\rangle_{n}} P_{n} .
+\]</span></p>
+<p>For the mean for given <span class="math inline">\(n\)</span></p>
+<p><span class="math display">\[
+\langle T\rangle_{n}=\int_{0}^{\Delta T} \ldots \int_{0}^{\Delta T} d t^{n} \sum_{\nu=1}^{n} t_{\nu} \prod_{\nu=1}^{n} p\left(t_{\nu} \mid t_{\nu}&lt;\Delta T, \mathcal{I}\right)
+\]</span></p>
+<p>we need the integral</p>
+<p><span class="math display">\[
+I:=\int_{0}^{\Delta T} t_{\nu} p\left(t_{\nu} \mid t_{\nu}&lt;\Delta T, \mathcal{I}\right) d t_{\nu}=\int_{0}^{\Delta T} t \frac{e^{-t}}{F} d t=\frac{1-F}{F}\left(e^{\Delta T}-1-\Delta T\right)
+\]</span></p>
+<p>Then <span class="math inline">\(\langle T\rangle_{n}=n I\)</span> and <span class="math inline">\(\langle T\rangle=\langle n\rangle I\)</span>. Along with equation (9.16) we obtain the final result, which in original units reads</p>
+</section>
+</section>
+<section id="mean-waiting-time" class="level2">
+<h2 class="anchored" data-anchor-id="mean-waiting-time">Mean waiting time</h2>
+<p><span class="math display">\[
+\langle T\rangle=\left(e^{\Delta T / \tau}-1-\frac{\Delta T}{\tau}\right) .
+\]</span></p>
+<p>This is a rather striking result as the time increases exponentially with the time <span class="math inline">\(\Delta T\)</span> needed to cross the road. In particular, it presents an exponential disadvantage for handicapped or elderly people.</p>
+</section>
+<section id="part-ii" class="level2">
+<h2 class="anchored" data-anchor-id="part-ii">PART II</h2>
+</section>
+<section id="assigning-probabilities" class="level2">
+<h2 class="anchored" data-anchor-id="assigning-probabilities">ASSIGNING PROBABILITIES</h2>
+<p>The rules of probability theory provide the means to transform probabilities. As a direct consequence of the sum rule and the product rule, Bayes’ theorem in equation (1.9) [p.&nbsp;12] has been derived:</p>
+<p><span class="math display">\[
+P(a \mid d, \mathcal{I})=\frac{1}{Z} P(d \mid a, \mathcal{I}) P(a \mid \mathcal{I})
+\]</span></p>
+<p>The theorem allows us to relate the posterior distribution to the product of the likelihood and the prior PDF. The likelihood distribution is usually known and determined by the experimental setup (expressed by <span class="math inline">\(\mathcal{I}\)</span> ) and the parameters <span class="math inline">\(a\)</span> of the model. Prior probabilities, on the contrary, cannot be assigned solely based on the rules of probability theory, since the priors incorporate the assumptions underlying the inference process. Prior PDFs may also occur in a more indirect way, for example, if not all parameter values entering the likelihood are known. The unknown parameters <span class="math inline">\(\boldsymbol{a}\)</span> can be marginalized:</p>
+<p><span class="math display">\[
+p(\boldsymbol{d} \mid \boldsymbol{b}, \mathcal{I})=\int p(\boldsymbol{d} \mid \boldsymbol{a}, \boldsymbol{b}, \mathcal{I}) p(\boldsymbol{a} \mid \boldsymbol{b}, \mathcal{I}) d a^{m}
+\]</span></p>
+<p>resulting in a probability distribution on the left-hand side which is independent of <span class="math inline">\(\boldsymbol{a}\)</span>. However, the marginalization also requires the specification of a prior PDF <span class="math inline">\(p(\boldsymbol{a} \mid \boldsymbol{b}, \mathcal{I})\)</span> for <span class="math inline">\(\boldsymbol{a}\)</span>, which ultimately cannot be provided by the rules of probability theory. A typical example for this situation is provided by Gaussian noise with zero mean and unknown variance. For the marginal likelihood the prior PDF for the standard deviation <span class="math inline">\(p(\sigma \mid \mathcal{I})\)</span> needs to be specified. This is a generic property of Bayesian inference. The rules of probability yield a hierarchy of conditional probabilities, but at the very end there is always a prior probability that has to be provided from outside, based on the available information. There are three generic cases. (a) Ignorant priors: For parameters or densities without any additional information, except the definition of the problem. (b) Testable information: In addition to (a) exact information is available, typically in the form of equality constraints, e.g.&nbsp;the moments of the sought-for distribution, <span class="math inline">\(\Phi\{p(x \mid \mathcal{I})\}=0\)</span>. (c) Priors for positive additive distribution functions.</p>
+<p>Next, we will discuss the first two cases in more detail. The third topic is addressed in Chapter 12 [p.&nbsp;201] on the ‘quantified maximum entropy method’ (QME), which has been applied very successfully to form-free image reconstruction problems, for example, in astrophysics and plasma physics.</p>
+</section>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section">10</h2>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/Chapter_08_The_central_limit_theorem.html" class="pagination-link" aria-label="The central limit theorem">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">The central limit theorem</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/Chapter_14_Bayesian_parameter_estimation.html" class="pagination-link" aria-label="Bayesian parameter estimation">
+        <span class="nav-page-text"><span class="chapter-title">Bayesian parameter estimation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Poisson processes and waiting times</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.1 Stochastic processes</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>If a classical particle moves in an external force field $\boldsymbol{F}(\boldsymbol{x})$ its motion is deterministic and it could be called a 'deterministic process'. If the particle interacts with randomly distributed obstacles its motion is still deterministic, but the trajectory depends on the random characteristics of the obstacles, and maybe also on the random choice of the initial conditions. Such a motion is an example of a 'stochastic process', or rather a 'random process'.</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>In a more abstract generalized definition, a stochastic process is a random variable $X_{\xi}$ that depends on an additional (deterministic) independent variable $\xi$, which can be discrete or continuous. In most cases it stands for an index $\boldsymbol{\xi} \in \mathbf{N}$ or time $t$, space $x$ or energy $E$. An almost trivial ubiquitous stochastic process is given by additive noise $\eta(t)$ on a time-dependent signal $s(t)$, i.e. $X_{t}=s(t)+\eta(t)$. As a consequence, $X_{t}$ is no longer continuous. The most apparent applications of stochastic processes are time series of any kind that depend on some random impact. A broad field of applications are time series occurring, for example, in business, finance, engineering, medical applications and of course in physics. Beyond time series analysis, stochastic processes are at the heart of diffusion Langevin dynamics, Feynman's path integrals <span class="co">[</span><span class="ot">43</span><span class="co">]</span>, as well as Klauder's stochastic quantization <span class="co">[</span><span class="ot">62</span><span class="co">]</span>, which represents an unconventional approach to quantum mechanics. Here we will give a concise introduction and present a few pedagogical examples. An important example of stochastic processes, which we have encountered already, are random walks as discussed in Section 4.2 <span class="co">[</span><span class="ot">p. 57</span><span class="co">]</span> and Chapter 5 <span class="co">[</span><span class="ot">p. 71</span><span class="co">]</span>. We will have ample opportunity to encounter further examples of stochastic processes in various sections of this book: electron temperature distribution as a function of the laser cord position (Section 23.2), energy dependence of a signal on top of a background (Section 23.3), time dependence of the magnetic flux in a plasma (Section 24.1.2), surface growth as a function of time (Section 24.4), the yearly onset of cherry blossom over time (Section 25.1), and eruptions of Old Faithful geyser as a function of time (Section 25.2.2). There are many more examples of stochastic processes covered in this book, namely all those cases where a function $f(x)$ is measured which is corrupted by (additive) random noise. An important class of stochastic processes are Markov processes. They are introduced in Section 30.3 <span class="co">[</span><span class="ot">p. 544</span><span class="co">]</span> as</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>the basis for a widespread stochastic integration technique, called 'Markov Chain Monte Carlo'.</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>For the sake of clarity we consider only a single random variable $X_{\xi}$ that might, however, depend on an $L$-component vector $\lambda$ of independent random variables. For fixed $\xi, X_{\xi}(\lambda)$ is an ordinary random variable, for which the CDF and PDF can be defined as usual:</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>F_{\xi}(x) &amp; :=P\left(X_{\xi}(\lambda) \leq x\right)  \tag{9.1a}<span class="sc">\\</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>p_{\xi}(x) &amp; :=\frac{d}{d x} F_{\xi}(x) \tag{9.1b}</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>The really new aspects of stochastic processes concern the dependence on the independent variable $\xi$, which, as said before, typically represents time, space or energy.</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>Stochastic processes are referred to as continuous (discrete) stochastic processes if they are based on continuous (discrete) input variables $\lambda$. That does not, however, imply that $X_{\xi}(\lambda)$ as a function of $\xi$ is necessarily continuous (discrete). As a counterexample consider a (discrete) Bernoulli experiment, whose outcome $o \in\left<span class="sc">\{</span>o_{1}, o_{2}\right<span class="sc">\}</span>$ defines the global behaviour</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>X_{t}(o):= \begin{cases}\cos (t) &amp; \text { for } o=o_{1} <span class="sc">\\</span> \exp (-t) &amp; \text { for } o=o_{2}\end{cases}</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>This is a case of a discrete stochastic process which is continuous in $t$. The opposite situation is given by the following process:</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>X_{t}(\tau):=\boldsymbol{I}(t \leq \tau),</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>with $\tau$ being a (continuous) exponential random variable. Apparently, $X_{t}$ is discontinuous if considered as a function of $t$, but the process is referred to as continuous.</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>Interesting aspects of stochastic processes are the $\xi$-dependence of individual realizations (samples)</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>X_{\xi}^{*}:=X_{\xi}\left(\lambda^{*}\right)</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>for a fixed $\lambda^{*}$, or the $\xi$-dependence of the mean, i.e.</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>E(\xi)=\left\langle X_{\xi}\right\rangle &amp; :=\int d x x p_{\xi}(x) <span class="sc">\\</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>&amp; =\int d^{L} \lambda p(\lambda) \int d x x \underbrace{p_{\xi}(x \mid \lambda)}_{\delta\left(x-X_{\xi}(\lambda)\right)} <span class="sc">\\</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>&amp; =\int d^{L} \lambda X_{\xi}(\lambda) p(\lambda)</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>In the second line we have introduced the independent random variable $\lambda$ via the marginalization rule and we have utilized the fact that $x$ is uniquely determined if $\xi$ and $\lambda$ are specified. Another interesting aspect of stochastic processes is the autocorrelation in $\xi$, i.e.</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>A\left(\xi, \xi^{\prime}\right):=\left\langle\Delta X_{\xi^{\prime}} \Delta X_{\xi}\right\rangle=\int d^{L} \lambda X_{\xi^{\prime}}(\lambda) X_{\xi}(\lambda) p(\lambda)-\left\langle X_{\xi^{\prime}}\right\rangle\left\langle X_{\xi}\right\rangle .</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>The autocorrelation plays a crucial role in MCMC, as outlined in Section 30.3 <span class="co">[</span><span class="ot">p. 544</span><span class="co">]</span>. As a simple introductory example we consider a one-dimensional random walk on a lattice, with sites $x \in \mathbb{Z}$. In addition, we assume a parabolic potential $v(x)=x^{2}$, in order to avoid an increasing variance, which we found for the unrestricted random walk in Section 4.2 <span class="co">[</span><span class="ot">p. 57</span><span class="co">]</span>. Let $X_{t}$ be the position of the walker at discrete time $t$ and in each time step the walker has only three choices: stay or move one step forward or backward. That is, $X_{t+1}=X_{t}+\Delta X$. A possible choice for the probability $P\left(\Delta X \mid X_{t}, \mathcal{I}\right)$ that the walker will be at site $X_{t+1}$ in the next time step can be defined via the Metropolis-Hastings algorithm (see Section 30.3 <span class="co">[</span><span class="ot">p. 544</span><span class="co">]</span>), resulting in</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>P\left(\Delta X= \pm 1 \mid X_{t}, \mathcal{I}\right) &amp; =\min \left(\frac{1}{2} \exp \left<span class="sc">\{</span>-\beta \mp 2 \beta X_{t}\right<span class="sc">\}</span>, 1\right) <span class="sc">\\</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>P\left(\Delta X=0 \mid X_{t}, \mathcal{I}\right) &amp; =1-P\left(\Delta X=+1 \mid X_{t}, \mathcal{I}\right)-P\left(\Delta X=-1 \mid X_{t}, \mathcal{I}\right)</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>This process is actually a 'Markov process' as the next step depends on the actual position, but otherwise it has no memory. In Figure 9.1 the time evolution of a few individual random walks $X_{t}$ with $\beta=0.05$ is depicted. The walks always start at $X_{0}=0$. In addition, the sample mean $\overline{X_{t}}$ and sample variance $\overline{\left(\Delta X_{t}\right)^{2}}$, obtained from 1000 independent repetitions of such random walks, are displayed. As expected from symmetry, the sample mean is $\bar{X}_{t} \approx 0$. The sample variance initially increases linearly with time, according to a diffusion process, but then levels off due to the parabolic potential, which prevents the walkers from deviating too far from the origin. In Figure 9.1(b) the autocorrelation is depicted, which has been computed from the same sample of random walks. Here the autocorrelation of a single random walk is defined as</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Show plot"</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>Figure 9.1 (a) Three individual random walks, all starting at $X_{0}=0$, are depicted as jagged lines in different shades of grey. The time is expressed in units of the total time $T=1000$. In addition, the sample mean (thick solid line) and variance (dashed line) of $N=1000$ independent random walks are displayed. (b) The corresponding scaled autocorrelation function $A(\Delta t)$ versus lag size $\Delta t$.</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>\tilde{A}(\Delta t) &amp; :=\frac{1}{t_{1}-t_{0}+1} \sum_{t=t_{0}}^{t_{1}} \Delta X_{t+\Delta t} \Delta X_{t} <span class="sc">\\</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>\Delta X_{t} &amp; :=X_{t}-\overline{X_{t}}</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>The autocorrelation is determined in the time window ranging from $t_{0}=100$ to $t_{1}=900$. The first 100 steps have been discarded, in order to enter the region where $\left\langle X_{t+\Delta t} X_{t}\right\rangle$ is independent of $t$, then the process is said to be 'homogeneous'. There are a couple more subtleties to be accounted for in computing autocorrelations numerically, which are, however, immaterial for the basic understanding of this topic. In Figure 9.1 the scaled autocorrelation function $A(\Delta t):=\tilde{A}(\Delta t) / \tilde{A}(0)$, averaged over the sample, is shown. We see that the autocorrelation decays exponentially, which is a typical behaviour. A fit of $\exp <span class="sc">\{</span>\Delta t / \xi<span class="sc">\}</span>$ to the data defines the autocorrelation length $\xi$. We recognize that the random walk has a rather long autocorrelation length $\xi \approx 20$, i.e. there is a long-range correlation between fluctuations. For a small autocorrelation $A(\Delta t) \approx 0$, it is necessary that $\left\langle X_{t+\Delta t} X_{t}\right\rangle$ changes sign frequently as a function of $t$. Apparently, the autocorrelation length defines a typical time window in which the walk is either above or below the mean value. More details on autocorrelation functions of Markov processes are given in Section 30.3 <span class="co">[</span><span class="ot">p. 544</span><span class="co">]</span>.</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>In the next sections we focus on Poisson processes and various aspects of Poisson points. As mentioned before, we will encounter further examples of stochastic processes later in this book. For additional details on stochastic processes we refer the reader to <span class="co">[</span><span class="ot">8, 159</span><span class="co">]</span>. Readers particularly interested in mathematically rigorous definitions and properties of stochastic processes may look at <span class="co">[</span><span class="ot">45</span><span class="co">]</span>.</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.2 Three ways to generate Poisson points</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>We have introduced the Poisson distribution as a limiting case of the binomial distribution by keeping $\mu=p N$ fixed and considering the limit $N \rightarrow \infty$. We use this situation to generate 'Poisson points' as outlined in the next section.</span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.2.1 Global generation of Poisson points</span></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>We consider a finite interval $\Omega_{L}=(0, L)$ of length $L$, in which we generate $N$ independent and uniformly distributed points. They are called 'Poisson points' (PPs). The point density is</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>\rho:=\frac{N}{L} . \tag{9.2}</span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>We now select an arbitrary interval $I_{x} \subset \Omega_{L}$ of length $x$. The probability for an individual point to appear in $I_{x}$ is, according to the classic definition,</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>p=\frac{x}{L} .</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>The probability that $n$ PPs land in $I_{x}$ is therefore binomial. The mean number of points generated on $I_{x}$ is</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>\mu=p N=x \rho . \tag{9.3}</span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>Next we erase these PPs and start afresh, but this time we double both the length $L$ and the number of points $N$. We retain the interval $I_{x}$. As the point density is the same, the mean number ( $\mu$ ) of points in $I_{x}$ is also the same. Upon repeating the doubling process we fulfil the requirements of the Poisson theorem ( $\mu=p N=$ fixed and $N \rightarrow \infty$ ). Hence, in the limit of $N \rightarrow \infty,{ }^{1}$ we obtain a Poisson distribution</span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>P(n \mid x, \rho, \mathcal{I}):=e^{-\rho x} \frac{(\rho x)^{n}}{n!} . \tag{9.4}</span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a><span class="fu">## Distance law of neighbouring PPs</span></span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>Next, we are interested in the PDF of the distances between Poisson points $p(\xi \mid \rho, \mathcal{I})$, where $\xi$ stands for the proposition</span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>$\xi$ : The distance to the next Poisson point is within $[\xi, \xi+d \xi)$.</span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>The proposition requires that there is no Poisson point in the interval $[0, \xi)$, and there must be a Poisson point in the following interval $d \xi$. Both events are logically independent. Both probabilities follow from the Poisson distribution $P(n \mid x, \rho, \mathcal{I})$ given in equation (9.4) with $(n=0 ; x=\xi)$ and $(n=1 ; x=d \xi)$, respectively. This yields the sought-for probability</span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>P(\xi \mid \rho, \mathcal{I})=P(n=0 \mid \xi, \rho, \mathcal{I}) P(n=1 \mid d \xi, \rho, \mathcal{I})=e^{-\rho \xi} \rho d \xi</span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>and the corresponding PDF is exponential.</span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a><span class="fu">## Distance law of Poisson process</span></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a>p(\xi \mid \rho, \mathcal{I})=\rho e^{-\rho \xi} . \tag{9.5}</span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a>Its mean value is $1 / \rho$, in accordance with the mean density of $\rho$.</span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a><span class="fu">## Distance law of PPs</span></span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a>The distances between neighbouring PPs are exponentially distributed. Next we want to consider the distribution of the distance $d_{n}$ between Poisson point $m$ and $m+n$. As the individual intervals are independent, the distances are independent of $m$ and they are a sum of $n$ independent and exponentially distributed random numbers. According to equation (7.68) <span class="co">[</span><span class="ot">p. 130</span><span class="co">]</span>, such a sum is Gamma distributed.</span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a><span class="ot">[^5]</span></span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a><span class="fu">## Distance distribution of Poisson points</span></span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>p\left(p\left(d_{n} \mid \rho, \mathcal{I}\right)\right)=p_{\Gamma}\left(d_{n} \mid n, \rho\right)=\frac{\rho}{\Gamma(n)}\left(\rho d_{n}\right)^{n-1} e^{-\rho d_{n}} \tag{9.6}</span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.2.2 Successive generation of Poisson points</span></span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a>The derived exponential distribution suggests an alternative view of the generation process. So far the Poisson points have been generated by distributing the points homogeneously on an interval. In this way it is warranted that the points are independent of each other. Similarly, the distances between the points are i.i.d. For this reason also a sequential generation process can be used. We start at $x=0$ and determine the next Poisson point $x_{1}$ at a distance of $\xi_{1}$ according to the exponential distribution equation (9.5). Then the next point $x_{2}$ is generated at a distance $\xi_{2}$, again derived from $p(\xi \mid \rho, \mathcal{I})$, and so on. The Poisson points are then located at</span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>x_{n}=\sum_{i=1}^{n} \xi_{i} .</span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>The PDF implies that the probability for the next PP being at a distance $d \xi$ is given by</span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a>p(d \xi \mid \rho, \mathcal{I}) d \xi=(1-\rho d \xi) \cdot \rho d \xi</span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a>This expression can be interpreted as the probability for no event $(1-\rho d \xi)$ in $d \xi$ times the probability for one event $\rho d \xi$ in the following infinitesimal interval $d \xi$. In other words, the events in infinitesimal intervals are uncorrelated and the probability $P_{d \xi}$ for an event in $d \xi$ is analytic in $d \xi$ :</span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a>P_{d \xi}=\rho d \xi</span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a>As we will see in the next section, these features entail the Poisson distribution.</span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.2.3 Local generation of Poisson processes</span></span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a>The Poisson process can also be defined by the two axioms derived before.</span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The probability for an event happening in an infinitesimal interval $d \xi$ is independent of previous PPs.</span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The probability is analytic in $d \xi$, i.e. $P$ (event in $d \xi \mid \rho, \mathcal{I})=\rho d \xi$.</span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a>It would be straightforward to identify the underlying Bernoulli experiment and to derive the Poisson distribution as a limiting case. Here, however, we want to present a different approach, that is over the top for the present problem but turns out to be very useful in more</span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>complex situations. For instance, the same approach can be used to derive the 'FokkerPlanck equation' for drift-diffusion processes from random walks. The present problem is nicely suited to illustrate this idea. To begin with, we notice that the axioms imply</span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The probability for two events happening in $d \xi$ is negligible $\left(O\left(d \xi^{2}\right)\right)$.</span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The probability for no event in $d \xi$ is therefore $1-\rho d \xi$.</span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a>Next, we define the proposition</span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a>A(n, x) \text { : The number of events in an interval of length } x \text { is } n \text {. }</span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a>The goal is the probability $P(A(n, x) \mid \mathcal{I})$ for $n$ Poisson points in the interval of length $x$. The basic idea of the present approach is to derive a differential equation for the sought-for probability. To this end, we compute the probability for the interval of length $x+d x$ by marginalization over all propositions $A(m, x)$ for the interval of length $x$ :</span>
+<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a>P(A(n, x+d x) \mid \mathcal{I})=\sum_{m=0}^{\infty} P(A(n, x+d x) \mid A(m, x), \mathcal{I}) P(A(m, x) \mid \mathcal{I}) .</span>
+<span id="cb4-204"><a href="#cb4-204" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a>We can simplify this expression by taking advantage of the fact that only zero or one events can happen within the infinitesimal interval $d x$. Hence, only two terms of the summation over $m$ remain: $m=n$ and $m=n-1$. Contributions of higher order $\left(O\left(d x^{2}\right)\right)$ can be neglected. Then</span>
+<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a>P(A(n, x+d x) \mid \mathcal{I})= &amp; P(A(n, x+d x) \mid A(n, x), \mathcal{I}) P(A(n, x) \mid \mathcal{I}) <span class="sc">\\</span></span>
+<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a>&amp; +P(A(n, x+d x) \mid A(n-1, x), \mathcal{I}) P(A(n-1, x) \mid \mathcal{I}) <span class="sc">\\</span></span>
+<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a>= &amp; (1-\rho d x) P(A(n, x) \mid \mathcal{I})+\rho d x P(A(n-1, x) \mid \mathcal{I})</span>
+<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a>So we obtain the desired differential equation</span>
+<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a>\frac{d}{d x} P(A(n, x) \mid \mathcal{I})=\rho(P(A(n-1, x) \mid \mathcal{I})-P(A(n, x) \mid \mathcal{I})) .</span>
+<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a>Next we introduce a simplified notation $P_{n}(x):=P(A(n, x) \mid \mathcal{I})$ and define $P_{-1}(x)=0$, then the differential equation reads</span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a>\frac{d}{d x} P_{n}(x)=\rho\left(P_{n-1}(x)-P_{n}(x)\right) \tag{9.7}</span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a>The initial condition is given by</span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>P_{n}(0)=\delta_{n, 0} \tag{9.8}</span>
+<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>because there is no PP in an interval of zero size. This is actually a difference-differential equation, which can be solved by various means. Here we proceed using 'generating functions' because of their importance in many problems of probability theory: We define the generating function $\phi(x, z)$ via the following series expansion:</span>
+<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a>Generating function</span>
+<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a>\phi(x, z):=\sum_{n=0}^{\infty} P_{n}(x) z^{n} . \tag{9.9}</span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a>Apart from the presence of the additional variable $x$, it is the same object introduced in Section 2.1.3 <span class="co">[</span><span class="ot">p. 21</span><span class="co">]</span>. For arbitrary but fixed $x, P_{n}(x)$ represent the coefficients of a Taylor expansion. The representation by $\phi(x, z)$ has the same information as $P_{n}(x)$ but certain advantages, as we have seen in Section 2.1.3 <span class="co">[</span><span class="ot">p. 21</span><span class="co">]</span> already. In particular, the probabilities $P_{n}(x)$ are given by</span>
+<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a>P_{\nu}(x)=\left.\frac{1}{v!} \frac{d^{v}}{d z^{v}} \phi(x, z)\right|_{z=0} . \tag{9.10}</span>
+<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-256"><a href="#cb4-256" aria-hidden="true" tabindex="-1"></a>In order to obtain the differential equation for the generating function, we multiply equation (9.7) by $z^{n}$ summed over $n$. The result is</span>
+<span id="cb4-257"><a href="#cb4-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-259"><a href="#cb4-259" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-260"><a href="#cb4-260" aria-hidden="true" tabindex="-1"></a>\frac{d}{d x} \underbrace{\sum_{n=0}^{\infty} P_{n}(x) z^{n}}_{\phi(x, z)} &amp; =\rho(\underbrace{\sum_{n=0}^{\infty} P_{n-1}(x) z^{n}}_{z \phi(x, z)}-\underbrace{\sum_{n=0}^{\infty} P_{n}(x) z^{n}}_{\phi(x, z)}) <span class="sc">\\</span></span>
+<span id="cb4-261"><a href="#cb4-261" aria-hidden="true" tabindex="-1"></a>\frac{d}{d x} \phi(x, z) &amp; =\rho(z-1) \phi(x, z) . \tag{9.11}</span>
+<span id="cb4-262"><a href="#cb4-262" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-263"><a href="#cb4-263" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-264"><a href="#cb4-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-265"><a href="#cb4-265" aria-hidden="true" tabindex="-1"></a>Along with the initial condition equation (9.8), which implies $\phi(x, 0)=1$, the solution of the differential equation (9.11) reads</span>
+<span id="cb4-266"><a href="#cb4-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-267"><a href="#cb4-267" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-268"><a href="#cb4-268" aria-hidden="true" tabindex="-1"></a>\phi(x, z)=e^{\rho(x-1) z}</span>
+<span id="cb4-269"><a href="#cb4-269" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-270"><a href="#cb4-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-271"><a href="#cb4-271" aria-hidden="true" tabindex="-1"></a>Eventually we obtain the sought-for probabilities $P_{n}(x)$ via equation (9.10):</span>
+<span id="cb4-272"><a href="#cb4-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-273"><a href="#cb4-273" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-274"><a href="#cb4-274" aria-hidden="true" tabindex="-1"></a>P_{n}(t)=\left.\frac{1}{n!} \frac{d^{n}}{d x^{n}} e^{\rho(x-1) t}\right|_{x=0}=\frac{1}{n!}(\rho t)^{n} e^{-\rho t} .</span>
+<span id="cb4-275"><a href="#cb4-275" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-276"><a href="#cb4-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-277"><a href="#cb4-277" aria-hidden="true" tabindex="-1"></a>This is - as expected - the Poisson distribution. We see that the Poisson distribution follows from very general assumptions. For that reason the distribution is ubiquitous in physics.</span>
+<span id="cb4-278"><a href="#cb4-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-279"><a href="#cb4-279" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.3 Waiting time paradox</span></span>
+<span id="cb4-280"><a href="#cb4-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-281"><a href="#cb4-281" aria-hidden="true" tabindex="-1"></a>If we interpret the distance between neighbouring PPs $t$ in a temporal way we have</span>
+<span id="cb4-282"><a href="#cb4-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-283"><a href="#cb4-283" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-284"><a href="#cb4-284" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-285"><a href="#cb4-285" aria-hidden="true" tabindex="-1"></a>p(t \mid \tau)=\frac{1}{\tau} e^{-\frac{t}{\tau}}, \tag{9.12}</span>
+<span id="cb4-286"><a href="#cb4-286" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-287"><a href="#cb4-287" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-288"><a href="#cb4-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-289"><a href="#cb4-289" aria-hidden="true" tabindex="-1"></a>with $\tau$ being the mean 'waiting time'. Let us assume a Poisson-distributed arrival time of buses at a bus stop. What is the mean waiting time for the next bus, when we are at the bus</span>
+<span id="cb4-290"><a href="#cb4-290" aria-hidden="true" tabindex="-1"></a>stop at a random instant of time? We could likewise ask: If we switch on a Geiger counter, how long does it take to the next signal, triggered by an alpha particle? Since the mean time between arrivals is $\tau$, it seems reasonable to assume that the mean waiting time should be $\tau / 2$. The correct answer, however, is $\tau$, which may appear paradoxical since the remaining time to the next bus should be shorter than the entire interval between successive buses.</span>
+<span id="cb4-291"><a href="#cb4-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-292"><a href="#cb4-292" aria-hidden="true" tabindex="-1"></a>In the following, we will see how Bayesian probability theory provides the correct answer. The quantity to be determined is the probability density $p\left(t \mid R_{I}, \tau, \mathcal{I}\right)$ for the waiting time $t$, given that we arrived at a random instant $t^{*}$ in time. The time $t^{*}$ falls into a time interval $I$ between successive buses. This is denoted by the proposition</span>
+<span id="cb4-293"><a href="#cb4-293" aria-hidden="true" tabindex="-1"></a>$I_{t^{*}}$ : The time interval $I$ of our arrival is determined by $t^{*} \in I$.</span>
+<span id="cb4-294"><a href="#cb4-294" aria-hidden="true" tabindex="-1"></a>We proceed by introducing the length $L$ of the arrival interval $I$ via the marginalization rule</span>
+<span id="cb4-295"><a href="#cb4-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-296"><a href="#cb4-296" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-297"><a href="#cb4-297" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-298"><a href="#cb4-298" aria-hidden="true" tabindex="-1"></a>p\left(t \mid R_{I}, \tau, \mathcal{I}\right) &amp; =\int_{0}^{\infty} \underbrace{p\left(t \mid L_{I}=L, I_{t^{*}}, \mathcal{I}\right)}_{\frac{1}{L} 1(0&lt;t \leq L)}, p\left(L \mid I_{t^{*}}, \tau, \mathcal{I}\right) d L <span class="sc">\\</span></span>
+<span id="cb4-299"><a href="#cb4-299" aria-hidden="true" tabindex="-1"></a>p\left(t \mid I_{t^{*}}, \tau, \mathcal{I}\right) &amp; =\int_{t}^{\infty} \frac{1}{L} p\left(L \mid I_{t^{*}}, \tau, \mathcal{I}\right) d L \tag{9.13}</span>
+<span id="cb4-300"><a href="#cb4-300" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-301"><a href="#cb4-301" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-302"><a href="#cb4-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-303"><a href="#cb4-303" aria-hidden="true" tabindex="-1"></a>Here we exploited the random arrival time $t$, resulting in a uniform PDF within the interval $I$. The quantity $p\left(L \mid I_{t^{*}}, \tau, \mathcal{I}\right)$ is the PDF for the length of the interval selected as specified in $I_{t^{*}}$. We proceed with Bayes' theorem:</span>
+<span id="cb4-304"><a href="#cb4-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-305"><a href="#cb4-305" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-306"><a href="#cb4-306" aria-hidden="true" tabindex="-1"></a>p\left(L \mid I_{t^{*}}, \tau, \mathcal{I}\right)=\frac{p\left(I_{t^{*}} \mid L, \tau, \mathcal{I}\right) p(L \mid \tau, \mathcal{I})}{p\left(I_{t^{*}} \mid \tau, \mathcal{I}\right)}</span>
+<span id="cb4-307"><a href="#cb4-307" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-308"><a href="#cb4-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-309"><a href="#cb4-309" aria-hidden="true" tabindex="-1"></a>The probability to arrive in an interval of length $L$ is, according to the classical definition and in analogy with the dart problem of Section 7.2.1 <span class="co">[</span><span class="ot">p. 94</span><span class="co">]</span>, proportional to its length $L$</span>
+<span id="cb4-310"><a href="#cb4-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-311"><a href="#cb4-311" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-312"><a href="#cb4-312" aria-hidden="true" tabindex="-1"></a>p\left(I_{t^{*}} \mid L, \tau, \mathcal{I}\right)=\kappa L</span>
+<span id="cb4-313"><a href="#cb4-313" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-314"><a href="#cb4-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-315"><a href="#cb4-315" aria-hidden="true" tabindex="-1"></a>with an unknown parameter $\kappa$. The PDF $p(L \mid \tau, \mathcal{I})$ is the exponential distribution of neighbouring PPs. The expression in the denominator is a constant that can be combined with $\kappa$ into a constant that is determined by the normalization, resulting in</span>
+<span id="cb4-316"><a href="#cb4-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-317"><a href="#cb4-317" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-318"><a href="#cb4-318" aria-hidden="true" tabindex="-1"></a>p\left(L \mid I_{t^{*}}, \tau, \mathcal{I}\right)=\frac{L}{\tau^{2}} e^{-\frac{L}{\tau}}</span>
+<span id="cb4-319"><a href="#cb4-319" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-320"><a href="#cb4-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-321"><a href="#cb4-321" aria-hidden="true" tabindex="-1"></a>This is a special case of a Gamma distribution with $\alpha=2$ and $\beta=1 / \tau$. Hence, the mean interval length $L$ is therefore</span>
+<span id="cb4-322"><a href="#cb4-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-323"><a href="#cb4-323" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-324"><a href="#cb4-324" aria-hidden="true" tabindex="-1"></a>\langle L\rangle=2 \tau .</span>
+<span id="cb4-325"><a href="#cb4-325" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-326"><a href="#cb4-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-327"><a href="#cb4-327" aria-hidden="true" tabindex="-1"></a>Apparently, intervals selected by $I_{t}$ * are longer than average.</span>
+<span id="cb4-328"><a href="#cb4-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-329"><a href="#cb4-329" aria-hidden="true" tabindex="-1"></a>Now, we proceed with equation (9.13):</span>
+<span id="cb4-330"><a href="#cb4-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-331"><a href="#cb4-331" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-332"><a href="#cb4-332" aria-hidden="true" tabindex="-1"></a>p\left(t \mid I_{t^{*}}, \tau, \mathcal{I}\right)=\frac{1}{\tau^{2}} \int_{t}^{\infty} e^{-\frac{L}{\tau}} d L=\frac{1}{\tau} e^{-\frac{t}{\tau}}</span>
+<span id="cb4-333"><a href="#cb4-333" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-334"><a href="#cb4-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-335"><a href="#cb4-335" aria-hidden="true" tabindex="-1"></a>This proves that the waiting time has the same PDF as the interval length between successive buses. As we have seen, this counterintuitive result is due to the larger probability for an arrival in a long interval. This also clarifies why the first interval from an arbitrarily chosen point in time to the first event also has a mean duration of $\tau$.</span>
+<span id="cb4-336"><a href="#cb4-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-337"><a href="#cb4-337" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.4 Order statistic of Poisson processes</span></span>
+<span id="cb4-338"><a href="#cb4-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-339"><a href="#cb4-339" aria-hidden="true" tabindex="-1"></a>Assume $\left<span class="sc">\{</span>t_{n}\right<span class="sc">\}</span>$ are Poisson points, obeying equation (9.12), and let $N(t)$ denote the stochastic process which provides the number of Poisson points up to time $t$ :</span>
+<span id="cb4-340"><a href="#cb4-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-341"><a href="#cb4-341" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-342"><a href="#cb4-342" aria-hidden="true" tabindex="-1"></a>N(t)=\sum_{n=0}^{\infty} \mathbb{I}\left(t \geq t_{n}\right) .</span>
+<span id="cb4-343"><a href="#cb4-343" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-344"><a href="#cb4-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-345"><a href="#cb4-345" aria-hidden="true" tabindex="-1"></a>The probability for $N(t)=n$ is of course given by the Poisson distribution. A representative result is depicted in Figure 9.2. Next we want to estimate the PDF for position $x$ of the $n$th Poisson point. We can use the general considerations on order statistics derived in Section 7.6 <span class="co">[</span><span class="ot">p. 118</span><span class="co">]</span>. In order to find the $n$th Poisson point in $[t, t+d t), n-1$ PPs have to be located in the interval $[0, t)$. The corresponding probability is</span>
+<span id="cb4-346"><a href="#cb4-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-347"><a href="#cb4-347" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-348"><a href="#cb4-348" aria-hidden="true" tabindex="-1"></a>p(n-1 \mid t, \tau, \mathcal{I})=e^{-t / \tau} \frac{(t / \tau)^{n-1}}{(n-1)!} .</span>
+<span id="cb4-349"><a href="#cb4-349" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-350"><a href="#cb4-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-351"><a href="#cb4-351" aria-hidden="true" tabindex="-1"></a>The probability for the next point being located in $[t, t+d t)$ is given by $d t / \tau$. The product of the two independent probabilities results in a special Gamma distribution, which is also called the 'Erlang distribution' in the present context.</span>
+<span id="cb4-352"><a href="#cb4-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-355"><a href="#cb4-355" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-356"><a href="#cb4-356" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb4-357"><a href="#cb4-357" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Show plot"</span></span>
+<span id="cb4-358"><a href="#cb4-358" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span>
+<span id="cb4-359"><a href="#cb4-359" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-360"><a href="#cb4-360" aria-hidden="true" tabindex="-1"></a>Figure 9.2 Poisson points (crosses) and Poisson process $N(t)$ for $\tau=1$.</span>
+<span id="cb4-361"><a href="#cb4-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-362"><a href="#cb4-362" aria-hidden="true" tabindex="-1"></a><span class="fu">## Erlang distribution</span></span>
+<span id="cb4-363"><a href="#cb4-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-364"><a href="#cb4-364" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-365"><a href="#cb4-365" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-366"><a href="#cb4-366" aria-hidden="true" tabindex="-1"></a>p\left(t_{n}=t \mid \tau, \mathcal{I}\right)=\frac{\tau^{-n}}{\Gamma(n)} t^{n-1} e^{-t / \tau} . \tag{9.14}</span>
+<span id="cb4-367"><a href="#cb4-367" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-368"><a href="#cb4-368" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-369"><a href="#cb4-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-370"><a href="#cb4-370" aria-hidden="true" tabindex="-1"></a>The expectation value of this position is</span>
+<span id="cb4-371"><a href="#cb4-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-372"><a href="#cb4-372" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-373"><a href="#cb4-373" aria-hidden="true" tabindex="-1"></a>\left\langle t_{n}\right\rangle=n \tau .</span>
+<span id="cb4-374"><a href="#cb4-374" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-375"><a href="#cb4-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-376"><a href="#cb4-376" aria-hidden="true" tabindex="-1"></a>This result is in agreement with the expectations, since the mean distance of the points is given by $\tau$. The Erlang distribution has been introduced in studies of the frequency of phone calls and is important for various types of queueing problems.</span>
+<span id="cb4-377"><a href="#cb4-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-378"><a href="#cb4-378" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.5 Various examples</span></span>
+<span id="cb4-379"><a href="#cb4-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-380"><a href="#cb4-380" aria-hidden="true" tabindex="-1"></a>Next we will give some simple pedagogical examples. Realistic applications will follow in Part V <span class="co">[</span><span class="ot">p. 333</span><span class="co">]</span>.</span>
+<span id="cb4-381"><a href="#cb4-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-382"><a href="#cb4-382" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.5.1 Shot noise</span></span>
+<span id="cb4-383"><a href="#cb4-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-384"><a href="#cb4-384" aria-hidden="true" tabindex="-1"></a>As a first example we consider shot noise, which is relevant in the measurement of individual photons. Suppose a light source emits photons with a mean rate of $\lambda$ photons per time interval. The emission of the photons shall be uncorrelated and within an infinitesimal time interval at most one photon is being emitted. Therefore, the probability for the emission of a photon within $d t$ is given by</span>
+<span id="cb4-385"><a href="#cb4-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-386"><a href="#cb4-386" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-387"><a href="#cb4-387" aria-hidden="true" tabindex="-1"></a>p=\lambda d t .</span>
+<span id="cb4-388"><a href="#cb4-388" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-389"><a href="#cb4-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-390"><a href="#cb4-390" aria-hidden="true" tabindex="-1"></a>These are precisely the conditions for a Poisson process, and the probability to find $k$ photons within a finite interval of length $t$ is therefore</span>
+<span id="cb4-391"><a href="#cb4-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-392"><a href="#cb4-392" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-393"><a href="#cb4-393" aria-hidden="true" tabindex="-1"></a>P(n \mid N=t / d t, p=\lambda d t) \underset{d t \rightarrow 0}{\longrightarrow} e^{-\lambda t} \frac{(\lambda t)^{n}}{n!} .</span>
+<span id="cb4-394"><a href="#cb4-394" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-395"><a href="#cb4-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-396"><a href="#cb4-396" aria-hidden="true" tabindex="-1"></a>Hence, shot noise obeys a Poisson distribution.</span>
+<span id="cb4-397"><a href="#cb4-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-398"><a href="#cb4-398" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.5.2 The stickiness of bad luck</span></span>
+<span id="cb4-399"><a href="#cb4-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-400"><a href="#cb4-400" aria-hidden="true" tabindex="-1"></a>It is a common impression that all waiting queues proceed faster than our own. Is this just a distorted perception? Let us analyse the problem.</span>
+<span id="cb4-401"><a href="#cb4-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-402"><a href="#cb4-402" aria-hidden="true" tabindex="-1"></a>Let $t_{0}$ denote our waiting time and $t_{i}(i=1, \ldots)$ the waiting times in other queues. Let us assume that nobody experiences preferred treatment and that hence all $t_{i}$ are subject to</span>
+<span id="cb4-403"><a href="#cb4-403" aria-hidden="true" tabindex="-1"></a>the same statistical fluctuations and are hence i.i.d.-distributed random variables with probability density $p(t \mid \mathcal{I})$. We are interested in the probability that only the $n$th waiting time $\left(t_{n}\right)$ is larger than ours $\left(t_{0}\right)$. For a systematic treatment we define the following proposition.</span>
+<span id="cb4-404"><a href="#cb4-404" aria-hidden="true" tabindex="-1"></a>$A_{n}$ : Only the $n$th waiting time $\left<span class="sc">\{</span>t_{n}\right<span class="sc">\}</span>$ is greater than ours.</span>
+<span id="cb4-405"><a href="#cb4-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-406"><a href="#cb4-406" aria-hidden="true" tabindex="-1"></a>In order to compute the probability $P\left(A_{n} \mid \mathcal{I}\right)$, we employ the marginalization rule to introduce the value $t_{0}$ of our waiting time:</span>
+<span id="cb4-407"><a href="#cb4-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-408"><a href="#cb4-408" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-409"><a href="#cb4-409" aria-hidden="true" tabindex="-1"></a>P\left(A_{n} \mid \mathcal{I}\right)=\int P\left(A_{n} \mid t_{0}, \mathcal{I}\right) p\left(t_{0} \mid \mathcal{I}\right) d t_{0}</span>
+<span id="cb4-410"><a href="#cb4-410" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-411"><a href="#cb4-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-412"><a href="#cb4-412" aria-hidden="true" tabindex="-1"></a>The expression $A_{n}$ implies that the waiting times of the queues $1-(n-1)$ are smaller than $t_{0}$ and that $t_{n}&gt;t_{0}$. Since the waiting times are uncorrelated, we obtain</span>
+<span id="cb4-413"><a href="#cb4-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-414"><a href="#cb4-414" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-415"><a href="#cb4-415" aria-hidden="true" tabindex="-1"></a>P\left(A_{n} \mid \mathcal{I}\right)=\int \prod_{i=1}^{n-1} \underbrace{P\left(t_{i}&lt;t_{0} \mid \mathcal{I}\right)}_{:=q\left(t_{0}\right) ; \text { independent of } i} \underbrace{P\left(t_{n}&gt;t_{0} \mid \mathcal{I}\right)}_{=\left(1-q\left(t_{0}\right)\right)} p\left(t_{0} \mid \mathcal{I}\right) d t_{0} .</span>
+<span id="cb4-416"><a href="#cb4-416" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-417"><a href="#cb4-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-418"><a href="#cb4-418" aria-hidden="true" tabindex="-1"></a>Now, $q(t)$ is the CDF corresponding to $p(t \mid \mathcal{I})$ and therefore $p\left(t_{0} \mid \mathcal{I}\right) d t_{0}=d q\left(t_{0}\right)$. So, the integral simplifies significantly as</span>
+<span id="cb4-419"><a href="#cb4-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-420"><a href="#cb4-420" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-421"><a href="#cb4-421" aria-hidden="true" tabindex="-1"></a>P\left(A_{n} \mid \mathcal{I}\right)=\int q^{n-1}(1-q) d q=\frac{\Gamma(n) \Gamma(2)}{\Gamma(n+2)}=\frac{(n-1)!}{(n+1)!}=\frac{1}{n(n+1)} .</span>
+<span id="cb4-422"><a href="#cb4-422" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-423"><a href="#cb4-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-424"><a href="#cb4-424" aria-hidden="true" tabindex="-1"></a>It is straightforward to verify the correct normalization:</span>
+<span id="cb4-425"><a href="#cb4-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-426"><a href="#cb4-426" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-427"><a href="#cb4-427" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-428"><a href="#cb4-428" aria-hidden="true" tabindex="-1"></a>\sum_{n=1}^{\infty} P\left(A_{n} \mid \mathcal{I}\right) &amp; =\sum_{n=1}^{\infty} \frac{1}{n(n+1)}=\lim _{L \rightarrow \infty} \sum_{n=1}^{L}\left(\frac{1}{n}-\frac{1}{n+1}\right) <span class="sc">\\</span></span>
+<span id="cb4-429"><a href="#cb4-429" aria-hidden="true" tabindex="-1"></a>&amp; =\lim _{L \rightarrow \infty}\left(\sum_{n=1}^{L} \frac{1}{n}-\sum_{n=2}^{L+1} \frac{1}{n}\right)=\lim _{L \rightarrow \infty}\left(1-\frac{1}{L+1}\right)=1 .</span>
+<span id="cb4-430"><a href="#cb4-430" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-431"><a href="#cb4-431" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-432"><a href="#cb4-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-433"><a href="#cb4-433" aria-hidden="true" tabindex="-1"></a>The surprising aspects of the result are:</span>
+<span id="cb4-434"><a href="#cb4-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-435"><a href="#cb4-435" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>it is independent of the distribution $p(t \mid \mathcal{I})$;</span>
+<span id="cb4-436"><a href="#cb4-436" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>the mean value does not exist, $\langle n\rangle=\infty$.</span>
+<span id="cb4-437"><a href="#cb4-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-438"><a href="#cb4-438" aria-hidden="true" tabindex="-1"></a>This implies that on average, endless many queues are faster than ours. However, the mean is dominated by the tail of the distribution, because the median is only $n$. $=1.5$ since $P\left(A_{1} \mid \mathcal{I}\right)=\frac{1}{2}$.</span>
+<span id="cb4-439"><a href="#cb4-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-440"><a href="#cb4-440" aria-hidden="true" tabindex="-1"></a>In conclusion, we want to simulate this queueing problem. As PDF for the waiting times we use uniform random numbers on the unit interval. The algorithm is as follows:</span>
+<span id="cb4-441"><a href="#cb4-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-442"><a href="#cb4-442" aria-hidden="true" tabindex="-1"></a><span class="fu">## Algorithm to simulate THE QUEUEING PROBLEM</span></span>
+<span id="cb4-443"><a href="#cb4-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-444"><a href="#cb4-444" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Generate a reference random number $t_{0}$.</span></span>
+<span id="cb4-445"><a href="#cb4-445" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Generate random numbers $t_{n}$ until $t_{n}&gt;t_{0}$ and record $n$.</span></span>
+<span id="cb4-446"><a href="#cb4-446" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Repeat the experiment $L$ times.</span></span>
+<span id="cb4-447"><a href="#cb4-447" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; Compute the mean and standard deviation of $n$.</span></span>
+<span id="cb4-448"><a href="#cb4-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-449"><a href="#cb4-449" aria-hidden="true" tabindex="-1"></a>The result of a simulation run up to a maximum length $L=1000$ is shown in Figure 9.3. Neither the mean value nor the standard deviation converge with increasing simulation length. This is to be expected, since both values diverge for $L \rightarrow \infty$. Despite the high probability of $2 / 3$ that the next or second next element already exceeds the value of the reference element, there is a non-negligible probability for the occurrence of very long waiting times (please note the logarithmic scale of the ordinate in Figure 9.3). In the present example the arithmetic mean at the end of the simulation is 548 and the standard deviation is 17151,30 times the mean value!</span>
+<span id="cb4-450"><a href="#cb4-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-453"><a href="#cb4-453" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-454"><a href="#cb4-454" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb4-455"><a href="#cb4-455" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Show plot"</span></span>
+<span id="cb4-456"><a href="#cb4-456" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span>
+<span id="cb4-457"><a href="#cb4-457" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-458"><a href="#cb4-458" aria-hidden="true" tabindex="-1"></a>Figure 9.3 Computer simulation of the queueing problem according to algorithm in equation (9.15). The number $n(L)$ of faster queues is marked by dots. The running mean (solid line) and standard deviation (dashed line) are plotted versus the number of repetitions $L$.</span>
+<span id="cb4-459"><a href="#cb4-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-460"><a href="#cb4-460" aria-hidden="true" tabindex="-1"></a><span class="fu">### 9.5.3 Pedestrian delay problem</span></span>
+<span id="cb4-461"><a href="#cb4-461" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-462"><a href="#cb4-462" aria-hidden="true" tabindex="-1"></a>In its simplest form the pedestrian delay problem considers pedestrians arriving at random at a street with the goal of crossing it. The traffic is described by a Poisson process, where</span>
+<span id="cb4-463"><a href="#cb4-463" aria-hidden="true" tabindex="-1"></a>any structures due to traffic lights or the like are ignored. The central question is how long the pedestrian has to wait on average until the time gap between cars is big enough.</span>
+<span id="cb4-464"><a href="#cb4-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-465"><a href="#cb4-465" aria-hidden="true" tabindex="-1"></a>To be more specific, let $\Delta T$ be the time the pedestrian needs to traverse the street and $\tau$ the mean time gap between the Poisson events, i.e. the PDF for the Poisson events reads</span>
+<span id="cb4-466"><a href="#cb4-466" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-467"><a href="#cb4-467" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-468"><a href="#cb4-468" aria-hidden="true" tabindex="-1"></a>p(t \mid \tau, \mathcal{I})=\frac{1}{\tau} e^{-\frac{t}{\tau}} .</span>
+<span id="cb4-469"><a href="#cb4-469" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-470"><a href="#cb4-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-471"><a href="#cb4-471" aria-hidden="true" tabindex="-1"></a>It is expedient to express all times in units of $\tau$. Then the PDF reads</span>
+<span id="cb4-472"><a href="#cb4-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-473"><a href="#cb4-473" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-474"><a href="#cb4-474" aria-hidden="true" tabindex="-1"></a>p(t \mid \tau, \mathcal{I})=e^{-t} .</span>
+<span id="cb4-475"><a href="#cb4-475" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-476"><a href="#cb4-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-477"><a href="#cb4-477" aria-hidden="true" tabindex="-1"></a>We seek to determine the PDF $p(T \mid \mathcal{I})$ for $T$, the waiting time of the pedestrian. To begin with, we introduce the proposition</span>
+<span id="cb4-478"><a href="#cb4-478" aria-hidden="true" tabindex="-1"></a>$A_{n}$ : The first $n$ intervals are too short and the interval $n+1$ is long enough.</span>
+<span id="cb4-479"><a href="#cb4-479" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-480"><a href="#cb4-480" aria-hidden="true" tabindex="-1"></a>This proposition implies that the first time intervals $t_{1}, \ldots, t_{n}$ are all smaller than $\Delta T$ and for the last one we have $t_{n+1} \geq \Delta T$. We will first determine the probability for $A_{n}$ :</span>
+<span id="cb4-481"><a href="#cb4-481" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-482"><a href="#cb4-482" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-483"><a href="#cb4-483" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-484"><a href="#cb4-484" aria-hidden="true" tabindex="-1"></a>P_{n}:=P\left(A_{n} \mid \Delta T, \mathcal{I}\right) &amp; =\prod_{\nu=1}^{n} P\left(t_{\nu}&lt;\Delta T \mid \mathcal{I}\right) P\left(t_{n+1} \geq \Delta T \mid \mathcal{I}\right), <span class="sc">\\</span></span>
+<span id="cb4-485"><a href="#cb4-485" aria-hidden="true" tabindex="-1"></a>P(t&lt;\Delta T \mid \mathcal{I}) &amp; =\int_{0}^{\Delta T} e^{-t} d t=1-e^{-\Delta T}:=F, <span class="sc">\\</span></span>
+<span id="cb4-486"><a href="#cb4-486" aria-hidden="true" tabindex="-1"></a>P(t \geq \Delta T \mid \mathcal{I}) &amp; =1-F, <span class="sc">\\</span></span>
+<span id="cb4-487"><a href="#cb4-487" aria-hidden="true" tabindex="-1"></a>P_{n} &amp; =F^{n}(1-F) .</span>
+<span id="cb4-488"><a href="#cb4-488" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-489"><a href="#cb4-489" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-490"><a href="#cb4-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-491"><a href="#cb4-491" aria-hidden="true" tabindex="-1"></a>This is the geometric distribution. The mean and variance of the number of initially wrong intervals are therefore, according to equations (4.25b) and (4.25c) <span class="co">[</span><span class="ot">p. 63</span><span class="co">]</span> ,</span>
+<span id="cb4-492"><a href="#cb4-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-493"><a href="#cb4-493" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-494"><a href="#cb4-494" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-495"><a href="#cb4-495" aria-hidden="true" tabindex="-1"></a>\langle n\rangle &amp; =\frac{F}{(1-F)}=e^{\Delta T}-1,  \tag{9.16a}<span class="sc">\\</span></span>
+<span id="cb4-496"><a href="#cb4-496" aria-hidden="true" tabindex="-1"></a>\left\langle(\Delta n)^{2}\right\rangle &amp; =\frac{F}{(1-F)^{2}}=e^{\Delta T}\left(e^{\Delta T}-1\right) . \tag{9.16b}</span>
+<span id="cb4-497"><a href="#cb4-497" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-498"><a href="#cb4-498" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-499"><a href="#cb4-499" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-500"><a href="#cb4-500" aria-hidden="true" tabindex="-1"></a>Next we determine the PDF for the waiting time $T$ :</span>
+<span id="cb4-501"><a href="#cb4-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-502"><a href="#cb4-502" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-503"><a href="#cb4-503" aria-hidden="true" tabindex="-1"></a>p(T \mid \Delta T, \mathcal{I})=\sum_{n=0}^{\infty} p\left(T \mid \Delta T, A_{n}, \mathcal{I}\right) P_{n} .</span>
+<span id="cb4-504"><a href="#cb4-504" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-505"><a href="#cb4-505" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-506"><a href="#cb4-506" aria-hidden="true" tabindex="-1"></a>We introduce the $n$ random variables $t=\left<span class="sc">\{</span>t_{1}, \ldots, t_{n}\right<span class="sc">\}</span>$, corresponding to the interval lengths, by the marginalization rule</span>
+<span id="cb4-507"><a href="#cb4-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-508"><a href="#cb4-508" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-509"><a href="#cb4-509" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-510"><a href="#cb4-510" aria-hidden="true" tabindex="-1"></a>p\left(T \mid A_{n}, \Delta T, \mathcal{I}\right) &amp; =\int_{0}^{\infty} \cdots \int_{0}^{\infty} d t^{n} p\left(T \mid t, \not A_{n}, \Delta T, \mathcal{I}\right) p\left(t \mid A_{n}, \Delta T, \mathcal{I}\right) <span class="sc">\\</span></span>
+<span id="cb4-511"><a href="#cb4-511" aria-hidden="true" tabindex="-1"></a>p(T \mid t, \mathcal{I}) &amp; =\delta\left(T-\sum_{\nu=1}^{n} t_{\nu}\right) <span class="sc">\\</span></span>
+<span id="cb4-512"><a href="#cb4-512" aria-hidden="true" tabindex="-1"></a>p\left(t \mid A_{n}, \Delta T, \mathcal{I}\right) &amp; =\prod_{\nu=1}^{n} p\left(t_{\nu} \mid t_{\nu}&lt;\Delta T\right)</span>
+<span id="cb4-513"><a href="#cb4-513" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-514"><a href="#cb4-514" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-515"><a href="#cb4-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-516"><a href="#cb4-516" aria-hidden="true" tabindex="-1"></a>Hence</span>
+<span id="cb4-517"><a href="#cb4-517" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-518"><a href="#cb4-518" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-519"><a href="#cb4-519" aria-hidden="true" tabindex="-1"></a>p\left(T \mid A_{n}, \mathcal{I}\right)=\int_{0}^{\Delta T} \ldots \int_{0}^{\Delta T} d t^{n} \delta\left(T-\sum_{\nu=1}^{n} t_{\nu}\right) \prod_{\nu=1}^{n} p\left(t_{\nu} \mid t_{\nu}&lt;\Delta T, \mathcal{I}\right) .</span>
+<span id="cb4-520"><a href="#cb4-520" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-521"><a href="#cb4-521" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-522"><a href="#cb4-522" aria-hidden="true" tabindex="-1"></a>We will not compute the PDF for T in full, but rather only the mean:</span>
+<span id="cb4-523"><a href="#cb4-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-524"><a href="#cb4-524" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-525"><a href="#cb4-525" aria-hidden="true" tabindex="-1"></a>\langle T\rangle=\sum_{n=0}^{\infty} \underbrace{\int_{0}^{\infty} T P\left(T \mid A_{n}, \Delta T, \mathcal{I}\right) d T}_{:=\langle T\rangle_{n}} P_{n} .</span>
+<span id="cb4-526"><a href="#cb4-526" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-527"><a href="#cb4-527" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-528"><a href="#cb4-528" aria-hidden="true" tabindex="-1"></a>For the mean for given $n$</span>
+<span id="cb4-529"><a href="#cb4-529" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-530"><a href="#cb4-530" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-531"><a href="#cb4-531" aria-hidden="true" tabindex="-1"></a>\langle T\rangle_{n}=\int_{0}^{\Delta T} \ldots \int_{0}^{\Delta T} d t^{n} \sum_{\nu=1}^{n} t_{\nu} \prod_{\nu=1}^{n} p\left(t_{\nu} \mid t_{\nu}&lt;\Delta T, \mathcal{I}\right)</span>
+<span id="cb4-532"><a href="#cb4-532" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-533"><a href="#cb4-533" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-534"><a href="#cb4-534" aria-hidden="true" tabindex="-1"></a>we need the integral</span>
+<span id="cb4-535"><a href="#cb4-535" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-536"><a href="#cb4-536" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-537"><a href="#cb4-537" aria-hidden="true" tabindex="-1"></a>I:=\int_{0}^{\Delta T} t_{\nu} p\left(t_{\nu} \mid t_{\nu}&lt;\Delta T, \mathcal{I}\right) d t_{\nu}=\int_{0}^{\Delta T} t \frac{e^{-t}}{F} d t=\frac{1-F}{F}\left(e^{\Delta T}-1-\Delta T\right)</span>
+<span id="cb4-538"><a href="#cb4-538" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-539"><a href="#cb4-539" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-540"><a href="#cb4-540" aria-hidden="true" tabindex="-1"></a>Then $\langle T\rangle_{n}=n I$ and $\langle T\rangle=\langle n\rangle I$. Along with equation (9.16) we obtain the final result, which in original units reads</span>
+<span id="cb4-541"><a href="#cb4-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-542"><a href="#cb4-542" aria-hidden="true" tabindex="-1"></a><span class="fu">## Mean waiting time</span></span>
+<span id="cb4-543"><a href="#cb4-543" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-544"><a href="#cb4-544" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-545"><a href="#cb4-545" aria-hidden="true" tabindex="-1"></a>\langle T\rangle=\left(e^{\Delta T / \tau}-1-\frac{\Delta T}{\tau}\right) .</span>
+<span id="cb4-546"><a href="#cb4-546" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-547"><a href="#cb4-547" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-548"><a href="#cb4-548" aria-hidden="true" tabindex="-1"></a>This is a rather striking result as the time increases exponentially with the time $\Delta T$ needed to cross the road. In particular, it presents an exponential disadvantage for handicapped or elderly people.</span>
+<span id="cb4-549"><a href="#cb4-549" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-550"><a href="#cb4-550" aria-hidden="true" tabindex="-1"></a><span class="fu">## PART II</span></span>
+<span id="cb4-551"><a href="#cb4-551" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-552"><a href="#cb4-552" aria-hidden="true" tabindex="-1"></a><span class="fu">## ASSIGNING PROBABILITIES</span></span>
+<span id="cb4-553"><a href="#cb4-553" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-554"><a href="#cb4-554" aria-hidden="true" tabindex="-1"></a>The rules of probability theory provide the means to transform probabilities. As a direct consequence of the sum rule and the product rule, Bayes' theorem in equation (1.9) <span class="co">[</span><span class="ot">p. 12</span><span class="co">]</span> has been derived:</span>
+<span id="cb4-555"><a href="#cb4-555" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-556"><a href="#cb4-556" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-557"><a href="#cb4-557" aria-hidden="true" tabindex="-1"></a>P(a \mid d, \mathcal{I})=\frac{1}{Z} P(d \mid a, \mathcal{I}) P(a \mid \mathcal{I})</span>
+<span id="cb4-558"><a href="#cb4-558" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-559"><a href="#cb4-559" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-560"><a href="#cb4-560" aria-hidden="true" tabindex="-1"></a>The theorem allows us to relate the posterior distribution to the product of the likelihood and the prior PDF. The likelihood distribution is usually known and determined by the experimental setup (expressed by $\mathcal{I}$ ) and the parameters $a$ of the model. Prior probabilities, on the contrary, cannot be assigned solely based on the rules of probability theory, since the priors incorporate the assumptions underlying the inference process. Prior PDFs may also occur in a more indirect way, for example, if not all parameter values entering the likelihood are known. The unknown parameters $\boldsymbol{a}$ can be marginalized:</span>
+<span id="cb4-561"><a href="#cb4-561" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-562"><a href="#cb4-562" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-563"><a href="#cb4-563" aria-hidden="true" tabindex="-1"></a>p(\boldsymbol{d} \mid \boldsymbol{b}, \mathcal{I})=\int p(\boldsymbol{d} \mid \boldsymbol{a}, \boldsymbol{b}, \mathcal{I}) p(\boldsymbol{a} \mid \boldsymbol{b}, \mathcal{I}) d a^{m}</span>
+<span id="cb4-564"><a href="#cb4-564" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-565"><a href="#cb4-565" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-566"><a href="#cb4-566" aria-hidden="true" tabindex="-1"></a>resulting in a probability distribution on the left-hand side which is independent of $\boldsymbol{a}$. However, the marginalization also requires the specification of a prior PDF $p(\boldsymbol{a} \mid \boldsymbol{b}, \mathcal{I})$ for $\boldsymbol{a}$, which ultimately cannot be provided by the rules of probability theory. A typical example for this situation is provided by Gaussian noise with zero mean and unknown variance. For the marginal likelihood the prior PDF for the standard deviation $p(\sigma \mid \mathcal{I})$ needs to be specified. This is a generic property of Bayesian inference. The rules of probability yield a hierarchy of conditional probabilities, but at the very end there is always a prior probability that has to be provided from outside, based on the available information. There are three generic cases.</span>
+<span id="cb4-567"><a href="#cb4-567" aria-hidden="true" tabindex="-1"></a>(a) Ignorant priors: For parameters or densities without any additional information, except the definition of the problem.</span>
+<span id="cb4-568"><a href="#cb4-568" aria-hidden="true" tabindex="-1"></a>(b) Testable information: In addition to (a) exact information is available, typically in the form of equality constraints, e.g. the moments of the sought-for distribution, $\Phi<span class="sc">\{</span>p(x \mid \mathcal{I})<span class="sc">\}</span>=0$.</span>
+<span id="cb4-569"><a href="#cb4-569" aria-hidden="true" tabindex="-1"></a>(c) Priors for positive additive distribution functions.</span>
+<span id="cb4-570"><a href="#cb4-570" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-571"><a href="#cb4-571" aria-hidden="true" tabindex="-1"></a>Next, we will discuss the first two cases in more detail. The third topic is addressed in Chapter 12 <span class="co">[</span><span class="ot">p. 201</span><span class="co">]</span> on the 'quantified maximum entropy method' (QME), which has been applied very successfully to form-free image reconstruction problems, for example, in astrophysics and plasma physics.</span>
+<span id="cb4-572"><a href="#cb4-572" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-573"><a href="#cb4-573" aria-hidden="true" tabindex="-1"></a><span class="fu">## 10</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

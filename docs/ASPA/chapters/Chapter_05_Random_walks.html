@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Random walks – Bayesian Probability Theory: Applications in the Physical Sciences</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/Chapter_06_Limit_theorems.html" rel="next">
+<link href="../chapters/Chapter_04_Combinatorics.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-46cf542fe7cabf791d008aea1ba490d7.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/Chapter_04_Combinatorics.html">PART II: PROBABILITY DISTRIBUTIONS</a></li><li class="breadcrumb-item"><a href="../chapters/Chapter_05_Random_walks.html"><span class="chapter-title">Random walks</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bayesian Probability Theory: Applications in the Physical Sciences</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bayesian Probability Theory</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/00_Introduction_to_R.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Introduction to R for Bayesian Inference</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: FOUNDATIONS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_01_The_meaning_of_probability.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The meaning of ‘probability’</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_02_Basic_definitions_for_frequentist_statistics_and_Bayesian_in.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Basic definitions for frequentist statistics and Bayesian inference</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_03_Bayesian_inference.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bayesian inference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: PROBABILITY DISTRIBUTIONS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_04_Combinatorics.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Combinatorics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_05_Random_walks.html" class="sidebar-item-text sidebar-link active"><span class="chapter-title">Random walks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_06_Limit_theorems.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Limit theorems</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_07_Continuous_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Continuous distributions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_08_The_central_limit_theorem.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The central limit theorem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_09_Poisson_processes_and_waiting_times.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Poisson processes and waiting times</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: PARAMETER ESTIMATION</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_14_Bayesian_parameter_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Bayesian parameter estimation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_15_Frequentist_parameter_estimation.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Frequentist parameter estimation</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: HYPOTHESIS TESTING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_17_The_Bayesian_way.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The Bayesian way</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_18_The_frequentist_approach.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">The frequentist approach</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_19_Sampling_distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">19</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_20_Comparison_of_Bayesian_and_frequentist_hypothesis_tests.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Comparison of Bayesian and frequentist hypothesis tests</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART V: MONTE CARLO &amp; MCMC METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_29_Numerical_integration.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Numerical integration</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_30_Monte_Carlo_methods.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Monte Carlo methods</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Chapter_31_Nested_sampling.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Nested sampling</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDICES</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/Appendix_Discrete_Distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-title">Discrete Distributions &amp; Bayesian Inference</span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#number-of-unrestricted-paths-delta-boldsymboly-and-boldsymboln-have-the-same-parity" id="toc-number-of-unrestricted-paths-delta-boldsymboly-and-boldsymboln-have-the-same-parity" class="nav-link active" data-scroll-target="#number-of-unrestricted-paths-delta-boldsymboly-and-boldsymboln-have-the-same-parity">Number of unrestricted paths ( <span class="math inline">\(\Delta \boldsymbol{y}\)</span> and <span class="math inline">\(\boldsymbol{N}\)</span> HAVE THE SAME PARITY)</a></li>
+  <li><a href="#number-of-abscissa-avoiding-paths-from--lefty_0right-to--lefty_nright-in-n-steps" id="toc-number-of-abscissa-avoiding-paths-from--lefty_0right-to--lefty_nright-in-n-steps" class="nav-link" data-scroll-target="#number-of-abscissa-avoiding-paths-from--lefty_0right-to--lefty_nright-in-n-steps">Number of abscissa avoiding paths from <span class="math inline">\(-\left|y_{0}^{*}\right|\)</span> to <span class="math inline">\(-\left|y_{N}^{*}\right|\)</span> IN <span class="math inline">\(N\)</span> steps</a></li>
+  <li><a href="#probability-for-being-in-lead-for-the-first-time-at-step-n2-l1" id="toc-probability-for-being-in-lead-for-the-first-time-at-step-n2-l1" class="nav-link" data-scroll-target="#probability-for-being-in-lead-for-the-first-time-at-step-n2-l1">Probability for being in lead for the first time AT STEP <span class="math inline">\(N=2 L+1\)</span></a></li>
+  <li><a href="#probability-for-ever-being-in-the-lead" id="toc-probability-for-ever-being-in-the-lead" class="nav-link" data-scroll-target="#probability-for-ever-being-in-the-lead">Probability for ever being in the lead</a></li>
+  <li><a href="#probability-for-boldsymbolu-boldsymbold-in-random-walk-with-two-absorbing-walls" id="toc-probability-for-boldsymbolu-boldsymbold-in-random-walk-with-two-absorbing-walls" class="nav-link" data-scroll-target="#probability-for-boldsymbolu-boldsymbold-in-random-walk-with-two-absorbing-walls">Probability for ( <span class="math inline">\(\boldsymbol{u}, \boldsymbol{d}\)</span> ) IN RANDOM WALK WITH TWO ABSORBING WALLS</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">6</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/Chapter_04_Combinatorics.html">PART II: PROBABILITY DISTRIBUTIONS</a></li><li class="breadcrumb-item"><a href="../chapters/Chapter_05_Random_walks.html"><span class="chapter-title">Random walks</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-title">Random walks</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>In this chapter, we consider a few random walk problems that are of great importance in statistical physics and in different guises for data analysis. The simplest one has already been discussed before. These problems also allow us to get acquainted with the various combinatorial tools discussed so far, and with the concept of generating functions. A thorough analysis of a wide range of random walk problems, along with useful mathematical tools, can be found in [218].</p>
+<section id="first-return" class="level3">
+<h3 class="anchored" data-anchor-id="first-return">5.1 First return</h3>
+<p>As a first example we consider a one-dimensional random walk and determine the probability that a walker returns to his initial position for the first time after <span class="math inline">\(n\)</span> steps. This probability allows us to answer the question of how long a random walk takes to come back to the origin and whether this will happen at all. The number of steps <span class="math inline">\(n\)</span> to return to the origin is apparently even, <span class="math inline">\(n=2 m\)</span>. In addition, we consider the probability that the walker returns to his initial position after <span class="math inline">\(n\)</span> steps, no matter if it is the first return. We introduce the corresponding propositions &gt; <span class="math inline">\(f_{n}\)</span> : First return after <span class="math inline">\(n\)</span> steps. &gt; <span class="math inline">\(r_{n}\)</span> : Return after <span class="math inline">\(n\)</span> steps.</p>
+<p>The sought-for probability is <span class="math inline">\(P\left(f_{n} \mid p, \mathcal{I}\right)\)</span>, while the probability for the arbitrary return is <span class="math inline">\(P\left(r_{n} \mid p, \mathcal{I}\right)\)</span>. The latter probability is simply a binomial distribution</p>
+<p><span class="math display">\[
+P\left(r_{2 m} \mid p, \mathcal{I}\right)=P\left(N_{r}=m \mid N=2 m, p, \mathcal{I}\right)=\binom{2 m}{m} p^{m} q^{m}
+\]</span></p>
+<p>The value of this probability for <span class="math inline">\(m=0\)</span> is <span class="math inline">\(P\left(r_{0} \mid p, \mathcal{I}\right)=1\)</span>, which is alright, we only have to stretch the meaning of ‘return’. For <span class="math inline">\(f_{n}\)</span>, however, return really means that the walker has to leave his initial position first, so <span class="math inline">\(P\left(f_{0} \mid p, \mathcal{I}\right) \stackrel{!}{=} 0\)</span>. The corresponding generating function of <span class="math inline">\(P\left(r_{2 m} \mid p, \mathcal{I}\right)\)</span> is</p>
+<p><span class="math display">\[
+\phi_{r}(z)=\sum_{m=0}^{\infty} P\left(r_{2 m} \mid p, \mathcal{I}\right) z^{2 m}=\sum_{m=0}^{\infty}\binom{2 m}{m}\left(p q z^{2}\right)^{m}
+\]</span></p>
+<p>In order to simplify the characteristic function, it is advantageous to express the binomial coefficient with the negative binomial as outlined in Appendix equation (A.23) [p.&nbsp;605]:</p>
+<p><span class="math display">\[
+\binom{2 m}{m}=2^{2 m}(-1)^{m}\binom{-\frac{1}{2}}{m} .
+\]</span></p>
+<p>Hence, we have</p>
+<p><span class="math display">\[
+\phi_{r}(z)=\sum_{m=0}^{\infty}\binom{-\frac{1}{2}}{m}\left(-4 p q z^{2}\right)^{m}=\left(1-4 p q z^{2}\right)^{-1 / 2}
+\]</span></p>
+<p>The sum over all propositions yields</p>
+<p><span class="math display">\[
+\begin{equation*}
+\sum_{m=0}^{\infty} P\left(r_{2 m} \mid p, \mathcal{I}\right)=\phi(z=1)=\left.\left(1-4 p q z^{2}\right)^{-\frac{1}{2}}\right|_{z=1}=(1-4 p q)^{-\frac{1}{2}} . \tag{5.1}
+\end{equation*}
+\]</span></p>
+<p>The result can exceed 1 , since the propositions are not mutually exclusive. Next, we decompose the proposition <span class="math inline">\(r_{2 m}\)</span> such that we are able to compute the probability for <span class="math inline">\(f_{2 n}\)</span>. An arbitrary return at time <span class="math inline">\(2 m\)</span>, for <span class="math inline">\(m \geq 1\)</span>, implies that the walker returns for the first time after <span class="math inline">\(2 n\)</span> steps and in the remaining time <span class="math inline">\(2(m-n)\)</span> returns again (not necessarily for the first time). A special case is given if <span class="math inline">\(n=m\)</span>, i.e.&nbsp;the walker returns only once. In mathematical terms, we introduce the mutually exclusive propositions <span class="math inline">\(f_{2 n}\)</span> via the marginalization rule, and obtain for <span class="math inline">\(m \geq 1\)</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+P\left(r_{2 m} \mid p, \mathcal{I}\right) &amp; =\sum_{l=1}^{m} P\left(r_{2 m} \mid f_{2 l}, p, \mathcal{I}\right) P\left(f_{2 l} \mid p, \mathcal{I}\right) \\
+&amp; =\sum_{l=1}^{m} P\left(r_{2(m-l)} \mid p, \mathcal{I}\right) P\left(f_{2 l} \mid p, \mathcal{I}\right)
+\end{aligned}
+\]</span></p>
+<p>The last term of the sum, i.e.&nbsp;the one for <span class="math inline">\(l=m\)</span>, yields the correct contribution, since <span class="math inline">\(P\left(r_{0} \mid p, \mathcal{I}\right)=1\)</span>. As we have defined <span class="math inline">\(P\left(f_{0} \mid p, \mathcal{I}\right)=0\)</span>, we can extend the sum on the righthand side and include <span class="math inline">\(l=0\)</span> as well, resulting in a complete formula for the convolution. For the case <span class="math inline">\(m=0\)</span>, the equation does not hold. In order to cover also this limiting case we add a Kronecker <span class="math inline">\(\delta_{m, 0}\)</span> on the right-hand side and end up with the expression, which is now valid for <span class="math inline">\(m \geq 0\)</span></p>
+<p><span class="math display">\[
+P\left(r_{2 m} \mid p, \mathcal{I}\right)=\sum_{l=0}^{m} P\left(r_{2(m-l)} \mid p, \mathcal{I}\right) P\left(f_{2 l} \mid p, \mathcal{I}\right)+\delta_{m, 0}
+\]</span></p>
+<p>The generating function on the left-hand side is <span class="math inline">\(\phi_{r}(z)\)</span>. The generating function on the right-hand side is the sum of the characteristic function of the convolution and that of the Kronecker <span class="math inline">\(\delta\)</span>. The latter is 1 and we obtain</p>
+<p><span class="math display">\[
+\phi_{r}(z)=\phi_{r}(z) \cdot \phi_{f}(z)+1
+\]</span></p>
+<p>or rather</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp; \phi_{f}(z)=1-\phi_{r}(z)^{-1}  \tag{5.2a}\\
+&amp; \phi_{f}(z) \stackrel{(5.1)}{=} 1-\sqrt{1-4 p q z^{2}} \tag{5.2b}
+\end{align*}
+\]</span></p>
+<p>From the characteristic function we conclude a couple of important results. First of all, the probability that the walker returns at all, either after 2,4 , or any other even number of steps, is equal to the normalization, i.e.&nbsp;<span class="math inline">\(\phi_{f}(z=1)=1-\sqrt{1-4 p q}\)</span>, and hence the probability that the walker never returns to his initial position is <span class="math inline">\(\sqrt{1-4 p q}\)</span>. For <span class="math inline">\(p \neq q\)</span> this probability is greater than zero, which is plausible since in that case there is a drift/bias in the random walk. For <span class="math inline">\(p=q=\frac{1}{2}\)</span>, the return probability is 1 . Hence, the walker will definitely return to his initial position. An interesting quantity then is the mean waiting time for the first return, or rather the mean number of steps up to the first return:</p>
+<p><span class="math display">\[
+\langle m\rangle=\left.\frac{\partial}{\partial z} \phi_{f}(z)\right|_{z=1}=\left.2 p q(1-4 p q)^{-1 / 2}\right|_{p=q=\frac{1}{2}}=\infty .
+\]</span></p>
+<p>Although the walker will definitely return, on average it takes him an eternity. Next we will analyse the result in more detail. To this end we invoke Newton’s binomial theorem:</p>
+<p><span class="math display">\[
+\Phi_{f}(z)=1-\sqrt{1-4 p q z^{2}}=1-\sum_{n=0}^{\infty}\binom{\frac{1}{2}}{n}\left(-4 p q z^{2}\right)^{n} .
+\]</span></p>
+<p>Comparison with the definition of the generating function</p>
+<p><span class="math display">\[
+\Phi_{f}(z)=\sum_{m=0}^{\infty} p\left(f_{2 m} \mid p, \mathcal{I}\right) z^{2 m}
+\]</span></p>
+<p>reveals</p>
+<p><span class="math display">\[
+\text { for } m=0: \quad \begin{aligned}
+P\left(f_{0} \mid p, \mathcal{I}\right) &amp; =0 \\
+\text { for } m&gt;0: \quad P\left(f_{2 m} \mid p, \mathcal{I}\right) &amp; =-\binom{\frac{1}{2}}{m}(-4 p q)^{m} \\
+&amp; \stackrel{\text { (A.24a) }}{=}\binom{2 m}{m}(-4)^{-m} \frac{1}{2 m-1}(-4 p q)^{m} \\
+&amp; =\frac{1}{2 m-1} P_{\mathrm{B}}(m \mid N=2 m, p, \mathcal{I}) \\
+&amp; =\frac{1}{m \gg 1} \frac{(4 p q)^{m}}{2 m-1} \frac{\text { see (6.8) }}{\sqrt{4 \pi p q m}}
+\end{aligned}
+\]</span></p>
+<p>We are merely interested in the case <span class="math inline">\(p=q=1 / 2\)</span>. In this case we have, for <span class="math inline">\(m \gg 1\)</span> :</p>
+<p><span class="math display">\[
+P\left(f_{2 m} \mid p, \mathcal{I}\right)=\frac{1}{2 m} \frac{1}{\sqrt{\pi m}} \quad \text { see (6.8). }
+\]</span></p>
+<p>Apparently, in this case the median is <span class="math inline">\(\breve{m}=1\)</span> and the third quartile, which can be obtained by numerical inspection, is at <span class="math inline">\(m \approx 5\)</span>. Nonetheless, the mean value <span class="math inline">\(\langle m\rangle\)</span> diverges, since for large <span class="math inline">\(m\)</span> the probability decays only as <span class="math inline">\(m^{-\frac{3}{2}}\)</span>.</p>
+</section>
+<section id="first-return-in-2-d-and-3-d" class="level3">
+<h3 class="anchored" data-anchor-id="first-return-in-2-d-and-3-d">5.1.1 First return in 2-D and 3-D</h3>
+<p>Interestingly, equation (5.2a) is independent of the spatial dimension and we will use it for the computation of the first-return probability for two and three dimensions. We will only consider the isotropic case, with equal hopping probability in each direction. The explicit mention of this probability in the conditional part of the probabilities will be omitted. The key quantity that we need to compute is the generating function <span class="math inline">\(\phi_{r}(z=1)\)</span>, which could be determined similarly as in the 1-D case. However, there is actually a more elegant approach, which is particularly preferable for higher dimensions. To begin with, we consider the probability <span class="math inline">\(P_{n}(\boldsymbol{x})\)</span> that the walker will cover a distance <span class="math inline">\(\boldsymbol{x}\)</span> in <span class="math inline">\(n\)</span> steps, no matter how often the point <span class="math inline">\(\boldsymbol{x}\)</span> occurs throughout this journey. Based on the marginalization rule we can derive a simple recursion relation</p>
+<p><span class="math display">\[
+\begin{equation*}
+P_{n}(x)=\sum_{\Delta x} P_{n-1}(x-\Delta x) P_{1}(\Delta x) . \tag{5.3}
+\end{equation*}
+\]</span></p>
+<p>Next we introduce the Fourier transform of these terms, i.e.</p>
+<p><span class="math display">\[
+\begin{equation*}
+\tilde{P}_{n}(\boldsymbol{k}):=\sum_{\boldsymbol{x}} e^{i \boldsymbol{k} \boldsymbol{x}} P_{n}(\boldsymbol{x}), \quad \varepsilon(\boldsymbol{k}):=\sum_{\boldsymbol{x}} e^{i \boldsymbol{k} \boldsymbol{x}} P_{1}(\boldsymbol{x}), \tag{5.4}
+\end{equation*}
+\]</span></p>
+<p>where the sum runs over all points of the simple cubic lattice of size <span class="math inline">\(N=L^{D}\)</span>, with <span class="math inline">\(D\)</span> being the spatial dimension of the lattice. Throughout the calculation we assume a finite lattice and at the end we will consider <span class="math inline">\(N \rightarrow \infty\)</span>. Moreover, we assume periodic boundary conditions, which have no influence on the result for the infinite lattice but simplify the calculations. In the statistical context the Fourier transform is also called the ‘characteristic function’. It will be discussed in more detail in Section 7.8 [p.&nbsp;124], where we will also prove that the characteristic function of a convolution, i.e.&nbsp;an expression like equation (5.3), is simply the product of the characteristic functions of the individual factors. Then</p>
+<p><span class="math display">\[
+\tilde{P}_{n}(\boldsymbol{k})=\tilde{P}_{n-1}(\boldsymbol{k}) \tilde{P}_{1}(\boldsymbol{k})=[\varepsilon(\boldsymbol{k})]^{n} .
+\]</span></p>
+<p>The inverse Fourier transform immediately yields the aspired probability</p>
+<p><span class="math display">\[
+P_{n}(x)=\frac{1}{N} \sum_{k}^{1 . \text { b.z. }} e^{-i k x}[\varepsilon(k)]^{n},
+\]</span></p>
+<p>where the sum covers the first Brillouin zone and the wavevectors are <span class="math inline">\(k_{\alpha}=\frac{2 \pi}{L} n_{\alpha}\)</span>. Since we are interested in an infinite lattice, we can now replace the sum by an integral and we also restrict the further discussion to <span class="math inline">\(\boldsymbol{x}=\mathbf{0}\)</span>, relevant for the first-return probability</p>
+<p><span class="math display">\[
+P_{n}(\boldsymbol{x})=\frac{1}{(2 \pi)^{D}} \int_{-\pi}^{\pi} d^{D} k[\varepsilon(\boldsymbol{k})]^{n}
+\]</span></p>
+<p>We employ this expression for the evaluation of the generating function <span class="math inline">\(\phi_{r}(z=1)\)</span> :</p>
+<p><span class="math display">\[
+\begin{align*}
+\phi_{r}(z=1) &amp; =\sum_{n=0}^{\infty} P_{n}(\mathbf{0})=\frac{1}{(2 \pi)^{D}} \int_{-\pi}^{\pi} d^{D} k \sum_{n=0}^{\infty}[\varepsilon(\boldsymbol{k})]^{n} \\
+&amp; =\frac{1}{(2 \pi)^{D}} \int_{-\pi}^{\pi} d^{D} k \frac{1}{1-\varepsilon(\boldsymbol{k})} . \tag{5.5}
+\end{align*}
+\]</span></p>
+<p>Finally, we compute <span class="math inline">\(\varepsilon(\boldsymbol{k})\)</span> :</p>
+<p><span class="math display">\[
+\varepsilon(\boldsymbol{k})=\sum_{\boldsymbol{x}}^{i \boldsymbol{k} \boldsymbol{x}} P_{1}(\boldsymbol{x})=\frac{1}{2 D} \sum_{\alpha=1}^{D}\left(e^{i k_{\alpha}}+e^{-i k_{\alpha}}\right)=\frac{1}{D} \sum_{\alpha=1}^{D} \cos \left(k_{\alpha}\right) .
+\]</span></p>
+<p>Apart from the prefactor this is the tight-binding dispersion, for which the density of states (dos) can be found in the literature. Now the numerical evaluation of the integral in equation (5.5) is straightforward and not really demanding, but it is worth mentioning that there is an even more elegant way to proceed. As standard in solid-state physics, we introduce the density of states (dos) <span class="math inline">\(\rho(\varepsilon)\)</span>, which reduces the integral in equation (5.5) to a onedimensional integral</p>
+<p><span class="math display">\[
+\begin{equation*}
+\phi_{r}(z=1)=\int_{-1}^{1} d \varepsilon \frac{\rho(\varepsilon)}{1-\varepsilon} \xi, \quad \rho(\varepsilon):=\frac{1}{(2 \pi)^{D}} \int_{-\pi}^{\pi} d^{D} k \delta(\varepsilon-\varepsilon(\boldsymbol{k})) \tag{5.6}
+\end{equation*}
+\]</span></p>
+<p>The dos for the 2-D lattice can be found in [59]. For our purposes, we merely need that <span class="math inline">\(\rho(\varepsilon)\)</span> is finite for <span class="math inline">\(\varepsilon \rightarrow D\)</span>, resulting in a logarithmic divergence and <span class="math inline">\(\phi_{r}^{(2-D)}(z=1)=\infty\)</span>. According to equation (5.2a), we find <span class="math inline">\(\phi_{f}^{(2-D)}(z=1)=1\)</span>. In other words, the walker will definitely return to his starting position.</p>
+<p>The situation is different in three spatial dimensions, because the dos now vanishes at the band edges <span class="math inline">\(\varepsilon \rightarrow \pm 1\)</span>, and the integral in equation (5.6) yields a finite value. For the detailed calculation we employed the dos expressed in terms of complete elliptic integrals, as reported in [99]. Straightforward numerical integration of the integral yields <span class="math inline">\(\phi_{r}(z=1)=1.516\)</span>, resulting in <span class="math inline">\(\phi_{f}(z=1)=0.341\)</span>. Apparently, it is now very likely ( <span class="math inline">\(P=\)</span> 0.659 ) that the walker will never return to the origin of his journey. Hence a well-meant piece of advice in [91] reads: ‘one should not get drunk in more than two dimensions’.</p>
+</section>
+<section id="first-lead" class="level3">
+<h3 class="anchored" data-anchor-id="first-lead">5.2 First lead</h3>
+<p>Next we will study a related question, which will become important in the context of hypothesis testing. Given a Bernoulli experiment with two alternative outcomes called success and failure, what is the probability that it takes <span class="math inline">\(N\)</span> trials before the total number of successes exceeds for the first time the total number of the failures. We call this event first lead. It is expedient to translate the problem into the random walk (Brownian motion) language. The problem of first lead is equivalent to a random walk with up (success) and down (failure) moves, and we seek the probability that the random walk occurs above the abscissa for the first time at step <span class="math inline">\(N\)</span>. For the analysis we introduce the number <span class="math inline">\(n_{u}\)</span> of up steps and the number <span class="math inline">\(n_{d}\)</span> of down steps. The total number is <span class="math inline">\(N=n_{u}+n_{d}\)</span>. Clearly, the ‘first lead’ can only occur for an odd number <span class="math inline">\(N=2 L+1\)</span> of trials and, right before the first lead, the random walk has to be balanced, i.e.&nbsp;<span class="math inline">\(n_{u}=n_{d}\)</span>. This return event need not be the first, but the walker shall never cross the abscissa before. We call this return from below in <span class="math inline">\(2 L\)</span> steps. Therefore, the probability for the first lead in <span class="math inline">\(N=2 L+1\)</span> steps is equal to the probability ( <span class="math inline">\(p\)</span> ) for the final step upwards times the probability for a return from below in <span class="math inline">\(2 L\)</span> steps.</p>
+<p>Now we define the relevant propositions:</p>
+<p><span class="math display">\[
+\begin{aligned}
+L_{2 L+1} &amp; : \text { First lead at step } 2 L+1 . \\
+F_{2 L}^{b} &amp; : \text { First return from below at step } 2 L .
+\end{aligned}
+\]</span></p>
+<p>The probability for the ‘first return from below’ in <span class="math inline">\(2 L\)</span> steps is <span class="math inline">\((p q)^{L}\)</span> times the number of paths from <span class="math inline">\((0,0)\)</span> to <span class="math inline">\((2 L, 0)\)</span> that are never above the abscissa. This number is equivalent to the number <span class="math inline">\(\mathcal{N}\left(y_{0}, y_{N} \mid y&lt;0, N=2 L, \mathcal{I}\right)\)</span> of paths from <span class="math inline">\((0,-1)\)</span> to <span class="math inline">\((2 L,-1)\)</span> that never touch the abscissa. The sought-for probability is therefore</p>
+<p><span class="math display">\[
+\begin{equation*}
+P\left(L_{2 L+1} \mid p, \mathcal{I}\right)=p^{L+1} q^{L} \mathcal{N}\left(y_{0}, y_{N} \mid y&lt;0, N=2 L, \mathcal{I}\right) . \tag{5.7}
+\end{equation*}
+\]</span></p>
+<p>Such restricted random walks can best be analysed based on the ‘reflection principle’ [170] that we will briefly outline in the next section.</p>
+</section>
+<section id="reflection-principle" class="level3">
+<h3 class="anchored" data-anchor-id="reflection-principle">5.2.1 Reflection principle</h3>
+<p>Here we consider the more general case of a random walk that starts at time <span class="math inline">\(t=0\)</span> at a negative position <span class="math inline">\(y_{0}=-\left|y_{0}^{*}\right|\)</span> and ends again after <span class="math inline">\(N\)</span> time steps at a negative position <span class="math inline">\(y_{N}=-\left|y_{N}^{*}\right|\)</span>. We are interested in the number of paths between these points, that never reach <span class="math inline">\(y=0\)</span>. A representative path is depicted in Figure 5.1 as a dashed curve. This number is apparently equal to the number of unrestricted paths minus the number of paths that reach <span class="math inline">\(y=0\)</span> at least once. The number of unrestricted paths is homogeneous in <span class="math inline">\(y\)</span>, i.e.</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp; \mathcal{N}\left(y_{0}, y_{N} \mid N, \mathcal{I}\right)=\mathcal{N}(0, \Delta y \mid N, \mathcal{I}) \\
+&amp; \Delta y:=y_{N}-y_{0}
+\end{aligned}
+\]</span></p>
+<p>In order to cover a distance of <span class="math inline">\(\Delta y\)</span> in <span class="math inline">\(N\)</span> steps, the number <span class="math inline">\(L\)</span> of downward steps is given by</p>
+<p><span class="math display">\[
+\begin{aligned}
+\Delta y &amp; =(N-L)-L=N-2 L, \\
+L &amp; =\frac{N-\Delta y}{2} .
+\end{aligned}
+\]</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show plot</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter_05_Random_walks_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure 5.1 Illustration of the reflection principle.</p>
+<p>Apparently, we have to take into account that in an even (odd) number <span class="math inline">\(N\)</span> only an even (odd) distance can be covered. In other words, <span class="math inline">\(\Delta y\)</span> and <span class="math inline">\(N\)</span> need to have the same parity. So we have</p>
+</section>
+<section id="number-of-unrestricted-paths-delta-boldsymboly-and-boldsymboln-have-the-same-parity" class="level2">
+<h2 class="anchored" data-anchor-id="number-of-unrestricted-paths-delta-boldsymboly-and-boldsymboln-have-the-same-parity">Number of unrestricted paths ( <span class="math inline">\(\Delta \boldsymbol{y}\)</span> and <span class="math inline">\(\boldsymbol{N}\)</span> HAVE THE SAME PARITY)</h2>
+<p><span class="math display">\[
+\begin{align*}
+\mathcal{N}(0, \Delta y \mid N, \mathcal{I}) &amp; =\binom{N}{L(\Delta y)}  \tag{5.8a}\\
+L(\Delta y) &amp; :=\frac{N-\Delta y}{2} \tag{5.8b}
+\end{align*}
+\]</span></p>
+<p>In the present case, we have</p>
+<p><span class="math display">\[
+\begin{equation*}
+\Delta y=\Delta y^{*}:=y_{N}-y_{0}=-\left(\left|y_{N}^{*}\right|-\left|y_{0}^{*}\right|\right) . \tag{5.9}
+\end{equation*}
+\]</span></p>
+<p>Next we determine the number of those paths that start at <span class="math inline">\(y_{0}=-\left|y_{0}^{*}\right|\)</span>, end at <span class="math inline">\(y_{N}=-\left|y_{N}^{*}\right|\)</span>, and which reach <span class="math inline">\(y=0\)</span> at least once. A representative path is depicted in Figure 5.1, marked by circles. This number is easily determined based on the reflection principle [170]. To this end, we identify the initial part of the path up to the point where it first reaches the abscissa. Then we reflect this part of the path on the abscissa, as represented in Figure 5.1 with the curve marked with stars. All such reflected paths start at <span class="math inline">\(y_{0}=+\left|y_{0}^{*}\right|\)</span> and end at <span class="math inline">\(y_{N}=-\left|y_{N}^{*}\right|\)</span>. One can easily convince oneself that there is a one-to-one correspondence between the set of restricted paths we are interested in and the set <span class="math inline">\(\mathcal{R}\)</span> of unrestricted paths from <span class="math inline">\(y_{0}=\left|y_{0}^{*}\right|\)</span> to <span class="math inline">\(y_{N}=-\left|y_{N}^{*}\right|\)</span>. In other words, for each restricted path there is by construction a reflected path. And for each path of the set <span class="math inline">\(\mathcal{R}\)</span> there is a path of the original set of restricted paths that we can construct by simply applying the reflection described before. Therefore, the number <span class="math inline">\(N_{r}\)</span> of restricted paths, starting at <span class="math inline">\(y_{0}=-\left|y_{0}^{*}\right|\)</span> and reaching at least once <span class="math inline">\(y=0\)</span>, is equal to the number of unrestricted paths starting at <span class="math inline">\(y_{0}=\left|y_{0}^{*}\right|\)</span> :</p>
+<p><span class="math display">\[
+N_{r}=\mathcal{N}\left(0,-\left|y_{N}^{*}\right|-\left|y_{0}^{*}\right| \mid N, \mathcal{I}\right)=\binom{N}{\frac{N+\left|y_{N}^{*}\right|+\left|y_{0}^{*}\right|}{2}}=\binom{N}{L\left(\Delta y^{*}\right)+\left|y_{0}^{*}\right|} .
+\]</span></p>
+<p>Finally, the sought-for number of paths starting at <span class="math inline">\(y=-\left|y_{0}^{*}\right|\)</span> and reaching <span class="math inline">\(y=-\left|y_{N}^{*}\right|\)</span> in <span class="math inline">\(N\)</span> steps avoiding the abscissa is given by</p>
+</section>
+<section id="number-of-abscissa-avoiding-paths-from--lefty_0right-to--lefty_nright-in-n-steps" class="level2">
+<h2 class="anchored" data-anchor-id="number-of-abscissa-avoiding-paths-from--lefty_0right-to--lefty_nright-in-n-steps">Number of abscissa avoiding paths from <span class="math inline">\(-\left|y_{0}^{*}\right|\)</span> to <span class="math inline">\(-\left|y_{N}^{*}\right|\)</span> IN <span class="math inline">\(N\)</span> steps</h2>
+<p><span class="math display">\[
+\begin{align*}
+\mathcal{N}\left(-\left|y_{0}^{*}\right|,-\left|y_{N}^{*}\right| \mid y&lt;0, N, \mathcal{I}\right) &amp; =\binom{N}{L\left(\Delta y^{*}\right)}-\binom{N}{L\left(\Delta y^{*}\right)+\left|y_{0}^{*}\right|}  \tag{5.10}\\
+L\left(\Delta y^{*}\right) &amp; :=\frac{N+\left(\left|y_{N}^{*}\right|-\left|y_{0}^{*}\right|\right)}{2} .
+\end{align*}
+\]</span></p>
+<section id="first-lead-problem-continued" class="level3">
+<h3 class="anchored" data-anchor-id="first-lead-problem-continued">5.2.2 First lead problem continued</h3>
+<p>Now we are prepared to compute the probability for the first lead. The key quantity in equation (5.2) is</p>
+<p><span class="math display">\[
+\mathcal{N}\left(y_{0}=-1, y_{N}=-1 \mid N=2 L, \mathcal{I}\right) .
+\]</span></p>
+<p>Hence, <span class="math inline">\(\left|y_{N}^{*}\right|=\left|y_{0}^{*}\right|=1\)</span> and we get, according to equation (5.10),</p>
+<p><span class="math display">\[
+\mathcal{N}\left(y_{0}=-1, y_{N}=-1 \mid N=2 L, \mathcal{I}\right)=\binom{2 L}{L}-\binom{2 L}{L+1}=\binom{2 L}{L} \frac{1}{L+1} .
+\]</span></p>
+<p>Eventually we find</p>
+</section>
+</section>
+<section id="probability-for-being-in-lead-for-the-first-time-at-step-n2-l1" class="level2">
+<h2 class="anchored" data-anchor-id="probability-for-being-in-lead-for-the-first-time-at-step-n2-l1">Probability for being in lead for the first time AT STEP <span class="math inline">\(N=2 L+1\)</span></h2>
+<p><span class="math display">\[
+\begin{equation*}
+P\left(L_{2 L+1} \mid p, \mathcal{I}\right)=\binom{2 L}{L} \frac{1}{L+1} p^{L+1} q^{L} \tag{5.11}
+\end{equation*}
+\]</span></p>
+<p>Next we will determine the corresponding generating function</p>
+<p><span class="math display">\[
+\begin{aligned}
+\Phi_{L}(z) &amp; =\sum_{L=0}^{\infty}\binom{2 L}{L} \frac{1}{L+1} p^{L+1} q^{L} z^{L} \\
+&amp; =\int_{0}^{p} d x \sum_{L=0}^{\infty}\binom{2 L}{L}(x q z)^{L}
+\end{aligned}
+\]</span></p>
+<p>We use equation (A.23) [p.&nbsp;605] to transform the binomial coefficient</p>
+<p><span class="math display">\[
+\begin{aligned}
+\Phi_{L}(z) &amp; =\int_{0}^{p} d x \sum_{L=0}^{\infty}\binom{-\frac{1}{2}}{L}(-4 x q z)^{L} \\
+&amp; =\int_{0}^{p} d x(1-4 x q z)^{-1 / 2}
+\end{aligned}
+\]</span></p>
+<p>resulting in</p>
+<p>Generating function FOR FIRST LEAD</p>
+<p><span class="math display">\[
+\begin{equation*}
+\Phi_{L}(z)=\frac{1}{2 q z}(1-\sqrt{1-4 p q z}) . \tag{5.12}
+\end{equation*}
+\]</span></p>
+<p>The probability <span class="math inline">\(P(L \mid P, \mathcal{I})\)</span> that a lead occurs at all is, according to equation (5.2), given by</p>
+<p><span class="math display">\[
+\begin{aligned}
+P(L \mid P, \mathcal{I}) &amp; =\Phi_{L}(z=1)=\frac{1}{2 q}(1-\sqrt{1-4 p(1-p)}) \\
+&amp; =\frac{1}{2 q}\left(1-\sqrt{(1-2 p)^{2}}\right) \\
+&amp; =\frac{1}{2 q}(1-|1-2 p|)
+\end{aligned}
+\]</span></p>
+</section>
+<section id="probability-for-ever-being-in-the-lead" class="level2">
+<h2 class="anchored" data-anchor-id="probability-for-ever-being-in-the-lead">Probability for ever being in the lead</h2>
+<p><span class="math display">\[
+p_{L}=\left\{\begin{array}{ll}
+1 &amp; \text { for } p \geq \frac{1}{2} \\
+\frac{p}{1-p} &amp; \text { for } p&lt;\frac{1}{2}
+\end{array}\right. \text {. }
+\]</span></p>
+<p>The probability is one for <span class="math inline">\(p \geq 1 / 2\)</span> and it decreases with decreasing <span class="math inline">\(p&lt;1 / 2\)</span> and is zero for <span class="math inline">\(p=0\)</span>. It should be noted that the presented problem is closely related to Bertrand’s ballot</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show plot</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter_05_Random_walks_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure 5.2 Random walk with absorbing wall. The walk starts at the square ( 0,0 ) and ends either at <span class="math inline">\(y=0\)</span> or <span class="math inline">\(x=N\)</span> (here <span class="math inline">\(N=16\)</span> ), whatever happens first. The pairs of numbers at the margins are ( <span class="math inline">\(u, d\)</span> ), i.e.&nbsp;the number of upward/downward steps required to reach the boundary.</p>
+<p>problem [67], which gives the probability that in an election where candidate A receives <span class="math inline">\(P\)</span> and candidate B receives <span class="math inline">\(Q\)</span> votes, with <span class="math inline">\(P&gt;Q\)</span>, A will be ahead of B throughout the entire count.</p>
+<section id="random-walk-with-absorbing-wall" class="level3">
+<h3 class="anchored" data-anchor-id="random-walk-with-absorbing-wall">5.3 Random walk with absorbing wall</h3>
+<p>Next we consider a similar random walk setup, depicted in Figure 5.2. In addition to the absorbing wall <span class="math inline">\({ }^{1}\)</span> at <span class="math inline">\(y=0\)</span>, that we used before, we also introduce an absorbing wall at <span class="math inline">\(x=N^{*}\)</span>. In other words, the random walk introduced in the first lead problem will end after <span class="math inline">\(N^{*}\)</span> steps, at the latest. Here we will denote the number of upward/downward steps by <span class="math inline">\(u / d\)</span>. The pairs ( <span class="math inline">\(u, d\)</span> ) of steps, required to reach specific points on the boundary, are given in Figure 5.2 as well.</p>
+<p>We have to treat the two stopping events separately. The absorption condition at the upper boundary is identical to the stopping in the first lead case. In this case, <span class="math inline">\((u, d)= (L+1, L)\)</span>, with <span class="math inline">\(L \in\left\{0,1, \ldots, L^{*}-1\right\}\)</span>, where</p>
+<p><span class="math display">\[
+\begin{equation*}
+L^{*}=\left\lceil\frac{N^{*}}{2}\right\rceil . \tag{5.13}
+\end{equation*}
+\]</span></p>
+<p>[^1]The probability that the walk ends with <span class="math inline">\((L+1, L)\)</span> at the top boundary is identical to <span class="math inline">\(P\left(L_{2 L+1} \mid p, \mathcal{I}\right)\)</span> given in equation (5.11):</p>
+<p><span class="math display">\[
+P((L+1, L) \mid p, \mathcal{I})=\boldsymbol{I}\left(0 \leq L&lt;L^{*}\right)\binom{2 L}{L} \frac{1}{L+1} p^{L+1} q^{L} .
+\]</span></p>
+<p>If the walk reaches the right boundary, then <span class="math inline">\((u, d)=\left(N^{*}-L, L\right)\)</span>, with <span class="math inline">\(L \in\left\{L^{*}, \ldots, N^{*}\right\}\)</span>. This situation is also covered by equation (5.10), with <span class="math inline">\(N=N^{*}\)</span> and <span class="math inline">\(L\left(\Delta y^{*}\right)=L\)</span> :</p>
+<p><span class="math display">\[
+\begin{aligned}
+P\left(\left(N^{*}-L, L\right) \mid p, N^{*}, \mathcal{I}\right) &amp; =\boldsymbol{1}\left(L^{*} \leq L \leq N^{*}\right)\left[\binom{N^{*}}{L}-\binom{N^{*}}{L+1}\right] p^{N^{*}-L} q^{L} \\
+&amp; =\boldsymbol{1}\left(L^{*} \leq L \leq N^{*}\right)\binom{N^{*}}{L}\left(1-\frac{N^{*}-L}{L+1}\right) p^{N^{*}-L} q^{L}
+\end{aligned}
+\]</span></p>
+</section>
+</section>
+<section id="probability-for-boldsymbolu-boldsymbold-in-random-walk-with-two-absorbing-walls" class="level2">
+<h2 class="anchored" data-anchor-id="probability-for-boldsymbolu-boldsymbold-in-random-walk-with-two-absorbing-walls">Probability for ( <span class="math inline">\(\boldsymbol{u}, \boldsymbol{d}\)</span> ) IN RANDOM WALK WITH TWO ABSORBING WALLS</h2>
+<p><span class="math display">\[
+\begin{align*}
+P\left(u, d \mid p, N^{*}, \mathcal{I}\right)= &amp; p^{u} q^{d}\left\{\delta_{d, u-1} \mathbb{I}\left(0 \leq d&lt;L^{*}\right)\binom{2 d}{d} \frac{1}{d+1} p^{u} q^{d}\right.  \tag{5.14}\\
+&amp; \left.+\delta_{d, N^{*}-u} \mathbb{I}\left(L^{*} \leq d \leq N^{*}\right)\binom{N^{*}}{d}\left(1-\frac{N^{*}-d}{d+1}\right)\right\} \\
+L^{*}:= &amp; \left\lceil\frac{N^{*}}{2}\right\rceil
+\end{align*}
+\]</span></p>
+<p>Based on Figure 5.2 we see that the points where the boundary is hit are uniquely specified by the number <span class="math inline">\(d\)</span> of downward moves. The probability to find a walker at such a point is given by</p>
+<p><span class="math display">\[
+\begin{aligned}
+P\left(d \mid p, N^{*}, \mathcal{I}\right)= &amp; \left\{\boldsymbol{I}\left(0 \leq d&lt;L^{*}\right)\binom{2 d}{d} \frac{1}{d+1} p^{u} q^{d}\right. \\
+&amp; \left.+\boldsymbol{I}\left(L^{*} \leq d \leq 2 L^{*}\right)\binom{2 L^{*}}{d}\left(1-\frac{2 L^{*}-d}{d+1}\right)\right\} \times p^{u} q^{d}
+\end{aligned}
+\]</span></p>
+<div class="cell">
+<details class="code-fold">
+<summary>Show plot</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Chapter_05_Random_walks_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Figure 5.3 Marginal probability <span class="math inline">\(P\left(d \mid N^{*}, p, \mathcal{I}\right)\)</span> for the number <span class="math inline">\(d\)</span> of downward moves for different values of <span class="math inline">\(p\)</span>.</p>
+<p>Representative results are depicted in Figure 5.3. Apparently, there is always a peak in the probability distribution for short distances. Another peak crops up for <span class="math inline">\(p \leq 0.5\)</span>, i.e.&nbsp;in the regime where there is a finite probability in the first lead problem that the walk never stops. We will come back to these results in Section 20.2.3 [p.&nbsp;329], where they are used to determine the impact of stopping criteria on hypothesis testing.</p>
+</section>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section">6</h2>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/Chapter_04_Combinatorics.html" class="pagination-link" aria-label="Combinatorics">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-title">Combinatorics</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/Chapter_06_Limit_theorems.html" class="pagination-link" aria-label="Limit theorems">
+        <span class="nav-page-text"><span class="chapter-title">Limit theorems</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Random walks</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>In this chapter, we consider a few random walk problems that are of great importance in statistical physics and in different guises for data analysis. The simplest one has already been discussed before. These problems also allow us to get acquainted with the various combinatorial tools discussed so far, and with the concept of generating functions. A thorough analysis of a wide range of random walk problems, along with useful mathematical tools, can be found in <span class="co">[</span><span class="ot">218</span><span class="co">]</span>.</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5.1 First return</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>As a first example we consider a one-dimensional random walk and determine the probability that a walker returns to his initial position for the first time after $n$ steps. This probability allows us to answer the question of how long a random walk takes to come back to the origin and whether this will happen at all. The number of steps $n$ to return to the origin is apparently even, $n=2 m$. In addition, we consider the probability that the walker returns to his initial position after $n$ steps, no matter if it is the first return. We introduce the corresponding propositions</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; $f_{n}$ : First return after $n$ steps.</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; $r_{n}$ : Return after $n$ steps.</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>The sought-for probability is $P\left(f_{n} \mid p, \mathcal{I}\right)$, while the probability for the arbitrary return is $P\left(r_{n} \mid p, \mathcal{I}\right)$. The latter probability is simply a binomial distribution</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>P\left(r_{2 m} \mid p, \mathcal{I}\right)=P\left(N_{r}=m \mid N=2 m, p, \mathcal{I}\right)=\binom{2 m}{m} p^{m} q^{m}</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>The value of this probability for $m=0$ is $P\left(r_{0} \mid p, \mathcal{I}\right)=1$, which is alright, we only have to stretch the meaning of 'return'. For $f_{n}$, however, return really means that the walker has to leave his initial position first, so $P\left(f_{0} \mid p, \mathcal{I}\right) \stackrel{!}{=} 0$. The corresponding generating function of $P\left(r_{2 m} \mid p, \mathcal{I}\right)$ is</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>\phi_{r}(z)=\sum_{m=0}^{\infty} P\left(r_{2 m} \mid p, \mathcal{I}\right) z^{2 m}=\sum_{m=0}^{\infty}\binom{2 m}{m}\left(p q z^{2}\right)^{m}</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>In order to simplify the characteristic function, it is advantageous to express the binomial coefficient with the negative binomial as outlined in Appendix equation (A.23) <span class="co">[</span><span class="ot">p. 605</span><span class="co">]</span>:</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>\binom{2 m}{m}=2^{2 m}(-1)^{m}\binom{-\frac{1}{2}}{m} .</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>Hence, we have</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>\phi_{r}(z)=\sum_{m=0}^{\infty}\binom{-\frac{1}{2}}{m}\left(-4 p q z^{2}\right)^{m}=\left(1-4 p q z^{2}\right)^{-1 / 2}</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>The sum over all propositions yields</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>\sum_{m=0}^{\infty} P\left(r_{2 m} \mid p, \mathcal{I}\right)=\phi(z=1)=\left.\left(1-4 p q z^{2}\right)^{-\frac{1}{2}}\right|_{z=1}=(1-4 p q)^{-\frac{1}{2}} . \tag{5.1}</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>The result can exceed 1 , since the propositions are not mutually exclusive. Next, we decompose the proposition $r_{2 m}$ such that we are able to compute the probability for $f_{2 n}$. An arbitrary return at time $2 m$, for $m \geq 1$, implies that the walker returns for the first time after $2 n$ steps and in the remaining time $2(m-n)$ returns again (not necessarily for the first time). A special case is given if $n=m$, i.e. the walker returns only once. In mathematical terms, we introduce the mutually exclusive propositions $f_{2 n}$ via the marginalization rule, and obtain for $m \geq 1$</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>P\left(r_{2 m} \mid p, \mathcal{I}\right) &amp; =\sum_{l=1}^{m} P\left(r_{2 m} \mid f_{2 l}, p, \mathcal{I}\right) P\left(f_{2 l} \mid p, \mathcal{I}\right) <span class="sc">\\</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>&amp; =\sum_{l=1}^{m} P\left(r_{2(m-l)} \mid p, \mathcal{I}\right) P\left(f_{2 l} \mid p, \mathcal{I}\right)</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>The last term of the sum, i.e. the one for $l=m$, yields the correct contribution, since $P\left(r_{0} \mid p, \mathcal{I}\right)=1$. As we have defined $P\left(f_{0} \mid p, \mathcal{I}\right)=0$, we can extend the sum on the righthand side and include $l=0$ as well, resulting in a complete formula for the convolution. For the case $m=0$, the equation does not hold. In order to cover also this limiting case we add a Kronecker $\delta_{m, 0}$ on the right-hand side and end up with the expression, which is now valid for $m \geq 0$</span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>P\left(r_{2 m} \mid p, \mathcal{I}\right)=\sum_{l=0}^{m} P\left(r_{2(m-l)} \mid p, \mathcal{I}\right) P\left(f_{2 l} \mid p, \mathcal{I}\right)+\delta_{m, 0}</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>The generating function on the left-hand side is $\phi_{r}(z)$. The generating function on the right-hand side is the sum of the characteristic function of the convolution and that of the Kronecker $\delta$. The latter is 1 and we obtain</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>\phi_{r}(z)=\phi_{r}(z) \cdot \phi_{f}(z)+1</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>or rather</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>&amp; \phi_{f}(z)=1-\phi_{r}(z)^{-1}  \tag{5.2a}<span class="sc">\\</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>&amp; \phi_{f}(z) \stackrel{(5.1)}{=} 1-\sqrt{1-4 p q z^{2}} \tag{5.2b}</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>From the characteristic function we conclude a couple of important results. First of all, the probability that the walker returns at all, either after 2,4 , or any other even number of steps, is equal to the normalization, i.e. $\phi_{f}(z=1)=1-\sqrt{1-4 p q}$, and hence the probability that the walker never returns to his initial position is $\sqrt{1-4 p q}$. For $p \neq q$ this probability is greater than zero, which is plausible since in that case there is a drift/bias in the random walk. For $p=q=\frac{1}{2}$, the return probability is 1 . Hence, the walker will definitely return to his initial position. An interesting quantity then is the mean waiting time for the first return, or rather the mean number of steps up to the first return:</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>\langle m\rangle=\left.\frac{\partial}{\partial z} \phi_{f}(z)\right|_{z=1}=\left.2 p q(1-4 p q)^{-1 / 2}\right|_{p=q=\frac{1}{2}}=\infty .</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>Although the walker will definitely return, on average it takes him an eternity. Next we will analyse the result in more detail. To this end we invoke Newton's binomial theorem:</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>\Phi_{f}(z)=1-\sqrt{1-4 p q z^{2}}=1-\sum_{n=0}^{\infty}\binom{\frac{1}{2}}{n}\left(-4 p q z^{2}\right)^{n} .</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>Comparison with the definition of the generating function</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>\Phi_{f}(z)=\sum_{m=0}^{\infty} p\left(f_{2 m} \mid p, \mathcal{I}\right) z^{2 m}</span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>reveals</span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>\text { for } m=0: \quad \begin{aligned}</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>P\left(f_{0} \mid p, \mathcal{I}\right) &amp; =0 <span class="sc">\\</span></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>\text { for } m&gt;0: \quad P\left(f_{2 m} \mid p, \mathcal{I}\right) &amp; =-\binom{\frac{1}{2}}{m}(-4 p q)^{m} <span class="sc">\\</span></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>&amp; \stackrel{\text { (A.24a) }}{=}\binom{2 m}{m}(-4)^{-m} \frac{1}{2 m-1}(-4 p q)^{m} <span class="sc">\\</span></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>&amp; =\frac{1}{2 m-1} P_{\mathrm{B}}(m \mid N=2 m, p, \mathcal{I}) <span class="sc">\\</span></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>&amp; =\frac{1}{m \gg 1} \frac{(4 p q)^{m}}{2 m-1} \frac{\text { see (6.8) }}{\sqrt{4 \pi p q m}}</span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>We are merely interested in the case $p=q=1 / 2$. In this case we have, for $m \gg 1$ :</span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>P\left(f_{2 m} \mid p, \mathcal{I}\right)=\frac{1}{2 m} \frac{1}{\sqrt{\pi m}} \quad \text { see (6.8). }</span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>Apparently, in this case the median is $\breve{m}=1$ and the third quartile, which can be obtained by numerical inspection, is at $m \approx 5$. Nonetheless, the mean value $\langle m\rangle$ diverges, since for large $m$ the probability decays only as $m^{-\frac{3}{2}}$.</span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5.1.1 First return in 2-D and 3-D</span></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>Interestingly, equation (5.2a) is independent of the spatial dimension and we will use it for the computation of the first-return probability for two and three dimensions. We will only consider the isotropic case, with equal hopping probability in each direction. The explicit mention of this probability in the conditional part of the probabilities will be omitted. The key quantity that we need to compute is the generating function $\phi_{r}(z=1)$, which could be determined similarly as in the 1-D case. However, there is actually a more elegant approach, which is particularly preferable for higher dimensions. To begin with, we consider the probability $P_{n}(\boldsymbol{x})$ that the walker will cover a distance $\boldsymbol{x}$ in $n$ steps, no matter how often the point $\boldsymbol{x}$ occurs throughout this journey. Based on the marginalization rule we can derive a simple recursion relation</span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>P_{n}(x)=\sum_{\Delta x} P_{n-1}(x-\Delta x) P_{1}(\Delta x) . \tag{5.3}</span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>Next we introduce the Fourier transform of these terms, i.e.</span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>\tilde{P}_{n}(\boldsymbol{k}):=\sum_{\boldsymbol{x}} e^{i \boldsymbol{k} \boldsymbol{x}} P_{n}(\boldsymbol{x}), \quad \varepsilon(\boldsymbol{k}):=\sum_{\boldsymbol{x}} e^{i \boldsymbol{k} \boldsymbol{x}} P_{1}(\boldsymbol{x}), \tag{5.4}</span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>where the sum runs over all points of the simple cubic lattice of size $N=L^{D}$, with $D$ being the spatial dimension of the lattice. Throughout the calculation we assume a finite lattice and at the end we will consider $N \rightarrow \infty$. Moreover, we assume periodic boundary conditions, which have no influence on the result for the infinite lattice but simplify the calculations. In the statistical context the Fourier transform is also called the 'characteristic function'. It will be discussed in more detail in Section 7.8 <span class="co">[</span><span class="ot">p. 124</span><span class="co">]</span>, where we will also prove that the characteristic function of a convolution, i.e. an expression like equation (5.3), is simply the product of the characteristic functions of the individual factors. Then</span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>\tilde{P}_{n}(\boldsymbol{k})=\tilde{P}_{n-1}(\boldsymbol{k}) \tilde{P}_{1}(\boldsymbol{k})=<span class="co">[</span><span class="ot">\varepsilon(\boldsymbol{k})</span><span class="co">]</span>^{n} .</span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>The inverse Fourier transform immediately yields the aspired probability</span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a>P_{n}(x)=\frac{1}{N} \sum_{k}^{1 . \text { b.z. }} e^{-i k x}<span class="co">[</span><span class="ot">\varepsilon(k)</span><span class="co">]</span>^{n},</span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a>where the sum covers the first Brillouin zone and the wavevectors are $k_{\alpha}=\frac{2 \pi}{L} n_{\alpha}$. Since we are interested in an infinite lattice, we can now replace the sum by an integral and we also restrict the further discussion to $\boldsymbol{x}=\mathbf{0}$, relevant for the first-return probability</span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a>P_{n}(\boldsymbol{x})=\frac{1}{(2 \pi)^{D}} \int_{-\pi}^{\pi} d^{D} k<span class="co">[</span><span class="ot">\varepsilon(\boldsymbol{k})</span><span class="co">]</span>^{n}</span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a>We employ this expression for the evaluation of the generating function $\phi_{r}(z=1)$ :</span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>\phi_{r}(z=1) &amp; =\sum_{n=0}^{\infty} P_{n}(\mathbf{0})=\frac{1}{(2 \pi)^{D}} \int_{-\pi}^{\pi} d^{D} k \sum_{n=0}^{\infty}<span class="co">[</span><span class="ot">\varepsilon(\boldsymbol{k})</span><span class="co">]</span>^{n} <span class="sc">\\</span></span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a>&amp; =\frac{1}{(2 \pi)^{D}} \int_{-\pi}^{\pi} d^{D} k \frac{1}{1-\varepsilon(\boldsymbol{k})} . \tag{5.5}</span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>Finally, we compute $\varepsilon(\boldsymbol{k})$ :</span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a>\varepsilon(\boldsymbol{k})=\sum_{\boldsymbol{x}}^{i \boldsymbol{k} \boldsymbol{x}} P_{1}(\boldsymbol{x})=\frac{1}{2 D} \sum_{\alpha=1}^{D}\left(e^{i k_{\alpha}}+e^{-i k_{\alpha}}\right)=\frac{1}{D} \sum_{\alpha=1}^{D} \cos \left(k_{\alpha}\right) .</span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a>Apart from the prefactor this is the tight-binding dispersion, for which the density of states (dos) can be found in the literature. Now the numerical evaluation of the integral in equation (5.5) is straightforward and not really demanding, but it is worth mentioning that there is an even more elegant way to proceed. As standard in solid-state physics, we introduce the density of states (dos) $\rho(\varepsilon)$, which reduces the integral in equation (5.5) to a onedimensional integral</span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a>\phi_{r}(z=1)=\int_{-1}^{1} d \varepsilon \frac{\rho(\varepsilon)}{1-\varepsilon} \xi, \quad \rho(\varepsilon):=\frac{1}{(2 \pi)^{D}} \int_{-\pi}^{\pi} d^{D} k \delta(\varepsilon-\varepsilon(\boldsymbol{k})) \tag{5.6}</span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a>The dos for the 2-D lattice can be found in <span class="co">[</span><span class="ot">59</span><span class="co">]</span>. For our purposes, we merely need that $\rho(\varepsilon)$ is finite for $\varepsilon \rightarrow D$, resulting in a logarithmic divergence and $\phi_{r}^{(2-D)}(z=1)=\infty$. According to equation (5.2a), we find $\phi_{f}^{(2-D)}(z=1)=1$. In other words, the walker will definitely return to his starting position.</span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a>The situation is different in three spatial dimensions, because the dos now vanishes at the band edges $\varepsilon \rightarrow \pm 1$, and the integral in equation (5.6) yields a finite value. For the detailed calculation we employed the dos expressed in terms of complete elliptic integrals, as reported in <span class="co">[</span><span class="ot">99</span><span class="co">]</span>. Straightforward numerical integration of the integral yields $\phi_{r}(z=1)=1.516$, resulting in $\phi_{f}(z=1)=0.341$. Apparently, it is now very likely ( $P=$ 0.659 ) that the walker will never return to the origin of his journey. Hence a well-meant piece of advice in <span class="co">[</span><span class="ot">91</span><span class="co">]</span> reads: 'one should not get drunk in more than two dimensions'.</span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5.2 First lead</span></span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a>Next we will study a related question, which will become important in the context of hypothesis testing. Given a Bernoulli experiment with two alternative outcomes called</span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a>success and failure, what is the probability that it takes $N$ trials before the total number of successes exceeds for the first time the total number of the failures. We call this event first lead. It is expedient to translate the problem into the random walk (Brownian motion) language. The problem of first lead is equivalent to a random walk with up (success) and down (failure) moves, and we seek the probability that the random walk occurs above the abscissa for the first time at step $N$. For the analysis we introduce the number $n_{u}$ of up steps and the number $n_{d}$ of down steps. The total number is $N=n_{u}+n_{d}$. Clearly, the 'first lead' can only occur for an odd number $N=2 L+1$ of trials and, right before the first lead, the random walk has to be balanced, i.e. $n_{u}=n_{d}$. This return event need not be the first, but the walker shall never cross the abscissa before. We call this return from below in $2 L$ steps. Therefore, the probability for the first lead in $N=2 L+1$ steps is equal to the probability ( $p$ ) for the final step upwards times the probability for a return from below in $2 L$ steps.</span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a>Now we define the relevant propositions:</span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a>L_{2 L+1} &amp; : \text { First lead at step } 2 L+1 . <span class="sc">\\</span></span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a>F_{2 L}^{b} &amp; : \text { First return from below at step } 2 L .</span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a>The probability for the 'first return from below' in $2 L$ steps is $(p q)^{L}$ times the number of paths from $(0,0)$ to $(2 L, 0)$ that are never above the abscissa. This number is equivalent to the number $\mathcal{N}\left(y_{0}, y_{N} \mid y&lt;0, N=2 L, \mathcal{I}\right)$ of paths from $(0,-1)$ to $(2 L,-1)$ that never touch the abscissa. The sought-for probability is therefore</span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a>P\left(L_{2 L+1} \mid p, \mathcal{I}\right)=p^{L+1} q^{L} \mathcal{N}\left(y_{0}, y_{N} \mid y&lt;0, N=2 L, \mathcal{I}\right) . \tag{5.7}</span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a>Such restricted random walks can best be analysed based on the 'reflection principle' <span class="co">[</span><span class="ot">170</span><span class="co">]</span> that we will briefly outline in the next section.</span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5.2.1 Reflection principle</span></span>
+<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a>Here we consider the more general case of a random walk that starts at time $t=0$ at a negative position $y_{0}=-\left|y_{0}^{*}\right|$ and ends again after $N$ time steps at a negative position $y_{N}=-\left|y_{N}^{*}\right|$. We are interested in the number of paths between these points, that never reach $y=0$. A representative path is depicted in Figure 5.1 as a dashed curve. This number is apparently equal to the number of unrestricted paths minus the number of paths that reach $y=0$ at least once. The number of unrestricted paths is homogeneous in $y$, i.e.</span>
+<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-204"><a href="#cb4-204" aria-hidden="true" tabindex="-1"></a>&amp; \mathcal{N}\left(y_{0}, y_{N} \mid N, \mathcal{I}\right)=\mathcal{N}(0, \Delta y \mid N, \mathcal{I}) <span class="sc">\\</span></span>
+<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a>&amp; \Delta y:=y_{N}-y_{0}</span>
+<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a>In order to cover a distance of $\Delta y$ in $N$ steps, the number $L$ of downward steps is given by</span>
+<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a>\Delta y &amp; =(N-L)-L=N-2 L, <span class="sc">\\</span></span>
+<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a>L &amp; =\frac{N-\Delta y}{2} .</span>
+<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Show plot"</span></span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a>Figure 5.1 Illustration of the reflection principle.</span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>Apparently, we have to take into account that in an even (odd) number $N$ only an even (odd) distance can be covered. In other words, $\Delta y$ and $N$ need to have the same parity. So we have</span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a><span class="fu">## Number of unrestricted paths ( $\Delta \boldsymbol{y}$ and $\boldsymbol{N}$ HAVE THE SAME PARITY)</span></span>
+<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a>\mathcal{N}(0, \Delta y \mid N, \mathcal{I}) &amp; =\binom{N}{L(\Delta y)}  \tag{5.8a}<span class="sc">\\</span></span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>L(\Delta y) &amp; :=\frac{N-\Delta y}{2} \tag{5.8b}</span>
+<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>In the present case, we have</span>
+<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>\Delta y=\Delta y^{*}:=y_{N}-y_{0}=-\left(\left|y_{N}^{*}\right|-\left|y_{0}^{*}\right|\right) . \tag{5.9}</span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a>Next we determine the number of those paths that start at $y_{0}=-\left|y_{0}^{*}\right|$, end at $y_{N}=-\left|y_{N}^{*}\right|$, and which reach $y=0$ at least once. A representative path is depicted in Figure 5.1, marked by circles. This number is easily determined based on the reflection principle [170]. To this end, we identify the initial part of the path up to the point where it first reaches the abscissa. Then we reflect this part of the path on the abscissa, as represented in Figure 5.1 with the curve marked with stars. All such reflected paths start at $y_{0}=+\left|y_{0}^{*}\right|$ and end at $y_{N}=-\left|y_{N}^{*}\right|$. One can easily convince oneself that there is a one-to-one correspondence</span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a>between the set of restricted paths we are interested in and the set $\mathcal{R}$ of unrestricted paths from $y_{0}=\left|y_{0}^{*}\right|$ to $y_{N}=-\left|y_{N}^{*}\right|$. In other words, for each restricted path there is by construction a reflected path. And for each path of the set $\mathcal{R}$ there is a path of the original set of restricted paths that we can construct by simply applying the reflection described before. Therefore, the number $N_{r}$ of restricted paths, starting at $y_{0}=-\left|y_{0}^{*}\right|$ and reaching at least once $y=0$, is equal to the number of unrestricted paths starting at $y_{0}=\left|y_{0}^{*}\right|$ :</span>
+<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a>N_{r}=\mathcal{N}\left(0,-\left|y_{N}^{*}\right|-\left|y_{0}^{*}\right| \mid N, \mathcal{I}\right)=\binom{N}{\frac{N+\left|y_{N}^{*}\right|+\left|y_{0}^{*}\right|}{2}}=\binom{N}{L\left(\Delta y^{*}\right)+\left|y_{0}^{*}\right|} .</span>
+<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a>Finally, the sought-for number of paths starting at $y=-\left|y_{0}^{*}\right|$ and reaching $y=-\left|y_{N}^{*}\right|$ in $N$ steps avoiding the abscissa is given by</span>
+<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a><span class="fu">## Number of abscissa avoiding paths from $-\left|y_{0}^{*}\right|$ to $-\left|y_{N}^{*}\right|$ IN $N$ steps</span></span>
+<span id="cb4-256"><a href="#cb4-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-257"><a href="#cb4-257" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-259"><a href="#cb4-259" aria-hidden="true" tabindex="-1"></a>\mathcal{N}\left(-\left|y_{0}^{*}\right|,-\left|y_{N}^{*}\right| \mid y&lt;0, N, \mathcal{I}\right) &amp; =\binom{N}{L\left(\Delta y^{*}\right)}-\binom{N}{L\left(\Delta y^{*}\right)+\left|y_{0}^{*}\right|}  \tag{5.10}<span class="sc">\\</span></span>
+<span id="cb4-260"><a href="#cb4-260" aria-hidden="true" tabindex="-1"></a>L\left(\Delta y^{*}\right) &amp; :=\frac{N+\left(\left|y_{N}^{*}\right|-\left|y_{0}^{*}\right|\right)}{2} .</span>
+<span id="cb4-261"><a href="#cb4-261" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-262"><a href="#cb4-262" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-263"><a href="#cb4-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-264"><a href="#cb4-264" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5.2.2 First lead problem continued</span></span>
+<span id="cb4-265"><a href="#cb4-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-266"><a href="#cb4-266" aria-hidden="true" tabindex="-1"></a>Now we are prepared to compute the probability for the first lead. The key quantity in equation (5.2) is</span>
+<span id="cb4-267"><a href="#cb4-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-268"><a href="#cb4-268" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-269"><a href="#cb4-269" aria-hidden="true" tabindex="-1"></a>\mathcal{N}\left(y_{0}=-1, y_{N}=-1 \mid N=2 L, \mathcal{I}\right) .</span>
+<span id="cb4-270"><a href="#cb4-270" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-271"><a href="#cb4-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-272"><a href="#cb4-272" aria-hidden="true" tabindex="-1"></a>Hence, $\left|y_{N}^{*}\right|=\left|y_{0}^{*}\right|=1$ and we get, according to equation (5.10),</span>
+<span id="cb4-273"><a href="#cb4-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-274"><a href="#cb4-274" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-275"><a href="#cb4-275" aria-hidden="true" tabindex="-1"></a>\mathcal{N}\left(y_{0}=-1, y_{N}=-1 \mid N=2 L, \mathcal{I}\right)=\binom{2 L}{L}-\binom{2 L}{L+1}=\binom{2 L}{L} \frac{1}{L+1} .</span>
+<span id="cb4-276"><a href="#cb4-276" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-277"><a href="#cb4-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-278"><a href="#cb4-278" aria-hidden="true" tabindex="-1"></a>Eventually we find</span>
+<span id="cb4-279"><a href="#cb4-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-280"><a href="#cb4-280" aria-hidden="true" tabindex="-1"></a><span class="fu">## Probability for being in lead for the first time AT STEP $N=2 L+1$</span></span>
+<span id="cb4-281"><a href="#cb4-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-282"><a href="#cb4-282" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-283"><a href="#cb4-283" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-284"><a href="#cb4-284" aria-hidden="true" tabindex="-1"></a>P\left(L_{2 L+1} \mid p, \mathcal{I}\right)=\binom{2 L}{L} \frac{1}{L+1} p^{L+1} q^{L} \tag{5.11}</span>
+<span id="cb4-285"><a href="#cb4-285" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-286"><a href="#cb4-286" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-287"><a href="#cb4-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-288"><a href="#cb4-288" aria-hidden="true" tabindex="-1"></a>Next we will determine the corresponding generating function</span>
+<span id="cb4-289"><a href="#cb4-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-290"><a href="#cb4-290" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-291"><a href="#cb4-291" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-292"><a href="#cb4-292" aria-hidden="true" tabindex="-1"></a>\Phi_{L}(z) &amp; =\sum_{L=0}^{\infty}\binom{2 L}{L} \frac{1}{L+1} p^{L+1} q^{L} z^{L} <span class="sc">\\</span></span>
+<span id="cb4-293"><a href="#cb4-293" aria-hidden="true" tabindex="-1"></a>&amp; =\int_{0}^{p} d x \sum_{L=0}^{\infty}\binom{2 L}{L}(x q z)^{L}</span>
+<span id="cb4-294"><a href="#cb4-294" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-295"><a href="#cb4-295" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-296"><a href="#cb4-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-297"><a href="#cb4-297" aria-hidden="true" tabindex="-1"></a>We use equation (A.23) <span class="co">[</span><span class="ot">p. 605</span><span class="co">]</span> to transform the binomial coefficient</span>
+<span id="cb4-298"><a href="#cb4-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-299"><a href="#cb4-299" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-300"><a href="#cb4-300" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-301"><a href="#cb4-301" aria-hidden="true" tabindex="-1"></a>\Phi_{L}(z) &amp; =\int_{0}^{p} d x \sum_{L=0}^{\infty}\binom{-\frac{1}{2}}{L}(-4 x q z)^{L} <span class="sc">\\</span></span>
+<span id="cb4-302"><a href="#cb4-302" aria-hidden="true" tabindex="-1"></a>&amp; =\int_{0}^{p} d x(1-4 x q z)^{-1 / 2}</span>
+<span id="cb4-303"><a href="#cb4-303" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-304"><a href="#cb4-304" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-305"><a href="#cb4-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-306"><a href="#cb4-306" aria-hidden="true" tabindex="-1"></a>resulting in</span>
+<span id="cb4-307"><a href="#cb4-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-308"><a href="#cb4-308" aria-hidden="true" tabindex="-1"></a>Generating function FOR FIRST LEAD</span>
+<span id="cb4-309"><a href="#cb4-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-310"><a href="#cb4-310" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-311"><a href="#cb4-311" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-312"><a href="#cb4-312" aria-hidden="true" tabindex="-1"></a>\Phi_{L}(z)=\frac{1}{2 q z}(1-\sqrt{1-4 p q z}) . \tag{5.12}</span>
+<span id="cb4-313"><a href="#cb4-313" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-314"><a href="#cb4-314" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-315"><a href="#cb4-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-316"><a href="#cb4-316" aria-hidden="true" tabindex="-1"></a>The probability $P(L \mid P, \mathcal{I})$ that a lead occurs at all is, according to equation (5.2), given by</span>
+<span id="cb4-317"><a href="#cb4-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-318"><a href="#cb4-318" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-319"><a href="#cb4-319" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-320"><a href="#cb4-320" aria-hidden="true" tabindex="-1"></a>P(L \mid P, \mathcal{I}) &amp; =\Phi_{L}(z=1)=\frac{1}{2 q}(1-\sqrt{1-4 p(1-p)}) <span class="sc">\\</span></span>
+<span id="cb4-321"><a href="#cb4-321" aria-hidden="true" tabindex="-1"></a>&amp; =\frac{1}{2 q}\left(1-\sqrt{(1-2 p)^{2}}\right) <span class="sc">\\</span></span>
+<span id="cb4-322"><a href="#cb4-322" aria-hidden="true" tabindex="-1"></a>&amp; =\frac{1}{2 q}(1-|1-2 p|)</span>
+<span id="cb4-323"><a href="#cb4-323" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-324"><a href="#cb4-324" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-325"><a href="#cb4-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-326"><a href="#cb4-326" aria-hidden="true" tabindex="-1"></a><span class="fu">## Probability for ever being in the lead</span></span>
+<span id="cb4-327"><a href="#cb4-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-328"><a href="#cb4-328" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-329"><a href="#cb4-329" aria-hidden="true" tabindex="-1"></a>p_{L}=\left<span class="sc">\{</span>\begin{array}{ll}</span>
+<span id="cb4-330"><a href="#cb4-330" aria-hidden="true" tabindex="-1"></a>1 &amp; \text { for } p \geq \frac{1}{2} <span class="sc">\\</span></span>
+<span id="cb4-331"><a href="#cb4-331" aria-hidden="true" tabindex="-1"></a>\frac{p}{1-p} &amp; \text { for } p&lt;\frac{1}{2}</span>
+<span id="cb4-332"><a href="#cb4-332" aria-hidden="true" tabindex="-1"></a>\end{array}\right. \text {. }</span>
+<span id="cb4-333"><a href="#cb4-333" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-334"><a href="#cb4-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-335"><a href="#cb4-335" aria-hidden="true" tabindex="-1"></a>The probability is one for $p \geq 1 / 2$ and it decreases with decreasing $p&lt;1 / 2$ and is zero for $p=0$. It should be noted that the presented problem is closely related to Bertrand's ballot</span>
+<span id="cb4-336"><a href="#cb4-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-339"><a href="#cb4-339" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-340"><a href="#cb4-340" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb4-341"><a href="#cb4-341" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Show plot"</span></span>
+<span id="cb4-342"><a href="#cb4-342" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span>
+<span id="cb4-343"><a href="#cb4-343" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-344"><a href="#cb4-344" aria-hidden="true" tabindex="-1"></a>Figure 5.2 Random walk with absorbing wall. The walk starts at the square ( 0,0 ) and ends either at $y=0$ or $x=N$ (here $N=16$ ), whatever happens first. The pairs of numbers at the margins are ( $u, d$ ), i.e. the number of upward/downward steps required to reach the boundary.</span>
+<span id="cb4-345"><a href="#cb4-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-346"><a href="#cb4-346" aria-hidden="true" tabindex="-1"></a>problem <span class="co">[</span><span class="ot">67</span><span class="co">]</span>, which gives the probability that in an election where candidate A receives $P$ and candidate B receives $Q$ votes, with $P&gt;Q$, A will be ahead of B throughout the entire count.</span>
+<span id="cb4-347"><a href="#cb4-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-348"><a href="#cb4-348" aria-hidden="true" tabindex="-1"></a><span class="fu">### 5.3 Random walk with absorbing wall</span></span>
+<span id="cb4-349"><a href="#cb4-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-350"><a href="#cb4-350" aria-hidden="true" tabindex="-1"></a>Next we consider a similar random walk setup, depicted in Figure 5.2. In addition to the absorbing wall ${ }^{1}$ at $y=0$, that we used before, we also introduce an absorbing wall at $x=N^{*}$. In other words, the random walk introduced in the first lead problem will end after $N^{*}$ steps, at the latest. Here we will denote the number of upward/downward steps by $u / d$. The pairs ( $u, d$ ) of steps, required to reach specific points on the boundary, are given in Figure 5.2 as well.</span>
+<span id="cb4-351"><a href="#cb4-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-352"><a href="#cb4-352" aria-hidden="true" tabindex="-1"></a>We have to treat the two stopping events separately. The absorption condition at the upper boundary is identical to the stopping in the first lead case. In this case, $(u, d)= (L+1, L)$, with $L \in\left<span class="sc">\{</span>0,1, \ldots, L^{*}-1\right<span class="sc">\}</span>$, where</span>
+<span id="cb4-353"><a href="#cb4-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-354"><a href="#cb4-354" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-355"><a href="#cb4-355" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-356"><a href="#cb4-356" aria-hidden="true" tabindex="-1"></a>L^{*}=\left\lceil\frac{N^{*}}{2}\right\rceil . \tag{5.13}</span>
+<span id="cb4-357"><a href="#cb4-357" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-358"><a href="#cb4-358" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-359"><a href="#cb4-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-360"><a href="#cb4-360" aria-hidden="true" tabindex="-1"></a><span class="ot">[^1]</span>The probability that the walk ends with $(L+1, L)$ at the top boundary is identical to $P\left(L_{2 L+1} \mid p, \mathcal{I}\right)$ given in equation (5.11):</span>
+<span id="cb4-361"><a href="#cb4-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-362"><a href="#cb4-362" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-363"><a href="#cb4-363" aria-hidden="true" tabindex="-1"></a>P((L+1, L) \mid p, \mathcal{I})=\boldsymbol{I}\left(0 \leq L&lt;L^{*}\right)\binom{2 L}{L} \frac{1}{L+1} p^{L+1} q^{L} .</span>
+<span id="cb4-364"><a href="#cb4-364" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-365"><a href="#cb4-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-366"><a href="#cb4-366" aria-hidden="true" tabindex="-1"></a>If the walk reaches the right boundary, then $(u, d)=\left(N^{*}-L, L\right)$, with $L \in\left\{L^{*}, \ldots, N^{*}\right\}$. This situation is also covered by equation (5.10), with $N=N^{*}$ and $L\left(\Delta y^{*}\right)=L$ :</span>
+<span id="cb4-367"><a href="#cb4-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-368"><a href="#cb4-368" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-369"><a href="#cb4-369" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-370"><a href="#cb4-370" aria-hidden="true" tabindex="-1"></a>P\left(\left(N^{*}-L, L\right) \mid p, N^{*}, \mathcal{I}\right) &amp; =\boldsymbol{1}\left(L^{*} \leq L \leq N^{*}\right)\left[\binom{N^{*}}{L}-\binom{N^{*}}{L+1}\right] p^{N^{*}-L} q^{L} <span class="sc">\\</span></span>
+<span id="cb4-371"><a href="#cb4-371" aria-hidden="true" tabindex="-1"></a>&amp; =\boldsymbol{1}\left(L^{*} \leq L \leq N^{*}\right)\binom{N^{*}}{L}\left(1-\frac{N^{*}-L}{L+1}\right) p^{N^{*}-L} q^{L}</span>
+<span id="cb4-372"><a href="#cb4-372" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-373"><a href="#cb4-373" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-374"><a href="#cb4-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-375"><a href="#cb4-375" aria-hidden="true" tabindex="-1"></a><span class="fu">## Probability for ( $\boldsymbol{u}, \boldsymbol{d}$ ) IN RANDOM WALK WITH TWO ABSORBING WALLS</span></span>
+<span id="cb4-376"><a href="#cb4-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-377"><a href="#cb4-377" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-378"><a href="#cb4-378" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-379"><a href="#cb4-379" aria-hidden="true" tabindex="-1"></a>P\left(u, d \mid p, N^{*}, \mathcal{I}\right)= &amp; p^{u} q^{d}\left\{\delta_{d, u-1} \mathbb{I}\left(0 \leq d&lt;L^{*}\right)\binom{2 d}{d} \frac{1}{d+1} p^{u} q^{d}\right.  \tag{5.14}<span class="sc">\\</span></span>
+<span id="cb4-380"><a href="#cb4-380" aria-hidden="true" tabindex="-1"></a>&amp; \left.+\delta_{d, N^{*}-u} \mathbb{I}\left(L^{*} \leq d \leq N^{*}\right)\binom{N^{*}}{d}\left(1-\frac{N^{*}-d}{d+1}\right)\right<span class="sc">\}</span> <span class="sc">\\</span></span>
+<span id="cb4-381"><a href="#cb4-381" aria-hidden="true" tabindex="-1"></a>L^{*}:= &amp; \left\lceil\frac{N^{*}}{2}\right\rceil</span>
+<span id="cb4-382"><a href="#cb4-382" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-383"><a href="#cb4-383" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-384"><a href="#cb4-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-385"><a href="#cb4-385" aria-hidden="true" tabindex="-1"></a>Based on Figure 5.2 we see that the points where the boundary is hit are uniquely specified by the number $d$ of downward moves. The probability to find a walker at such a point is given by</span>
+<span id="cb4-386"><a href="#cb4-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-387"><a href="#cb4-387" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-388"><a href="#cb4-388" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb4-389"><a href="#cb4-389" aria-hidden="true" tabindex="-1"></a>P\left(d \mid p, N^{*}, \mathcal{I}\right)= &amp; \left\{\boldsymbol{I}\left(0 \leq d&lt;L^{*}\right)\binom{2 d}{d} \frac{1}{d+1} p^{u} q^{d}\right. <span class="sc">\\</span></span>
+<span id="cb4-390"><a href="#cb4-390" aria-hidden="true" tabindex="-1"></a>&amp; \left.+\boldsymbol{I}\left(L^{*} \leq d \leq 2 L^{*}\right)\binom{2 L^{*}}{d}\left(1-\frac{2 L^{*}-d}{d+1}\right)\right<span class="sc">\}</span> \times p^{u} q^{d}</span>
+<span id="cb4-391"><a href="#cb4-391" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb4-392"><a href="#cb4-392" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb4-393"><a href="#cb4-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-396"><a href="#cb4-396" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-397"><a href="#cb4-397" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb4-398"><a href="#cb4-398" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-summary: "Show plot"</span></span>
+<span id="cb4-399"><a href="#cb4-399" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">1</span>, <span class="at">main=</span><span class="st">""</span>)</span>
+<span id="cb4-400"><a href="#cb4-400" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-401"><a href="#cb4-401" aria-hidden="true" tabindex="-1"></a>Figure 5.3 Marginal probability $P\left(d \mid N^{*}, p, \mathcal{I}\right)$ for the number $d$ of downward moves for different values of $p$.</span>
+<span id="cb4-402"><a href="#cb4-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-403"><a href="#cb4-403" aria-hidden="true" tabindex="-1"></a>Representative results are depicted in Figure 5.3. Apparently, there is always a peak in the probability distribution for short distances. Another peak crops up for $p \leq 0.5$, i.e. in the regime where there is a finite probability in the first lead problem that the walk never stops. We will come back to these results in Section 20.2.3 <span class="co">[</span><span class="ot">p. 329</span><span class="co">]</span>, where they are used to determine the impact of stopping criteria on hypothesis testing.</span>
+<span id="cb4-404"><a href="#cb4-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-405"><a href="#cb4-405" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
