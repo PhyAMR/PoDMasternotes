@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; PAC Learning – Machine Learning — Lecture Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/03-uniform-convergence.html" rel="next">
+<link href="../chapters/01-intro.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-intro.html">Supervised Learning</a></li><li class="breadcrumb-item"><a href="../chapters/02-pac-learning.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PAC Learning</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Machine Learning — Lecture Notes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Supervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction &amp; ML Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-pac-learning.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PAC Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-uniform-convergence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Uniform Convergence</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-bias-complexity-tradeoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Bias-Complexity Tradeoff</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-vc-dimension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">VC Dimension</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-model-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Model Selection</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-linear-predictors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Linear Predictors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-stochastic-gradient-descent.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Stochastic Gradient Descent</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-support-vector-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Support Vector Machines</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Kernel Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-boosting-trees-rf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Boosting, Decision Trees and Random Forests</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-neural-networks-cnn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Neural Networks and Convolutional Neural Networks</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Unsupervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Clustering</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-reinforcement-learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Reinforcement Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Exam Preparation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16-proofs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Proofs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17-exam-exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#pac-learnability" id="toc-pac-learnability" class="nav-link active" data-scroll-target="#pac-learnability"><span class="header-section-number">3.1</span> PAC learnability</a>
+  <ul class="collapse">
+  <li><a href="#agnostic-pac-learnability" id="toc-agnostic-pac-learnability" class="nav-link" data-scroll-target="#agnostic-pac-learnability"><span class="header-section-number">3.1.1</span> Agnostic PAC learnability</a></li>
+  </ul></li>
+  <li><a href="#a-more-general-learning-model" id="toc-a-more-general-learning-model" class="nav-link" data-scroll-target="#a-more-general-learning-model"><span class="header-section-number">3.2</span> A more general learning model</a></li>
+  <li><a href="#generalization-of-errors" id="toc-generalization-of-errors" class="nav-link" data-scroll-target="#generalization-of-errors"><span class="header-section-number">3.3</span> Generalization of errors</a>
+  <ul class="collapse">
+  <li><a href="#bayes-optimal-predictor" id="toc-bayes-optimal-predictor" class="nav-link" data-scroll-target="#bayes-optimal-predictor"><span class="header-section-number">3.3.1</span> Bayes Optimal Predictor</a></li>
+  <li><a href="#agnostic-pac-learnability-1" id="toc-agnostic-pac-learnability-1" class="nav-link" data-scroll-target="#agnostic-pac-learnability-1"><span class="header-section-number">3.3.2</span> Agnostic PAC learnability</a></li>
+  </ul></li>
+  <li><a href="#new-types-of-classification" id="toc-new-types-of-classification" class="nav-link" data-scroll-target="#new-types-of-classification"><span class="header-section-number">3.4</span> New types of classification</a>
+  <ul class="collapse">
+  <li><a href="#generalized-loss-function" id="toc-generalized-loss-function" class="nav-link" data-scroll-target="#generalized-loss-function"><span class="header-section-number">3.4.1</span> Generalized loss function</a></li>
+  <li><a href="#relevance-of-errors" id="toc-relevance-of-errors" class="nav-link" data-scroll-target="#relevance-of-errors"><span class="header-section-number">3.4.2</span> Relevance of errors</a></li>
+  <li><a href="#generalized-agnostic-pac-learnability" id="toc-generalized-agnostic-pac-learnability" class="nav-link" data-scroll-target="#generalized-agnostic-pac-learnability"><span class="header-section-number">3.4.3</span> Generalized agnostic PAC learnability</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-intro.html">Supervised Learning</a></li><li class="breadcrumb-item"><a href="../chapters/02-pac-learning.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PAC Learning</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PAC Learning</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>As we will see below, through the assumptions made above we are not certain of finding the correct predictor that completely nullifies the true error, but we will have the possibility of getting as close as possible. In particular, we will say that the learning is <strong>probably approximately correct</strong> and in this sense we will speak of <strong>PAC learning</strong>.</p>
+<p>In detail, we mean the following:</p>
+<ul>
+<li><strong>Approximately</strong>: we cannot be sure of finding the predictor <span class="math inline">\(h^*(x)\)</span>, but we can certainly get close to it. Quantitatively, we define a threshold through the <strong>accuracy parameter</strong> <span class="math inline">\(\epsilon\)</span> and we will say that we are satisfied when <span class="math inline">\(L_{\mathcal{D},f}\left(h_S\right)\leqslant\epsilon\)</span>.</li>
+<li><strong>Probably</strong>: even if the number of extracted points is high and we are sure that they are i.i.d., it can still happen that the set <span class="math inline">\(\mathcal{S}\)</span> is not representative to the point of not allowing us to find the hypothesis that allows us to limit the true error. Usually, a <strong>confidence parameter</strong> <span class="math inline">\(\delta\)</span> is defined, which represents the probability that <span class="math inline">\(\mathcal{S}\)</span> is not a representative set; consequently, <span class="math inline">\(1-\delta\)</span> will represent the probability that the ERM on the hypothesis class <span class="math inline">\(\mathcal{H}\)</span> produces a model with an acceptable error rate.</li>
+</ul>
+<p>On these ideas rests the following fundamental theorem:</p>
+<div class="theorem" name="Theorem on PAC learning">
+<p>Let <span class="math inline">\(\mathcal{H}\)</span> be a <strong>finite</strong> hypothesis class and let <span class="math inline">\(\delta\in(0,1)\)</span>, <span class="math inline">\(\epsilon\in(0,1)\)</span> and <span class="math inline">\(m\in\mathbb{N}\)</span> such that</p>
+<p><span class="math display">\[
+    m\geqslant\frac{\log\left(\frac{\abs{\mathcal{H}}}{\delta}\right)}{\epsilon}
+\]</span></p>
+<p>Then, for <strong>any prediction rule</strong> <span class="math inline">\(\boldsymbol{f}\)</span> and for <strong>any distribution</strong> <span class="math inline">\(\boldsymbol{\mathcal{D}}\)</span> for which the <strong>realizability assumption</strong> is valid, with a probability equal to or greater than <span class="math inline">\(1-\delta\)</span> it holds that <strong>for every</strong> hypothesis <span class="math inline">\(h_S\)</span>, to which the ERM is applied with respect to a learning set <span class="math inline">\(\mathcal{S}\)</span> with <span class="math inline">\(m\)</span> i.i.d. points from <span class="math inline">\(\mathcal{D}\)</span>, it holds:</p>
+<p><span class="math display">\[
+    \boxed{L_{\mathcal{D},f}\left(h_S\right)\leqslant\epsilon}
+\]</span></p>
+</div>
+<p>Usually in practice one starts from <span class="math inline">\(m\)</span>, which is known, and chooses to increase or decrease the parameters <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(\delta\)</span> to find the best algorithm that fits the data: since <span class="math inline">\(m\)</span> is inversely proportional to both parameters, as they decrease it is necessary for the number of points in <span class="math inline">\(\mathcal{S}\)</span> to be larger for the hypotheses of the theorem to be respected, and this is quite obvious if we think about the fact that increasing <span class="math inline">\(m\)</span> means increasing the representativeness of <span class="math inline">\(\mathcal{S}\)</span>.</p>
+<p>The crucial point of the whole theorem is that we know of the existence of “unlucky” learning sets that lead to fallacious functions, since for them the empirical risk (low) is very different from the true error (high); we therefore place an upper limit on the probability of sampling these “deceptive” sets given by the parameter <span class="math inline">\(\delta\)</span> and we fix a tolerance threshold for the true error through <span class="math inline">\(\epsilon\)</span>. In all this, the proof of the theorem <em>(It is not required for this course and will therefore not be reported.)</em> clarifies that it is the <em>finiteness</em> of the class <span class="math inline">\(\mathcal{H}\)</span> that guarantees that there is no overfitting with a probability of <span class="math inline">\(1-\delta\)</span>.</p>
+<section id="pac-learnability" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="pac-learnability"><span class="header-section-number">3.1</span> PAC learnability</h2>
+<p>The concept of PAC learning is also useful for defining a property related to it, which is that of <strong>PAC learnability</strong>.</p>
+<p>First of all, we generally indicate with <span class="math inline">\(m_{\mathcal{H}}(\epsilon,\delta)\)</span> a natural number associated with the class <span class="math inline">\(\mathcal{H}\)</span> called <strong>sample complexity</strong>; being dependent on the parameters <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(\delta\)</span>, which we know go from <span class="math inline">\(0\)</span> to <span class="math inline">\(1\)</span>, then we can consider <span class="math inline">\(m_{\mathcal{H}}\)</span> as a function of the type <span class="math inline">\((0,1)^2\to\mathbb{N}\)</span>.</p>
+<p>At this point we can make the property explicit as follows:</p>
+<div class="definition">
+<p>A hypothesis class <span class="math inline">\(\mathcal{H}\)</span> is <strong>PAC learnable</strong> if there exists a function and a learning algorithm with the following property:</p>
+<pre><code>- for every $\epsilon,\delta\in(0,1)$
+- for every distribution $\mathcal{D}$ on $\mathcal{X}$
+- for every prediction rule $f:x\to\{0,1\}$
+- if the **realizability assumption** is valid with respect to $\mathcal{H}$, $\mathcal{D}$ and $f$</code></pre>
+<p>then when the learning algorithm is run on <span class="math inline">\(m\geqslant m_{\mathcal{H}}(\epsilon,\delta)\)</span> i.i.d. points according to <span class="math inline">\(\mathcal{D}\)</span> and labeled according to <span class="math inline">\(f\)</span> it returns a hypothesis <span class="math inline">\(h\)</span> such that</p>
+<p><span class="math display">\[
+    L_{\mathcal{D},f}(h)\leqslant\epsilon
+\]</span></p>
+<p>with a probability of <em>at least</em> <span class="math inline">\(1-\delta\)</span>.</p>
+</div>
+<p>The other side of the coin of this definition is that there are certainly hypothesis classes that are <em>not</em> PAC learnable: for such hypotheses, therefore, there will always be the possibility of having an overfitting of the data, regardless of how large the learning set is chosen.</p>
+<p>PAC learnability therefore guarantees the possibility of approaching with a certain confidence an algorithm with a true error close to zero, provided that the size of <span class="math inline">\(\mathcal{S}\)</span> is increased.</p>
+<p>From the theorem on PAC learning and the definition of PAC learnability, an obvious corollary follows:</p>
+<div class="theorem" name="Corollary on PAC learning">
+<p>Every <strong>finite</strong> hypothesis class is PAC learnable with sample complexity</p>
+<p><span class="math display">\[
+    m_{\mathcal{H}}(\epsilon,\delta)\leqslant\frac{\log\left(\frac{\abs{\mathcal{H}}}{\delta}\right)}{\epsilon}
+\]</span></p>
+</div>
+<p>It should be borne in mind that the one just written is a <em>sufficient</em> but <em>not necessary</em> condition, in the sense that there are hypothesis classes that do not respect the condition <span class="citation" data-cites="eq:pac-learning-corollario">(<a href="#ref-eq:pac-learning-corollario" role="doc-biblioref"><strong>eq:pac-learning-corollario?</strong></a>)</span> but which are still PAC learnable.</p>
+<section id="agnostic-pac-learnability" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="agnostic-pac-learnability"><span class="header-section-number">3.1.1</span> Agnostic PAC learnability</h3>
+<p>When we relax the realizability assumption and allow noise in the labels, we need a more general notion of PAC learnability.</p>
+<div class="definition" name="Agnostic PAC learnability">
+<p>A hypothesis class <span class="math inline">\(\mathcal{H}\)</span> is <strong>agnostic-PAC learnable</strong> if there exists a learner algorithm <span class="math inline">\(A\)</span> and a sample complexity function <span class="math inline">\(m_{\mathcal{H}}(\epsilon,\delta)\)</span> such that for every distribution <span class="math inline">\(\mathcal{D}\)</span> over <span class="math inline">\(\mathcal{X}\times\mathcal{Y}\)</span>, with probability at least <span class="math inline">\(1-\delta\)</span> over <span class="math inline">\(\mathcal{S}\sim\mathcal{D}^m\)</span>, the learned hypothesis <span class="math inline">\(h=A(\mathcal{S})\)</span> satisfies:</p>
+<p><span class="math display">\[
+L_{\mathcal{D}}(h) \leq \min_{h'\in\mathcal{H}} L_{\mathcal{D}}(h') + \epsilon
+\]</span></p>
+</div>
+<p>The key difference from the realizable case is that we no longer assume a perfect hypothesis exists in <span class="math inline">\(\mathcal{H}\)</span>. Instead, we require that our learned hypothesis achieves error no worse than the best hypothesis in our class, plus a tolerance term <span class="math inline">\(\epsilon\)</span>.</p>
+<div class="theorem">
+<p>For a finite hypothesis class <span class="math inline">\(\mathcal{H}\)</span>, the sample complexity for agnostic PAC learnability is</p>
+<p><span class="math display">\[
+m_{\mathcal{H}}(\epsilon,\delta) \geq \frac{\log(2|\mathcal{H}|/\delta)}{2\epsilon^2}
+\]</span></p>
+</div>
+</section>
+</section>
+<section id="a-more-general-learning-model" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="a-more-general-learning-model"><span class="header-section-number">3.2</span> A more general learning model</h2>
+<p>All the conditions that we have imposed so far are very stringent and make the applicability of the methods described above in the real world difficult.</p>
+<p>A first constraint that can be abandoned is that of the narrowness of the hypothesis class <span class="math inline">\(\mathcal{H}\)</span>: after all, the corollary on PAC learning tells us that if the class is finite then, that condition being valid, it is certainly PAC learnable; but, in addition to the existence of the possibility of finite classes for which <span class="citation" data-cites="eq:pac-learning-corollario">(<a href="#ref-eq:pac-learning-corollario" role="doc-biblioref"><strong>eq:pac-learning-corollario?</strong></a>)</span> is not respected but which are still PAC learnable, there is also the possibility of <em>infinite</em> classes that are equally PAC learnable.</p>
+<p>The two most important limitations assumed to be valid so far, however, are the following:</p>
+<ul>
+<li><p><strong><em>Realizability assumption</em></strong></p>
+<p>We have assumed that the correct prediction rule is in the considered hypothesis class, that is:</p>
+<p><span class="math display">\[
+      \exists h^*\in\mathcal{H}:\mathbb{P}_{x\sim\mathcal{D}}\left[h^*(x)=f(x)\right]=1
+  \]</span></p>
+<p>In practice, this condition is rarely met. Moreover, it would be more realistic to assume that the prediction rule <span class="math inline">\(f\)</span> does not <em>uniquely</em> determine the labels, because we must consider the presence of sources of noise that can alter the categorization of elements of the domain that are the same.</p>
+<p>For these reasons, the prediction rule <span class="math inline">\(f\)</span> is usually replaced with a <strong>joint distribution</strong> <span class="math inline">\(\mathcal{D}\)</span> with respect to the set <span class="math inline">\(\mathcal{X}\times\mathcal{Y}\)</span> composed essentially of two parts:</p>
+<pre><code>  - $\mathcal{D}_x$: the **marginal distribution** that replaces the previous distribution $\mathcal{D}$
+  - ${\mathcal{D}}((x,y)|x)$: the **conditional distribution** that associates to each point $x$ of the domain the probability that it is labeled in one way or another</code></pre>
+<p>To give a practical example: to train an algorithm to identify photos of men or women, we could include among the parameters the fact that the subject wears a skirt or not; according to Western norms, skirts are generally worn by women, but there is still a small probability that it is instead worn by a man (think of the Scottish kilt).</p></li>
+<li><p><strong><em>Binary classification</em></strong></p>
+<p>So far we have limited ourselves to a set <span class="math inline">\(\mathcal{Y}\)</span> of the type <span class="math inline">\(\{0,1\}\)</span>, but in many problems it is useful to classify through a larger number of labels. In the case of regression, the dimension of <span class="math inline">\(\mathcal{Y}\)</span> becomes infinite, as it is necessary to identify a line that fits the points in a space and therefore depends on <em>real</em> parameters.</p></li>
+</ul>
+</section>
+<section id="generalization-of-errors" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="generalization-of-errors"><span class="header-section-number">3.3</span> Generalization of errors</h2>
+<p>Let’s proceed by first giving up the realizability assumption, and only later will we also assume a classification that is not necessarily binary.</p>
+<p>By extending the concept of a prediction rule, from a function that maps points from <span class="math inline">\(\mathcal{X}\)</span> to <span class="math inline">\(\mathcal{Y}\)</span> to a joint distribution on <span class="math inline">\(\mathcal{X}\times\mathcal{Y}\)</span>, it is necessary to redefine the true error.</p>
+<p>First of all, we will not have a point <span class="math inline">\(x\)</span> extracted from <span class="math inline">\(\mathcal{D}\)</span> but a pair <span class="math inline">\((x,y)\)</span> extracted from the joint distribution <span class="math inline">\(\mathcal{D}\)</span>, just as we will not have the image <span class="math inline">\(f(x)\)</span> but we will have to make explicit reference to the element <span class="math inline">\(y\)</span> belonging to the set <span class="math inline">\(\mathcal{Y}\)</span>. We will therefore rewrite equation <span class="citation" data-cites="eq:modelli-di-machine-learning-true-error-1">(<a href="#ref-eq:modelli-di-machine-learning-true-error-1" role="doc-biblioref"><strong>eq:modelli-di-machine-learning-true-error-1?</strong></a>)</span> as:</p>
+<p><span class="math display">\[
+    \boxed{L_{\mathcal{D}}(h)={\mathcal{D}}((x,y):h(x)\neq y)=\mathbb{P}_{(x,y)\sim\mathcal{D}}[h(x)\neq y]}
+\]</span></p>
+<p>According to what we have said, it will <em>never</em> be possible to have a true error equal to zero, because the prediction rule is not deterministic but <strong>probabilistic</strong>, so there is a sort of “intrinsic error” that cannot be eliminated even if the “correct” predictor were chosen.</p>
+<p>The empirical risk, on the other hand, does not change in its definition (equation <span class="citation" data-cites="eq:modelli-di-machine-learning-empirical-risk">(<a href="#ref-eq:modelli-di-machine-learning-empirical-risk" role="doc-biblioref"><strong>eq:modelli-di-machine-learning-empirical-risk?</strong></a>)</span>), because it refers to the training set <span class="math inline">\(\mathcal{S}\)</span> which has remained unchanged; let’s just remember that it is the probability that, taking a pair <span class="math inline">\(\left(x_i,y_i\right)\)</span> randomly (uniform distribution), we have <span class="math inline">\(h\left(x_i\right)\neq y_i\)</span>.</p>
+<section id="bayes-optimal-predictor" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="bayes-optimal-predictor"><span class="header-section-number">3.3.1</span> Bayes Optimal Predictor</h3>
+<p>Our goal is always to find a function <span class="math inline">\(h:\mathcal{X}\to\mathcal{Y}\)</span> that minimizes <span class="math inline">\(L_{\mathcal{D}}(h)\)</span>.</p>
+<p>According to Bayesian statistics, given the distribution <span class="math inline">\(\mathcal{D}\)</span> on the set <span class="math inline">\(\mathcal{X}\times\mathcal{Y}\)</span>, the best predictor is the <strong>Bayes Optimal Predictor</strong>:</p>
+<p><span class="math display">\[
+    f_{\mathcal{D}}(x)=
+    \begin{cases}
+        1 \ \ \ \text{if } \mathcal{P}[y=1|x]\geqslant\frac{1}{2}\\
+        0 \ \ \ \text{otherwise}
+    \end{cases}
+\]</span></p>
+<p>Its meaning is quite intuitive: given <span class="math inline">\(x\)</span>, if the probability that <span class="math inline">\(y=1\)</span> is greater than <span class="math inline">\(\frac{1}{2}\)</span>, then it is statistically more likely to be correct in stating that <span class="math inline">\(y=1\)</span> than the contrary. Rigorously, it is possible to show that <span class="math inline">\(L_{\mathcal{D}}\left(f_{\mathcal{D}}\right)\leqslant L_{\mathcal{D}}(g)\)</span> for any <span class="math inline">\(g:\mathcal{X}\to\{0,1\}\)</span>.</p>
+<p>This algorithm, however, is not applicable in machine learning, because it requires knowledge of the distribution <span class="math inline">\(\mathcal{D}\)</span> which, on the contrary, is not known.</p>
+</section>
+<section id="agnostic-pac-learnability-1" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="agnostic-pac-learnability-1"><span class="header-section-number">3.3.2</span> Agnostic PAC learnability</h3>
+<p>Even if we give up the idea of looking for the optimal predictor with a loss function equal to zero, we still want to arrive at a function that is quite close to it, and therefore reduce the true error knowing that we can only get close to zero. We can then extend the concept of PAC learnability to that of <strong>agnostic PAC learnability</strong> as follows:</p>
+<div class="definition">
+<p>A hypothesis class <span class="math inline">\(\mathcal{H}\)</span> is <strong>agnostic PAC learnable</strong> if there exists a function <span class="math inline">\(m_{\mathcal{H}}:(0,1)^2\to\mathbb{N}\)</span> and a learning algorithm with the following property:</p>
+<pre><code>- for every $\epsilon,\delta\in(0,1)$
+- for every distribution $\mathcal{D}$ on $\mathcal{X}\times\mathcal{Y}$</code></pre>
+<p>then when the learning algorithm is run on <span class="math inline">\(m\geqslant m_{\mathcal{H}}(\epsilon,\delta)\)</span> i.i.d. points according to <span class="math inline">\(\mathcal{D}\)</span> it returns a hypothesis <span class="math inline">\(h\)</span> such that</p>
+<p><span class="math display">\[
+    L_{\mathcal{D}}(h)\leqslant \min_{h'\in\mathcal{H}}L_{\mathcal{D}}\left(h'\right)+\epsilon
+\]</span></p>
+<p>with a probability of <em>at least</em> <span class="math inline">\(1-\delta\)</span>.</p>
+</div>
+<p>In this way we try to get closer to the minimum error value, which is given by a predictor <span class="math inline">\(h'\)</span> known only if the distribution <span class="math inline">\(\mathcal{D}\)</span> is also known.</p>
+<p>The most relevant fact is that the realizability assumption is not required for <span class="math inline">\(\mathcal{H}\)</span>, and if it were satisfied then the smallest true error would be zero and we would fall back into the case of classical PAC learnability.</p>
+</section>
+</section>
+<section id="new-types-of-classification" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="new-types-of-classification"><span class="header-section-number">3.4</span> New types of classification</h2>
+<p>The second and last assumption that remains to be dropped is that of binary classification; let’s see two other types of classification:</p>
+<ul>
+<li><p><strong>Multiclass classification</strong></p>
+<p>The natural extension with respect to the binary one is the multiclass, in which the dimension of <span class="math inline">\(\mathcal{Y}=\{0,1,\dots,K-1\}\)</span> is <span class="math inline">\(K&gt;2\)</span>. In this case we will not limit ourselves to the classification of images of dogs and cats, but we will also look at birds, fish and so on.</p>
+<p>The true error can be defined in the same way, that is, equal to <span class="math inline">\(0\)</span> if the prediction is correct and <span class="math inline">\(1\)</span> if it is wrong. The novelty is that we can “play” with the loss function by establishing that there are relative errors that are “less serious” than others: returning to the example mentioned above, we could state that mistaking a dog for a cat is not as wrong as mistaking a dog for a fish.</p></li>
+<li><p><strong>Regression</strong></p>
+<p>Here we further extremize the extension by finding <span class="math inline">\(\mathcal{Y}=\mathbb{R}\)</span>; the dimension of the set of labels is therefore not only infinite but also non-numerable, and for this reason we will no longer indicate <span class="math inline">\(\mathcal{Y}\)</span> with <em>set of labels</em> but with <em>target set</em>.</p>
+<p>In this case it will be inevitable to change the definition of the loss function, because from probability theory we know that, given a probability density function, the probability of being exactly at any point on the real line is zero. We will then see an extension of the definition of the loss function below.</p></li>
+</ul>
+<section id="generalized-loss-function" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="generalized-loss-function"><span class="header-section-number">3.4.1</span> Generalized loss function</h3>
+<p>Let’s consider the hypothesis class <span class="math inline">\(\mathcal{H}\)</span>, whose elements are the predictors <span class="math inline">\(h\)</span>, and the domain <span class="math inline">\(\mathcal{Z}=\mathcal{X}\times\mathcal{Y}\)</span> whose elements are the pairs <span class="math inline">\((x,y)\)</span>.</p>
+<p>A loss function in general is defined as a function of the type</p>
+<p><span class="math display">\[
+    l:\mathcal{H}\times\mathcal{Z}\to\mathbb{R}_+
+\]</span></p>
+<p>The error will therefore be any positive real number determined from a function of <span class="math inline">\(h\)</span> and <span class="math inline">\(z\)</span>.</p>
+<p>From the function just written, a <strong>risk function</strong> is defined from the <strong>expected value</strong> of the loss function with <span class="math inline">\(z\)</span> extracted from the distribution <span class="math inline">\(\mathcal{D}\)</span>:</p>
+<p><span class="math display">\[
+    \boxed{L_{\mathcal{D}}(h)=\mathbb{E}_{z\sim\mathcal{D}}[l(h,z)]}
+\]</span></p>
+<p>Similarly, we can redefine the empirical risk as the expected value of the loss given a learning set <span class="math inline">\(\mathcal{S}=\left(z_1,\dots,z_m\right)\)</span>:</p>
+<p><span class="math display">\[
+    \boxed{L_{\mathcal{S}}(h)=\frac{1}{m}\sum_{i=1}^ml\left(h,z_i\right)}
+\]</span></p>
+<p>Let’s see below the simplest loss functions: <em>(The functions indicated with the term </em>objective* are such because in the literature loss functions are translated as <em>objective functions</em>.)*</p>
+<ul>
+<li><p><strong>0-1 objective</strong>: used in the case of binary classification and often also of multiclass classification</p>
+<p><span class="math display">\[
+      l_{0-1}(h,(x,y))=
+      \begin{cases}
+          0 \ \ \ \text{if } h(x)=y\\
+          1 \ \ \ \text{if } h(x)\neq y
+      \end{cases}
+  \]</span></p></li>
+<li><p><strong>Quadratic objective</strong>: used in the case of regression, it penalizes a few large errors</p>
+<p><span class="math display">\[
+      l_{sq}(h,(x,y))=(h(x)-y)^2
+  \]</span></p></li>
+<li><p><strong>Mean absolute error</strong>: used in the case of regression, it penalizes many small errors</p>
+<p><span class="math display">\[
+      l_{abs}(h,(x,y))=\abs{h(x)-y}
+  \]</span></p></li>
+</ul>
+</section>
+<section id="relevance-of-errors" class="level3" data-number="3.4.2">
+<h3 data-number="3.4.2" class="anchored" data-anchor-id="relevance-of-errors"><span class="header-section-number">3.4.2</span> Relevance of errors</h3>
+<p>Sometimes the weight associated with errors depends on the type of application in which an algorithm is used.</p>
+<p>Let’s look at a practical example: a fingerprint scanner that has to understand if a fingerprint belongs to its internal register; if this occurs then the user is authorized to access, while if this is not the case the user is not authorized to access and is rejected.</p>
+<p>In this problem the classification is binary: in particular we indicate with <span class="math inline">\(-1\)</span> the rejection and with <span class="math inline">\(1\)</span> the approval. There will be two types of error: a <strong>false approval</strong>, when an unauthorized malicious person still manages to access the service, and a <strong>false rejection</strong>, when an authorized user is rejected.</p>
+<p>In general we can build a matrix <em>(It is not called in any particular way by either the professor or the book, but searching on the internet it could be what is called a </em>confusion matrix<em>.)</em> associated with the errors. Where with <span class="math inline">\(h\)</span> we indicate the predictor learned by the machine learning algorithm.</p>
+<p>According to what is written, the two types of errors have the same weight and contribute in the same way, but it is possible to vary the two weights in order to make one error more “serious” than the other; let’s see two examples.</p>
+<ul>
+<li><p><strong><em>The discount at the supermarket</em></strong></p>
+<p>We are in 2032: the World Cup is being played in Saudi Arabia, Ferrari has already abandoned the current car to concentrate on the one for 2033 and China has now completely conquered Italy by proposing its supermarkets with fingerprint recognition for possible discounts to those who, in one way or another, favor the Asian regime.</p>
+<p>In a case of error, a customer whose fingerprint is registered in the database is rejected, thus not being able to take advantage of the discount to which he is entitled. This, on the whole, is considered more serious than the other type of error, that is, a malicious person who manages to take advantage of the discount through a fingerprint despite not being registered, because in the latter case the store loses a small profit, while in the other it loses a customer who will no longer buy from that supermarket (and will not favor the colonization work of the dragon).</p>
+<p>For this reason, the matrix would assign higher weight to false rejections (e.g., 10× false approvals). The algorithm is therefore trained to recognize false rejections as if they were each worth ten false approvals, so they will tend to be more avoided by a correctly optimized prediction rule.</p></li>
+<li><p><strong><em>Secret room of the CIA</em></strong></p>
+<p>It is clear that in the case of security systems, contrary to the previous case, a false approval would be considered extremely more serious than a false rejection: an authorized employee, if rejected, would simply understand the high degree of security for a place of that type, while it is necessary to avoid the possibility that some unknown person has access to such a reserved area. The matrix would assign a very high weight to false approvals.</p></li>
+</ul>
+</section>
+<section id="generalized-agnostic-pac-learnability" class="level3" data-number="3.4.3">
+<h3 data-number="3.4.3" class="anchored" data-anchor-id="generalized-agnostic-pac-learnability"><span class="header-section-number">3.4.3</span> Generalized agnostic PAC learnability</h3>
+<p>Having now also freed ourselves from binary classification, we can finally define an even more general PAC learnability that allows us to adapt to as many problems as we face in the real world.</p>
+<div class="definition">
+<p>A hypothesis class <span class="math inline">\(\mathcal{H}\)</span> is <strong>agnostic PAC learnable</strong> with respect to a set <span class="math inline">\(\mathcal{Z}\)</span> and a loss function <span class="math inline">\(l:\mathcal{H}\times\mathcal{Z}\to\mathbb{R}_+\)</span> if there exists a function <span class="math inline">\(m_{\mathcal{H}}:(0,1)^2\to\mathbb{N}\)</span> and a learning algorithm with the following property:</p>
+<pre><code>- for every $\epsilon,\delta\in(0,1)$
+- for every distribution $\mathcal{D}$ on $\mathcal{Z}$</code></pre>
+<p>then when the learning algorithm is run on <span class="math inline">\(m\geqslant m_{\mathcal{H}}(\epsilon,\delta)\)</span> i.i.d. points according to <span class="math inline">\(\mathcal{D}\)</span> it returns a hypothesis <span class="math inline">\(h\)</span> such that</p>
+<p><span class="math display">\[
+    L_{\mathcal{D}}(h)\leqslant \min_{h'\in\mathcal{H}}L_{\mathcal{D}}\left(h'\right)+\epsilon
+\]</span></p>
+<p>with a probability of <em>at least</em> <span class="math inline">\(1-\delta\)</span> and with <span class="math inline">\(L_{\mathcal{D}}(h)=\mathbb{E}_{z\sim\mathcal{D}}[l(h,z)]\)</span>.</p>
+</div>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/01-intro.html" class="pagination-link" aria-label="Introduction &amp; ML Models">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction &amp; ML Models</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/03-uniform-convergence.html" class="pagination-link" aria-label="Uniform Convergence">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Uniform Convergence</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "PAC Learning"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>As we will see below, through the assumptions made above we are not certain of finding the correct predictor that completely nullifies the true error, but we will have the possibility of getting as close as possible. In particular, we will say that the learning is **probably approximately correct** and in this sense we will speak of **PAC learning**.</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>In detail, we mean the following:</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Approximately**: we cannot be sure of finding the predictor $h^*(x)$, but we can certainly get close to it. Quantitatively, we define a threshold through the **accuracy parameter** $\epsilon$ and we will say that we are satisfied when $L_{\mathcal{D},f}\left(h_S\right)\leqslant\epsilon$.</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Probably**: even if the number of extracted points is high and we are sure that they are i.i.d., it can still happen that the set $\mathcal{S}$ is not representative to the point of not allowing us to find the hypothesis that allows us to limit the true error. Usually, a **confidence parameter** $\delta$ is defined, which represents the probability that $\mathcal{S}$ is not a representative set; consequently, $1-\delta$ will represent the probability that the ERM on the hypothesis class $\mathcal{H}$ produces a model with an acceptable error rate.</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>On these ideas rests the following fundamental theorem:</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Theorem on PAC learning"}</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>Let $\mathcal{H}$ be a **finite** hypothesis class and let $\delta\in(0,1)$, $\epsilon\in(0,1)$ and $m\in\mathbb{N}$ such that</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    m\geqslant\frac{\log\left(\frac{\abs{\mathcal{H}}}{\delta}\right)}{\epsilon}</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>Then, for **any prediction rule** $\boldsymbol{f}$ and for **any distribution** $\boldsymbol{\mathcal{D}}$ for which the **realizability assumption** is valid, with a probability equal to or greater than $1-\delta$ it holds that **for every** hypothesis $h_S$, to which the ERM is applied with respect to a learning set $\mathcal{S}$ with $m$ i.i.d. points from $\mathcal{D}$, it holds:</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    \boxed{L_{\mathcal{D},f}\left(h_S\right)\leqslant\epsilon}</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>Usually in practice one starts from $m$, which is known, and chooses to increase or decrease the parameters $\epsilon$ and $\delta$ to find the best algorithm that fits the data: since $m$ is inversely proportional to both parameters, as they decrease it is necessary for the number of points in $\mathcal{S}$ to be larger for the hypotheses of the theorem to be respected, and this is quite obvious if we think about the fact that increasing $m$ means increasing the representativeness of $\mathcal{S}$.</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>The crucial point of the whole theorem is that we know of the existence of "unlucky" learning sets that lead to fallacious functions, since for them the empirical risk (low) is very different from the true error (high); we therefore place an upper limit on the probability of sampling these "deceptive" sets given by the parameter $\delta$ and we fix a tolerance threshold for the true error through $\epsilon$. In all this, the proof of the theorem *(It is not required for this course and will therefore not be reported.)* clarifies that it is the *finiteness*\footnote{The expression $\abs{\mathcal{H}}$ indicates, in fact, the size of the class $\mathcal{H}$, that is, the quantity of hypotheses that we are considering.} of the class $\mathcal{H}$ that guarantees that there is no overfitting with a probability of $1-\delta$.</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## PAC learnability</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>The concept of PAC learning is also useful for defining a property related to it, which is that of **PAC learnability**.</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>First of all, we generally indicate with $m_{\mathcal{H}}(\epsilon,\delta)$ a natural number associated with the class $\mathcal{H}$ called **sample complexity**; being dependent on the parameters $\epsilon$ and $\delta$, which we know go from $0$ to $1$, then we can consider $m_{\mathcal{H}}$ as a function of the type $(0,1)^2\to\mathbb{N}$.\footnote{As we already know, this is the size of $\mathcal{S}$.}</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>At this point we can make the property explicit as follows:</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>A hypothesis class $\mathcal{H}$ is **PAC learnable** if there exists a function \hbox{$m_{\mathcal{H}}:(0,1)^2\to\mathbb{N}$} and a learning algorithm with the following property:</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="in">    - for every $\epsilon,\delta\in(0,1)$</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="in">    - for every distribution $\mathcal{D}$ on $\mathcal{X}$</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="in">    - for every prediction rule $f:x\to\{0,1\}$</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="in">    - if the **realizability assumption** is valid with respect to $\mathcal{H}$, $\mathcal{D}$ and $f$</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>then when the learning algorithm is run on $m\geqslant m_{\mathcal{H}}(\epsilon,\delta)$ i.i.d. points according to $\mathcal{D}$ and labeled according to $f$ it returns a hypothesis $h$ such that</span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>    L_{\mathcal{D},f}(h)\leqslant\epsilon</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>with a probability of *at least* $1-\delta$.</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>The other side of the coin of this definition is that there are certainly hypothesis classes that are *not* PAC learnable: for such hypotheses, therefore, there will always be the possibility of having an overfitting of the data, regardless of how large the learning set is chosen.</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>PAC learnability therefore guarantees the possibility of approaching with a certain confidence an algorithm with a true error close to zero, provided that the size of $\mathcal{S}$ is increased.</span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>From the theorem on PAC learning and the definition of PAC learnability, an obvious corollary follows:</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Corollary on PAC learning"}</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>Every **finite** hypothesis class is PAC learnable with sample complexity</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>    m_{\mathcal{H}}(\epsilon,\delta)\leqslant\frac{\log\left(\frac{\abs{\mathcal{H}}}{\delta}\right)}{\epsilon}</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>It should be borne in mind that the one just written is a *sufficient* but *not necessary* condition, in the sense that there are hypothesis classes that do not respect the condition @eq:pac-learning-corollario but which are still PAC learnable.</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a><span class="fu">### Agnostic PAC learnability</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>When we relax the realizability assumption and allow noise in the labels, we need a more general notion of PAC learnability.</span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>:::{.definition name="Agnostic PAC learnability"}</span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>A hypothesis class $\mathcal{H}$ is **agnostic-PAC learnable** if there exists a learner algorithm $A$ and a sample complexity function $m_{\mathcal{H}}(\epsilon,\delta)$ such that for every distribution $\mathcal{D}$ over $\mathcal{X}\times\mathcal{Y}$, with probability at least $1-\delta$ over $\mathcal{S}\sim\mathcal{D}^m$, the learned hypothesis $h=A(\mathcal{S})$ satisfies:</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>L_{\mathcal{D}}(h) \leq \min_{h'\in\mathcal{H}} L_{\mathcal{D}}(h') + \epsilon</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>The key difference from the realizable case is that we no longer assume a perfect hypothesis exists in $\mathcal{H}$. Instead, we require that our learned hypothesis achieves error no worse than the best hypothesis in our class, plus a tolerance term $\epsilon$.</span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>::: {.theorem}</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>For a finite hypothesis class $\mathcal{H}$, the sample complexity for agnostic PAC learnability is</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>m_{\mathcal{H}}(\epsilon,\delta) \geq \frac{\log(2|\mathcal{H}|/\delta)}{2\epsilon^2}</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a><span class="fu">## A more general learning model</span></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>All the conditions that we have imposed so far are very stringent and make the applicability of the methods described above in the real world difficult.</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>A first constraint that can be abandoned is that of the narrowness of the hypothesis class $\mathcal{H}$: after all, the corollary on PAC learning tells us that if the class is finite then, that condition being valid, it is certainly PAC learnable; but, in addition to the existence of the possibility of finite classes for which @eq:pac-learning-corollario is not respected but which are still PAC learnable, there is also the possibility of *infinite* classes that are equally PAC learnable.</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>The two most important limitations assumed to be valid so far, however, are the following:</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>***Realizability assumption***</span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>    We have assumed that the correct prediction rule is in the considered hypothesis class, that is:</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>    $$</span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a>        \exists h^*\in\mathcal{H}:\mathbb{P}_{x\sim\mathcal{D}}\left[h^*(x)=f(x)\right]=1</span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>    $$</span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>    In practice, this condition is rarely met. Moreover, it would be more realistic to assume that the prediction rule $f$ does not *uniquely* determine the labels, because we must consider the presence of sources of noise that can alter the categorization of elements of the domain that are the same.</span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a>    For these reasons, the prediction rule $f$ is usually replaced with a **joint distribution** $\mathcal{D}$ with respect to the set $\mathcal{X}\times\mathcal{Y}$ composed essentially of two parts:</span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a><span class="in">        - $\mathcal{D}_x$: the **marginal distribution** that replaces the previous distribution $\mathcal{D}$</span></span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a><span class="in">        - ${\mathcal{D}}((x,y)|x)$: the **conditional distribution** that associates to each point $x$ of the domain the probability that it is labeled in one way or another</span></span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a>    To give a practical example: to train an algorithm to identify photos of men or women, we could include among the parameters the fact that the subject wears a skirt or not; according to Western norms, skirts are generally worn by women, but there is still a small probability that it is instead worn by a man (think of the Scottish kilt).</span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>***Binary classification***</span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>    So far we have limited ourselves to a set $\mathcal{Y}$ of the type $<span class="sc">\{</span>0,1<span class="sc">\}</span>$, but in many problems it is useful to classify through a larger number of labels. In the case of regression, the dimension of $\mathcal{Y}$ becomes infinite, as it is necessary to identify a line that fits the points in a space and therefore depends on *real* parameters.</span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## Generalization of errors</span></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>Let's proceed by first giving up the realizability assumption, and only later will we also assume a classification that is not necessarily binary.</span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>By extending the concept of a prediction rule, from a function that maps points from $\mathcal{X}$ to $\mathcal{Y}$ to a joint distribution on $\mathcal{X}\times\mathcal{Y}$, it is necessary to redefine the true error.</span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a>First of all, we will not have a point $x$ extracted from $\mathcal{D}$ but a pair $(x,y)$ extracted from the joint distribution $\mathcal{D}$, just as we will not have the image $f(x)$ but we will have to make explicit reference to the element $y$ belonging to the set $\mathcal{Y}$. We will therefore rewrite equation @eq:modelli-di-machine-learning-true-error-1 as:</span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>    \boxed{L_{\mathcal{D}}(h)={\mathcal{D}}((x,y):h(x)\neq y)=\mathbb{P}_{(x,y)\sim\mathcal{D}}<span class="co">[</span><span class="ot">h(x)\neq y</span><span class="co">]</span>}</span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a>According to what we have said, it will *never* be possible to have a true error equal to zero, because the prediction rule is not deterministic but **probabilistic**, so there is a sort of "intrinsic error" that cannot be eliminated even if the "correct" predictor were chosen.</span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a>The empirical risk, on the other hand, does not change in its definition (equation @eq:modelli-di-machine-learning-empirical-risk), because it refers to the training set $\mathcal{S}$ which has remained unchanged; let's just remember that it is the probability that, taking a pair $\left(x_i,y_i\right)$ randomly (uniform distribution), we have $h\left(x_i\right)\neq y_i$.</span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bayes Optimal Predictor</span></span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a>Our goal is always to find a function $h:\mathcal{X}\to\mathcal{Y}$ that minimizes $L_{\mathcal{D}}(h)$.</span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a>According to Bayesian statistics, given the distribution $\mathcal{D}$ on the set $\mathcal{X}\times\mathcal{Y}$, the best predictor is the **Bayes Optimal Predictor**:</span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a>    f_{\mathcal{D}}(x)=</span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a>        1 \ \ \ \text{if } \mathcal{P}<span class="co">[</span><span class="ot">y=1|x</span><span class="co">]</span>\geqslant\frac{1}{2}<span class="sc">\\</span></span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a>        0 \ \ \ \text{otherwise}</span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a>Its meaning is quite intuitive: given $x$, if the probability that $y=1$ is greater than $\frac{1}{2}$, then it is statistically more likely to be correct in stating that $y=1$ than the contrary. Rigorously, it is possible to show that $L_{\mathcal{D}}\left(f_{\mathcal{D}}\right)\leqslant L_{\mathcal{D}}(g)$ for any $g:\mathcal{X}\to<span class="sc">\{</span>0,1<span class="sc">\}</span>$.</span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>This algorithm, however, is not applicable in machine learning, because it requires knowledge of the distribution $\mathcal{D}$ which, on the contrary, is not known.</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a><span class="fu">### Agnostic PAC learnability</span></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a>Even if we give up the idea of looking for the optimal predictor with a loss function equal to zero, we still want to arrive at a function that is quite close to it, and therefore reduce the true error knowing that we can only get close to zero. We can then extend the concept of PAC learnability to that of **agnostic PAC learnability** as follows:</span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>A hypothesis class $\mathcal{H}$ is **agnostic PAC learnable** if there exists a function $m_{\mathcal{H}}:(0,1)^2\to\mathbb{N}$ and a learning algorithm with the following property:</span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="in">    - for every $\epsilon,\delta\in(0,1)$</span></span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a><span class="in">    - for every distribution $\mathcal{D}$ on $\mathcal{X}\times\mathcal{Y}$</span></span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>then when the learning algorithm is run on $m\geqslant m_{\mathcal{H}}(\epsilon,\delta)$ i.i.d. points according to $\mathcal{D}$ it returns a hypothesis $h$ such that</span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a>    L_{\mathcal{D}}(h)\leqslant \min_{h'\in\mathcal{H}}L_{\mathcal{D}}\left(h'\right)+\epsilon</span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>with a probability of *at least* $1-\delta$.</span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a>In this way we try to get closer to the minimum error value, which is given by a predictor $h'$ known only if the distribution $\mathcal{D}$ is also known.</span>
+<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a>The most relevant fact is that the realizability assumption is not required for $\mathcal{H}$, and if it were satisfied then the smallest true error would be zero and we would fall back into the case of classical PAC learnability.</span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a><span class="fu">## New types of classification</span></span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a>The second and last assumption that remains to be dropped is that of binary classification; let's see two other types of classification:</span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Multiclass classification**</span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a>    The natural extension with respect to the binary one is the multiclass, in which the dimension of $\mathcal{Y}=<span class="sc">\{</span>0,1,\dots,K-1<span class="sc">\}</span>$ is $K&gt;2$. In this case we will not limit ourselves to the classification of images of dogs and cats, but we will also look at birds, fish and so on.</span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a>    The true error can be defined in the same way, that is, equal to $0$ if the prediction is correct and $1$ if it is wrong. The novelty is that we can "play" with the loss function by establishing that there are relative errors that are "less serious" than others: returning to the example mentioned above, we could state that mistaking a dog for a cat is not as wrong as mistaking a dog for a fish.</span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Regression**</span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a>    Here we further extremize the extension by finding $\mathcal{Y}=\mathbb{R}$; the dimension of the set of labels is therefore not only infinite but also non-numerable, and for this reason we will no longer indicate $\mathcal{Y}$ with *set of labels* but with *target set*.</span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a>    In this case it will be inevitable to change the definition of the loss function, because from probability theory we know that, given a probability density function, the probability of being exactly at any point on the real line is zero. We will then see an extension of the definition of the loss function below.</span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a><span class="fu">### Generalized loss function</span></span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a>Let's consider the hypothesis class $\mathcal{H}$, whose elements are the predictors $h$, and the domain $\mathcal{Z}=\mathcal{X}\times\mathcal{Y}$ whose elements are the pairs $(x,y)$.</span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a>A loss function in general is defined as a function of the type</span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a>    l:\mathcal{H}\times\mathcal{Z}\to\mathbb{R}_+</span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a>The error will therefore be any positive real number determined from a function of $h$ and $z$.</span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a>From the function just written, a **risk function** is defined from the **expected value** of the loss function with $z$ extracted from the distribution $\mathcal{D}$:</span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a>    \boxed{L_{\mathcal{D}}(h)=\mathbb{E}_{z\sim\mathcal{D}}<span class="co">[</span><span class="ot">l(h,z)</span><span class="co">]</span>}</span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a>Similarly, we can redefine the empirical risk as the expected value of the loss given a learning set $\mathcal{S}=\left(z_1,\dots,z_m\right)$:</span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a>    \boxed{L_{\mathcal{S}}(h)=\frac{1}{m}\sum_{i=1}^ml\left(h,z_i\right)}</span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a>Let's see below the simplest loss functions: *(The functions indicated with the term *objective* are such because in the literature loss functions are translated as *objective functions*.)*</span>
+<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**0-1 objective**: used in the case of binary classification and often also of multiclass classification</span>
+<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a>    $$</span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a>        l_{0-1}(h,(x,y))=</span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a>        \begin{cases}</span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a>            0 \ \ \ \text{if } h(x)=y<span class="sc">\\</span></span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a>            1 \ \ \ \text{if } h(x)\neq y</span>
+<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a>        \end{cases}</span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a>    $$</span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Quadratic objective**: used in the case of regression, it penalizes a few large errors</span>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a>    $$</span>
+<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a>        l_{sq}(h,(x,y))=(h(x)-y)^2</span>
+<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a>    $$</span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Mean absolute error**: used in the case of regression, it penalizes many small errors</span>
+<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a>    $$</span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a>        l_{abs}(h,(x,y))=\abs{h(x)-y}</span>
+<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a>    $$</span>
+<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a><span class="fu">### Relevance of errors</span></span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a>Sometimes the weight associated with errors depends on the type of application in which an algorithm is used.</span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a>Let's look at a practical example: a fingerprint scanner that has to understand if a fingerprint belongs to its internal register; if this occurs then the user is authorized to access, while if this is not the case the user is not authorized to access and is rejected.</span>
+<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a>In this problem the classification is binary: in particular we indicate with $-1$ the rejection and with $1$ the approval. There will be two types of error: a **false approval**, when an unauthorized malicious person still manages to access the service, and a **false rejection**, when an authorized user is rejected.</span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a>In general we can build a matrix *(It is not called in any particular way by either the professor or the book, but searching on the internet it could be what is called a *confusion matrix*.)* associated with the errors. Where with $h$ we indicate the predictor learned by the machine learning algorithm.</span>
+<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a>According to what is written, the two types of errors have the same weight and contribute in the same way, but it is possible to vary the two weights in order to make one error more "serious" than the other; let's see two examples.</span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>***The discount at the supermarket***</span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a>    We are in 2032: the World Cup is being played in Saudi Arabia, Ferrari has already abandoned the current car to concentrate on the one for 2033 and China has now completely conquered Italy by proposing its supermarkets with fingerprint recognition for possible discounts to those who, in one way or another, favor the Asian regime.</span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a>    In a case of error, a customer whose fingerprint is registered in the database is rejected, thus not being able to take advantage of the discount to which he is entitled. This, on the whole, is considered more serious than the other type of error, that is, a malicious person who manages to take advantage of the discount through a fingerprint despite not being registered, because in the latter case the store loses a small profit, while in the other it loses a customer who will no longer buy from that supermarket (and will not favor the colonization work of the dragon).</span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a>    For this reason, the matrix would assign higher weight to false rejections (e.g., 10× false approvals). The algorithm is therefore trained to recognize false rejections as if they were each worth ten false approvals, so they will tend to be more avoided by a correctly optimized prediction rule.</span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>***Secret room of the CIA***</span>
+<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a>    It is clear that in the case of security systems, contrary to the previous case, a false approval would be considered extremely more serious than a false rejection: an authorized employee, if rejected, would simply understand the high degree of security for a place of that type, while it is necessary to avoid the possibility that some unknown person has access to such a reserved area. The matrix would assign a very high weight to false approvals.</span>
+<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a><span class="fu">### Generalized agnostic PAC learnability</span></span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a>Having now also freed ourselves from binary classification, we can finally define an even more general PAC learnability that allows us to adapt to as many problems as we face in the real world.</span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a>A hypothesis class $\mathcal{H}$ is **agnostic PAC learnable** with respect to a set $\mathcal{Z}$ and a loss function $l:\mathcal{H}\times\mathcal{Z}\to\mathbb{R}_+$ if there exists a function $m_{\mathcal{H}}:(0,1)^2\to\mathbb{N}$ and a learning algorithm with the following property:</span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a><span class="in">    - for every $\epsilon,\delta\in(0,1)$</span></span>
+<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a><span class="in">    - for every distribution $\mathcal{D}$ on $\mathcal{Z}$</span></span>
+<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a>then when the learning algorithm is run on $m\geqslant m_{\mathcal{H}}(\epsilon,\delta)$ i.i.d. points according to $\mathcal{D}$ it returns a hypothesis $h$ such that</span>
+<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a>    L_{\mathcal{D}}(h)\leqslant \min_{h'\in\mathcal{H}}L_{\mathcal{D}}\left(h'\right)+\epsilon</span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a>with a probability of *at least* $1-\delta$ and with $L_{\mathcal{D}}(h)=\mathbb{E}_{z\sim\mathcal{D}}<span class="co">[</span><span class="ot">l(h,z)</span><span class="co">]</span>$.</span>
+<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

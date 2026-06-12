@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; VC Dimension – Machine Learning — Lecture Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/06-model-selection.html" rel="next">
+<link href="../chapters/04-bias-complexity-tradeoff.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-intro.html">Supervised Learning</a></li><li class="breadcrumb-item"><a href="../chapters/05-vc-dimension.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">VC Dimension</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Machine Learning — Lecture Notes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Supervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction &amp; ML Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-pac-learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PAC Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-uniform-convergence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Uniform Convergence</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-bias-complexity-tradeoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Bias-Complexity Tradeoff</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-vc-dimension.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">VC Dimension</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-model-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Model Selection</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-linear-predictors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Linear Predictors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-stochastic-gradient-descent.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Stochastic Gradient Descent</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-support-vector-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Support Vector Machines</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Kernel Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-boosting-trees-rf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Boosting, Decision Trees and Random Forests</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-neural-networks-cnn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Neural Networks and Convolutional Neural Networks</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Unsupervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Clustering</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-reinforcement-learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Reinforcement Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Exam Preparation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16-proofs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Proofs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17-exam-exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-example-of-the-threshold-function" id="toc-the-example-of-the-threshold-function" class="nav-link active" data-scroll-target="#the-example-of-the-threshold-function"><span class="header-section-number">6.1</span> The example of the threshold function</a></li>
+  <li><a href="#restriction-of-a-function" id="toc-restriction-of-a-function" class="nav-link" data-scroll-target="#restriction-of-a-function"><span class="header-section-number">6.2</span> Restriction of a function</a></li>
+  <li><a href="#shattering-a-set" id="toc-shattering-a-set" class="nav-link" data-scroll-target="#shattering-a-set"><span class="header-section-number">6.3</span> Shattering a set</a>
+  <ul class="collapse">
+  <li><a href="#relationship-between-shattering-and-no-free-lunch" id="toc-relationship-between-shattering-and-no-free-lunch" class="nav-link" data-scroll-target="#relationship-between-shattering-and-no-free-lunch"><span class="header-section-number">6.3.1</span> Relationship between shattering and No-Free-Lunch</a></li>
+  </ul></li>
+  <li><a href="#definition-of-vc-dimension" id="toc-definition-of-vc-dimension" class="nav-link" data-scroll-target="#definition-of-vc-dimension"><span class="header-section-number">6.4</span> Definition of VC dimension</a>
+  <ul class="collapse">
+  <li><a href="#calculation-of-the-vc-dimension" id="toc-calculation-of-the-vc-dimension" class="nav-link" data-scroll-target="#calculation-of-the-vc-dimension"><span class="header-section-number">6.4.1</span> Calculation of the VC dimension</a></li>
+  </ul></li>
+  <li><a href="#theorem-of-statistical-learning" id="toc-theorem-of-statistical-learning" class="nav-link" data-scroll-target="#theorem-of-statistical-learning"><span class="header-section-number">6.5</span> Theorem of statistical learning</a>
+  <ul class="collapse">
+  <li><a href="#the-link-between-vc-dimension-and-sample-complexity" id="toc-the-link-between-vc-dimension-and-sample-complexity" class="nav-link" data-scroll-target="#the-link-between-vc-dimension-and-sample-complexity"><span class="header-section-number">6.5.1</span> The link between VC dimension and sample complexity</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-intro.html">Supervised Learning</a></li><li class="breadcrumb-item"><a href="../chapters/05-vc-dimension.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">VC Dimension</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">VC Dimension</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>In the last chapter, we discussed the importance of the chosen hypothesis class in finding the function that best labels a data distribution, paying particular attention to its size and how it correlates with the errors associated with the learning algorithm.</p>
+<p>Our main goal, however, remains to understand which classes <span class="math inline">\(\mathcal{H}\)</span> are PAC learnable or, at the limit, agnostically PAC learnable, that is, to know with certainty that the error is bounded by a certain quantity as a function of the parameters <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(\delta\)</span>.</p>
+<p>Through uniform convergence, we have shown that all <em>finite</em> classes are agnostically PAC learnable, while through the No-Free-Lunch theorem we know that the set of <em>all</em> functions certainly does not enjoy the same property. It therefore remains to be discovered whether infinite classes are, in general, PAC learnable or not.</p>
+<section id="the-example-of-the-threshold-function" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="the-example-of-the-threshold-function"><span class="header-section-number">6.1</span> The example of the threshold function</h2>
+<p>To affirm that not only finite classes are PAC learnable <em>(Or, in other words, that the property of a class being finite is a sufficient but not necessary condition for PAC learnability.)</em> a single counterexample is enough, which can be provided by the <strong>threshold function</strong>.</p>
+<p>It is a very simple function, dependent on a single parameter <span class="math inline">\(a\)</span> which can take any value in the set of real numbers. It is defined as:</p>
+<p><span class="math display">\[
+    h_a(x)=
+    \begin{cases}
+        1 \ \ \ x&lt;a\\
+        0 \ \ \ x\geqslant a
+    \end{cases}
+\]</span></p>
+<p>which, in short, can also be written as <span class="math inline">\(\mathds{1}_{[x&lt;a]}\)</span>.</p>
+<p>We are therefore in the case of binary classification, where a value is classified in one way if it is below the threshold (<em>threshold</em>, precisely) <span class="math inline">\(a\)</span>, and in another if it is above it.</p>
+<p>The class <span class="math inline">\(\mathcal{H}=\{h_a:a\in\mathbb{R}\}\)</span> is evidently infinite, the set <span class="math inline">\(\mathbb{R}\)</span> being infinite, but it is possible to show that it is PAC learnable with sample complexity</p>
+<p><span class="math display">\[
+    m_{\mathcal{H}}(\epsilon,\delta)=\frac{\log\frac{2}{\delta}}{\epsilon}
+\]</span></p>
+<p>We will see the proof later, but in reality the reason is quite intuitive: given a training set <span class="math inline">\(\mathcal{S}\)</span> with a certain number of points divided into <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>, the parameter <span class="math inline">\(a\)</span> must necessarily be between the largest point classified as <span class="math inline">\(1\)</span> and the smallest point classified as <span class="math inline">\(0\)</span>, since otherwise contradictions would be encountered; this fact significantly limits the values that the parameter <span class="math inline">\(a\)</span> can take and, intuitively, makes <span class="math inline">\(\abs{\mathcal{H}}&lt;\infty\)</span>.</p>
+</section>
+<section id="restriction-of-a-function" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="restriction-of-a-function"><span class="header-section-number">6.2</span> Restriction of a function</h2>
+<p>To understand which hypothesis classes are PAC learnable, it is useful to define the <em>restriction</em> of a class <span class="math inline">\(\mathcal{H}\)</span> to a set <span class="math inline">\(\mathcal{C}\)</span>.</p>
+<p>For simplicity, we always remain in the context of binary classifications, so <span class="math inline">\(\mathcal{H}\)</span> represents a set of functions that go from a domain <span class="math inline">\(\mathcal{X}\)</span> to <span class="math inline">\(\{0,1\}\)</span>. Let us now consider a subset <span class="math inline">\(\mathcal{C}\)</span> of the domain <span class="math inline">\(\mathcal{X}\)</span>:</p>
+<p><span class="math display">\[
+    \mathcal{C}=\left\{c_1,\dots,c_m\right\}\subset\mathcal{X}
+\]</span></p>
+<p>The <strong>restriction</strong> of <span class="math inline">\(\mathcal{H}\)</span> to <span class="math inline">\(\mathcal{C}\)</span> is defined as the set of functions from <span class="math inline">\(\mathcal{C}\)</span> to <span class="math inline">\(\{0,1\}\)</span> that can be derived from <span class="math inline">\(\mathcal{H}\)</span>:</p>
+<p><span class="math display">\[
+    \mathcal{H}_{\mathcal{C}}=\left\{h\left(c_1\right),\dots,h\left(c_m\right):h\in\mathcal{H}\right\}
+\]</span></p>
+<p>In the context of binary classification, each function <span class="math inline">\(h\left(c_i\right)\)</span> is a vector of length <span class="math inline">\(m\)</span> composed of <span class="math inline">\(0\)</span>s and <span class="math inline">\(1\)</span>s.</p>
+<p>To visualize the concept of restriction, let’s go back to the example of the threshold function and imagine selecting three points on the real axis; it is clear that there are only four possible classifications (below threshold, above threshold, etc.). We have thus <em>restricted</em>, precisely, the class <span class="math inline">\(\mathcal{H}\)</span> to four possible cases, formally represented by four vectors composed of <span class="math inline">\(0\)</span>s and <span class="math inline">\(1\)</span>s of size equal to <span class="math inline">\(|\mathcal{C}|=3\)</span>.</p>
+</section>
+<section id="shattering-a-set" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="shattering-a-set"><span class="header-section-number">6.3</span> Shattering a set</h2>
+<p>From the restriction of a hypothesis class, it is possible to define the <strong>shattering</strong> <em>(In Italian </em>frantumazione<em>.)</em> of a set:</p>
+<div class="definition">
+<p>Given a set <span class="math inline">\(\mathcal{C}\subset\mathcal{X}\)</span>, we will say that <span class="math inline">\(\mathcal{H}\)</span> <strong>shatters</strong> <span class="math inline">\(\mathcal{C}\)</span> if its restriction <span class="math inline">\(\mathcal{H}_{\mathcal{C}}\)</span> contains <em>all</em> <span class="math inline">\(2^{\abs{\mathcal{C}}}\)</span> functions from <span class="math inline">\(\mathcal{C}\)</span> to <span class="math inline">\(\{0,1\}\)</span>.</p>
+</div>
+<p>The example proposed above, with the threshold function and <span class="math inline">\(\mathcal{C}=\left\{c_1,c_2,c_3\right\}\)</span>, clearly shows that <span class="math inline">\(\mathcal{H}\)</span> does not shatter <span class="math inline">\(\mathcal{C}\)</span>, since <span class="math inline">\(2^{\mathcal{C}}=8\)</span> but the restriction includes only four possible functions.</p>
+<p>This concept is useful to us because it leads directly back to overfitting: shattering a set, in fact, is equivalent to saying that any combination of points belonging to that set can be reproduced by a hypothesis of the considered class; this means that the number <span class="math inline">\(\abs{\mathcal{C}}\)</span> can give us an indication of how valid <span class="math inline">\(\mathcal{H}\)</span> is for solving a given problem.</p>
+<section id="relationship-between-shattering-and-no-free-lunch" class="level3" data-number="6.3.1">
+<h3 data-number="6.3.1" class="anchored" data-anchor-id="relationship-between-shattering-and-no-free-lunch"><span class="header-section-number">6.3.1</span> Relationship between shattering and No-Free-Lunch</h3>
+<p>The (non) validity of a hypothesis class due to its size was discussed in the No-Free-Lunch theorem and its related corollary, where it was shown that the class containing all functions is not PAC learnable.</p>
+<p>The concept of shattering is important for extending this reasoning to a generic hypothesis class <span class="math inline">\(\mathcal{H}\)</span>. The underlying procedure, in fact, is the same: to identify an algorithm that fails in learning for a given data distribution; for this reason, the following theorem is indicated as another corollary of the No-Free-Lunch theorem:</p>
+<div class="theorem" name="No-Free-Lunch Corollary (with shattering)">
+<p>Let:</p>
+<pre><code>item $\mathcal{H}$ be a hypothesis class containing functions that go from $\mathcal{X}$ to $\{0,1\}$
+
+item $m$ be the size of a learning set
+
+item $\mathcal{C}\subset\mathcal{X}$ be a set of size $2m$ that is *shattered* by $\mathcal{H}$</code></pre>
+<p>Under these hypotheses, <strong><em>the No-Free-Lunch theorem is valid</em></strong>.</p>
+</div>
+<p>The proof is not required for the course, but it is important to understand intuitively what this corollary is communicating to us: in short, we can say that if <span class="math inline">\(\mathcal{H}\)</span> is able to shatter a certain set <span class="math inline">\(\mathcal{C}\)</span>, a subset of the domain <span class="math inline">\(\mathcal{X}\)</span>, then a set containing up to half the number of points of <span class="math inline">\(\mathcal{C}\)</span> is not a good learning set for the algorithm; learning on a set of that type, in fact, is such that it does not provide real information for predicting the classification of further points drawn from the same distribution.</p>
+</section>
+</section>
+<section id="definition-of-vc-dimension" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="definition-of-vc-dimension"><span class="header-section-number">6.4</span> Definition of VC dimension</h2>
+<p>Having understood that the limit in the learning of an algorithm is given by the size of <span class="math inline">\(\abs{\mathcal{C}}\)</span> for which there is shattering by <span class="math inline">\(\mathcal{H}\)</span>, we can formalize this aspect by defining a quantity called <strong>VC dimension</strong>, which takes its name from the two Russian mathematicians Vapnik and Chervonenkis.</p>
+<div class="definition">
+<p>The <strong>VC dimension</strong> of a hypothesis class <span class="math inline">\(\mathcal{H}\)</span>, denoted by <span class="math inline">\(VCdim(\mathcal{H})\)</span>, is the <strong><em>maximum size</em></strong> of a set <span class="math inline">\(\mathcal{C}\subset\mathcal{X}\)</span> that can be shattered by <span class="math inline">\(\mathcal{H}\)</span>.</p>
+</div>
+<p>If <span class="math inline">\(\mathcal{H}\)</span> can shatter sets of arbitrarily large size, we will say that <span class="math inline">\(\mathcal{H}\)</span> has an <em>infinite</em> VC dimension.</p>
+<p>It is easy to verify that if <span class="math inline">\(VCdim(\mathcal{H})=\infty\)</span> then <span class="math inline">\(\mathcal{H}\)</span> is certainly PAC learnable, since whatever size <span class="math inline">\(m\)</span> of the learning set we choose, <span class="math inline">\(\mathcal{H}\)</span> will be able to shatter a set twice as large, from which the No-Free-Lunch theorem follows.</p>
+<p>Another easy result to prove is that a finite hypothesis class certainly has a finite VC dimension: for <span class="math inline">\(\mathcal{H}\)</span> to be able to shatter <span class="math inline">\(\mathcal{C}\)</span>, in fact, it is necessary that</p>
+<p><span class="math display">\[
+    \abs{\mathcal{H}}\geqslant2^{\abs{\mathcal{C}}}
+\]</span></p>
+<p>From which, deriving <span class="math inline">\(\abs{\mathcal{C}}\)</span>:</p>
+<p><span class="math display">\[
+    2^{\abs{\mathcal{C}}}\leqslant\abs{\mathcal{H}} \ \Longrightarrow \ \abs{\mathcal{C}}\leqslant\log_2\abs{\mathcal{H}}
+\]</span></p>
+<p>If <span class="math inline">\(\abs{\mathcal{C}}\)</span> is the maximum size of the set that can be shattered by <span class="math inline">\(\mathcal{H}\)</span>, then it will be nothing other than the VC dimension:</p>
+<p><span class="math display">\[
+    VCdim(\mathcal{H})\leqslant\log_2\abs{\mathcal{H}}
+\]</span></p>
+<p>The reverse, however, is not true, so there can exist infinite classes with a finite VC dimension; we will see some examples in this regard.</p>
+<section id="calculation-of-the-vc-dimension" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="calculation-of-the-vc-dimension"><span class="header-section-number">6.4.1</span> Calculation of the VC dimension</h3>
+<p>To prove that the VC dimension of a class is finite and equal to a certain value <span class="math inline">\(d\)</span>, it is necessary to proceed by following two steps:</p>
+<pre><code>item Show that there exists a set $\mathcal{C}$ of size $d$ that can be shattered by $\mathcal{H}$:
+
+$$
+    VCdim(\mathcal{H})\geqslant d
+$$
+
+
+item Show that \underline{*all*} sets of size $d+1$ cannot be shattered by $\mathcal{H}$:
+
+$$
+    VCdim(\mathcal{H})&lt;d+1
+$$</code></pre>
+<p>If these two conditions are met, then it is clear that</p>
+<p><span class="math display">\[
+    VCdim(\mathcal{H})=d
+\]</span></p>
+<section id="calculation-for-the-threshold-function" class="level4" data-number="6.4.1.1">
+<h4 data-number="6.4.1.1" class="anchored" data-anchor-id="calculation-for-the-threshold-function"><span class="header-section-number">6.4.1.1</span> Calculation for the threshold function</h4>
+<p>With <span class="math inline">\(\abs{\mathcal{C}}=1\)</span>, it is clear that the set can be shattered, since it is sufficient to place the parameter <span class="math inline">\(a\)</span> to the left or right of <span class="math inline">\(c_1\)</span> to classify it as <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>.</p>
+<p>With <span class="math inline">\(|\mathcal{C}|=2\)</span>, there is no shattering since it is impossible to have the classification <span class="math inline">\((0,1)\)</span> and only the remaining three are possible. Following the steps mentioned at the beginning of the paragraph, we will have:</p>
+<p><span class="math display">\[
+    \begin{cases}
+        VCdim(\mathcal{H})\geqslant1\\
+        VCdim(\mathcal{H})&lt;2
+    \end{cases}
+    \Longrightarrow \ \ \boxed{VCdim(\mathcal{H})=1}
+\]</span></p>
+</section>
+<section id="calculation-for-the-interval-function" class="level4" data-number="6.4.1.2">
+<h4 data-number="6.4.1.2" class="anchored" data-anchor-id="calculation-for-the-interval-function"><span class="header-section-number">6.4.1.2</span> Calculation for the interval function</h4>
+<p>Let’s define the interval function through two parameters <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span> as follows:</p>
+<p><span class="math display">\[
+    h_{a,b}(x)=
+    \begin{cases}
+        1 \ \ \ a&lt;x&lt;b\\
+        0 \ \ \ otherwise
+    \end{cases}
+\]</span></p>
+<p>The hypothesis class will therefore be:</p>
+<p><span class="math display">\[
+    \mathcal{H}=\left\{h_{a,b}:a,b\in\mathbb{R},a&lt;b\right\}
+\]</span></p>
+<p>This time a set <span class="math inline">\(\mathcal{C}\)</span> with <span class="math inline">\(|\mathcal{C}|=2\)</span> can be shattered by the hypothesis class. Moving on to <span class="math inline">\(|\mathcal{C}|=3\)</span>, the restriction <span class="math inline">\(\mathcal{H}_{\mathcal{C}}\)</span> contains the functions for all classifications except one, namely <span class="math inline">\((1,0,1)\)</span>, as it is impossible to place the central point outside the interval while simultaneously including the other two inside.</p>
+<p>It follows that:</p>
+<p><span class="math display">\[
+    \begin{cases}
+        VCdim(\mathcal{H})\geqslant2\\
+        VCdim(\mathcal{H})&lt;3
+    \end{cases}
+    \Longrightarrow \ \ \boxed{VCdim(\mathcal{H})=2}
+\]</span></p>
+</section>
+<section id="calculation-for-the-rectangular-function" class="level4" data-number="6.4.1.3">
+<h4 data-number="6.4.1.3" class="anchored" data-anchor-id="calculation-for-the-rectangular-function"><span class="header-section-number">6.4.1.3</span> Calculation for the rectangular function</h4>
+<p>Let’s move to <span class="math inline">\(\mathbb{R}^2\)</span> and consider the following function dependent on four parameters:</p>
+<p><span class="math display">\[
+    h_{a_1,a_2,b_1,b_2}\left(x_1,x_2\right)=
+    \begin{cases}
+        1 \ \ \ a_1\leqslant x_1\leqslant a_2, \ b_1\leqslant x_2\leqslant b_2\\
+        0 \ \ \ otherwise
+    \end{cases}
+\]</span></p>
+<p>The class is therefore:</p>
+<p><span class="math display">\[
+    \mathcal{H}=\left\{h_{a_1,a_2,b_1,b_2}:a_1,a_2,b_1,b_2\in\mathbb{R},a_1\leqslant a_2,b_1\leqslant b_2\right\}
+\]</span></p>
+<p>As expected, there are examples up to <span class="math inline">\(\abs{\mathcal{C}}=4\)</span> in which <span class="math inline">\(\mathcal{H}\)</span> is able to shatter the set. For <span class="math inline">\(\abs{\mathcal{C}}=5\)</span>, however, any set <span class="math inline">\(\mathcal{C}\)</span> is no longer shatterable by <span class="math inline">\(\mathcal{H}\)</span>, since the most "internal" of the five cannot be classified as <span class="math inline">\(0\)</span> while the other four are classified as <span class="math inline">\(1\)</span>.</p>
+<p>It will therefore be:</p>
+<p><span class="math display">\[
+    \begin{cases}
+        VCdim(\mathcal{H})\geqslant4\\
+        VCdim(\mathcal{H})&lt;5
+    \end{cases}
+    \Longrightarrow \ \ \boxed{VCdim(\mathcal{H})=4}
+\]</span></p>
+</section>
+<section id="calculation-for-the-sine-ceiling-function" class="level4" data-number="6.4.1.4">
+<h4 data-number="6.4.1.4" class="anchored" data-anchor-id="calculation-for-the-sine-ceiling-function"><span class="header-section-number">6.4.1.4</span> Calculation for the sine ceiling function</h4>
+<p>In the examples seen so far, the VC dimension has coincided with the number of parameters useful for defining the functions within the hypothesis class. This, in reality, is not a general rule, and in this regard we will see an example below in which the two values are different.</p>
+<p>Let’s consider the ceiling function applied to the sine function modulated by a factor of <span class="math inline">\(0.5\)</span> and whose frequency is determined by a free parameter <span class="math inline">\(\theta\)</span>:</p>
+<p><span class="math display">\[
+    h_\theta(x)=\lceil 0.5\sin(\theta x)\rceil
+\]</span></p>
+<p>We recall that the ceiling function returns the smallest integer greater than or equal to the input value; since the modulated sine oscillates between <span class="math inline">\(-0.5\)</span> and <span class="math inline">\(0.5\)</span>, then the function <span class="math inline">\(h_\theta(x)\)</span> will alternately take only the values <span class="math inline">\(0\)</span> (when the sine is negative) and <span class="math inline">\(1\)</span> (when the sine is positive). It is possible to show that for any combination of points classified as <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>, in whatever number they are, there exists a value of <span class="math inline">\(\theta\)</span> capable of determining a function in <span class="math inline">\(\mathcal{H}\)</span> that correctly describes this classification. In other words, the VC dimension of this class is infinite, despite the fact that the parameter on which it depends is only one.</p>
+</section>
+</section>
+</section>
+<section id="theorem-of-statistical-learning" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="theorem-of-statistical-learning"><span class="header-section-number">6.5</span> Theorem of statistical learning</h2>
+<p>What we have arrived at so far has been to state that if the VC dimension of a class is infinite, then it is certainly not PAC learnable, and we have also shown that a finite class (which we know to be PAC learnable) has a finite VC dimension.</p>
+<p>There is still one type to explore, namely infinite classes with a finite VC dimension; the question is: what can we say about their PAC learnability?</p>
+<p>We will see below an important theorem - not by chance called the <em>fundamental theorem</em> - which guarantees the PAC learnability of all classes with a finite VC dimension. We will thus have managed to reach our initial goal, which was to find a parameter that is directly linked to the PAC learnability of a class: it is, in fact, the VC dimension.</p>
+<div class="theorem" name="Fundamental Theorem of Statistical Learning">
+<p>Let <span class="math inline">\(\mathcal{H}\)</span> be a hypothesis class containing functions that go from a domain <span class="math inline">\(\mathcal{X}\)</span> to <span class="math inline">\(\{0,1\}\)</span> and let the loss function be a <span class="math inline">\(0-1\)</span> objective function.</p>
+<p>Then, the following statements are equivalent:</p>
+<pre><code>item $\mathcal{H}$ has the property of **uniform convergence**
+
+
+item Any ERM algorithm is an **agnostic PAC learner** for $\mathcal{H}$
+
+
+item $\mathcal{H}$ is **agnostic PAC learnable**
+
+
+
+item $\mathcal{H}$ is **PAC learnable**
+
+
+
+item Any ERM algorithm is a **PAC learner** for $\mathcal{H}$
+
+
+
+item $\mathcal{H}$ has **finite VC dimension**</code></pre>
+</div>
+<p>We do not give the proof in detail, also because most of them are obvious or have already been seen previously:</p>
+<pre><code>item The implications $1\rightarrow2\rightarrow3$ derive from the theorem on the link between uniform convergence and PAC learning, which we saw in section @sec:convergenza-uniforme-e-pac-learnability
+
+
+item The implication $3\rightarrow4$ is obvious, since
+
+$$
+    \underbrace{\underbrace{L_{\mathcal{D}}(h)\leqslant\epsilon}_{\text{PAC learning}}\leqslant\min_{h'\in\mathcal{H}}L_{\mathcal{D}}\left(h'\right)+\epsilon}_{\text{Agnostic PAC learning}}
+$$
+
+and the two properties coincide if the realizability assumption is valid (and therefore the minimum in the last member is zero)
+
+
+item For the same reason just seen, $2\rightarrow5$ also holds
+
+
+item By contradiction, if the infinite VC dimension for a hypothesis class implies its non-PAC learnability, then for a class to be PAC learnable it is necessary that it has a finite VC dimension, so we will have $4\rightarrow6$ and $5\rightarrow6$</code></pre>
+<p>To close the circle, it is necessary to show that <span class="math inline">\(6\rightarrow1\)</span>. The proof is not required by the course, so it will not be given in detail; suffice it to say that it is divided into two parts:</p>
+<pre><code>item Let $d$ be the VC dimension of $\mathcal{H}$, even if $\abs{\mathcal{H}}=\infty$, by applying the restriction of $\mathcal{H}$ to $\mathcal{C}$ it is shown that the "effective size" $\abs{\mathcal{H}_{\mathcal{C}}}$ is $O\left(\abs{\mathcal{C}}^d\right)$, so the size of $\mathcal{H}_{\mathcal{C}}$ grows *polynomially* with respect to $\abs{\mathcal{C}}$. This part of the proof is known as *Sauer's lemma*.
+
+
+item We know that finite classes enjoy the property of uniform convergence, but it is possible to generalize this result by stating that uniform convergence is valid for all those classes with "effective size" small, that is, with a polynomial and not exponential growth with respect to $\abs{\mathcal{C}}$.</code></pre>
+<section id="the-link-between-vc-dimension-and-sample-complexity" class="level3" data-number="6.5.1">
+<h3 data-number="6.5.1" class="anchored" data-anchor-id="the-link-between-vc-dimension-and-sample-complexity"><span class="header-section-number">6.5.1</span> The link between VC dimension and sample complexity</h3>
+<p>The VC dimension characterizes not only PAC learnability but also the sample complexity associated with the various properties of the considered hypothesis class. This is demonstrated in the quantitative version of the fundamental theorem of statistical learning.</p>
+<div class="theorem" name="Fundamental Theorem of Statistical Learning (quantitative version)">
+<p>Let <span class="math inline">\(\mathcal{H}\)</span> be a hypothesis class containing functions that go from a domain <span class="math inline">\(\mathcal{X}\)</span> to <span class="math inline">\(\{0,1\}\)</span> and let the loss function be a <span class="math inline">\(0-1\)</span> objective function. Assume, moreover, that <span class="math inline">\(VCdim(\mathcal{H})=d&lt;\infty\)</span>.</p>
+<p>Then, there exist constants <span class="math inline">\(C_1\)</span> and <span class="math inline">\(C_2\)</span> such that:</p>
+<pre><code>item $\mathcal{H}$ enjoys uniform convergence with sample complexity
+
+$$
+    C_1\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon^2}\leqslant m_{\mathcal{H}}^{UC}(\epsilon,\delta)\leqslant C_2\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon^2}
+$$
+
+
+item $\mathcal{H}$ is agnostically PAC learnable with sample complexity
+
+$$
+    C_1\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon^2}\leqslant m_{\mathcal{H}}(\epsilon,\delta)\leqslant C_2\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon^2}
+$$
+
+
+item $\mathcal{H}$ is PAC learnable with sample complexity
+
+$$
+    C_1\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon}\leqslant m_{\mathcal{H}}(\epsilon,\delta)\leqslant C_2\frac{d\log\left(\frac{1}{\epsilon}\right)+\log\left(\frac{1}{\delta}\right)}{\epsilon}
+$$</code></pre>
+</div>
+<p>The proof is not required for this theorem either, but it is interesting to note how the ends of the interval are similar to the upper bound of the sample complexity seen in equation <span class="citation" data-cites="eq:convergenza-uniforme-sample-complexity">(<a href="#ref-eq:convergenza-uniforme-sample-complexity" role="doc-biblioref"><strong>eq:convergenza-uniforme-sample-complexity?</strong></a>)</span>. The numerator, in particular, can be rewritten as</p>
+<p><span class="math display">\[
+    \log\left(\frac{2\abs{\mathcal{H}}}{\delta}\right)=\log(2\abs{\mathcal{H}})+\log\left(\frac{1}{\delta}\right)
+\]</span></p>
+<p>So it is clear that, in this context, it is as if the VC dimension of <span class="math inline">\(\mathcal{H}\)</span>, i.e., <span class="math inline">\(d\)</span>, were playing the role of <span class="math inline">\(\log(2\abs{\mathcal{H}})\)</span>.</p>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/04-bias-complexity-tradeoff.html" class="pagination-link" aria-label="The Bias-Complexity Tradeoff">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Bias-Complexity Tradeoff</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/06-model-selection.html" class="pagination-link" aria-label="Model Selection">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Model Selection</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb7" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "VC Dimension"</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>In the last chapter, we discussed the importance of the chosen hypothesis class in finding the function that best labels a data distribution, paying particular attention to its size and how it correlates with the errors associated with the learning algorithm.</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>Our main goal, however, remains to understand which classes $\mathcal{H}$ are PAC learnable or, at the limit, agnostically PAC learnable, that is, to know with certainty that the error is bounded by a certain quantity as a function of the parameters $\epsilon$ and $\delta$.</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>Through uniform convergence, we have shown that all *finite* classes are agnostically PAC learnable, while through the No-Free-Lunch theorem we know that the set of *all* functions certainly does not enjoy the same property. It therefore remains to be discovered whether infinite classes are, in general, PAC learnable or not.</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## The example of the threshold function</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>To affirm that not only finite classes are PAC learnable *(Or, in other words, that the property of a class being finite is a sufficient but not necessary condition for PAC learnability.)* a single counterexample is enough, which can be provided by the **threshold function**.</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>It is a very simple function, dependent on a single parameter $a$ which can take any value in the set of real numbers. It is defined as:</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    h_a(x)=</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        1 \ \ \ x&lt;a<span class="sc">\\</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        0 \ \ \ x\geqslant a</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>which, in short, can also be written as $\mathds{1}_{<span class="co">[</span><span class="ot">x&lt;a</span><span class="co">]</span>}$.</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>We are therefore in the case of binary classification, where a value is classified in one way if it is below the threshold (*threshold*, precisely) $a$, and in another if it is above it.</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>The class $\mathcal{H}=<span class="sc">\{</span>h_a:a\in\mathbb{R}<span class="sc">\}</span>$ is evidently infinite, the set $\mathbb{R}$ being infinite, but it is possible to show that it is PAC learnable with sample complexity</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    m_{\mathcal{H}}(\epsilon,\delta)=\frac{\log\frac{2}{\delta}}{\epsilon}</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>We will see the proof later, but in reality the reason is quite intuitive: given a training set $\mathcal{S}$ with a certain number of points divided into $0$ and $1$, the parameter $a$ must necessarily be between the largest point classified as $1$ and the smallest point classified as $0$, since otherwise contradictions would be encountered; this fact significantly limits the values that the parameter $a$ can take and, intuitively, makes $\abs{\mathcal{H}}&lt;\infty$.</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## Restriction of a function</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>To understand which hypothesis classes are PAC learnable, it is useful to define the *restriction* of a class $\mathcal{H}$ to a set $\mathcal{C}$.</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>For simplicity, we always remain in the context of binary classifications, so $\mathcal{H}$ represents a set of functions that go from a domain $\mathcal{X}$ to $<span class="sc">\{</span>0,1<span class="sc">\}</span>$. Let us now consider a subset $\mathcal{C}$ of the domain $\mathcal{X}$:</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    \mathcal{C}=\left<span class="sc">\{</span>c_1,\dots,c_m\right<span class="sc">\}</span>\subset\mathcal{X}</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>The **restriction** of $\mathcal{H}$ to $\mathcal{C}$ is defined as the set of functions from $\mathcal{C}$ to $<span class="sc">\{</span>0,1<span class="sc">\}</span>$ that can be derived from $\mathcal{H}$:</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    \mathcal{H}_{\mathcal{C}}=\left<span class="sc">\{</span>h\left(c_1\right),\dots,h\left(c_m\right):h\in\mathcal{H}\right<span class="sc">\}</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>In the context of binary classification, each function $h\left(c_i\right)$ is a vector of length $m$ composed of $0$s and $1$s.</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>To visualize the concept of restriction, let's go back to the example of the threshold function and imagine selecting three points on the real axis; it is clear that there are only four possible classifications (below threshold, above threshold, etc.). We have thus *restricted*, precisely, the class $\mathcal{H}$ to four possible cases, formally represented by four vectors composed of $0$s and $1$s of size equal to $|\mathcal{C}|=3$.</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## Shattering a set</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>From the restriction of a hypothesis class, it is possible to define the **shattering** *(In Italian *frantumazione*.)* of a set:</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>:::{.definition} </span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>Given a set $\mathcal{C}\subset\mathcal{X}$, we will say that $\mathcal{H}$ **shatters** $\mathcal{C}$ if its restriction $\mathcal{H}_{\mathcal{C}}$ contains *all* $2^{\abs{\mathcal{C}}}$ functions from $\mathcal{C}$ to $<span class="sc">\{</span>0,1<span class="sc">\}</span>$.</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>The example proposed above, with the threshold function and $\mathcal{C}=\left<span class="sc">\{</span>c_1,c_2,c_3\right<span class="sc">\}</span>$, clearly shows that $\mathcal{H}$ does not shatter $\mathcal{C}$, since $2^{\mathcal{C}}=8$ but the restriction includes only four possible functions.</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>This concept is useful to us because it leads directly back to overfitting: shattering a set, in fact, is equivalent to saying that any combination of points belonging to that set can be reproduced by a hypothesis of the considered class; this means that the number $\abs{\mathcal{C}}$ can give us an indication of how valid $\mathcal{H}$ is for solving a given problem.</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a><span class="fu">### Relationship between shattering and No-Free-Lunch</span></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>The (non) validity of a hypothesis class due to its size was discussed in the No-Free-Lunch theorem and its related corollary, where it was shown that the class containing all functions is not PAC learnable.</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>The concept of shattering is important for extending this reasoning to a generic hypothesis class $\mathcal{H}$. The underlying procedure, in fact, is the same: to identify an algorithm that fails in learning for a given data distribution; for this reason, the following theorem is indicated as another corollary of the No-Free-Lunch theorem:</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="No-Free-Lunch Corollary (with shattering)"}</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>Let:</span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a><span class="in">    item $\mathcal{H}$ be a hypothesis class containing functions that go from $\mathcal{X}$ to $\{0,1\}$</span></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a><span class="in">    item $m$ be the size of a learning set</span></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a><span class="in">    item $\mathcal{C}\subset\mathcal{X}$ be a set of size $2m$ that is *shattered* by $\mathcal{H}$</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a>Under these hypotheses, ***the No-Free-Lunch theorem is valid***.</span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>The proof is not required for the course, but it is important to understand intuitively what this corollary is communicating to us: in short, we can say that if $\mathcal{H}$ is able to shatter a certain set $\mathcal{C}$, a subset of the domain $\mathcal{X}$, then a set containing up to half the number of points of $\mathcal{C}$ is not a good learning set for the algorithm; learning on a set of that type, in fact, is such that it does not provide real information for predicting the classification of further points drawn from the same distribution.</span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a><span class="fu">## Definition of VC dimension</span></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>Having understood that the limit in the learning of an algorithm is given by the size of $\abs{\mathcal{C}}$ for which there is shattering by $\mathcal{H}$, we can formalize this aspect by defining a quantity called **VC dimension**, which takes its name from the two Russian mathematicians Vapnik and Chervonenkis.</span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>:::{.definition} </span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>The **VC dimension** of a hypothesis class $\mathcal{H}$, denoted by $VCdim(\mathcal{H})$, is the ***maximum size*** of a set $\mathcal{C}\subset\mathcal{X}$ that can be shattered by $\mathcal{H}$.</span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>If $\mathcal{H}$ can shatter sets of arbitrarily large size, we will say that $\mathcal{H}$ has an *infinite* VC dimension.</span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a>It is easy to verify that if $VCdim(\mathcal{H})=\infty$ then $\mathcal{H}$ is certainly \underline{*not*} PAC learnable, since whatever size $m$ of the learning set we choose, $\mathcal{H}$ will be able to shatter a set twice as large, from which the No-Free-Lunch theorem follows.</span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a>Another easy result to prove is that a finite hypothesis class certainly has a finite VC dimension: for $\mathcal{H}$ to be able to shatter $\mathcal{C}$, in fact, it is necessary that</span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a>    \abs{\mathcal{H}}\geqslant2^{\abs{\mathcal{C}}}</span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>From which, deriving $\abs{\mathcal{C}}$:</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>    2^{\abs{\mathcal{C}}}\leqslant\abs{\mathcal{H}} \ \Longrightarrow \ \abs{\mathcal{C}}\leqslant\log_2\abs{\mathcal{H}}</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>If $\abs{\mathcal{C}}$ is the maximum size of the set that can be shattered by $\mathcal{H}$, then it will be nothing other than the VC dimension:</span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>    VCdim(\mathcal{H})\leqslant\log_2\abs{\mathcal{H}}</span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>The reverse, however, is not true, so there can exist infinite classes with a finite VC dimension; we will see some examples in this regard.</span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a><span class="fu">### Calculation of the VC dimension</span></span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>To prove that the VC dimension of a class is finite and equal to a certain value $d$, it is necessary to proceed by following two steps:</span>
+<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-128"><a href="#cb7-128" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-129"><a href="#cb7-129" aria-hidden="true" tabindex="-1"></a><span class="in">    item Show that there exists a set $\mathcal{C}$ of size $d$ that can be shattered by $\mathcal{H}$:</span></span>
+<span id="cb7-130"><a href="#cb7-130" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-131"><a href="#cb7-131" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-132"><a href="#cb7-132" aria-hidden="true" tabindex="-1"></a><span class="in">        VCdim(\mathcal{H})\geqslant d</span></span>
+<span id="cb7-133"><a href="#cb7-133" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-134"><a href="#cb7-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-135"><a href="#cb7-135" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-136"><a href="#cb7-136" aria-hidden="true" tabindex="-1"></a><span class="in">    item Show that \underline{*all*} sets of size $d+1$ cannot be shattered by $\mathcal{H}$:</span></span>
+<span id="cb7-137"><a href="#cb7-137" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-138"><a href="#cb7-138" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-139"><a href="#cb7-139" aria-hidden="true" tabindex="-1"></a><span class="in">        VCdim(\mathcal{H})&lt;d+1</span></span>
+<span id="cb7-140"><a href="#cb7-140" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-141"><a href="#cb7-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-142"><a href="#cb7-142" aria-hidden="true" tabindex="-1"></a>If these two conditions are met, then it is clear that</span>
+<span id="cb7-143"><a href="#cb7-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-144"><a href="#cb7-144" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-145"><a href="#cb7-145" aria-hidden="true" tabindex="-1"></a>    VCdim(\mathcal{H})=d</span>
+<span id="cb7-146"><a href="#cb7-146" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-147"><a href="#cb7-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-148"><a href="#cb7-148" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Calculation for the threshold function</span></span>
+<span id="cb7-149"><a href="#cb7-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-150"><a href="#cb7-150" aria-hidden="true" tabindex="-1"></a>With $\abs{\mathcal{C}}=1$, it is clear that the set can be shattered, since it is sufficient to place the parameter $a$ to the left or right of $c_1$ to classify it as $0$ or $1$.</span>
+<span id="cb7-151"><a href="#cb7-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-152"><a href="#cb7-152" aria-hidden="true" tabindex="-1"></a>With $|\mathcal{C}|=2$, there is no shattering since it is impossible to have the classification $(0,1)$ and only the remaining three are possible. Following the steps mentioned at the beginning of the paragraph, we will have:</span>
+<span id="cb7-153"><a href="#cb7-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-154"><a href="#cb7-154" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-155"><a href="#cb7-155" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb7-156"><a href="#cb7-156" aria-hidden="true" tabindex="-1"></a>        VCdim(\mathcal{H})\geqslant1<span class="sc">\\</span></span>
+<span id="cb7-157"><a href="#cb7-157" aria-hidden="true" tabindex="-1"></a>        VCdim(\mathcal{H})&lt;2</span>
+<span id="cb7-158"><a href="#cb7-158" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb7-159"><a href="#cb7-159" aria-hidden="true" tabindex="-1"></a>    \Longrightarrow \ \ \boxed{VCdim(\mathcal{H})=1}</span>
+<span id="cb7-160"><a href="#cb7-160" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-161"><a href="#cb7-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-162"><a href="#cb7-162" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Calculation for the interval function</span></span>
+<span id="cb7-163"><a href="#cb7-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-164"><a href="#cb7-164" aria-hidden="true" tabindex="-1"></a>Let's define the interval function through two parameters $a$, $b$ as follows:</span>
+<span id="cb7-165"><a href="#cb7-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-166"><a href="#cb7-166" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-167"><a href="#cb7-167" aria-hidden="true" tabindex="-1"></a>    h_{a,b}(x)=</span>
+<span id="cb7-168"><a href="#cb7-168" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb7-169"><a href="#cb7-169" aria-hidden="true" tabindex="-1"></a>        1 \ \ \ a&lt;x&lt;b<span class="sc">\\</span></span>
+<span id="cb7-170"><a href="#cb7-170" aria-hidden="true" tabindex="-1"></a>        0 \ \ \ otherwise</span>
+<span id="cb7-171"><a href="#cb7-171" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb7-172"><a href="#cb7-172" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-173"><a href="#cb7-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-174"><a href="#cb7-174" aria-hidden="true" tabindex="-1"></a>The hypothesis class will therefore be:</span>
+<span id="cb7-175"><a href="#cb7-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-176"><a href="#cb7-176" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-177"><a href="#cb7-177" aria-hidden="true" tabindex="-1"></a>    \mathcal{H}=\left<span class="sc">\{</span>h_{a,b}:a,b\in\mathbb{R},a&lt;b\right<span class="sc">\}</span></span>
+<span id="cb7-178"><a href="#cb7-178" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-179"><a href="#cb7-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-180"><a href="#cb7-180" aria-hidden="true" tabindex="-1"></a>This time a set $\mathcal{C}$ with $|\mathcal{C}|=2$ can be shattered by the hypothesis class. Moving on to $|\mathcal{C}|=3$, the restriction $\mathcal{H}_{\mathcal{C}}$ contains the functions for all classifications except one, namely $(1,0,1)$, as it is impossible to place the central point outside the interval while simultaneously including the other two inside.</span>
+<span id="cb7-181"><a href="#cb7-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-182"><a href="#cb7-182" aria-hidden="true" tabindex="-1"></a>It follows that:</span>
+<span id="cb7-183"><a href="#cb7-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-184"><a href="#cb7-184" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-185"><a href="#cb7-185" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb7-186"><a href="#cb7-186" aria-hidden="true" tabindex="-1"></a>        VCdim(\mathcal{H})\geqslant2<span class="sc">\\</span></span>
+<span id="cb7-187"><a href="#cb7-187" aria-hidden="true" tabindex="-1"></a>        VCdim(\mathcal{H})&lt;3</span>
+<span id="cb7-188"><a href="#cb7-188" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb7-189"><a href="#cb7-189" aria-hidden="true" tabindex="-1"></a>    \Longrightarrow \ \ \boxed{VCdim(\mathcal{H})=2}</span>
+<span id="cb7-190"><a href="#cb7-190" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-191"><a href="#cb7-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-192"><a href="#cb7-192" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Calculation for the rectangular function</span></span>
+<span id="cb7-193"><a href="#cb7-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-194"><a href="#cb7-194" aria-hidden="true" tabindex="-1"></a>Let's move to $\mathbb{R}^2$ and consider the following function dependent on four parameters:</span>
+<span id="cb7-195"><a href="#cb7-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-196"><a href="#cb7-196" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-197"><a href="#cb7-197" aria-hidden="true" tabindex="-1"></a>    h_{a_1,a_2,b_1,b_2}\left(x_1,x_2\right)=</span>
+<span id="cb7-198"><a href="#cb7-198" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb7-199"><a href="#cb7-199" aria-hidden="true" tabindex="-1"></a>        1 \ \ \ a_1\leqslant x_1\leqslant a_2, \ b_1\leqslant x_2\leqslant b_2<span class="sc">\\</span></span>
+<span id="cb7-200"><a href="#cb7-200" aria-hidden="true" tabindex="-1"></a>        0 \ \ \ otherwise</span>
+<span id="cb7-201"><a href="#cb7-201" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb7-202"><a href="#cb7-202" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-203"><a href="#cb7-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-204"><a href="#cb7-204" aria-hidden="true" tabindex="-1"></a>The class is therefore:</span>
+<span id="cb7-205"><a href="#cb7-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-206"><a href="#cb7-206" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-207"><a href="#cb7-207" aria-hidden="true" tabindex="-1"></a>    \mathcal{H}=\left<span class="sc">\{</span>h_{a_1,a_2,b_1,b_2}:a_1,a_2,b_1,b_2\in\mathbb{R},a_1\leqslant a_2,b_1\leqslant b_2\right<span class="sc">\}</span></span>
+<span id="cb7-208"><a href="#cb7-208" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-209"><a href="#cb7-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-210"><a href="#cb7-210" aria-hidden="true" tabindex="-1"></a>As expected, there are examples up to $\abs{\mathcal{C}}=4$ in which $\mathcal{H}$ is able to shatter the set. For $\abs{\mathcal{C}}=5$, however, any set $\mathcal{C}$ is no longer shatterable by $\mathcal{H}$, since the most \"internal\" of the five cannot be classified as $0$ while the other four are classified as $1$.</span>
+<span id="cb7-211"><a href="#cb7-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-212"><a href="#cb7-212" aria-hidden="true" tabindex="-1"></a>It will therefore be:</span>
+<span id="cb7-213"><a href="#cb7-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-214"><a href="#cb7-214" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-215"><a href="#cb7-215" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb7-216"><a href="#cb7-216" aria-hidden="true" tabindex="-1"></a>        VCdim(\mathcal{H})\geqslant4<span class="sc">\\</span></span>
+<span id="cb7-217"><a href="#cb7-217" aria-hidden="true" tabindex="-1"></a>        VCdim(\mathcal{H})&lt;5</span>
+<span id="cb7-218"><a href="#cb7-218" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb7-219"><a href="#cb7-219" aria-hidden="true" tabindex="-1"></a>    \Longrightarrow \ \ \boxed{VCdim(\mathcal{H})=4}</span>
+<span id="cb7-220"><a href="#cb7-220" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-221"><a href="#cb7-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-222"><a href="#cb7-222" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Calculation for the sine ceiling function</span></span>
+<span id="cb7-223"><a href="#cb7-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-224"><a href="#cb7-224" aria-hidden="true" tabindex="-1"></a>In the examples seen so far, the VC dimension has coincided with the number of parameters useful for defining the functions within the hypothesis class. This, in reality, is not a general rule, and in this regard we will see an example below in which the two values are different.</span>
+<span id="cb7-225"><a href="#cb7-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-226"><a href="#cb7-226" aria-hidden="true" tabindex="-1"></a>Let's consider the ceiling function applied to the sine function modulated by a factor of $0.5$ and whose frequency is determined by a free parameter $\theta$:</span>
+<span id="cb7-227"><a href="#cb7-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-228"><a href="#cb7-228" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-229"><a href="#cb7-229" aria-hidden="true" tabindex="-1"></a>    h_\theta(x)=\lceil 0.5\sin(\theta x)\rceil</span>
+<span id="cb7-230"><a href="#cb7-230" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-231"><a href="#cb7-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-232"><a href="#cb7-232" aria-hidden="true" tabindex="-1"></a>We recall that the ceiling function returns the smallest integer greater than or equal to the input value; since the modulated sine oscillates between $-0.5$ and $0.5$, then the function $h_\theta(x)$ will alternately take only the values $0$ (when the sine is negative) and $1$ (when the sine is positive). It is possible to show that for any combination of points classified as $0$ and $1$, in whatever number they are, there exists a value of $\theta$ capable of determining a function in $\mathcal{H}$ that correctly describes this classification. In other words, the VC dimension of this class is infinite, despite the fact that the parameter on which it depends is only one.</span>
+<span id="cb7-233"><a href="#cb7-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-234"><a href="#cb7-234" aria-hidden="true" tabindex="-1"></a><span class="fu">## Theorem of statistical learning</span></span>
+<span id="cb7-235"><a href="#cb7-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-236"><a href="#cb7-236" aria-hidden="true" tabindex="-1"></a>What we have arrived at so far has been to state that if the VC dimension of a class is infinite, then it is certainly not PAC learnable, and we have also shown that a finite class (which we know to be PAC learnable) has a finite VC dimension.</span>
+<span id="cb7-237"><a href="#cb7-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-238"><a href="#cb7-238" aria-hidden="true" tabindex="-1"></a>There is still one type to explore, namely infinite classes with a finite VC dimension; the question is: what can we say about their PAC learnability?</span>
+<span id="cb7-239"><a href="#cb7-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-240"><a href="#cb7-240" aria-hidden="true" tabindex="-1"></a>We will see below an important theorem - not by chance called the *fundamental theorem* - which guarantees the PAC learnability of all classes with a finite VC dimension. We will thus have managed to reach our initial goal, which was to find a parameter that is directly linked to the PAC learnability of a class: it is, in fact, the VC dimension.</span>
+<span id="cb7-241"><a href="#cb7-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-242"><a href="#cb7-242" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Fundamental Theorem of Statistical Learning"}</span>
+<span id="cb7-243"><a href="#cb7-243" aria-hidden="true" tabindex="-1"></a>Let $\mathcal{H}$ be a hypothesis class containing functions that go from a domain $\mathcal{X}$ to $<span class="sc">\{</span>0,1<span class="sc">\}</span>$ and let the loss function be a $0-1$ objective function.</span>
+<span id="cb7-244"><a href="#cb7-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-245"><a href="#cb7-245" aria-hidden="true" tabindex="-1"></a>Then, the following statements are equivalent:</span>
+<span id="cb7-246"><a href="#cb7-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-247"><a href="#cb7-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-248"><a href="#cb7-248" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-249"><a href="#cb7-249" aria-hidden="true" tabindex="-1"></a><span class="in">    item $\mathcal{H}$ has the property of **uniform convergence**</span></span>
+<span id="cb7-250"><a href="#cb7-250" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-251"><a href="#cb7-251" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-252"><a href="#cb7-252" aria-hidden="true" tabindex="-1"></a><span class="in">    item Any ERM algorithm is an **agnostic PAC learner** for $\mathcal{H}$</span></span>
+<span id="cb7-253"><a href="#cb7-253" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-254"><a href="#cb7-254" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-255"><a href="#cb7-255" aria-hidden="true" tabindex="-1"></a><span class="in">    item $\mathcal{H}$ is **agnostic PAC learnable**</span></span>
+<span id="cb7-256"><a href="#cb7-256" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-257"><a href="#cb7-257" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-258"><a href="#cb7-258" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-259"><a href="#cb7-259" aria-hidden="true" tabindex="-1"></a><span class="in">    item $\mathcal{H}$ is **PAC learnable**</span></span>
+<span id="cb7-260"><a href="#cb7-260" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-261"><a href="#cb7-261" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-262"><a href="#cb7-262" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-263"><a href="#cb7-263" aria-hidden="true" tabindex="-1"></a><span class="in">    item Any ERM algorithm is a **PAC learner** for $\mathcal{H}$</span></span>
+<span id="cb7-264"><a href="#cb7-264" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-265"><a href="#cb7-265" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-266"><a href="#cb7-266" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-267"><a href="#cb7-267" aria-hidden="true" tabindex="-1"></a><span class="in">    item $\mathcal{H}$ has **finite VC dimension**</span></span>
+<span id="cb7-268"><a href="#cb7-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-269"><a href="#cb7-269" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb7-270"><a href="#cb7-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-271"><a href="#cb7-271" aria-hidden="true" tabindex="-1"></a>We do not give the proof in detail, also because most of them are obvious or have already been seen previously:</span>
+<span id="cb7-272"><a href="#cb7-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-273"><a href="#cb7-273" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-274"><a href="#cb7-274" aria-hidden="true" tabindex="-1"></a><span class="in">    item The implications $1\rightarrow2\rightarrow3$ derive from the theorem on the link between uniform convergence and PAC learning, which we saw in section @sec:convergenza-uniforme-e-pac-learnability</span></span>
+<span id="cb7-275"><a href="#cb7-275" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-276"><a href="#cb7-276" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-277"><a href="#cb7-277" aria-hidden="true" tabindex="-1"></a><span class="in">    item The implication $3\rightarrow4$ is obvious, since</span></span>
+<span id="cb7-278"><a href="#cb7-278" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-279"><a href="#cb7-279" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-280"><a href="#cb7-280" aria-hidden="true" tabindex="-1"></a><span class="in">        \underbrace{\underbrace{L_{\mathcal{D}}(h)\leqslant\epsilon}_{\text{PAC learning}}\leqslant\min_{h'\in\mathcal{H}}L_{\mathcal{D}}\left(h'\right)+\epsilon}_{\text{Agnostic PAC learning}}</span></span>
+<span id="cb7-281"><a href="#cb7-281" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-282"><a href="#cb7-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-283"><a href="#cb7-283" aria-hidden="true" tabindex="-1"></a><span class="in">    and the two properties coincide if the realizability assumption is valid (and therefore the minimum in the last member is zero)</span></span>
+<span id="cb7-284"><a href="#cb7-284" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-285"><a href="#cb7-285" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-286"><a href="#cb7-286" aria-hidden="true" tabindex="-1"></a><span class="in">    item For the same reason just seen, $2\rightarrow5$ also holds</span></span>
+<span id="cb7-287"><a href="#cb7-287" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-288"><a href="#cb7-288" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-289"><a href="#cb7-289" aria-hidden="true" tabindex="-1"></a><span class="in">    item By contradiction, if the infinite VC dimension for a hypothesis class implies its non-PAC learnability, then for a class to be PAC learnable it is necessary that it has a finite VC dimension, so we will have $4\rightarrow6$ and $5\rightarrow6$</span></span>
+<span id="cb7-290"><a href="#cb7-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-291"><a href="#cb7-291" aria-hidden="true" tabindex="-1"></a>To close the circle, it is necessary to show that $6\rightarrow1$. The proof is not required by the course, so it will not be given in detail; suffice it to say that it is divided into two parts:</span>
+<span id="cb7-292"><a href="#cb7-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-293"><a href="#cb7-293" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-294"><a href="#cb7-294" aria-hidden="true" tabindex="-1"></a><span class="in">    item Let $d$ be the VC dimension of $\mathcal{H}$, even if $\abs{\mathcal{H}}=\infty$, by applying the restriction of $\mathcal{H}$ to $\mathcal{C}$ it is shown that the "effective size" $\abs{\mathcal{H}_{\mathcal{C}}}$ is $O\left(\abs{\mathcal{C}}^d\right)$, so the size of $\mathcal{H}_{\mathcal{C}}$ grows *polynomially* with respect to $\abs{\mathcal{C}}$. This part of the proof is known as *Sauer's lemma*.</span></span>
+<span id="cb7-295"><a href="#cb7-295" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-296"><a href="#cb7-296" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-297"><a href="#cb7-297" aria-hidden="true" tabindex="-1"></a><span class="in">    item We know that finite classes enjoy the property of uniform convergence, but it is possible to generalize this result by stating that uniform convergence is valid for all those classes with "effective size" small, that is, with a polynomial and not exponential growth with respect to $\abs{\mathcal{C}}$.</span></span>
+<span id="cb7-298"><a href="#cb7-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-299"><a href="#cb7-299" aria-hidden="true" tabindex="-1"></a><span class="fu">### The link between VC dimension and sample complexity</span></span>
+<span id="cb7-300"><a href="#cb7-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-301"><a href="#cb7-301" aria-hidden="true" tabindex="-1"></a>The VC dimension characterizes not only PAC learnability but also the sample complexity associated with the various properties of the considered hypothesis class. This is demonstrated in the quantitative version of the fundamental theorem of statistical learning.</span>
+<span id="cb7-302"><a href="#cb7-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-303"><a href="#cb7-303" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Fundamental Theorem of Statistical Learning\ (quantitative version)"}</span>
+<span id="cb7-304"><a href="#cb7-304" aria-hidden="true" tabindex="-1"></a>Let $\mathcal{H}$ be a hypothesis class containing functions that go from a domain $\mathcal{X}$ to $<span class="sc">\{</span>0,1<span class="sc">\}</span>$ and let the loss function be a $0-1$ objective function. Assume, moreover, that $VCdim(\mathcal{H})=d&lt;\infty$.</span>
+<span id="cb7-305"><a href="#cb7-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-306"><a href="#cb7-306" aria-hidden="true" tabindex="-1"></a>Then, there exist constants $C_1$ and $C_2$ such that:</span>
+<span id="cb7-307"><a href="#cb7-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-308"><a href="#cb7-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-309"><a href="#cb7-309" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-310"><a href="#cb7-310" aria-hidden="true" tabindex="-1"></a><span class="in">    item $\mathcal{H}$ enjoys uniform convergence with sample complexity</span></span>
+<span id="cb7-311"><a href="#cb7-311" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-312"><a href="#cb7-312" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-313"><a href="#cb7-313" aria-hidden="true" tabindex="-1"></a><span class="in">        C_1\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon^2}\leqslant m_{\mathcal{H}}^{UC}(\epsilon,\delta)\leqslant C_2\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon^2}</span></span>
+<span id="cb7-314"><a href="#cb7-314" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-315"><a href="#cb7-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-316"><a href="#cb7-316" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-317"><a href="#cb7-317" aria-hidden="true" tabindex="-1"></a><span class="in">    item $\mathcal{H}$ is agnostically PAC learnable with sample complexity</span></span>
+<span id="cb7-318"><a href="#cb7-318" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-319"><a href="#cb7-319" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-320"><a href="#cb7-320" aria-hidden="true" tabindex="-1"></a><span class="in">        C_1\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon^2}\leqslant m_{\mathcal{H}}(\epsilon,\delta)\leqslant C_2\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon^2}</span></span>
+<span id="cb7-321"><a href="#cb7-321" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-322"><a href="#cb7-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-323"><a href="#cb7-323" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-324"><a href="#cb7-324" aria-hidden="true" tabindex="-1"></a><span class="in">    item $\mathcal{H}$ is PAC learnable with sample complexity</span></span>
+<span id="cb7-325"><a href="#cb7-325" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-326"><a href="#cb7-326" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-327"><a href="#cb7-327" aria-hidden="true" tabindex="-1"></a><span class="in">        C_1\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon}\leqslant m_{\mathcal{H}}(\epsilon,\delta)\leqslant C_2\frac{d\log\left(\frac{1}{\epsilon}\right)+\log\left(\frac{1}{\delta}\right)}{\epsilon}</span></span>
+<span id="cb7-328"><a href="#cb7-328" aria-hidden="true" tabindex="-1"></a><span class="in">    $$</span></span>
+<span id="cb7-329"><a href="#cb7-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-330"><a href="#cb7-330" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb7-331"><a href="#cb7-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-332"><a href="#cb7-332" aria-hidden="true" tabindex="-1"></a>The proof is not required for this theorem either, but it is interesting to note how the ends of the interval are similar to the upper bound of the sample complexity seen in equation @eq:convergenza-uniforme-sample-complexity. The numerator, in particular, can be rewritten as</span>
+<span id="cb7-333"><a href="#cb7-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-334"><a href="#cb7-334" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-335"><a href="#cb7-335" aria-hidden="true" tabindex="-1"></a>    \log\left(\frac{2\abs{\mathcal{H}}}{\delta}\right)=\log(2\abs{\mathcal{H}})+\log\left(\frac{1}{\delta}\right)</span>
+<span id="cb7-336"><a href="#cb7-336" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb7-337"><a href="#cb7-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-338"><a href="#cb7-338" aria-hidden="true" tabindex="-1"></a>So it is clear that, in this context, it is as if the VC dimension of $\mathcal{H}$, i.e., $d$, were playing the role of $\log(2\abs{\mathcal{H}})$.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>7&nbsp; Model Selection – Machine Learning — Lecture Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/07-linear-predictors.html" rel="next">
+<link href="../chapters/05-vc-dimension.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-intro.html">Supervised Learning</a></li><li class="breadcrumb-item"><a href="../chapters/06-model-selection.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Model Selection</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Machine Learning — Lecture Notes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Supervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction &amp; ML Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-pac-learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PAC Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-uniform-convergence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Uniform Convergence</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-bias-complexity-tradeoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Bias-Complexity Tradeoff</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-vc-dimension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">VC Dimension</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-model-selection.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Model Selection</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-linear-predictors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Linear Predictors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-stochastic-gradient-descent.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Stochastic Gradient Descent</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-support-vector-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Support Vector Machines</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Kernel Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-boosting-trees-rf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Boosting, Decision Trees and Random Forests</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-neural-networks-cnn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Neural Networks and Convolutional Neural Networks</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Unsupervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Clustering</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-reinforcement-learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Reinforcement Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Exam Preparation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16-proofs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Proofs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17-exam-exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#validation-set" id="toc-validation-set" class="nav-link active" data-scroll-target="#validation-set"><span class="header-section-number">7.1</span> Validation Set</a>
+  <ul class="collapse">
+  <li><a href="#grid-search" id="toc-grid-search" class="nav-link" data-scroll-target="#grid-search"><span class="header-section-number">7.1.1</span> Grid search</a></li>
+  <li><a href="#k-fold-cross-validation" id="toc-k-fold-cross-validation" class="nav-link" data-scroll-target="#k-fold-cross-validation"><span class="header-section-number">7.1.2</span> K-Fold Cross Validation</a></li>
+  <li><a href="#new-decomposition-of-the-error" id="toc-new-decomposition-of-the-error" class="nav-link" data-scroll-target="#new-decomposition-of-the-error"><span class="header-section-number">7.1.3</span> New decomposition of the error</a></li>
+  <li><a href="#when-learning-fails" id="toc-when-learning-fails" class="nav-link" data-scroll-target="#when-learning-fails"><span class="header-section-number">7.1.4</span> When learning fails</a></li>
+  </ul></li>
+  <li><a href="#regularization" id="toc-regularization" class="nav-link" data-scroll-target="#regularization"><span class="header-section-number">7.2</span> Regularization</a>
+  <ul class="collapse">
+  <li><a href="#regularized-loss-minimization" id="toc-regularized-loss-minimization" class="nav-link" data-scroll-target="#regularized-loss-minimization"><span class="header-section-number">7.2.1</span> Regularized Loss Minimization</a></li>
+  <li><a href="#tikhonov-regularization" id="toc-tikhonov-regularization" class="nav-link" data-scroll-target="#tikhonov-regularization"><span class="header-section-number">7.2.2</span> Tikhonov Regularization</a></li>
+  <li><a href="#ridge-regression" id="toc-ridge-regression" class="nav-link" data-scroll-target="#ridge-regression"><span class="header-section-number">7.2.3</span> Ridge Regression</a></li>
+  </ul></li>
+  <li><a href="#stability" id="toc-stability" class="nav-link" data-scroll-target="#stability"><span class="header-section-number">7.3</span> Stability</a>
+  <ul class="collapse">
+  <li><a href="#tikhonov-regularization-as-a-stabilizer" id="toc-tikhonov-regularization-as-a-stabilizer" class="nav-link" data-scroll-target="#tikhonov-regularization-as-a-stabilizer"><span class="header-section-number">7.3.1</span> Tikhonov regularization as a stabilizer</a></li>
+  <li><a href="#fitting-stability-tradeoff" id="toc-fitting-stability-tradeoff" class="nav-link" data-scroll-target="#fitting-stability-tradeoff"><span class="header-section-number">7.3.2</span> Fitting-stability tradeoff</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-intro.html">Supervised Learning</a></li><li class="breadcrumb-item"><a href="../chapters/06-model-selection.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Model Selection</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Model Selection</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Let’s go back to the polynomial regression seen in paragraph <span class="citation" data-cites="sec:regressione-polinomiale">(<a href="#ref-sec:regressione-polinomiale" role="doc-biblioref"><strong>sec:regressione-polinomiale?</strong></a>)</span> and pay attention to our way of proceeding: although we assume a <em>non-linear</em> relationship between the data, we are still able to exploit the hypothesis class relative to <em>linear</em> regression to find the suitable fit. This is possible by “sacrificing” the dimension of the input data, making it go from <span class="math inline">\(1\)</span> to <span class="math inline">\(n+1\)</span> being <span class="math inline">\(n\)</span> the degree of the polynomial considered:</p>
+<p><span class="math display">\[
+    x\to\left(1,x,x^2,\dots,x^n\right)
+\]</span></p>
+<p>We therefore transform each input data by increasing the complexity of the domain, and in this way - as shown above - we are able to apply linear regression obtaining the best fit.</p>
+<p>At this point, however, the question to ask would be: how to choose, at the beginning, the degree of the polynomial? How do we know which polynomial best fits our data set?</p>
+<p>We understand, therefore, that we have identified the hypothesis class to solve the problem, but not the specific <em>model</em> characterized by its hyper-parameters, which in the example just seen is only one - the degree of the polynomial. Its search goes by the name of <em>model selection</em>, or in English <strong><em>model selection</em></strong>.</p>
+<section id="validation-set" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="validation-set"><span class="header-section-number">7.1</span> Validation Set</h2>
+<p>We have already seen in paragraph <span class="citation" data-cites="sec:insiemi-di-addestramento-test-e-validazione">(<a href="#ref-sec:insiemi-di-addestramento-test-e-validazione" role="doc-biblioref"><strong>sec:insiemi-di-addestramento-test-e-validazione?</strong></a>)</span> how the search for hyper-parameters is solved by a <em>split</em> of the training set, with part of it going to constitute the <strong>validation set</strong>, usually indicated with <span class="math inline">\(\mathcal{V}\)</span>. In reality, this is not the only possible method: another technique adopted is the <em>Structural Risk Minimization</em>, which we will not go into as it is a theoretical tool that is not very practical to use in many real problems.</p>
+<p>As we know, the validation set must in no way be used even partially for training, because otherwise an impartial evaluation of the selected hypothesis would not be possible and there would be serious risks of overfitting.</p>
+<p>The validation set therefore represents a first test for the chosen hypothesis, which allows to provide a better estimate of the true error with respect to the empirical risk. In practice, several configurations of hyper-parameters are selected, and for each of these the best hypothesis is determined according to ERM; these are then passed to the validation set from which the one with the lowest loss will emerge, which will finally be subjected to the test set.</p>
+<p>There is an important theorem that quantifies an upper bound for the difference between the loss calculated through the validation set and the true error that we see below.</p>
+<div class="theorem" name="Theorem on the error of the validation set">
+<p>Let <span class="math inline">\(\mathcal{V}\)</span> be a validation set composed of <span class="math inline">\(m_{\mathcal{V}}\)</span> elements and let <span class="math inline">\(h\)</span> be a predictor. Assuming that the loss function <span class="math inline">\(L_{\mathcal{V}}(h)\)</span> expresses a value in the interval <span class="math inline">\([0,1]\)</span> then for every <span class="math inline">\(\delta\in(0,1)\)</span> it results</p>
+<p><span class="math display">\[
+    \abs{L_{\mathcal{D}}(h)-L_{\mathcal{V}}(h)}\leqslant\sqrt{\frac{\log\left(\frac{2}{\delta}\right)}{2m_{\mathcal{V}}}}
+\]</span></p>
+<p>with a probability of <em>at least</em> <span class="math inline">\(1-\delta\)</span> with respect to the choice of <span class="math inline">\(\mathcal{V}\)</span>.</p>
+</div>
+<p>We can note how the upper bound is similar to that of the quantitative version of the fundamental theorem of statistical learning (paragraph <span class="citation" data-cites="sec:il-legame-tra-dimensione-vc-e-sample-complexity">(<a href="#ref-sec:il-legame-tra-dimensione-vc-e-sample-complexity" role="doc-biblioref"><strong>sec:il-legame-tra-dimensione-vc-e-sample-complexity?</strong></a>)</span>); in fact, isolating <span class="math inline">\(\epsilon\)</span> from the relation on agnostic PAC learning we will have</p>
+<p><span class="math display">\[
+    m\leqslant C\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon^2} \ \Longrightarrow \ \epsilon\leqslant\sqrt{C\frac{d+\log\left(\frac{1}{\delta}\right)}{m}}
+\]</span></p>
+<p>being both <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(m\)</span> two positive quantities.</p>
+<p>Resuming equation <span class="citation" data-cites="eq:convergenza-uniforme-teorema-epsilon">(<a href="#ref-eq:convergenza-uniforme-teorema-epsilon" role="doc-biblioref"><strong>eq:convergenza-uniforme-teorema-epsilon?</strong></a>)</span> we will write</p>
+<p><span class="math display">\[
+    L_{\mathcal{D}}(h)\leqslant L_{\mathcal{S}}(h)+\epsilon\leqslant L_{\mathcal{S}}(h)+\sqrt{C\frac{d+\log\left(\frac{1}{\delta}\right)}{m}}
+\]</span></p>
+<p>which we can compare with the thesis of the theorem just presented:</p>
+<p><span class="math display">\[
+    L_{\mathcal{D}}(h)\leqslant L_{\mathcal{V}}(h)+\sqrt{\frac{\log\left(\frac{2}{\delta}\right)}{2m_{\mathcal{V}}}}
+\]</span></p>
+<p>The main difference consists in the presence of <span class="math inline">\(d\)</span> - that is, of the VC dimension - in <span class="citation" data-cites="eq:selezione-del-modello-errore-training">(<a href="#ref-eq:selezione-del-modello-errore-training" role="doc-biblioref"><strong>eq:selezione-del-modello-errore-training?</strong></a>)</span>, as the predictor is obtained starting from the training set, and the more complex the problem is, the larger <span class="math inline">\(d\)</span> is. Since the objective is to minimize the empirical risk as much as possible, usually <span class="math inline">\(d\)</span> is such as to make the upper bound of <span class="citation" data-cites="eq:selezione-del-modello-errore-training">(<a href="#ref-eq:selezione-del-modello-errore-training" role="doc-biblioref"><strong>eq:selezione-del-modello-errore-training?</strong></a>)</span> much larger than that of <span class="citation" data-cites="eq:selezione-del-modello-errore-validation">(<a href="#ref-eq:selezione-del-modello-errore-validation" role="doc-biblioref"><strong>eq:selezione-del-modello-errore-validation?</strong></a>)</span>, therefore through the validation set we are able to obtain a better estimate of the true error.</p>
+<p>The validation set, therefore, is not used to formulate a hypothesis in itself, because it receives as input a hypothesis already obtained through an algorithm (typically ERM), but its function is to provide a better estimate of the error: this is the reason why it is important that there is no form of training at the time of validation, since otherwise the formula <span class="citation" data-cites="eq:selezione-del-modello-errore-validation">(<a href="#ref-eq:selezione-del-modello-errore-validation" role="doc-biblioref"><strong>eq:selezione-del-modello-errore-validation?</strong></a>)</span> would no longer be correct. The price we have to pay for this better estimate, however, is precisely that of an additional set of data with respect to the training one.</p>
+<p>Let’s summarize below the way to proceed:</p>
+<div class="definition">
+<pre><code>- *Different algorithms* or a single algorithm with *different configurations of hyper-parameters* are chosen
+- For each of the $r$ choices made, the relative hypothesis class $\mathcal{H}_i=\left\{h_{i1},h_{i2},\dots,h_{in_i}\right\}$ is considered, being $n_i$ the size of the $i$-th class
+- The machine learning algorithm is trained on each of the $r$ classes *independently*, finding for each the best hypothesis according to ERM
+- Through the best predictors found we build the new class $\mathcal{H}'=\left\{h_1^{ERM},h_2^{ERM},\dots,h_r^{ERM}\right\}$ of size $r$
+- For each of the predictors in the class $\mathcal{H}'$ the loss $L_{\mathcal{V}}$ is calculated and the one that minimizes this quantity is finally selected</code></pre>
+</div>
+<p>We note that <span class="math inline">\(\mathcal{H}'\)</span> is a <em>finite</em> hypothesis class, deriving from a set of algorithms and configurations that are finite in number. Since the selection of the predictor from this class occurs similarly to what happens for training (i.e.&nbsp;through ERM), the same principle that we know will apply: the larger the class, the more points it will be necessary to have in the set to minimize the error. This means that we cannot afford to try too many algorithms and too many configurations, because at a certain point we would run the risk of overfitting since we cannot insert excessive points in the validation set by subtracting them from the training set and the test set.</p>
+<p>What has been said is expressed in quantitative form in the following theorem.</p>
+<div class="theorem" name="Theorem on the error of the validation set with multiple hypotheses">
+<p>Let <span class="math inline">\(\mathcal{H}'=\left\{h_1^{ERM},h_2^{ERM},\dots,h_r^{ERM}\right\}\)</span> be a set of predictors. Assuming that the loss function, for each of these predictors, expresses a value in the interval <span class="math inline">\([0,1]\)</span>, and assuming that the validation set <span class="math inline">\(\mathcal{V}\)</span> of size <span class="math inline">\(m_{\mathcal{V}}\)</span> is sampled independently of <span class="math inline">\(\mathcal{H}'\)</span> then it results</p>
+<p><span class="math display">\[
+    \abs{L_{\mathcal{D}}(h)-L_{\mathcal{V}}(h)}\leqslant\sqrt{\frac{\log\left(\frac{2\abs{\mathcal{H}'}}{\delta}\right)}{2m_{\mathcal{V}}}}
+\]</span></p>
+<p>with a probability of <em>at least</em> <span class="math inline">\(1-\delta\)</span> with respect to the choice of <span class="math inline">\(\mathcal{V}\)</span> and for every <span class="math inline">\(h\in\mathcal{H}'\)</span>.</p>
+<p>Applying the theorem to a single hypothesis we will have that</p>
+<p><span class="math display">\[
+    P\left(\abs{L_{\mathcal{D}}(h)-L_{\mathcal{V}}(h)}&gt;\sqrt{\frac{\log\left(\frac{2}{\delta}\right)}{2m_{\mathcal{V}}}}\right)\leqslant\delta \hspace{0.6cm} \forall h\in\mathcal{H}'
+\]</span></p>
+<p>in the sense that the probability that the difference in modulus of the loss functions is greater than that square root is less than or equal to <span class="math inline">\(\delta\)</span>.</p>
+<p>From the sum rule in probability theory we know that</p>
+<p><span class="math display">\[
+    P\left(\bigcup_iA_i\right)\leqslant\sum_iP\left(A_i\right)
+\]</span></p>
+<p>Let’s indicate with <span class="math inline">\(P_{tot}\)</span> the probability associated with the union of all the hypotheses, or in other words with the probability that the validation set is “unlucky” for <em>all</em> the hypotheses of the class. It will result:</p>
+<p><span class="math display">\[
+    P_{tot}\leqslant\sum_{h\in\mathcal{H}'}\delta=\abs{\mathcal{H}'}\delta
+\]</span></p>
+<p>Setting <span class="math inline">\(\delta_{tot}=\abs{\mathcal{H}'}\delta\)</span> we obtain</p>
+<p><span class="math display">\[
+    P_{tot}\leqslant\delta_{tot}
+\]</span></p>
+<p>which is precisely the form known to us. For this relationship to make sense, however, it is necessary that <span class="math inline">\(\delta_{tot}&lt;1\)</span>, and it is not said that by summing <span class="math inline">\(\abs{\mathcal{H}'}\)</span> times <span class="math inline">\(\delta&lt;1\)</span> we obtain a number less than one. Let’s therefore set:</p>
+<p><span class="math display">\[
+    \delta'=\frac{\delta}{\abs{\mathcal{H}'}}
+\]</span></p>
+<p>We therefore choose <span class="math inline">\(\delta'\)</span> as an upper bound for the probability associated with the single predictor, and we note that, by making <span class="math inline">\(\delta_{tot}\)</span> explicit, we obtain</p>
+<p><span class="math display">\[
+    \delta_{tot}=\abs{\mathcal{H}'}\delta'=\abs{\mathcal{H}'}\cdot\frac{\delta}{\abs{\mathcal{H}'}}=\delta
+\]</span></p>
+<p>This result tells us that, by normalizing the upper bound for the single hypotheses with respect to the size of the class <span class="math inline">\(\mathcal{H}'\)</span>, it results <span class="math inline">\(\delta_{tot}\equiv\delta\)</span>.</p>
+<p>According to what we have said, for every <span class="math inline">\(h\in\mathcal{H}'\)</span> it results</p>
+<p><span class="math display">\[
+    \abs{L_{\mathcal{D}}(h)-L_{\mathcal{V}}(h)}\leqslant\sqrt{\frac{\log\left(\frac{2}{\delta'}\right)}{2m_{\mathcal{V}}}}=\sqrt{\frac{\log\left(\frac{2\abs{\mathcal{H}'}}{\delta}\right)}{2m_{\mathcal{V}}}}
+\]</span></p>
+<p>with a probability greater than or equal to <span class="math inline">\(1-\delta_{tot}=1-\delta\)</span>, precisely as predicted by the thesis.</p>
+</div>
+<p>Resuming the example of polynomial fitting, we can compare the error on the training and the error on the validation in what is called the <strong><em>model selection curve</em></strong>.</p>
+<p><img src="../../../../Grafiche/_inline_cache/2e1ce2ff5c4e5bb8.svg" class="tikz-figure img-fluid" alt=""></p>
+<p>The largest errors are had with polynomial degrees that are too low and with degrees that are too high: in the first case the high error is expressed both in the training and in the validation, highlighting the fact that the curve does not adapt well to the training data and at the same time is not able to extend to another data set (the validation one); this is, as we know, the phenomenon of underfitting. In the second case, the model adapts perfectly to the training data, while it is the validation set that reveals an evident error: this is the opposite phenomenon to the previous one, that is, that of overfitting.</p>
+<p>The model selection curve clearly expresses the importance of selection through a validation set: without the latter, in fact, we would tend to prefer higher degrees that greatly decrease the empirical risk, but obtaining a high error then in the test set; the validation set therefore acts as a “filter”, offering us a new point of view on the performance of the predictors obtained through ERM.</p>
+<section id="grid-search" class="level3" data-number="7.1.1">
+<h3 data-number="7.1.1" class="anchored" data-anchor-id="grid-search"><span class="header-section-number">7.1.1</span> Grid search</h3>
+<p>The example of polynomial fittings takes into consideration a hyper-parameter belonging to the set of natural numbers. It is not uncommon, however, to have to deal with hyper-parameters of a <em>real</em> type, and which can therefore formally assume infinite values.</p>
+<p>In these cases, a method known as <strong>grid search</strong> is applied, which consists in the finite subdivision of the numerical interval associated with the possible values that a hyper-parameter can assume. An example of a grid obtained from two hyper-parameters is shown in the following figure.</p>
+<p><img src="../../../../Grafiche/_inline_cache/cace96bf21f9349c.svg" class="tikz-figure img-fluid" alt=""></p>
+<p>This method is well suited in the case where the loss function has only one minimum: in this case, in fact, it is possible to “zoom” into the region of the grid where the most promising results have been obtained and build a finer grid, repeating the process again until one is satisfied with the accuracy of the calculation. In the case of multiple minima, however, it would be a matter of performing multiple searches in different areas, making the method inefficient.</p>
+<p>We must also always keep in mind the discussion seen above regarding the size of the class, according to which we cannot study an excessive number of configurations: we know, in fact, that the quality of the estimate of the true error decreases with the number of models. In essence, the more models are considered, the more the estimate of the true risk through the validation set becomes in turn an empirical risk, similarly to what happens with the training set. This is precisely the reason why we need, in addition to the validation set, also the test set: since it is used neither for training nor for validation, it offers the statistical guarantee of being a good approximation for <span class="math inline">\(L_{\mathcal{L}}(h)\)</span>.</p>
+<p>The critical point of this process concerns the exclusive use of the test set as an estimate of the error, and not as a useful <em>feedback</em> to repeat the learning process: if the result did not meet our expectations and we wanted to intervene on the models or algorithms based on the result, we could not then reuse the same test set to repeat the estimate of the true risk, as the test set would become just another validation set not able, by its nature, to provide effective estimates on performance.</p>
+</section>
+<section id="k-fold-cross-validation" class="level3" data-number="7.1.2">
+<h3 data-number="7.1.2" class="anchored" data-anchor-id="k-fold-cross-validation"><span class="header-section-number">7.1.2</span> K-Fold Cross Validation</h3>
+<p>A common problem in the field of machine learning is that of not having a very large data set available. Defining a validation set in these cases is more “expensive”, because it means considerably reducing the number of data on which the training takes place, especially if the models to be tried are different.</p>
+<p>In these cases, what is called <strong>K-Fold Cross Validation</strong> is performed, which takes place following the split between the training set and the test set:</p>
+<ul>
+<li>The training set of size <span class="math inline">\(m\)</span> is divided equally into <span class="math inline">\(k\)</span> subsets (called <em>folds</em>) of size <span class="math inline">\(\frac{m}{k}\)</span></li>
+<li>For each fold, the algorithm is trained on the union of all the others, and the selected hypothesis is validated on the fold in question, thus calculating the error</li>
+<li>The estimate of the true error corresponds to the average of the estimates calculated for each fold</li>
+</ul>
+<p><img src="../../../../Grafiche/_inline_cache/0ec543313599a0f2.svg" class="tikz-figure img-fluid" alt=""></p>
+<p>Let’s observe an example related to gesture recognition; let’s imagine we have images of twelve gestures, each repeated ten times by fourteen different people, for a total of <span class="math inline">\(1680\)</span> images.</p>
+<p><img src="../../../../Grafiche/_inline_cache/ef11f62b607df59a.svg" class="tikz-figure img-fluid" alt=""></p>
+<p>The images are converted into feature vectors with two elements: the first is the <em>distance</em> of the fingers from the center of the palm of the hand, and the other is the <em>curvature</em> of the same fingers. In figure <span class="citation" data-cites="fig:selezione-del-modello-riconoscimento-dei-gesti-dati-in-input">(<a href="#ref-fig:selezione-del-modello-riconoscimento-dei-gesti-dati-in-input" role="doc-biblioref"><strong>fig:selezione-del-modello-riconoscimento-dei-gesti-dati-in-input?</strong></a>)</span> we can observe some of these gestures together with the relative histogram of the distances (as a function of the angle with respect to the palm of the hand) and that of the curvatures (as a function of the <em>scale level</em>, that is, of the level of detail of the image).</p>
+<p><img src="../../../../Grafiche/_inline_cache/989ecee48ff93744.svg" class="tikz-figure img-fluid" alt=""></p>
+<p>As mentioned, the total images available are <span class="math inline">\(1680\)</span>, so it is convenient to choose the K-Fold Cross Validation method. In this regard, this example is also useful for understanding how to select the folds with criteria; we know in fact that the same person will not diversify the same gesture that much, so it is useful to maximize the differences between the training and validation set by building the validation set using all the gestures of a single person: if this were not the case, in fact, there would be images of the same person in both sets, potentially causing overfitting in the model.</p>
+</section>
+<section id="new-decomposition-of-the-error" class="level3" data-number="7.1.3">
+<h3 data-number="7.1.3" class="anchored" data-anchor-id="new-decomposition-of-the-error"><span class="header-section-number">7.1.3</span> New decomposition of the error</h3>
+<p>In paragraph <span class="citation" data-cites="sec:decomposizione-dellerrore">(<a href="#ref-sec:decomposizione-dellerrore" role="doc-biblioref"><strong>sec:decomposizione-dellerrore?</strong></a>)</span> we discussed how the error can be decomposed into two components:</p>
+<ul>
+<li>Approximation error <span class="math inline">\(L_{\mathcal{D}}\left(h^*\right)\)</span>, equal to the error associated with the best predictor in the hypothesis class, indicated with <span class="math inline">\(h^*\)</span></li>
+<li>Estimation error <span class="math inline">\(L_{\mathcal{D}}\left(h_{\mathcal{S}}\right)-L_{\mathcal{D}}\left(h^*\right)\)</span>, which tells us what the difference is between the true error (relative to the hypothesis <span class="math inline">\(h_{\mathcal{S}}\)</span> we found) and the approximation error</li>
+</ul>
+<p>Since it is sometimes difficult to derive the approximation error in a problem, it is possible to use the empirical risk and the error on the validation set to decompose the true error in another form; by adding and subtracting both <span class="math inline">\(L_{\mathcal{S}}\left(h_\mathcal{S}\right)\)</span> and <span class="math inline">\(L_{\mathcal{V}}\left(h_\mathcal{S}\right)\)</span> we will obtain</p>
+<p><span class="math display">\[
+    L_{\mathcal{D}}\left(h_\mathcal{S}\right)=\left(L_{\mathcal{D}}\left(h_\mathcal{S}\right)-L_{\mathcal{V}}\left(h_\mathcal{S}\right)\right)+\left(L_{\mathcal{V}}\left(h_\mathcal{S}\right)-L_{\mathcal{S}}\left(h_\mathcal{S}\right)\right)+L_{\mathcal{S}}\left(h_\mathcal{S}\right)
+\]</span></p>
+<p>The first term on the right-hand side we know is bounded above according to equation <span class="citation" data-cites="eq:selezione-del-modello-teorema">(<a href="#ref-eq:selezione-del-modello-teorema" role="doc-biblioref"><strong>eq:selezione-del-modello-teorema?</strong></a>)</span>; the second term, on the other hand, is able to estimate the overfitting of the model as we know from figure <span class="citation" data-cites="fig:model-selection-curve">(<a href="#ref-fig:model-selection-curve" role="doc-biblioref"><strong>fig:model-selection-curve?</strong></a>)</span>; always from the same figure we also know that, in the case the third term is very large, we are instead in the presence of underfitting.</p>
+</section>
+<section id="when-learning-fails" class="level3" data-number="7.1.4">
+<h3 data-number="7.1.4" class="anchored" data-anchor-id="when-learning-fails"><span class="header-section-number">7.1.4</span> When learning fails</h3>
+<p>Let’s summarize below the steps to be performed in case the results found are not satisfactory:</p>
+<ul>
+<li><p>Once the hyper-parameters have been chosen, it is useful to graph the model selection curve to make sure that it is indeed the best choice.</p></li>
+<li><p>If the <em>training error</em> <span class="math inline">\(L_{\mathcal{S}}\left(h_{\mathcal{S}}\right)\)</span> is too large, we are in a clear case of underfitting. Since this does not depend on the learning set <span class="math inline">\(\mathcal{S}\)</span> but only on the hypothesis class <span class="math inline">\(\mathcal{H}\)</span>, we will have to act on the latter. We can do this in two ways:</p>
+<pre><code>  - Widen $\mathcal{H}$, as its size may not be such as to contain the predictor that best classifies the data
+  - Change $\mathcal{H}$, because we may be looking in the wrong class of predictors. Returning to the example of polynomial fitting, if the points were distributed according to an exponential, we would actually be wrong from the start about the functions to look for.</code></pre>
+<p>Another possibility is to act on the description of the data itself, that is, on the feature vector: if this contains too many details, which may be irrelevant, then the learning process can become too difficult for the algorithm. It is also possible that some features are being ignored in favor of others that are however an obstacle to optimal classification.</p></li>
+<li><p>If the <em>training error</em> <span class="math inline">\(L_{\mathcal{S}}\left(h_{\mathcal{S}}\right)\)</span> is small but the <em>validation error</em> is high, it is advisable to graph the so-called <strong>learning curves</strong>: to obtain them, it is sufficient to repeat the training and validation on a gradually increasing portion of data, until all of them are included. The two possibilities that could arise are shown in figure <span class="citation" data-cites="fig:selezione-del-modello-learning-curve">(<a href="#ref-fig:selezione-del-modello-learning-curve" role="doc-biblioref"><strong>fig:selezione-del-modello-learning-curve?</strong></a>)</span>, assuming for simplicity that the training error remains constant.</p>
+<p>The reason for the learning curves is due to the fact that the validation error does not depend only on <span class="math inline">\(\mathcal{H}\)</span> but also on <span class="math inline">\(\mathcal{S}\)</span>, so this time it is also possible to act on the latter. In fact, if we were in the situation shown in the graph on the right of figure <span class="citation" data-cites="fig:selezione-del-modello-learning-curve">(<a href="#ref-fig:selezione-del-modello-learning-curve" role="doc-biblioref"><strong>fig:selezione-del-modello-learning-curve?</strong></a>)</span>, we would guess that by further increasing the training and validation data, the two curves could get even closer. If it were not possible to expand the amount of data available, another possibility is to reduce the complexity of the class <span class="math inline">\(\mathcal{H}\)</span> in order to limit overfitting.</p>
+<p><img src="../../../../Grafiche/_inline_cache/292cab74527bc788.svg" class="tikz-figure img-fluid" alt=""></p>
+<p>If we were in the situation on the left, instead, we would notice that even by increasing the amount of data available, the validation curve would not seem to go down. We would thus return to the previous point, where we had no other choice but to change the hypothesis class or modify the feature vector.</p></li>
+</ul>
+<p>It should be borne in mind that what has been written can only be done before using the test set. If the latter is applied, in fact, the learning is considered concluded and it is not possible to recalibrate parameters and hyper-parameters using the same test set as a final proof. <em>(Obviously, it is not forbidden to repeat the learning itself, as long as the final test set consists of new data not present in the previous learning process: the old test set will thus become part of the training and validation set.)</em></p>
+</section>
+</section>
+<section id="regularization" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="regularization"><span class="header-section-number">7.2</span> Regularization</h2>
+<p>One of the problems we often find ourselves facing is that of the <em>complexity</em> of the hypotheses considered: on the one hand, we do not want them to be excessively complex, because the algorithm would risk adapting excessively to the data in the set, including the noise associated with them; on the other hand, we do not want them to be too general, because we would run the risk of not really capturing the relevant characteristics of the data.</p>
+<p>The learning paradigm that we have used so far, Empirical Risk Minimization, tends by its nature to select predictors that overfit, as it has the objective of globally reducing the error on all the available data. This is inconvenient, because a solution with the opposite problem, that is, underfitting, is generally preferable: in fact, it is easier to understand why a simpler solution fails in learning than a more complex one, and it is therefore easier to correct by following the feedback of the results.</p>
+<section id="regularized-loss-minimization" class="level3" data-number="7.2.1">
+<h3 data-number="7.2.1" class="anchored" data-anchor-id="regularized-loss-minimization"><span class="header-section-number">7.2.1</span> Regularized Loss Minimization</h3>
+<p>To change the paradigm, we could think of not only minimizing the empirical risk, but the sum of the latter with a new function, called the <strong>regularization function</strong> <em>(In English </em>regularization function<em>.)</em>, which has the objective of penalizing the most complex solutions.</p>
+<p>Formally, given a hypothesis <span class="math inline">\(h\)</span> in the form of a weight vector <em>(These weights would correspond, for example, to the coefficients in a linear model, or to the weights of a neural network.)</em> <span class="math inline">\(\boldsymbol{w}=\left(w_1,\dots,w_d\right)^T\in\mathbb{R}^d\)</span>, the regularization function <span class="math inline">\(R(\boldsymbol{w})\)</span> is defined as</p>
+<p><span class="math display">\[
+    R:\mathbb{R}^d\to\mathbb{R}
+\]</span></p>
+<p>From this it is possible to define the <strong>Regularized Loss Minimization</strong> (<em>RLM</em>) algorithm, which selects <span class="math inline">\(h\)</span> from the following expression:</p>
+<p><span class="math display">\[
+    \boxed{\argmin_{\boldsymbol{w}}\left(L_{\mathcal{S}}(\boldsymbol{w})+R(\boldsymbol{w})\right)}
+\]</span></p>
+<p>The solution will therefore be a compromise between the one that minimizes the empirical risk and the one that tends to a lower complexity. According to this view, the term <span class="math inline">\(R\left(\boldsymbol{w}\right)\)</span> can be seen as a <em>stabilizer</em> in the search for the best solution, making the ERM less vulnerable to outliers and peculiarities in the learning set.</p>
+</section>
+<section id="tikhonov-regularization" class="level3" data-number="7.2.2">
+<h3 data-number="7.2.2" class="anchored" data-anchor-id="tikhonov-regularization"><span class="header-section-number">7.2.2</span> Tikhonov Regularization</h3>
+<p>The main form of regularization is given by <strong>Tikhonov regularization</strong>, which defines <span class="math inline">\(R\)</span> as the <span class="math inline">\(L2\)</span> norm of the weights:</p>
+<p><span class="math display">\[
+    R(\boldsymbol{w})=\lambda\norm{\boldsymbol{w}}^2=\lambda\sum_{i=1}^dw_i^2
+\]</span></p>
+<p>The norm <span class="math inline">\(\norm{\boldsymbol{w}}^2\)</span> represents the complexity of the hypothesis, while the parameter <span class="math inline">\(\lambda\)</span> calibrates the compromise between empirical risk and complexity of the solution: the larger it is, the more a low complexity will be preferred at the expense of a higher empirical error.</p>
+</section>
+<section id="ridge-regression" class="level3" data-number="7.2.3">
+<h3 data-number="7.2.3" class="anchored" data-anchor-id="ridge-regression"><span class="header-section-number">7.2.3</span> Ridge Regression</h3>
+<p>The application of RLM for a linear regression problem, choosing the quadratic objective function as the loss function and Tikhonov regularization, is called <strong>Ridge regression</strong>.</p>
+<p>Recalling the loss function from equations <span class="citation" data-cites="eq:pac-learning-loss-function-generalizzata">(<a href="#ref-eq:pac-learning-loss-function-generalizzata" role="doc-biblioref"><strong>eq:pac-learning-loss-function-generalizzata?</strong></a>)</span> and <span class="citation" data-cites="eq:pac-learning-obiettivo-quadratica">(<a href="#ref-eq:pac-learning-obiettivo-quadratica" role="doc-biblioref"><strong>eq:pac-learning-obiettivo-quadratica?</strong></a>)</span> we will write:</p>
+<p><span class="math display">\[
+    \boldsymbol{w}=\argmin_{\boldsymbol{w}}\left(\frac{1}{m}\sum_{i=1}^m\left(\sprod{\boldsymbol{x_i}}{\boldsymbol{w}}-y_i\right)^2+\lambda\norm{\boldsymbol{w}}^2\right)
+\]</span></p>
+<p>Let’s try to calculate <span class="math inline">\(\boldsymbol{w}\)</span>:</p>
+<p><span class="math display">\[
+    \frac{\partial\left(L_{\mathcal{S}}(\boldsymbol{w})+R\left(\boldsymbol{w}\right)\right)}{\partial\boldsymbol{w}}=\frac{2}{m}\sum_{i=1}^m\left(\sprod{\boldsymbol{x_i}}{\boldsymbol{w}}-y_i\right)\boldsymbol{x_i}+\lambda\frac{\partial\norm{\boldsymbol{w}}^2}{\partial\boldsymbol{w}}=0
+\]</span></p>
+<p>Let’s calculate the derivative <span class="math inline">\(\frac{\partial\norm{\boldsymbol{w}}^2}{\partial\boldsymbol{w}}\)</span> starting from the differentiation of <span class="math inline">\(\norm{\boldsymbol{w}}^2\)</span></p>
+<p><span class="math display">\[
+    \norm{\boldsymbol{w}}^2=\boldsymbol{w^T}\boldsymbol{w} \ \Longrightarrow \ d\norm{\boldsymbol{w}}^2=2\norm{\boldsymbol{w}}d\norm{\boldsymbol{w}}=2\boldsymbol{w}d\boldsymbol{w} \ \iff \ \frac{d\norm{\boldsymbol{w}}^2}{d\boldsymbol{w}}=2\boldsymbol{w}
+\]</span></p>
+<p>Let’s substitute in <span class="citation" data-cites="eq:selezione-del-modello-regressione-di-ridge-1">(<a href="#ref-eq:selezione-del-modello-regressione-di-ridge-1" role="doc-biblioref"><strong>eq:selezione-del-modello-regressione-di-ridge-1?</strong></a>)</span>:</p>
+<p><span class="math display">\[
+    \frac{\cancel{2}}{m}\sum_{i=1}^m\left(\sprod{\boldsymbol{x_i}}{\boldsymbol{w}}-y_i\right)\boldsymbol{x_i}+\cancel{2}\lambda\boldsymbol{w}=0 \ \Longrightarrow \ \sum_{i=1}^m\sprod{\boldsymbol{x_i}}{\boldsymbol{w}}\boldsymbol{x_i}+\lambda m\boldsymbol{w}=\sum_{i=1}^my_i\boldsymbol{x_i}
+\]</span></p>
+<p>Let’s rewrite the expression as a function of the matrix <span class="math inline">\(A\)</span> and the vector <span class="math inline">\(\boldsymbol{b}\)</span> as done in equation <span class="citation" data-cites="eq:predictor-lineari-minimi-quadrati-espressione-con-A-e-b">(<a href="#ref-eq:predictor-lineari-minimi-quadrati-espressione-con-A-e-b" role="doc-biblioref"><strong>eq:predictor-lineari-minimi-quadrati-espressione-con-A-e-b?</strong></a>)</span>:</p>
+<p><span class="math display">\[
+    A\boldsymbol{w}+\lambda mI\boldsymbol{w}=\boldsymbol{b}
+\]</span></p>
+<p>From this expression we easily derive:</p>
+<p><span class="math display">\[
+    (A+\lambda mI)\boldsymbol{w}=\boldsymbol{b} \ \Longrightarrow \ \boxed{\boldsymbol{w}=(A+\lambda mI)^{-1}\boldsymbol{b}}
+\]</span></p>
+<p>It is possible to show that, although the matrix <span class="math inline">\(A\)</span> is not necessarily invertible, the matrix <span class="math inline">\(A+\lambda mI\)</span> certainly is.</p>
+</section>
+</section>
+<section id="stability" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="stability"><span class="header-section-number">7.3</span> Stability</h2>
+<p>In the context of machine learning, the concept of <em>stability</em> arises from the question: what does it mean to encounter “overfitting”?</p>
+<p>As we know, within the training set there is noise - understood as <em>statistical perturbations</em> - that can influence the learning of the algorithm. Since this situation is always a risk when using a rule like that of ERM, we have introduced a function, called “regularization”, which allows to <em>stabilize</em> - according to what we have seen - the learning process, for a solution more balanced towards simplicity.</p>
+<p>By “stabilizing” we mean that, by slightly changing the learning set, the solution that the algorithm arrives at is still close to the one obtained before the change. Obviously, to give a formal definition, we must try to establish mathematically what we mean by “slightly changing” the set and by “close solution”.</p>
+<p>The simplest way to indicate a small change in the training set is to replace one element with another element. If the set <span class="math inline">\(S\)</span> consists of <span class="math inline">\(m\)</span> points in the form</p>
+<p><span class="math display">\[
+    \mathcal{S}=\left\{z_1,z_2,\dots,z_m\right\}
+\]</span></p>
+<p>we will denote by <span class="math inline">\(\mathcal{S}^{(i)}\)</span> the same set in which the <span class="math inline">\(i\)</span>-th element is replaced with <span class="math inline">\(z'\)</span>:</p>
+<p><span class="math display">\[
+    \mathcal{S}^{(i)}=\left\{z_1,\dots,z_{i-1},z',z_{i+1},\dots,z_m\right\}
+\]</span></p>
+<p>We recall that the loss function <span class="math inline">\(\ell\)</span> depends on the hypothesis <span class="math inline">\(h\)</span> and the element of the training set <span class="math inline">\(z\)</span>; obviously we will expect that:</p>
+<p><span class="math display">\[
+    \ell\left(A(\mathcal{S}^{(i)}),z_i\right)-\ell\left(A(\mathcal{S}),z_i\right)\geqslant0
+\]</span></p>
+<p>This relationship tells us that the loss calculated on the solution obtained from <span class="math inline">\(\mathcal{S}^{(i)}\)</span> with respect to <span class="math inline">\(z_i\)</span> is greater than or equal to that obtained from <span class="math inline">\(\mathcal{S}\)</span> always with respect to <span class="math inline">\(z_i\)</span>. It is intuitive: it is clear that, by replacing <span class="math inline">\(z_i\)</span> with another element, the solution derived including <span class="math inline">\(z_i\)</span> will not adapt in the same way.</p>
+<p>The problem is now to quantify this difference. To this end, we define a new class of algorithms, called <strong><em>On-Average-Replace-One-Stable</em></strong> (<strong>OAROS</strong>).</p>
+<div class="definition">
+<p>Let <span class="math inline">\(\epsilon:\mathbb{N}\to\mathbb{R}\)</span> be a monotonically decreasing function.</p>
+<p>An algorithm <span class="math inline">\(A\)</span> is said to be <strong><em>On-Average-Replace-One-Stable</em></strong> with rate <span class="math inline">\(\epsilon(m)\)</span> if, for every distribution <span class="math inline">\(\mathcal{D}\)</span>, it holds</p>
+<p><span class="math display">\[
+    \mathbb{E}_{(\mathcal{S},z')\sim\mathcal{D}^{m+1},i\sim U(m)}\left[\ell\left(A(\mathcal{S}^{(i)}),z_i\right)-\ell\left(A(\mathcal{S}),z_i\right)\right]\leqslant\epsilon(m)
+\]</span></p>
+</div>
+<p>In <span class="citation" data-cites="eq:selezione-del-modello-stabilita-definizione">(<a href="#ref-eq:selezione-del-modello-stabilita-definizione" role="doc-biblioref"><strong>eq:selezione-del-modello-stabilita-definizione?</strong></a>)</span> we find the expected value associated with the difference written previously, where all the points of the training set - including <span class="math inline">\(z'\)</span> - are extracted from the distribution <span class="math inline">\(\mathcal{D}\)</span>, while the index <span class="math inline">\(i\)</span> is extracted from the uniform distribution of natural numbers from <span class="math inline">\(1\)</span> to <span class="math inline">\(m\)</span>.</p>
+<p>The difference between loss functions is bounded above by the quantity <span class="math inline">\(\epsilon(m)\)</span>, and it will therefore be this value that determines how stable the algorithm actually is. But why is <span class="math inline">\(\epsilon(m)\)</span> monotonically decreasing? The answer is intuitive: replacing an element in a small set modifies that set much more than in the case where it was a larger set; consequently, the upper bound will tend to decrease as the size of <span class="math inline">\(\mathcal{S}\)</span> increases.</p>
+<p>Given this definition, we can arrive at the proof of our initial intuition, that is, that stable algorithms do not overfit.</p>
+<p>An algorithm <span class="math inline">\(A\)</span> suffers from overfitting if the difference between the true risk <span class="math inline">\(L_{\mathcal{D}}(A(\mathcal{S}))\)</span> and the empirical risk <span class="math inline">\(L_{\mathcal{S}}(A(\mathcal{S}))\)</span> is large. What we want to bound above, therefore, is</p>
+<p><span class="math display">\[
+    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A(\mathcal{S}))-L_{\mathcal{S}}(A(\mathcal{S}))\right]
+\]</span></p>
+<p>The following theorem comes to our aid.</p>
+<div class="theorem" name="Stable rules do not overfit">
+<p>If an algorithm <span class="math inline">\(A\)</span> is <strong><em>On-Average-Replace-One-Stable</em></strong> with rate <span class="math inline">\(\epsilon(m)\)</span> then</p>
+<p><span class="math display">\[
+    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A\mathcal({S}))-L_{\mathcal{S}}(A(\mathcal{S}))\right]\leqslant\epsilon(m)
+\]</span></p>
+<p>Our objective is to lead back to the expression <span class="citation" data-cites="eq:selezione-del-modello-stabilita-definizione">(<a href="#ref-eq:selezione-del-modello-stabilita-definizione" role="doc-biblioref"><strong>eq:selezione-del-modello-stabilita-definizione?</strong></a>)</span>, so we will have to try to rewrite the risk functions <span class="math inline">\(L\)</span> as a function of the loss functions <span class="math inline">\(\ell\)</span>.</p>
+<p>Let’s start from the true risk <span class="math inline">\(L_{\mathcal{D}}(A\mathcal({S}))\)</span>. The relative loss function will be calculated with respect to an element <span class="math inline">\(z'\)</span> not belonging to <span class="math inline">\(\mathcal{S}\)</span>: <em>(As is evident, the risk function <span class="math inline">\(L\)</span> is simply rewritten as the loss function <span class="math inline">\(\ell\)</span>, although - as mentioned in the previous note - the risk should correspond to the expected value of the loss. I imagine, again as reiterated before, that the expected value of an expected value returns the same quantity, so the written formula should hold.)</em></p>
+<p><span class="math display">\[
+    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A\mathcal({S}))\right]=\mathbb{E}_{(\mathcal{S},z')\sim\mathcal{D}^{m+1}}\left[\ell(A(\mathcal{S}),z')\right]
+\]</span></p>
+<p>Since all the points are <em>i.i.d.</em> from <span class="math inline">\(\mathcal{D}\)</span> then it must also hold that</p>
+<p><span class="math display">\[
+    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A\mathcal({S}))\right]=\mathbb{E}_{(\mathcal{S},z')\sim\mathcal{D}^{m+1}}\left[\ell\left(A\left(\mathcal{S}^{(i)}\right),z_i\right)\right]
+\]</span></p>
+<p>since <span class="math inline">\(z_i\notin\mathcal{S}^{(i)}\)</span>, just as <span class="math inline">\(z'\notin\mathcal{S}\)</span>.</p>
+<p>As for the empirical risk, on the other hand, the point with respect to which the loss is calculated must be contained in the learning set:</p>
+<p><span class="math display">\[
+    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{S}}(A\mathcal({S}))\right]=\mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m,i\sim U(m)}\left[\ell\left(A\left(\mathcal{S}\right),z_i\right)\right]
+\]</span></p>
+<p>Subtracting member by member <span class="citation" data-cites="eq:selezione-del-modello-stabilita-teorema-1">(<a href="#ref-eq:selezione-del-modello-stabilita-teorema-1" role="doc-biblioref"><strong>eq:selezione-del-modello-stabilita-teorema-1?</strong></a>)</span> and <span class="citation" data-cites="eq:selezione-del-modello-stabilita-teorema-2">(<a href="#ref-eq:selezione-del-modello-stabilita-teorema-2" role="doc-biblioref"><strong>eq:selezione-del-modello-stabilita-teorema-2?</strong></a>)</span> we obtain</p>
+<p><span class="math display">\[\begin{align*}
+    &amp;\mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A\mathcal({S}))-L_{\mathcal{S}}(A(\mathcal{S}))\right]=\\
+    =&amp;\mathbb{E}_{(\mathcal{S},z')\sim\mathcal{D}^{m+1},i\sim U(m)}\left[\ell\left(A(\mathcal{S}^{(i)}),z_i\right)-\ell\left(A(\mathcal{S}),z_i\right)\right]
+\end{align*}\]</span></p>
+<p>which, from the property <span class="citation" data-cites="eq:selezione-del-modello-stabilita-definizione">(<a href="#ref-eq:selezione-del-modello-stabilita-definizione" role="doc-biblioref"><strong>eq:selezione-del-modello-stabilita-definizione?</strong></a>)</span>, returns the thesis.</p>
+</div>
+<section id="tikhonov-regularization-as-a-stabilizer" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="tikhonov-regularization-as-a-stabilizer"><span class="header-section-number">7.3.1</span> Tikhonov regularization as a stabilizer</h3>
+<p>Having mathematically defined what stability is, it is now possible to clearly explain in what sense Tikhonov regularization is a real <em>stabilizer</em> when applied through the RLM algorithm.</p>
+<p>To this end, it is useful to define a new property associated with real-valued functions, called <em>Lipschitz continuity</em>.</p>
+<div class="definition">
+<p>A function <span class="math inline">\(f:\mathbb{R}^d\to\mathbb{R}^k\)</span> is said to be <span class="math inline">\(\rho\)</span>-Lipschitz on <span class="math inline">\(C\subset\mathbb{R}^d\)</span> if</p>
+<p><span class="math display">\[
+    \norm{f\left(\boldsymbol{w_1}\right)-f\left(\boldsymbol{w_2}\right)}\leqslant\rho\norm{\boldsymbol{w_1}-\boldsymbol{w_2}}\hspace{0.65cm}\forall\boldsymbol{w_1},\boldsymbol{w_2}\in C
+\]</span></p>
+</div>
+<p>This definition is useful for understanding mathematically what we mean by a function that changes “quickly”, since the change of the function with respect to the interval (in the limit we would speak of a <em>derivative</em>) is bounded above by the parameter <span class="math inline">\(\rho\)</span>. Intuitively, the more a function changes rapidly, the “worse” a solution it is if chosen as a hypothesis, because it would seem to have adapted well to the input data to the point of overfitting. We therefore understand that we can link the concept of “simplicity” and “<em>smoothness”</em> of a function to that of stability, consequently writing <span class="math inline">\(\epsilon(m)\)</span> as a function of <span class="math inline">\(\rho\)</span>.</p>
+<p>This link emerges in the following theorem.</p>
+<div class="theorem" name="Tikhonov regularization is a stabilizer">
+<p>If the loss function <span class="math inline">\(\ell(h,z)\)</span> is <em>convex</em> and <span class="math inline">\(\rho\)</span>-Lipschitz, then the RLM rule with Tikhonov regularization <span class="math inline">\(\lambda\norm{\boldsymbol{w}}^2\)</span> is <strong><em>On-Average-Replace-One-Stable</em></strong> with rate <span class="math inline">\(\frac{2\rho^2}{\lambda m}\)</span>.</p>
+</div>
+<p>The proof is not required by the course; what interests us is the consequence that this theorem brings with it, that is, the one due to the previous theorem on <em>OAROS</em> algorithms:</p>
+<p><span class="math display">\[
+    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A\mathcal({S}))-L_{\mathcal{S}}(A(\mathcal{S}))\right]\leqslant\frac{2\rho^2}{\lambda m}
+\]</span></p>
+<p>The upper bound of the expression is quite intuitive: on the one hand, we understand that increasing <span class="math inline">\(\rho\)</span> means worsening stability, since fewer constraints are imposed on the sudden changes of the solution, and on the other hand, we have that increasing <span class="math inline">\(\lambda\)</span> means improving stability, just as the same is true for <span class="math inline">\(m\)</span> as explained previously.</p>
+</section>
+<section id="fitting-stability-tradeoff" class="level3" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored" data-anchor-id="fitting-stability-tradeoff"><span class="header-section-number">7.3.2</span> Fitting-stability tradeoff</h3>
+<p>From what we have seen with the introduction of these new concepts, a new dualism naturally emerges, that of <em>fitting</em> versus <em>stability</em>: it is no coincidence that it is possible to speak of a <strong>fitting-stability tradeoff</strong>.</p>
+<p>This is to all intents and purposes a new “version” of the bias-complexity tradeoff, since it also expresses a polarization between two extremes representing overfitting and underfitting. This can be clearly seen by writing the true risk associated with the algorithm:</p>
+<p><span class="math display">\[
+    \mathbb{E}_{\mathcal{S}}\left[L_{\mathcal{D}}(A(\mathcal{S}))\right]=\mathbb{E}_{\mathcal{S}}\left[L_{\mathcal{S}}(A(\mathcal{S}))\right]+\mathbb{E}_{\mathcal{S}}\left[L_{\mathcal{D}}(A(\mathcal{S}))-L_{\mathcal{S}}(A(\mathcal{S}))\right]
+\]</span></p>
+<p>The first term on the right-hand side expresses how well <span class="math inline">\(A\)</span> fits the training set <span class="math inline">\(\mathcal{S}\)</span>, while the second term measures - as we know - the stability.</p>
+<p>In the case of RLM with Tikhonov regularization, the parameter on which the tradeoff is calibrated is <span class="math inline">\(\lambda\)</span>: a value that is too small can reduce the empirical risk but leave room for a dangerous tendency to overfit, while a sufficiently large value allows for a higher empirical risk in favor of greater stability. The aim will therefore be to find the configuration that minimizes the sum in equation <span class="citation" data-cites="eq:selezione-del-modello-compromesso-fitting-stabilita">(<a href="#ref-eq:selezione-del-modello-compromesso-fitting-stabilita" role="doc-biblioref"><strong>eq:selezione-del-modello-compromesso-fitting-stabilita?</strong></a>)</span>.</p>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/05-vc-dimension.html" class="pagination-link" aria-label="VC Dimension">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">VC Dimension</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/07-linear-predictors.html" class="pagination-link" aria-label="Linear Predictors">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Linear Predictors</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Model Selection"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>Let's go back to the polynomial regression seen in paragraph @sec:regressione-polinomiale and pay attention to our way of proceeding: although we assume a *non-linear* relationship between the data, we are still able to exploit the hypothesis class relative to *linear* regression to find the suitable fit. This is possible by "sacrificing" the dimension of the input data, making it go from $1$ to $n+1$ being $n$ the degree of the polynomial considered:</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    x\to\left(1,x,x^2,\dots,x^n\right)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>We therefore transform each input data by increasing the complexity of the domain, and in this way - as shown above - we are able to apply linear regression obtaining the best fit.</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>At this point, however, the question to ask would be: how to choose, at the beginning, the degree of the polynomial? How do we know which polynomial best fits our data set?</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>We understand, therefore, that we have identified the hypothesis class to solve the problem, but not the specific *model* characterized by its hyper-parameters, which in the example just seen is only one - the degree of the polynomial. Its search goes by the name of *model selection*, or in English ***model selection***.</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Validation Set</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>We have already seen in paragraph @sec:insiemi-di-addestramento-test-e-validazione how the search for hyper-parameters is solved by a *split* of the training set, with part of it going to constitute the **validation set**, usually indicated with $\mathcal{V}$. In reality, this is not the only possible method: another technique adopted is the *Structural Risk Minimization*, which we will not go into as it is a theoretical tool that is not very practical to use in many real problems.</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>As we know, the validation set must in no way be used even partially for training, because otherwise an impartial evaluation of the selected hypothesis would not be possible and there would be serious risks of overfitting.</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>The validation set therefore represents a first test for the chosen hypothesis, which allows to provide a better estimate of the true error with respect to the empirical risk. In practice, several configurations of hyper-parameters are selected, and for each of these the best hypothesis is determined according to ERM; these are then passed to the validation set from which the one with the lowest loss will emerge, which will finally be subjected to the test set.</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>There is an important theorem that quantifies an upper bound for the difference between the loss calculated through the validation set and the true error that we see below.</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Theorem on the error of the validation set"}</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>Let $\mathcal{V}$ be a validation set composed of $m_{\mathcal{V}}$ elements and let $h$ be a predictor. Assuming that the loss function $L_{\mathcal{V}}(h)$ expresses a value in the interval $<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$ then for every $\delta\in(0,1)$ it results</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    \abs{L_{\mathcal{D}}(h)-L_{\mathcal{V}}(h)}\leqslant\sqrt{\frac{\log\left(\frac{2}{\delta}\right)}{2m_{\mathcal{V}}}}</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>with a probability of *at least* $1-\delta$ with respect to the choice of $\mathcal{V}$.</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>We can note how the upper bound is similar to that of the quantitative version of the fundamental theorem of statistical learning (paragraph @sec:il-legame-tra-dimensione-vc-e-sample-complexity); in fact, isolating $\epsilon$ from the relation on agnostic PAC learning we will have</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    m\leqslant C\frac{d+\log\left(\frac{1}{\delta}\right)}{\epsilon^2} \ \Longrightarrow \ \epsilon\leqslant\sqrt{C\frac{d+\log\left(\frac{1}{\delta}\right)}{m}}</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>being both $\epsilon$ and $m$ two positive quantities.</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>Resuming equation @eq:convergenza-uniforme-teorema-epsilon we will write</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    L_{\mathcal{D}}(h)\leqslant L_{\mathcal{S}}(h)+\epsilon\leqslant L_{\mathcal{S}}(h)+\sqrt{C\frac{d+\log\left(\frac{1}{\delta}\right)}{m}}</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>which we can compare with the thesis of the theorem just presented:</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    L_{\mathcal{D}}(h)\leqslant L_{\mathcal{V}}(h)+\sqrt{\frac{\log\left(\frac{2}{\delta}\right)}{2m_{\mathcal{V}}}}</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>The main difference consists in the presence of $d$ - that is, of the VC dimension - in @eq:selezione-del-modello-errore-training, as the predictor is obtained starting from the training set, and the more complex the problem is, the larger $d$ is. Since the objective is to minimize the empirical risk as much as possible, usually $d$ is such as to make the upper bound of @eq:selezione-del-modello-errore-training much larger than that of @eq:selezione-del-modello-errore-validation, therefore through the validation set we are able to obtain a better estimate of the true error.</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>The validation set, therefore, is not used to formulate a hypothesis in itself, because it receives as input a hypothesis already obtained through an algorithm (typically ERM), but its function is to provide a better estimate of the error: this is the reason why it is important that there is no form of training at the time of validation, since otherwise the formula @eq:selezione-del-modello-errore-validation would no longer be correct. The price we have to pay for this better estimate, however, is precisely that of an additional set of data with respect to the training one.</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>Let's summarize below the way to proceed:</span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="in">    - *Different algorithms* or a single algorithm with *different configurations of hyper-parameters* are chosen</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="in">    - For each of the $r$ choices made, the relative hypothesis class $\mathcal{H}_i=\left\{h_{i1},h_{i2},\dots,h_{in_i}\right\}$ is considered, being $n_i$ the size of the $i$-th class</span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a><span class="in">    - The machine learning algorithm is trained on each of the $r$ classes *independently*, finding for each the best hypothesis according to ERM</span></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a><span class="in">    - Through the best predictors found we build the new class $\mathcal{H}'=\left\{h_1^{ERM},h_2^{ERM},\dots,h_r^{ERM}\right\}$ of size $r$</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a><span class="in">    - For each of the predictors in the class $\mathcal{H}'$ the loss $L_{\mathcal{V}}$ is calculated and the one that minimizes this quantity is finally selected</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>We note that $\mathcal{H}'$ is a *finite* hypothesis class, deriving from a set of algorithms and configurations that are finite in number. Since the selection of the predictor from this class occurs similarly to what happens for training (i.e. through ERM), the same principle that we know will apply: the larger the class, the more points it will be necessary to have in the set to minimize the error. This means that we cannot afford to try too many algorithms and too many configurations, because at a certain point we would run the risk of overfitting since we cannot insert excessive points in the validation set by subtracting them from the training set and the test set.</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>What has been said is expressed in quantitative form in the following theorem.</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Theorem on the error of the validation set with multiple hypotheses"}</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>Let $\mathcal{H}'=\left<span class="sc">\{</span>h_1^{ERM},h_2^{ERM},\dots,h_r^{ERM}\right<span class="sc">\}</span>$ be a set of predictors. Assuming that the loss function, for each of these predictors, expresses a value in the interval $<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$, and assuming that the validation set $\mathcal{V}$ of size $m_{\mathcal{V}}$ is sampled independently of $\mathcal{H}'$ then it results</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>    \abs{L_{\mathcal{D}}(h)-L_{\mathcal{V}}(h)}\leqslant\sqrt{\frac{\log\left(\frac{2\abs{\mathcal{H}'}}{\delta}\right)}{2m_{\mathcal{V}}}}</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>with a probability of *at least* $1-\delta$ with respect to the choice of $\mathcal{V}$ and for every $h\in\mathcal{H}'$.</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>\exrule</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>Applying the theorem to a single hypothesis we will have that</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>    P\left(\abs{L_{\mathcal{D}}(h)-L_{\mathcal{V}}(h)}&gt;\sqrt{\frac{\log\left(\frac{2}{\delta}\right)}{2m_{\mathcal{V}}}}\right)\leqslant\delta \hspace{0.6cm} \forall h\in\mathcal{H}'</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>in the sense that the probability that the difference in modulus of the loss functions is greater than that square root is less than or equal to $\delta$.</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>From the sum rule in probability theory we know that</span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>    P\left(\bigcup_iA_i\right)\leqslant\sum_iP\left(A_i\right)</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>Let's indicate with $P_{tot}$ the probability associated with the union of all the hypotheses, or in other words with the probability that the validation set is "unlucky" for *all* the hypotheses of the class. It will result:</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>    P_{tot}\leqslant\sum_{h\in\mathcal{H}'}\delta=\abs{\mathcal{H}'}\delta</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>Setting $\delta_{tot}=\abs{\mathcal{H}'}\delta$ we obtain</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>    P_{tot}\leqslant\delta_{tot}</span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>which is precisely the form known to us. For this relationship to make sense, however, it is necessary that $\delta_{tot}&lt;1$, and it is not said that by summing $\abs{\mathcal{H}'}$ times $\delta&lt;1$ we obtain a number less than one. Let's therefore set:</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>    \delta'=\frac{\delta}{\abs{\mathcal{H}'}}</span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>We therefore choose $\delta'$ as an upper bound for the probability associated with the single predictor, and we note that, by making $\delta_{tot}$ explicit, we obtain</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>    \delta_{tot}=\abs{\mathcal{H}'}\delta'=\abs{\mathcal{H}'}\cdot\frac{\delta}{\abs{\mathcal{H}'}}=\delta</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>This result tells us that, by normalizing the upper bound for the single hypotheses with respect to the size of the class $\mathcal{H}'$, it results $\delta_{tot}\equiv\delta$.</span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>According to what we have said, for every $h\in\mathcal{H}'$ it results</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>    \abs{L_{\mathcal{D}}(h)-L_{\mathcal{V}}(h)}\leqslant\sqrt{\frac{\log\left(\frac{2}{\delta'}\right)}{2m_{\mathcal{V}}}}=\sqrt{\frac{\log\left(\frac{2\abs{\mathcal{H}'}}{\delta}\right)}{2m_{\mathcal{V}}}}</span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>with a probability greater than or equal to $1-\delta_{tot}=1-\delta$, precisely as predicted by the thesis.</span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>Resuming the example of polynomial fitting, we can compare the error on the training and the error on the validation in what is called the ***model selection curve***.</span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>\begin{figure}<span class="co">[</span><span class="ot">H</span><span class="co">]</span></span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>    \centering</span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>    \begin{subfigure}<span class="co">[</span><span class="ot">c</span><span class="co">]</span>{0.45\textwidth}</span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>        \centering</span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>        \includegraphics<span class="co">[</span><span class="ot">width=\textwidth</span><span class="co">]</span>{Grafiche/Immagini/selezione-del-modello-esempio-fitting-polinomiale.png}</span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>        \caption{Polynomial fittings}</span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>    \end{subfigure}</span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>    \begin{subfigure}<span class="co">[</span><span class="ot">c</span><span class="co">]</span>{0.45\textwidth}</span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>        \centering</span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>        \includegraphics<span class="co">[</span><span class="ot">width=\textwidth</span><span class="co">]</span>{Grafiche/Immagini/selezione-del-modello-esempio-model-selection-curve.png}</span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>        \caption{Model selection curve}</span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{subfigure}</span></span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a><span class="in">    \caption{Example of polynomial fitting, with the error curves with respect to the training and with respect to the validation as a function of the degree of the polynomial}</span></span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>\end{figure}</span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>The largest errors are had with polynomial degrees that are too low and with degrees that are too high: in the first case the high error is expressed both in the training and in the validation, highlighting the fact that the curve does not adapt well to the training data and at the same time is not able to extend to another data set (the validation one); this is, as we know, the phenomenon of underfitting. In the second case, the model adapts perfectly to the training data, while it is the validation set that reveals an evident error: this is the opposite phenomenon to the previous one, that is, that of overfitting.</span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>The model selection curve clearly expresses the importance of selection through a validation set: without the latter, in fact, we would tend to prefer higher degrees that greatly decrease the empirical risk, but obtaining a high error then in the test set; the validation set therefore acts as a "filter", offering us a new point of view on the performance of the predictors obtained through ERM.</span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a><span class="fu">### Grid search</span></span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>The example of polynomial fittings takes into consideration a hyper-parameter belonging to the set of natural numbers. It is not uncommon, however, to have to deal with hyper-parameters of a *real* type, and which can therefore formally assume infinite values.</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>In these cases, a method known as **grid search** is applied, which consists in the finite subdivision of the numerical interval associated with the possible values that a hyper-parameter can assume. An example of a grid obtained from two hyper-parameters is shown in the following figure.</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>\begin{figure}<span class="co">[</span><span class="ot">H</span><span class="co">]</span></span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>    \centering</span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>    \includegraphics<span class="co">[</span><span class="ot">width=0.75\textwidth</span><span class="co">]</span>{Grafiche/Immagini/selezione-del-modello-grid-search.png}</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>    \caption{Grid formed from two hyper-parameters}</span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>\end{figure}</span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>This method is well suited in the case where the loss function has only one minimum: in this case, in fact, it is possible to "zoom" into the region of the grid where the most promising results have been obtained and build a finer grid, repeating the process again until one is satisfied with the accuracy of the calculation. In the case of multiple minima, however, it would be a matter of performing multiple searches in different areas, making the method inefficient.</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>We must also always keep in mind the discussion seen above regarding the size of the class, according to which we cannot study an excessive number of configurations: we know, in fact, that the quality of the estimate of the true error decreases with the number of models. In essence, the more models are considered, the more the estimate of the true risk through the validation set becomes in turn an empirical risk, similarly to what happens with the training set. This is precisely the reason why we need, in addition to the validation set, also the test set: since it is used neither for training nor for validation, it offers the statistical guarantee of being a good approximation for $L_{\mathcal{L}}(h)$.</span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>The critical point of this process concerns the exclusive use of the test set as an estimate of the error, and not as a useful *feedback* to repeat the learning process: if the result did not meet our expectations and we wanted to intervene on the models or algorithms based on the result, we could not then reuse the same test set to repeat the estimate of the true risk, as the test set would become just another validation set not able, by its nature, to provide effective estimates on performance.</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a><span class="fu">### K-Fold Cross Validation</span></span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>A common problem in the field of machine learning is that of not having a very large data set available. Defining a validation set in these cases is more "expensive", because it means considerably reducing the number of data on which the training takes place, especially if the models to be tried are different.</span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>In these cases, what is called **K-Fold Cross Validation** is performed, which takes place following the split between the training set and the test set:</span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The training set of size $m$ is divided equally into $k$ subsets (called *folds*) of size $\frac{m}{k}$</span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>For each fold, the algorithm is trained on the union of all the others, and the selected hypothesis is validated on the fold in question, thus calculating the error</span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The estimate of the true error corresponds to the average of the estimates calculated for each fold</span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>\begin{figure}<span class="co">[</span><span class="ot">H</span><span class="co">]</span></span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>    \centering</span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>    \includegraphics<span class="co">[</span><span class="ot">width=\textwidth</span><span class="co">]</span>{Grafiche/Immagini/selezione-del-modello-k-fold-cross-validation.png}</span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>    \caption{Diagram of K-Fold Cross Validation with $K=5$}</span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a>\end{figure}</span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>\begin{algorithm}<span class="co">[</span><span class="ot">H</span><span class="co">]</span></span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>    \caption*{**K-Fold Cross Validation** (pseudocode)}</span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>    \begin{algorithmic}<span class="co">[</span><span class="ot">1</span><span class="co">]</span></span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>        \State **input:**</span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>            \State \hspace{0.6cm} training set $S=\left(\boldsymbol{x_1},y_1\right),\dots,\left(\boldsymbol{x_m},y_m\right)$</span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>            \State \hspace{0.6cm} set of parameter values $\Theta$</span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>            \State \hspace{0.6cm} learning algorithm $A$</span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>            \State \hspace{0.6cm} integer number $k$</span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>        \State</span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>        \State **partition** $S$ in $S_1,S_2,\dots,S_k$</span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a>        \State</span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a>        \For{$\theta\in\Theta$}</span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>            \State</span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>            \For{$i=1$ to $k$}</span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>                \State $h_{i,\theta}\gets A\left(S\setminus S_i,\theta\right)$</span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>            \EndFor</span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a>            \State</span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a>            \State $error(\theta)\gets\text{\texttt{sum}}\left(L_{S_i}\left(h_{i,\theta}\right)\right)$ $/$ $k$\Comment{Sum over $i$}</span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>            \State</span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a>        \EndFor</span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>        \State</span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>        \State **output:**</span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>            \State \hspace{0.6cm} $\theta_{min}\gets\text{\texttt{argmin}}(error(\theta))$\Comment{Minimum with respect to $\theta$}</span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a>            \State \hspace{0.6cm} $h_{\theta_{min}}\gets A\left(S,\theta_{min}\right)$</span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a>    \end{algorithmic}</span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a>\end{algorithm}</span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a>Let's observe an example related to gesture recognition; let's imagine we have images of twelve gestures, each repeated ten times by fourteen different people, for a total of $1680$ images.</span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a>\begin{figure}<span class="co">[</span><span class="ot">H</span><span class="co">]</span></span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a>    \centering</span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a>    \includegraphics<span class="co">[</span><span class="ot">width=\textwidth</span><span class="co">]</span>{Grafiche/Immagini/selezione-del-modello-riconoscimento-dei-gesti.png}</span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a>    \caption{The twelve gestures that the algorithm must learn}</span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a>\end{figure}</span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a>The images are converted into feature vectors with two elements: the first is the *distance* of the fingers from the center of the palm of the hand, and the other is the *curvature* of the same fingers. In figure @fig:selezione-del-modello-riconoscimento-dei-gesti-dati-in-input we can observe some of these gestures together with the relative histogram of the distances (as a function of the angle with respect to the palm of the hand) and that of the curvatures (as a function of the *scale level*, that is, of the level of detail of the image).</span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>\begin{figure}<span class="co">[</span><span class="ot">H</span><span class="co">]</span></span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>    \centering</span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>    \includegraphics<span class="co">[</span><span class="ot">width=\textwidth</span><span class="co">]</span>{Grafiche/Immagini/selezione-del-modello-riconoscimento-dei-gesti-dati-in-input.png}</span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a>    \caption{Images associated with the histogram of distances and that of curvatures}</span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a>\end{figure}</span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>As mentioned, the total images available are $1680$, so it is convenient to choose the K-Fold Cross Validation method. In this regard, this example is also useful for understanding how to select the folds with criteria; we know in fact that the same person will not diversify the same gesture that much, so it is useful to maximize the differences between the training and validation set by building the validation set using all the gestures of a single person: if this were not the case, in fact, there would be images of the same person in both sets, potentially causing overfitting in the model.</span>
+<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a><span class="fu">### New decomposition of the error</span></span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a>In paragraph @sec:decomposizione-dellerrore we discussed how the error can be decomposed into two components:</span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Approximation error $L_{\mathcal{D}}\left(h^*\right)$, equal to the error associated with the best predictor in the hypothesis class, indicated with $h^*$</span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Estimation error $L_{\mathcal{D}}\left(h_{\mathcal{S}}\right)-L_{\mathcal{D}}\left(h^*\right)$, which tells us what the difference is between the true error (relative to the hypothesis $h_{\mathcal{S}}$ we found) and the approximation error</span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a>Since it is sometimes difficult to derive the approximation error in a problem, it is possible to use the empirical risk and the error on the validation set to decompose the true error in another form; by adding and subtracting both $L_{\mathcal{S}}\left(h_\mathcal{S}\right)$ and $L_{\mathcal{V}}\left(h_\mathcal{S}\right)$ we will obtain</span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a>    L_{\mathcal{D}}\left(h_\mathcal{S}\right)=\left(L_{\mathcal{D}}\left(h_\mathcal{S}\right)-L_{\mathcal{V}}\left(h_\mathcal{S}\right)\right)+\left(L_{\mathcal{V}}\left(h_\mathcal{S}\right)-L_{\mathcal{S}}\left(h_\mathcal{S}\right)\right)+L_{\mathcal{S}}\left(h_\mathcal{S}\right)</span>
+<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a>The first term on the right-hand side we know is bounded above according to equation @eq:selezione-del-modello-teorema; the second term, on the other hand, is able to estimate the overfitting of the model as we know from figure @fig:model-selection-curve; always from the same figure we also know that, in the case the third term is very large, we are instead in the presence of underfitting.</span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a><span class="fu">### When learning fails</span></span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a>Let's summarize below the steps to be performed in case the results found are not satisfactory:</span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Once the hyper-parameters have been chosen, it is useful to graph the model selection curve to make sure that it is indeed the best choice.</span>
+<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>If the *training error* $L_{\mathcal{S}}\left(h_{\mathcal{S}}\right)$ is too large, we are in a clear case of underfitting. Since this does not depend on the learning set $\mathcal{S}$ but only on the hypothesis class $\mathcal{H}$, we will have to act on the latter. We can do this in two ways:</span>
+<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a><span class="in">        - Widen $\mathcal{H}$, as its size may not be such as to contain the predictor that best classifies the data</span></span>
+<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a><span class="in">        - Change $\mathcal{H}$, because we may be looking in the wrong class of predictors. Returning to the example of polynomial fitting, if the points were distributed according to an exponential, we would actually be wrong from the start about the functions to look for.</span></span>
+<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a>    Another possibility is to act on the description of the data itself, that is, on the feature vector: if this contains too many details, which may be irrelevant, then the learning process can become too difficult for the algorithm. It is also possible that some features are being ignored in favor of others that are however an obstacle to optimal classification.</span>
+<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>If the *training error* $L_{\mathcal{S}}\left(h_{\mathcal{S}}\right)$ is small but the *validation error* is high, it is advisable to graph the so-called **learning curves**: to obtain them, it is sufficient to repeat the training and validation on a gradually increasing portion of data, until all of them are included. The two possibilities that could arise are shown in figure @fig:selezione-del-modello-learning-curve, assuming for simplicity that the training error remains constant.</span>
+<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a>    The reason for the learning curves is due to the fact that the validation error does not depend only on $\mathcal{H}$ but also on $\mathcal{S}$, so this time it is also possible to act on the latter. In fact, if we were in the situation shown in the graph on the right of figure @fig:selezione-del-modello-learning-curve, we would guess that by further increasing the training and validation data, the two curves could get even closer. If it were not possible to expand the amount of data available, another possibility is to reduce the complexity of the class $\mathcal{H}$ in order to limit overfitting.</span>
+<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a>    \begin{figure}<span class="co">[</span><span class="ot">H</span><span class="co">]</span></span>
+<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a>        \centering</span>
+<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a>        \includegraphics<span class="co">[</span><span class="ot">width=\textwidth</span><span class="co">]</span>{Grafiche/Immagini/selezione-del-modello-learning-curve.png}</span>
+<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a>        \caption{Learning curve graphs}</span>
+<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a>    \end{figure}</span>
+<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a>    If we were in the situation on the left, instead, we would notice that even by increasing the amount of data available, the validation curve would not seem to go down. We would thus return to the previous point, where we had no other choice but to change the hypothesis class or modify the feature vector.</span>
+<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a>It should be borne in mind that what has been written can only be done before using the test set. If the latter is applied, in fact, the learning is considered concluded and it is not possible to recalibrate parameters and hyper-parameters using the same test set as a final proof. *(Obviously, it is not forbidden to repeat the learning itself, as long as the final test set consists of new data not present in the previous learning process: the old test set will thus become part of the training and validation set.)*</span>
+<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regularization</span></span>
+<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a>One of the problems we often find ourselves facing is that of the *complexity* of the hypotheses considered: on the one hand, we do not want them to be excessively complex, because the algorithm would risk adapting excessively to the data in the set, including the noise associated with them; on the other hand, we do not want them to be too general, because we would run the risk of not really capturing the relevant characteristics of the data.</span>
+<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a>The learning paradigm that we have used so far, Empirical Risk Minimization, tends by its nature to select predictors that overfit, as it has the objective of globally reducing the error on all the available data. This is inconvenient, because a solution with the opposite problem, that is, underfitting, is generally preferable: in fact, it is easier to understand why a simpler solution fails in learning than a more complex one, and it is therefore easier to correct by following the feedback of the results.\footnote{This is a variation of *Occam's razor*, already discussed in paragraph @sec:insiemi-di-addestramento-test-e-validazione.}</span>
+<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a><span class="fu">### Regularized Loss Minimization</span></span>
+<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a>To change the paradigm, we could think of not only minimizing the empirical risk, but the sum of the latter with a new function, called the **regularization function** *(In English *regularization function*.)*, which has the objective of penalizing the most complex solutions.</span>
+<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a>Formally, given a hypothesis $h$ in the form of a weight vector *(These weights would correspond, for example, to the coefficients in a linear model, or to the weights of a neural network.)* $\boldsymbol{w}=\left(w_1,\dots,w_d\right)^T\in\mathbb{R}^d$, the regularization function $R(\boldsymbol{w})$ is defined as</span>
+<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a>    R:\mathbb{R}^d\to\mathbb{R}</span>
+<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a>From this it is possible to define the **Regularized Loss Minimization** (*RLM*) algorithm, which selects $h$ from the following expression:</span>
+<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a>    \boxed{\argmin_{\boldsymbol{w}}\left(L_{\mathcal{S}}(\boldsymbol{w})+R(\boldsymbol{w})\right)}</span>
+<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-305"><a href="#cb3-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a>The solution will therefore be a compromise between the one that minimizes the empirical risk and the one that tends to a lower complexity. According to this view, the term $R\left(\boldsymbol{w}\right)$ can be seen as a *stabilizer* in the search for the best solution, making the ERM less vulnerable to outliers and peculiarities in the learning set.</span>
+<span id="cb3-307"><a href="#cb3-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-308"><a href="#cb3-308" aria-hidden="true" tabindex="-1"></a><span class="fu">### Tikhonov Regularization</span></span>
+<span id="cb3-309"><a href="#cb3-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-310"><a href="#cb3-310" aria-hidden="true" tabindex="-1"></a>The main form of regularization is given by **Tikhonov regularization**, which defines $R$ as the $L2$ norm of the weights:</span>
+<span id="cb3-311"><a href="#cb3-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-312"><a href="#cb3-312" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-313"><a href="#cb3-313" aria-hidden="true" tabindex="-1"></a>    R(\boldsymbol{w})=\lambda\norm{\boldsymbol{w}}^2=\lambda\sum_{i=1}^dw_i^2</span>
+<span id="cb3-314"><a href="#cb3-314" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-315"><a href="#cb3-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-316"><a href="#cb3-316" aria-hidden="true" tabindex="-1"></a>The norm $\norm{\boldsymbol{w}}^2$ represents the complexity of the hypothesis, while the parameter $\lambda$ calibrates the compromise between empirical risk and complexity of the solution: the larger it is, the more a low complexity will be preferred at the expense of a higher empirical error.</span>
+<span id="cb3-317"><a href="#cb3-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-318"><a href="#cb3-318" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ridge Regression</span></span>
+<span id="cb3-319"><a href="#cb3-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-320"><a href="#cb3-320" aria-hidden="true" tabindex="-1"></a>The application of RLM for a linear regression problem, choosing the quadratic objective function as the loss function and Tikhonov regularization, is called **Ridge regression**.</span>
+<span id="cb3-321"><a href="#cb3-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-322"><a href="#cb3-322" aria-hidden="true" tabindex="-1"></a>Recalling the loss function from equations @eq:pac-learning-loss-function-generalizzata and @eq:pac-learning-obiettivo-quadratica we will write:\footnote{The book (and the professor consequently) actually reports a factor of $\frac{1}{2}$ multiplying the first term. I believe it is inserted because, in the following calculations, the derivative is performed, and in this way the coefficient $2$ resulting from the power is simplified; since I refuse to insert a factor from scratch making the text inconsistent with what was seen before, I prefer to omit this factor, obtaining a formally different result.}</span>
+<span id="cb3-323"><a href="#cb3-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-324"><a href="#cb3-324" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-325"><a href="#cb3-325" aria-hidden="true" tabindex="-1"></a>    \boldsymbol{w}=\argmin_{\boldsymbol{w}}\left(\frac{1}{m}\sum_{i=1}^m\left(\sprod{\boldsymbol{x_i}}{\boldsymbol{w}}-y_i\right)^2+\lambda\norm{\boldsymbol{w}}^2\right)</span>
+<span id="cb3-326"><a href="#cb3-326" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-327"><a href="#cb3-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-328"><a href="#cb3-328" aria-hidden="true" tabindex="-1"></a>Let's try to calculate $\boldsymbol{w}$:</span>
+<span id="cb3-329"><a href="#cb3-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-330"><a href="#cb3-330" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-331"><a href="#cb3-331" aria-hidden="true" tabindex="-1"></a>    \frac{\partial\left(L_{\mathcal{S}}(\boldsymbol{w})+R\left(\boldsymbol{w}\right)\right)}{\partial\boldsymbol{w}}=\frac{2}{m}\sum_{i=1}^m\left(\sprod{\boldsymbol{x_i}}{\boldsymbol{w}}-y_i\right)\boldsymbol{x_i}+\lambda\frac{\partial\norm{\boldsymbol{w}}^2}{\partial\boldsymbol{w}}=0</span>
+<span id="cb3-332"><a href="#cb3-332" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-333"><a href="#cb3-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-334"><a href="#cb3-334" aria-hidden="true" tabindex="-1"></a>Let's calculate the derivative $\frac{\partial\norm{\boldsymbol{w}}^2}{\partial\boldsymbol{w}}$ starting from the differentiation of $\norm{\boldsymbol{w}}^2$</span>
+<span id="cb3-335"><a href="#cb3-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-336"><a href="#cb3-336" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-337"><a href="#cb3-337" aria-hidden="true" tabindex="-1"></a>    \norm{\boldsymbol{w}}^2=\boldsymbol{w^T}\boldsymbol{w} \ \Longrightarrow \ d\norm{\boldsymbol{w}}^2=2\norm{\boldsymbol{w}}d\norm{\boldsymbol{w}}=2\boldsymbol{w}d\boldsymbol{w} \ \iff \ \frac{d\norm{\boldsymbol{w}}^2}{d\boldsymbol{w}}=2\boldsymbol{w}</span>
+<span id="cb3-338"><a href="#cb3-338" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-339"><a href="#cb3-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-340"><a href="#cb3-340" aria-hidden="true" tabindex="-1"></a>Let's substitute in @eq:selezione-del-modello-regressione-di-ridge-1:</span>
+<span id="cb3-341"><a href="#cb3-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-342"><a href="#cb3-342" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-343"><a href="#cb3-343" aria-hidden="true" tabindex="-1"></a>    \frac{\cancel{2}}{m}\sum_{i=1}^m\left(\sprod{\boldsymbol{x_i}}{\boldsymbol{w}}-y_i\right)\boldsymbol{x_i}+\cancel{2}\lambda\boldsymbol{w}=0 \ \Longrightarrow \ \sum_{i=1}^m\sprod{\boldsymbol{x_i}}{\boldsymbol{w}}\boldsymbol{x_i}+\lambda m\boldsymbol{w}=\sum_{i=1}^my_i\boldsymbol{x_i}</span>
+<span id="cb3-344"><a href="#cb3-344" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-345"><a href="#cb3-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-346"><a href="#cb3-346" aria-hidden="true" tabindex="-1"></a>Let's rewrite the expression as a function of the matrix $A$ and the vector $\boldsymbol{b}$ as done in equation @eq:predictor-lineari-minimi-quadrati-espressione-con-A-e-b:</span>
+<span id="cb3-347"><a href="#cb3-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-348"><a href="#cb3-348" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-349"><a href="#cb3-349" aria-hidden="true" tabindex="-1"></a>    A\boldsymbol{w}+\lambda mI\boldsymbol{w}=\boldsymbol{b}</span>
+<span id="cb3-350"><a href="#cb3-350" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-351"><a href="#cb3-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-352"><a href="#cb3-352" aria-hidden="true" tabindex="-1"></a>From this expression we easily derive:</span>
+<span id="cb3-353"><a href="#cb3-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-354"><a href="#cb3-354" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-355"><a href="#cb3-355" aria-hidden="true" tabindex="-1"></a>    (A+\lambda mI)\boldsymbol{w}=\boldsymbol{b} \ \Longrightarrow \ \boxed{\boldsymbol{w}=(A+\lambda mI)^{-1}\boldsymbol{b}}</span>
+<span id="cb3-356"><a href="#cb3-356" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-357"><a href="#cb3-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-358"><a href="#cb3-358" aria-hidden="true" tabindex="-1"></a>It is possible to show that, although the matrix $A$ is not necessarily invertible, the matrix $A+\lambda mI$ certainly is.</span>
+<span id="cb3-359"><a href="#cb3-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-360"><a href="#cb3-360" aria-hidden="true" tabindex="-1"></a><span class="fu">## Stability</span></span>
+<span id="cb3-361"><a href="#cb3-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-362"><a href="#cb3-362" aria-hidden="true" tabindex="-1"></a>In the context of machine learning, the concept of *stability* arises from the question: what does it mean to encounter "overfitting"?</span>
+<span id="cb3-363"><a href="#cb3-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-364"><a href="#cb3-364" aria-hidden="true" tabindex="-1"></a>As we know, within the training set there is noise - understood as *statistical perturbations* - that can influence the learning of the algorithm. Since this situation is always a risk when using a rule like that of ERM, we have introduced a function, called "regularization", which allows to *stabilize* - according to what we have seen - the learning process, for a solution more balanced towards simplicity.</span>
+<span id="cb3-365"><a href="#cb3-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-366"><a href="#cb3-366" aria-hidden="true" tabindex="-1"></a>By "stabilizing" we mean that, by slightly changing the learning set, the solution that the algorithm arrives at is still close to the one obtained before the change. Obviously, to give a formal definition, we must try to establish mathematically what we mean by "slightly changing" the set and by "close solution".</span>
+<span id="cb3-367"><a href="#cb3-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-368"><a href="#cb3-368" aria-hidden="true" tabindex="-1"></a>The simplest way to indicate a small change in the training set is to replace one element with another element. If the set $S$ consists of $m$ points in the form</span>
+<span id="cb3-369"><a href="#cb3-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-370"><a href="#cb3-370" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-371"><a href="#cb3-371" aria-hidden="true" tabindex="-1"></a>    \mathcal{S}=\left<span class="sc">\{</span>z_1,z_2,\dots,z_m\right<span class="sc">\}</span></span>
+<span id="cb3-372"><a href="#cb3-372" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-373"><a href="#cb3-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-374"><a href="#cb3-374" aria-hidden="true" tabindex="-1"></a>we will denote by $\mathcal{S}^{(i)}$ the same set in which the $i$-th element is replaced with $z'$:</span>
+<span id="cb3-375"><a href="#cb3-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-376"><a href="#cb3-376" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-377"><a href="#cb3-377" aria-hidden="true" tabindex="-1"></a>    \mathcal{S}^{(i)}=\left<span class="sc">\{</span>z_1,\dots,z_{i-1},z',z_{i+1},\dots,z_m\right<span class="sc">\}</span></span>
+<span id="cb3-378"><a href="#cb3-378" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-379"><a href="#cb3-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-380"><a href="#cb3-380" aria-hidden="true" tabindex="-1"></a>We recall that the loss function $\ell$ depends on the hypothesis $h$ and the element of the training set $z$; obviously we will expect that:</span>
+<span id="cb3-381"><a href="#cb3-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-382"><a href="#cb3-382" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-383"><a href="#cb3-383" aria-hidden="true" tabindex="-1"></a>    \ell\left(A(\mathcal{S}^{(i)}),z_i\right)-\ell\left(A(\mathcal{S}),z_i\right)\geqslant0</span>
+<span id="cb3-384"><a href="#cb3-384" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-385"><a href="#cb3-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-386"><a href="#cb3-386" aria-hidden="true" tabindex="-1"></a>This relationship tells us that the loss calculated on the solution obtained from $\mathcal{S}^{(i)}$ with respect to $z_i$ is greater than or equal to that obtained from $\mathcal{S}$ always with respect to $z_i$. It is intuitive: it is clear that, by replacing $z_i$ with another element, the solution derived including $z_i$ will not adapt in the same way.</span>
+<span id="cb3-387"><a href="#cb3-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-388"><a href="#cb3-388" aria-hidden="true" tabindex="-1"></a>The problem is now to quantify this difference. To this end, we define a new class of algorithms, called ***On-Average-Replace-One-Stable*** (**OAROS**).</span>
+<span id="cb3-389"><a href="#cb3-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-390"><a href="#cb3-390" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb3-391"><a href="#cb3-391" aria-hidden="true" tabindex="-1"></a>Let $\epsilon:\mathbb{N}\to\mathbb{R}$ be a monotonically decreasing function.</span>
+<span id="cb3-392"><a href="#cb3-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-393"><a href="#cb3-393" aria-hidden="true" tabindex="-1"></a>An algorithm $A$ is said to be ***On-Average-Replace-One-Stable*** with rate $\epsilon(m)$ if, for every distribution $\mathcal{D}$, it holds</span>
+<span id="cb3-394"><a href="#cb3-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-395"><a href="#cb3-395" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-396"><a href="#cb3-396" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}_{(\mathcal{S},z')\sim\mathcal{D}^{m+1},i\sim U(m)}\left<span class="co">[</span><span class="ot">\ell\left(A(\mathcal{S}^{(i)}),z_i\right)-\ell\left(A(\mathcal{S}),z_i\right)\right</span><span class="co">]</span>\leqslant\epsilon(m)</span>
+<span id="cb3-397"><a href="#cb3-397" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-398"><a href="#cb3-398" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-399"><a href="#cb3-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-400"><a href="#cb3-400" aria-hidden="true" tabindex="-1"></a>In @eq:selezione-del-modello-stabilita-definizione we find the expected value associated with the difference written previously, where all the points of the training set - including $z'$ - are extracted from the distribution $\mathcal{D}$, while the index $i$ is extracted from the uniform distribution of natural numbers from $1$ to $m$.</span>
+<span id="cb3-401"><a href="#cb3-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-402"><a href="#cb3-402" aria-hidden="true" tabindex="-1"></a>The difference between loss functions is bounded above by the quantity $\epsilon(m)$, and it will therefore be this value that determines how stable the algorithm actually is. But why is $\epsilon(m)$ monotonically decreasing? The answer is intuitive: replacing an element in a small set modifies that set much more than in the case where it was a larger set; consequently, the upper bound will tend to decrease as the size of $\mathcal{S}$ increases.</span>
+<span id="cb3-403"><a href="#cb3-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-404"><a href="#cb3-404" aria-hidden="true" tabindex="-1"></a>Given this definition, we can arrive at the proof of our initial intuition, that is, that stable algorithms do not overfit.</span>
+<span id="cb3-405"><a href="#cb3-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-406"><a href="#cb3-406" aria-hidden="true" tabindex="-1"></a>An algorithm $A$ suffers from overfitting if the difference between the true risk $L_{\mathcal{D}}(A(\mathcal{S}))$ and the empirical risk $L_{\mathcal{S}}(A(\mathcal{S}))$ is large. What we want to bound above, therefore, is\footnote{This is a rather curious quantity considering that the risk function is defined precisely as the expected value of the loss function with respect to the training set (equation @eq:pac-learning-risk-function-definizione), so it would be the expected value of... an expected value, which would therefore always return the expected value of the loss, unless I'm missing something.}</span>
+<span id="cb3-407"><a href="#cb3-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-408"><a href="#cb3-408" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-409"><a href="#cb3-409" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A(\mathcal{S}))-L_{\mathcal{S}}(A(\mathcal{S}))\right]</span>
+<span id="cb3-410"><a href="#cb3-410" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-411"><a href="#cb3-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-412"><a href="#cb3-412" aria-hidden="true" tabindex="-1"></a>The following theorem comes to our aid.</span>
+<span id="cb3-413"><a href="#cb3-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-414"><a href="#cb3-414" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Stable rules do not overfit"}</span>
+<span id="cb3-415"><a href="#cb3-415" aria-hidden="true" tabindex="-1"></a>If an algorithm $A$ is ***On-Average-Replace-One-Stable*** with rate $\epsilon(m)$ then</span>
+<span id="cb3-416"><a href="#cb3-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-417"><a href="#cb3-417" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-418"><a href="#cb3-418" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A\mathcal({S}))-L_{\mathcal{S}}(A(\mathcal{S}))\right]\leqslant\epsilon(m)</span>
+<span id="cb3-419"><a href="#cb3-419" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-420"><a href="#cb3-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-421"><a href="#cb3-421" aria-hidden="true" tabindex="-1"></a>\exrule</span>
+<span id="cb3-422"><a href="#cb3-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-423"><a href="#cb3-423" aria-hidden="true" tabindex="-1"></a>Our objective is to lead back to the expression @eq:selezione-del-modello-stabilita-definizione, so we will have to try to rewrite the risk functions $L$ as a function of the loss functions $\ell$.</span>
+<span id="cb3-424"><a href="#cb3-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-425"><a href="#cb3-425" aria-hidden="true" tabindex="-1"></a>Let's start from the true risk $L_{\mathcal{D}}(A\mathcal({S}))$. The relative loss function will be calculated with respect to an element $z'$ not belonging to $\mathcal{S}$: *(As is evident, the risk function $L$ is simply rewritten as the loss function $\ell$, although - as mentioned in the previous note - the risk should correspond to the expected value of the loss. I imagine, again as reiterated before, that the expected value of an expected value returns the same quantity, so the written formula should hold.)*</span>
+<span id="cb3-426"><a href="#cb3-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-427"><a href="#cb3-427" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-428"><a href="#cb3-428" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A\mathcal({S}))\right]=\mathbb{E}_{(\mathcal{S},z')\sim\mathcal{D}^{m+1}}\left<span class="co">[</span><span class="ot">\ell(A(\mathcal{S}),z')\right</span><span class="co">]</span></span>
+<span id="cb3-429"><a href="#cb3-429" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-430"><a href="#cb3-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-431"><a href="#cb3-431" aria-hidden="true" tabindex="-1"></a>Since all the points are *i.i.d.* from $\mathcal{D}$ then it must also hold that</span>
+<span id="cb3-432"><a href="#cb3-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-433"><a href="#cb3-433" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-434"><a href="#cb3-434" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A\mathcal({S}))\right]=\mathbb{E}_{(\mathcal{S},z')\sim\mathcal{D}^{m+1}}\left<span class="co">[</span><span class="ot">\ell\left(A\left(\mathcal{S}^{(i)}\right),z_i\right)\right</span><span class="co">]</span></span>
+<span id="cb3-435"><a href="#cb3-435" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-436"><a href="#cb3-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-437"><a href="#cb3-437" aria-hidden="true" tabindex="-1"></a>since $z_i\notin\mathcal{S}^{(i)}$, just as $z'\notin\mathcal{S}$.</span>
+<span id="cb3-438"><a href="#cb3-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-439"><a href="#cb3-439" aria-hidden="true" tabindex="-1"></a>As for the empirical risk, on the other hand, the point with respect to which the loss is calculated must be contained in the learning set:</span>
+<span id="cb3-440"><a href="#cb3-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-441"><a href="#cb3-441" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-442"><a href="#cb3-442" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{S}}(A\mathcal({S}))\right]=\mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m,i\sim U(m)}\left<span class="co">[</span><span class="ot">\ell\left(A\left(\mathcal{S}\right),z_i\right)\right</span><span class="co">]</span></span>
+<span id="cb3-443"><a href="#cb3-443" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-444"><a href="#cb3-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-445"><a href="#cb3-445" aria-hidden="true" tabindex="-1"></a>Subtracting member by member @eq:selezione-del-modello-stabilita-teorema-1 and @eq:selezione-del-modello-stabilita-teorema-2 we obtain</span>
+<span id="cb3-446"><a href="#cb3-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-447"><a href="#cb3-447" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb3-448"><a href="#cb3-448" aria-hidden="true" tabindex="-1"></a>    &amp;\mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A\mathcal({S}))-L_{\mathcal{S}}(A(\mathcal{S}))\right]=<span class="sc">\\</span></span>
+<span id="cb3-449"><a href="#cb3-449" aria-hidden="true" tabindex="-1"></a>    =&amp;\mathbb{E}_{(\mathcal{S},z')\sim\mathcal{D}^{m+1},i\sim U(m)}\left<span class="co">[</span><span class="ot">\ell\left(A(\mathcal{S}^{(i)}),z_i\right)-\ell\left(A(\mathcal{S}),z_i\right)\right</span><span class="co">]</span></span>
+<span id="cb3-450"><a href="#cb3-450" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb3-451"><a href="#cb3-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-452"><a href="#cb3-452" aria-hidden="true" tabindex="-1"></a>which, from the property @eq:selezione-del-modello-stabilita-definizione, returns the thesis.</span>
+<span id="cb3-453"><a href="#cb3-453" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-454"><a href="#cb3-454" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-455"><a href="#cb3-455" aria-hidden="true" tabindex="-1"></a><span class="fu">### Tikhonov regularization as a stabilizer</span></span>
+<span id="cb3-456"><a href="#cb3-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-457"><a href="#cb3-457" aria-hidden="true" tabindex="-1"></a>Having mathematically defined what stability is, it is now possible to clearly explain in what sense Tikhonov regularization is a real *stabilizer* when applied through the RLM algorithm.</span>
+<span id="cb3-458"><a href="#cb3-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-459"><a href="#cb3-459" aria-hidden="true" tabindex="-1"></a>To this end, it is useful to define a new property associated with real-valued functions, called *Lipschitz continuity*.</span>
+<span id="cb3-460"><a href="#cb3-460" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-461"><a href="#cb3-461" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb3-462"><a href="#cb3-462" aria-hidden="true" tabindex="-1"></a>A function $f:\mathbb{R}^d\to\mathbb{R}^k$ is said to be $\rho$-Lipschitz on $C\subset\mathbb{R}^d$ if</span>
+<span id="cb3-463"><a href="#cb3-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-464"><a href="#cb3-464" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-465"><a href="#cb3-465" aria-hidden="true" tabindex="-1"></a>    \norm{f\left(\boldsymbol{w_1}\right)-f\left(\boldsymbol{w_2}\right)}\leqslant\rho\norm{\boldsymbol{w_1}-\boldsymbol{w_2}}\hspace{0.65cm}\forall\boldsymbol{w_1},\boldsymbol{w_2}\in C</span>
+<span id="cb3-466"><a href="#cb3-466" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-467"><a href="#cb3-467" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-468"><a href="#cb3-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-469"><a href="#cb3-469" aria-hidden="true" tabindex="-1"></a>This definition is useful for understanding mathematically what we mean by a function that changes "quickly", since the change of the function with respect to the interval (in the limit we would speak of a *derivative*) is bounded above by the parameter $\rho$. Intuitively, the more a function changes rapidly, the "worse" a solution it is if chosen as a hypothesis, because it would seem to have adapted well to the input data to the point of overfitting. We therefore understand that we can link the concept of "simplicity" and "*smoothness"* of a function to that of stability, consequently writing $\epsilon(m)$ as a function of $\rho$.</span>
+<span id="cb3-470"><a href="#cb3-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-471"><a href="#cb3-471" aria-hidden="true" tabindex="-1"></a>This link emerges in the following theorem.</span>
+<span id="cb3-472"><a href="#cb3-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-473"><a href="#cb3-473" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Tikhonov regularization is a stabilizer"}</span>
+<span id="cb3-474"><a href="#cb3-474" aria-hidden="true" tabindex="-1"></a>If the loss function $\ell(h,z)$ is *convex* and $\rho$-Lipschitz, then the RLM rule with Tikhonov regularization $\lambda\norm{\boldsymbol{w}}^2$ is ***On-Average-Replace-One-Stable*** with rate $\frac{2\rho^2}{\lambda m}$.</span>
+<span id="cb3-475"><a href="#cb3-475" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-476"><a href="#cb3-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-477"><a href="#cb3-477" aria-hidden="true" tabindex="-1"></a>The proof is not required by the course; what interests us is the consequence that this theorem brings with it, that is, the one due to the previous theorem on *OAROS* algorithms:</span>
+<span id="cb3-478"><a href="#cb3-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-479"><a href="#cb3-479" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-480"><a href="#cb3-480" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}_{\mathcal{S}\sim\mathcal{D}^m}\left[L_{\mathcal{D}}(A\mathcal({S}))-L_{\mathcal{S}}(A(\mathcal{S}))\right]\leqslant\frac{2\rho^2}{\lambda m}</span>
+<span id="cb3-481"><a href="#cb3-481" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-482"><a href="#cb3-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-483"><a href="#cb3-483" aria-hidden="true" tabindex="-1"></a>The upper bound of the expression is quite intuitive: on the one hand, we understand that increasing $\rho$ means worsening stability, since fewer constraints are imposed on the sudden changes of the solution, and on the other hand, we have that increasing $\lambda$ means improving stability, just as the same is true for $m$ as explained previously.</span>
+<span id="cb3-484"><a href="#cb3-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-485"><a href="#cb3-485" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fitting-stability tradeoff</span></span>
+<span id="cb3-486"><a href="#cb3-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-487"><a href="#cb3-487" aria-hidden="true" tabindex="-1"></a>From what we have seen with the introduction of these new concepts, a new dualism naturally emerges, that of *fitting* versus *stability*: it is no coincidence that it is possible to speak of a **fitting-stability tradeoff**.</span>
+<span id="cb3-488"><a href="#cb3-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-489"><a href="#cb3-489" aria-hidden="true" tabindex="-1"></a>This is to all intents and purposes a new "version" of the bias-complexity tradeoff, since it also expresses a polarization between two extremes representing overfitting and underfitting. This can be clearly seen by writing the true risk associated with the algorithm:</span>
+<span id="cb3-490"><a href="#cb3-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-491"><a href="#cb3-491" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-492"><a href="#cb3-492" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}_{\mathcal{S}}\left[L_{\mathcal{D}}(A(\mathcal{S}))\right]=\mathbb{E}_{\mathcal{S}}\left[L_{\mathcal{S}}(A(\mathcal{S}))\right]+\mathbb{E}_{\mathcal{S}}\left[L_{\mathcal{D}}(A(\mathcal{S}))-L_{\mathcal{S}}(A(\mathcal{S}))\right]</span>
+<span id="cb3-493"><a href="#cb3-493" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-494"><a href="#cb3-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-495"><a href="#cb3-495" aria-hidden="true" tabindex="-1"></a>The first term on the right-hand side expresses how well $A$ fits the training set $\mathcal{S}$, while the second term measures - as we know - the stability.</span>
+<span id="cb3-496"><a href="#cb3-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-497"><a href="#cb3-497" aria-hidden="true" tabindex="-1"></a>In the case of RLM with Tikhonov regularization, the parameter on which the tradeoff is calibrated is $\lambda$: a value that is too small can reduce the empirical risk but leave room for a dangerous tendency to overfit, while a sufficiently large value allows for a higher empirical risk in favor of greater stability. The aim will therefore be to find the configuration that minimizes the sum in equation @eq:selezione-del-modello-compromesso-fitting-stabilita.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

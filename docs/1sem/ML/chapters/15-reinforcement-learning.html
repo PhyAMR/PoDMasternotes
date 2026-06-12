@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>16&nbsp; Reinforcement Learning – Machine Learning — Lecture Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/16-proofs.html" rel="next">
+<link href="../chapters/14-clustering.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/13-pca.html">Unsupervised Learning</a></li><li class="breadcrumb-item"><a href="../chapters/15-reinforcement-learning.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Reinforcement Learning</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Machine Learning — Lecture Notes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Supervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction &amp; ML Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-pac-learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PAC Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-uniform-convergence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Uniform Convergence</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-bias-complexity-tradeoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Bias-Complexity Tradeoff</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-vc-dimension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">VC Dimension</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-model-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Model Selection</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-linear-predictors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Linear Predictors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-stochastic-gradient-descent.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Stochastic Gradient Descent</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-support-vector-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Support Vector Machines</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Kernel Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-boosting-trees-rf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Boosting, Decision Trees and Random Forests</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-neural-networks-cnn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Neural Networks and Convolutional Neural Networks</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Unsupervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Clustering</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-reinforcement-learning.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Reinforcement Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Exam Preparation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16-proofs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Proofs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17-exam-exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#motivation-the-agent-environment-loop" id="toc-motivation-the-agent-environment-loop" class="nav-link active" data-scroll-target="#motivation-the-agent-environment-loop"><span class="header-section-number">16.1</span> Motivation: The Agent-Environment Loop</a></li>
+  <li><a href="#markov-decision-processes" id="toc-markov-decision-processes" class="nav-link" data-scroll-target="#markov-decision-processes"><span class="header-section-number">16.2</span> Markov Decision Processes</a></li>
+  <li><a href="#return-and-discount-factor" id="toc-return-and-discount-factor" class="nav-link" data-scroll-target="#return-and-discount-factor"><span class="header-section-number">16.3</span> Return and Discount Factor</a></li>
+  <li><a href="#value-functions" id="toc-value-functions" class="nav-link" data-scroll-target="#value-functions"><span class="header-section-number">16.4</span> Value Functions</a></li>
+  <li><a href="#bellman-equation" id="toc-bellman-equation" class="nav-link" data-scroll-target="#bellman-equation"><span class="header-section-number">16.5</span> Bellman Equation</a></li>
+  <li><a href="#dynamic-programming-solutions" id="toc-dynamic-programming-solutions" class="nav-link" data-scroll-target="#dynamic-programming-solutions"><span class="header-section-number">16.6</span> Dynamic Programming Solutions</a>
+  <ul class="collapse">
+  <li><a href="#policy-evaluation" id="toc-policy-evaluation" class="nav-link" data-scroll-target="#policy-evaluation"><span class="header-section-number">16.6.1</span> Policy Evaluation</a></li>
+  <li><a href="#policy-improvement" id="toc-policy-improvement" class="nav-link" data-scroll-target="#policy-improvement"><span class="header-section-number">16.6.2</span> Policy Improvement</a></li>
+  <li><a href="#policy-iteration" id="toc-policy-iteration" class="nav-link" data-scroll-target="#policy-iteration"><span class="header-section-number">16.6.3</span> Policy Iteration</a></li>
+  <li><a href="#value-iteration" id="toc-value-iteration" class="nav-link" data-scroll-target="#value-iteration"><span class="header-section-number">16.6.4</span> Value Iteration</a></li>
+  </ul></li>
+  <li><a href="#model-free-temporal-difference-learning" id="toc-model-free-temporal-difference-learning" class="nav-link" data-scroll-target="#model-free-temporal-difference-learning"><span class="header-section-number">16.7</span> Model-Free Temporal Difference Learning</a>
+  <ul class="collapse">
+  <li><a href="#td0-update" id="toc-td0-update" class="nav-link" data-scroll-target="#td0-update"><span class="header-section-number">16.7.1</span> TD(0) Update</a></li>
+  <li><a href="#sarsa-on-policy-td-control" id="toc-sarsa-on-policy-td-control" class="nav-link" data-scroll-target="#sarsa-on-policy-td-control"><span class="header-section-number">16.7.2</span> SARSA: On-Policy TD Control</a></li>
+  <li><a href="#q-learning-off-policy-td-control" id="toc-q-learning-off-policy-td-control" class="nav-link" data-scroll-target="#q-learning-off-policy-td-control"><span class="header-section-number">16.7.3</span> Q-Learning: Off-Policy TD Control</a></li>
+  </ul></li>
+  <li><a href="#exploration-vs.-exploitation" id="toc-exploration-vs.-exploitation" class="nav-link" data-scroll-target="#exploration-vs.-exploitation"><span class="header-section-number">16.8</span> Exploration vs.&nbsp;Exploitation</a>
+  <ul class="collapse">
+  <li><a href="#epsilon-greedy-exploration" id="toc-epsilon-greedy-exploration" class="nav-link" data-scroll-target="#epsilon-greedy-exploration"><span class="header-section-number">16.8.1</span> <span class="math inline">\(\epsilon\)</span>-Greedy Exploration</a></li>
+  <li><a href="#softmax-exploration" id="toc-softmax-exploration" class="nav-link" data-scroll-target="#softmax-exploration"><span class="header-section-number">16.8.2</span> Softmax Exploration</a></li>
+  </ul></li>
+  <li><a href="#deep-q-networks-dqn-and-curse-of-dimensionality" id="toc-deep-q-networks-dqn-and-curse-of-dimensionality" class="nav-link" data-scroll-target="#deep-q-networks-dqn-and-curse-of-dimensionality"><span class="header-section-number">16.9</span> Deep Q-Networks (DQN) and Curse of Dimensionality</a>
+  <ul class="collapse">
+  <li><a href="#the-curse-of-dimensionality" id="toc-the-curse-of-dimensionality" class="nav-link" data-scroll-target="#the-curse-of-dimensionality"><span class="header-section-number">16.9.1</span> The Curse of Dimensionality</a></li>
+  <li><a href="#function-approximation-and-deep-learning" id="toc-function-approximation-and-deep-learning" class="nav-link" data-scroll-target="#function-approximation-and-deep-learning"><span class="header-section-number">16.9.2</span> Function Approximation and Deep Learning</a></li>
+  <li><a href="#dqn-innovations" id="toc-dqn-innovations" class="nav-link" data-scroll-target="#dqn-innovations"><span class="header-section-number">16.9.3</span> DQN Innovations</a></li>
+  </ul></li>
+  <li><a href="#worked-example-gridworld-value-iteration" id="toc-worked-example-gridworld-value-iteration" class="nav-link" data-scroll-target="#worked-example-gridworld-value-iteration"><span class="header-section-number">16.10</span> Worked Example: Gridworld Value Iteration</a></li>
+  <li><a href="#policy-gradient-methods-brief-mention" id="toc-policy-gradient-methods-brief-mention" class="nav-link" data-scroll-target="#policy-gradient-methods-brief-mention"><span class="header-section-number">16.11</span> Policy Gradient Methods (Brief Mention)</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">16.12</span> Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/13-pca.html">Unsupervised Learning</a></li><li class="breadcrumb-item"><a href="../chapters/15-reinforcement-learning.html"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Reinforcement Learning</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Reinforcement Learning</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="motivation-the-agent-environment-loop" class="level2" data-number="16.1">
+<h2 data-number="16.1" class="anchored" data-anchor-id="motivation-the-agent-environment-loop"><span class="header-section-number">16.1</span> Motivation: The Agent-Environment Loop</h2>
+<p>Unlike supervised learning (labels provided) and unsupervised learning (structure discovery), <strong>reinforcement learning (RL)</strong> uses <strong>rewards</strong> as the training signal. An <strong>agent</strong> interacts with an <strong>environment</strong>, takes <strong>actions</strong>, receives <strong>rewards</strong>, and transitions to new <strong>states</strong>. The goal is to learn a <strong>policy</strong> (decision rule) that maximizes cumulative reward over time.</p>
+<p>Key challenges unique to RL:</p>
+<ul>
+<li><strong>Credit assignment</strong>: How do we attribute delayed rewards to earlier actions? (The reward for winning a chess game comes long after the opening move.)</li>
+<li><strong>Exploration vs.&nbsp;exploitation</strong>: Should we exploit what we know works, or explore to discover better strategies?</li>
+<li><strong>Non-stationarity</strong>: The distribution of states and rewards may change as we learn.</li>
+</ul>
+</section>
+<section id="markov-decision-processes" class="level2" data-number="16.2">
+<h2 data-number="16.2" class="anchored" data-anchor-id="markov-decision-processes"><span class="header-section-number">16.2</span> Markov Decision Processes</h2>
+<p>The foundation of RL is the <strong>Markov Decision Process (MDP)</strong>, which formalizes sequential decision-making under uncertainty.</p>
+<div class="definition" name="Markov Decision Process">
+<p>An MDP is a tuple <span class="math inline">\((S, A, P, R, \gamma)\)</span>:</p>
+<ul>
+<li><strong>State space</strong> <span class="math inline">\(S\)</span>: Set of possible states the environment can occupy.</li>
+<li><strong>Action space</strong> <span class="math inline">\(A\)</span>: Set of actions the agent can take.</li>
+<li><strong>Transition dynamics</strong> <span class="math inline">\(P\)</span>: For each state <span class="math inline">\(s\)</span> and action <span class="math inline">\(a\)</span>, <span class="math inline">\(P(s' | s, a)\)</span> is the probability of transitioning to state <span class="math inline">\(s'\)</span>.</li>
+<li><strong>Reward function</strong> <span class="math inline">\(R\)</span>: <span class="math inline">\(R(s, a, s')\)</span> or <span class="math inline">\(R(s, a)\)</span> is the immediate reward for taking action <span class="math inline">\(a\)</span> in state <span class="math inline">\(s\)</span>.</li>
+<li><strong>Discount factor</strong> <span class="math inline">\(\gamma \in [0, 1)\)</span>: Weighting future vs.&nbsp;immediate rewards.</li>
+</ul>
+<p>The <strong>Markov property</strong> states: <span class="math inline">\(P(s_{t+1} | s_t, a_t, s_{t-1}, a_{t-1}, \ldots) = P(s_{t+1} | s_t, a_t)\)</span>. The future depends only on the current state and action, not history.</p>
+</div>
+<p><strong>Intuition</strong>: The MDP captures the essential structure of decision-making: state (where we are), action (what we do), consequence (next state), and payoff (reward).</p>
+</section>
+<section id="return-and-discount-factor" class="level2" data-number="16.3">
+<h2 data-number="16.3" class="anchored" data-anchor-id="return-and-discount-factor"><span class="header-section-number">16.3</span> Return and Discount Factor</h2>
+<p>When an agent follows a sequence of actions over time, it accumulates rewards. We define the <strong>return</strong> (cumulative discounted reward) starting from time <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[G_t = r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \cdots = \sum_{k=0}^{\infty} \gamma^k r_{t+k+1}.\]</span></p>
+<p>The discount factor <span class="math inline">\(\gamma\)</span> has two interpretations:</p>
+<ul>
+<li><strong>Time preference</strong>: <span class="math inline">\(\gamma\)</span> close to 0 prioritizes immediate rewards; <span class="math inline">\(\gamma\)</span> close to 1 values long-term payoffs equally.</li>
+<li><strong>Convergence</strong>: For infinite-horizon problems, <span class="math inline">\(\gamma &lt; 1\)</span> ensures the sum converges (assuming bounded rewards).</li>
+</ul>
+<p>For finite-horizon problems (where the episode ends after <span class="math inline">\(T\)</span> steps), we can use <span class="math inline">\(\gamma = 1\)</span>.</p>
+</section>
+<section id="value-functions" class="level2" data-number="16.4">
+<h2 data-number="16.4" class="anchored" data-anchor-id="value-functions"><span class="header-section-number">16.4</span> Value Functions</h2>
+<p>A <strong>policy</strong> <span class="math inline">\(\pi\)</span> maps states to actions (deterministically) or to probability distributions over actions (stochastically).</p>
+<div class="definition" name="Value functions">
+<ul>
+<li><p><strong>State-value function</strong> under policy <span class="math inline">\(\pi\)</span>: <span class="math display">\[V^\pi(s) = \mathbb{E}_\pi[G_t | s_t = s] = \mathbb{E}_\pi\left[\sum_{k=0}^{\infty} \gamma^k r_{t+k+1} \,\Big|\, s_t = s\right].\]</span> The expected return starting from state <span class="math inline">\(s\)</span> and following <span class="math inline">\(\pi\)</span>.</p></li>
+<li><p><strong>Action-value function</strong> (Q-value) under policy <span class="math inline">\(\pi\)</span>: <span class="math display">\[Q^\pi(s, a) = \mathbb{E}_\pi[G_t | s_t = s, a_t = a].\]</span> The expected return after taking action <span class="math inline">\(a\)</span> in state <span class="math inline">\(s\)</span>, then following <span class="math inline">\(\pi\)</span>.</p></li>
+</ul>
+<p>The <strong>optimal value functions</strong> are: <span class="math display">\[V^*(s) = \max_\pi V^\pi(s), \quad Q^*(s, a) = \max_\pi Q^\pi(s, a).\]</span></p>
+</div>
+<p><strong>Intuition</strong>: Value functions quantify the goodness of states and state-action pairs. An agent aims to reach high-value states and choose high-value actions.</p>
+</section>
+<section id="bellman-equation" class="level2" data-number="16.5">
+<h2 data-number="16.5" class="anchored" data-anchor-id="bellman-equation"><span class="header-section-number">16.5</span> Bellman Equation</h2>
+<p>The recursive structure of returns yields the <strong>Bellman equation</strong>, which relates a state’s value to its successors’ values:</p>
+<div class="theorem" name="Bellman equation">
+<p>For any policy <span class="math inline">\(\pi\)</span> and any state <span class="math inline">\(s\)</span>:</p>
+<p><span class="math display">\[V^\pi(s) = \sum_a \pi(a|s) \sum_{s'} P(s'|s,a) \left[R(s,a,s') + \gamma V^\pi(s')\right].\]</span></p>
+<p>For the optimal policy:</p>
+<p><span class="math display">\[V^*(s) = \max_a \left[R(s,a) + \gamma \sum_{s'} P(s'|s,a) V^*(s')\right].\]</span></p>
+<p>The second form is the <strong>Bellman optimality equation</strong>: the optimal value of a state equals the immediate reward of the best action plus the (discounted) optimal value of the resulting state.</p>
+</div>
+<p><strong>Intuition</strong>: Value is a sum of immediate payoff and future payoff. This decomposition enables dynamic programming—we can solve for value functions without full lookahead.</p>
+</section>
+<section id="dynamic-programming-solutions" class="level2" data-number="16.6">
+<h2 data-number="16.6" class="anchored" data-anchor-id="dynamic-programming-solutions"><span class="header-section-number">16.6</span> Dynamic Programming Solutions</h2>
+<p>When the MDP is fully known (we have <span class="math inline">\(P, R\)</span>), we can solve for the optimal policy using <strong>dynamic programming</strong>.</p>
+<section id="policy-evaluation" class="level3" data-number="16.6.1">
+<h3 data-number="16.6.1" class="anchored" data-anchor-id="policy-evaluation"><span class="header-section-number">16.6.1</span> Policy Evaluation</h3>
+<p>Given a policy <span class="math inline">\(\pi\)</span>, compute its value function by iterating the Bellman equation:</p>
+<p><span class="math display">\[V_{k+1}(s) = \sum_a \pi(a|s) \sum_{s'} P(s'|s,a) \left[R(s,a,s') + \gamma V_k(s')\right].\]</span></p>
+<p>Repeat until convergence: <span class="math inline">\(V_k \approx V^\pi\)</span>.</p>
+</section>
+<section id="policy-improvement" class="level3" data-number="16.6.2">
+<h3 data-number="16.6.2" class="anchored" data-anchor-id="policy-improvement"><span class="header-section-number">16.6.2</span> Policy Improvement</h3>
+<p>Given a value function, extract a greedy policy:</p>
+<p><span class="math display">\[\pi'(s) = \arg\max_a \left[R(s,a) + \gamma \sum_{s'} P(s'|s,a) V(s')\right].\]</span></p>
+</section>
+<section id="policy-iteration" class="level3" data-number="16.6.3">
+<h3 data-number="16.6.3" class="anchored" data-anchor-id="policy-iteration"><span class="header-section-number">16.6.3</span> Policy Iteration</h3>
+<p>Alternate between evaluation and improvement until the policy stabilizes:</p>
+<ol type="1">
+<li><strong>Initialize</strong> <span class="math inline">\(\pi\)</span> arbitrarily.</li>
+<li><strong>Repeat</strong>:
+<ul>
+<li>Policy Evaluation: Compute <span class="math inline">\(V^\pi\)</span> (or approximate it).</li>
+<li>Policy Improvement: <span class="math inline">\(\pi \gets \arg\max_a [\cdots]\)</span> using <span class="math inline">\(V^\pi\)</span>.</li>
+<li><strong>Stop</strong> if <span class="math inline">\(\pi\)</span> doesn’t change.</li>
+</ul></li>
+</ol>
+<p><strong>Complexity</strong>: Polynomial in state and action space sizes. <strong>Convergence</strong>: Guaranteed to the optimal policy in finite MDPs.</p>
+</section>
+<section id="value-iteration" class="level3" data-number="16.6.4">
+<h3 data-number="16.6.4" class="anchored" data-anchor-id="value-iteration"><span class="header-section-number">16.6.4</span> Value Iteration</h3>
+<p>Alternatively, directly iterate the Bellman optimality equation:</p>
+<p><span class="math display">\[V_{k+1}(s) = \max_a \left[R(s,a) + \gamma \sum_{s'} P(s'|s,a) V_k(s')\right].\]</span></p>
+<p>Repeat until convergence. This is simpler (single loop) and also converges to <span class="math inline">\(V^*\)</span>.</p>
+</section>
+</section>
+<section id="model-free-temporal-difference-learning" class="level2" data-number="16.7">
+<h2 data-number="16.7" class="anchored" data-anchor-id="model-free-temporal-difference-learning"><span class="header-section-number">16.7</span> Model-Free Temporal Difference Learning</h2>
+<p>In practice, the MDP is unknown—we don’t have <span class="math inline">\(P\)</span> or <span class="math inline">\(R\)</span>. Instead, we learn from experience. <strong>Temporal Difference (TD)</strong> methods combine ideas from Monte Carlo methods and dynamic programming.</p>
+<section id="td0-update" class="level3" data-number="16.7.1">
+<h3 data-number="16.7.1" class="anchored" data-anchor-id="td0-update"><span class="header-section-number">16.7.1</span> TD(0) Update</h3>
+<p>When the agent observes a transition <span class="math inline">\((s, a, r, s')\)</span> with immediate reward <span class="math inline">\(r\)</span> and next state <span class="math inline">\(s'\)</span>, update:</p>
+<p><span class="math display">\[V(s) \leftarrow V(s) + \alpha \left[r + \gamma V(s') - V(s)\right],\]</span></p>
+<p>where <span class="math inline">\(\alpha\)</span> is the learning rate (typically <span class="math inline">\(\alpha \in (0, 1)\)</span> and decaying over time).</p>
+<p>The term <span class="math inline">\(\delta = r + \gamma V(s') - V(s)\)</span> is the <strong>temporal difference error</strong>—the mismatch between predicted and actual return. We nudge <span class="math inline">\(V(s)\)</span> toward <span class="math inline">\(r + \gamma V(s')\)</span>, the one-step-ahead estimate.</p>
+<p><strong>Convergence</strong>: Under mild conditions on learning rates and state/action visitation, TD(0) converges to the true value function <span class="math inline">\(V^\pi\)</span> with probability 1.</p>
+</section>
+<section id="sarsa-on-policy-td-control" class="level3" data-number="16.7.2">
+<h3 data-number="16.7.2" class="anchored" data-anchor-id="sarsa-on-policy-td-control"><span class="header-section-number">16.7.2</span> SARSA: On-Policy TD Control</h3>
+<p>To learn the optimal policy, we estimate Q-values on-policy. <strong>SARSA</strong> (State-Action-Reward-State-Action) learns <span class="math inline">\(Q(s, a)\)</span> by updating after each experience:</p>
+<p><span class="math display">\[Q(s, a) \leftarrow Q(s, a) + \alpha \left[r + \gamma Q(s', a') - Q(s, a)\right],\]</span></p>
+<p>where <span class="math inline">\((s', a')\)</span> is the next state-action pair chosen by the current policy (typically <span class="math inline">\(\epsilon\)</span>-greedy).</p>
+<p><strong>Limitation</strong>: Because SARSA uses the action chosen by the current policy (which may be exploratory), it is <strong>on-policy</strong>. It tends to learn a policy that avoids risky paths, even if they lead to high rewards. (SARSA avoids the “optimal move that risks a penalty.”)</p>
+</section>
+<section id="q-learning-off-policy-td-control" class="level3" data-number="16.7.3">
+<h3 data-number="16.7.3" class="anchored" data-anchor-id="q-learning-off-policy-td-control"><span class="header-section-number">16.7.3</span> Q-Learning: Off-Policy TD Control</h3>
+<p><strong>Q-learning</strong> decouples the action used for exploration from the action used for updating:</p>
+<p><span class="math display">\[Q(s, a) \leftarrow Q(s, a) + \alpha \left[r + \gamma \max_{a'} Q(s', a') - Q(s, a)\right].\]</span></p>
+<p>Here, the update uses the <strong>greedy</strong> best action <span class="math inline">\(\arg\max_{a'} Q(s', a')\)</span> regardless of which action we actually took. This is <strong>off-policy</strong>: we can learn the optimal policy from data collected under a different (e.g., more exploratory) policy.</p>
+<p><strong>Convergence</strong>: Under standard assumptions, Q-learning converges to <span class="math inline">\(Q^*\)</span> with probability 1.</p>
+<p><strong>Advantage</strong>: Q-learning often outperforms SARSA in practice because it learns the optimal policy even when following an exploratory policy.</p>
+</section>
+</section>
+<section id="exploration-vs.-exploitation" class="level2" data-number="16.8">
+<h2 data-number="16.8" class="anchored" data-anchor-id="exploration-vs.-exploitation"><span class="header-section-number">16.8</span> Exploration vs.&nbsp;Exploitation</h2>
+<p>A fundamental trade-off in RL:</p>
+<ul>
+<li><strong>Exploitation</strong>: Choose the action with the highest estimated Q-value (greedy).</li>
+<li><strong>Exploration</strong>: Try other actions to learn if they’re better.</li>
+</ul>
+<section id="epsilon-greedy-exploration" class="level3" data-number="16.8.1">
+<h3 data-number="16.8.1" class="anchored" data-anchor-id="epsilon-greedy-exploration"><span class="header-section-number">16.8.1</span> <span class="math inline">\(\epsilon\)</span>-Greedy Exploration</h3>
+<p>A simple strategy: - With probability <span class="math inline">\(1 - \epsilon\)</span>, choose <span class="math inline">\(a = \arg\max_{a'} Q(s, a')\)</span> (exploit). - With probability <span class="math inline">\(\epsilon\)</span>, choose a random action (explore).</p>
+<p>Typically, <span class="math inline">\(\epsilon\)</span> decays over time (e.g., <span class="math inline">\(\epsilon_t = \epsilon_0 / t\)</span>), prioritizing exploration early and exploitation later.</p>
+</section>
+<section id="softmax-exploration" class="level3" data-number="16.8.2">
+<h3 data-number="16.8.2" class="anchored" data-anchor-id="softmax-exploration"><span class="header-section-number">16.8.2</span> Softmax Exploration</h3>
+<p>Choose action <span class="math inline">\(a\)</span> with probability:</p>
+<p><span class="math display">\[P(a | s) = \frac{\exp(Q(s, a) / \tau)}{\sum_{a'} \exp(Q(s, a') / \tau)},\]</span></p>
+<p>where <span class="math inline">\(\tau\)</span> is a temperature parameter. High <span class="math inline">\(\tau\)</span> makes probabilities uniform (more exploration); low <span class="math inline">\(\tau\)</span> concentrates on high-Q actions (more exploitation).</p>
+</section>
+</section>
+<section id="deep-q-networks-dqn-and-curse-of-dimensionality" class="level2" data-number="16.9">
+<h2 data-number="16.9" class="anchored" data-anchor-id="deep-q-networks-dqn-and-curse-of-dimensionality"><span class="header-section-number">16.9</span> Deep Q-Networks (DQN) and Curse of Dimensionality</h2>
+<section id="the-curse-of-dimensionality" class="level3" data-number="16.9.1">
+<h3 data-number="16.9.1" class="anchored" data-anchor-id="the-curse-of-dimensionality"><span class="header-section-number">16.9.1</span> The Curse of Dimensionality</h3>
+<p>As state space grows exponentially with dimensionality, tabular methods (storing <span class="math inline">\(Q(s, a)\)</span> for each state-action pair) become infeasible. For a <span class="math inline">\(20 \times 20\)</span> pixel image with 256 grayscale levels, there are <span class="math inline">\(256^{400}\)</span> possible states—astronomically large.</p>
+</section>
+<section id="function-approximation-and-deep-learning" class="level3" data-number="16.9.2">
+<h3 data-number="16.9.2" class="anchored" data-anchor-id="function-approximation-and-deep-learning"><span class="header-section-number">16.9.2</span> Function Approximation and Deep Learning</h3>
+<p>Instead of a table, use a <strong>neural network</strong> to approximate <span class="math inline">\(Q(s, a) \approx Q_\theta(s, a)\)</span>, where <span class="math inline">\(\theta\)</span> are network weights. Update <span class="math inline">\(\theta\)</span> using gradient descent on the TD error:</p>
+<p><span class="math display">\[\theta \leftarrow \theta - \alpha \nabla_\theta \left[r + \gamma \max_{a'} Q_{\theta'}(s', a') - Q_\theta(s, a)\right]^2.\]</span></p>
+</section>
+<section id="dqn-innovations" class="level3" data-number="16.9.3">
+<h3 data-number="16.9.3" class="anchored" data-anchor-id="dqn-innovations"><span class="header-section-number">16.9.3</span> DQN Innovations</h3>
+<p>Combining neural networks with Q-learning naively causes <strong>instability</strong> (samples are correlated and non-stationary). <strong>Deep Q-Networks (DQN)</strong> address this with:</p>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span></p>
+<ul>
+<li><strong>Experience replay</strong>: Store transitions <span class="math inline">\((s, a, r, s')\)</span> in a buffer. Sample minibatches uniformly at random to break temporal correlations, making training more stable.</li>
+<li><strong>Target network</strong>: Maintain a separate “target” network <span class="math inline">\(Q_{\theta^-}\)</span> with frozen weights, updated infrequently (every <span class="math inline">\(C\)</span> steps) to <span class="math inline">\(Q_\theta\)</span>. Use <span class="math inline">\(Q_{\theta^-}\)</span> in the Bellman target <span class="math inline">\(r + \gamma \max_{a'} Q_{\theta^-}(s', a')\)</span> to reduce non-stationarity.</li>
+</ul>
+<p>These techniques allowed DQN to learn directly from raw pixels on Atari games, achieving superhuman performance on many games.</p>
+</div>
+</section>
+</section>
+<section id="worked-example-gridworld-value-iteration" class="level2" data-number="16.10">
+<h2 data-number="16.10" class="anchored" data-anchor-id="worked-example-gridworld-value-iteration"><span class="header-section-number">16.10</span> Worked Example: Gridworld Value Iteration</h2>
+<div class="example" name="Simple gridworld policy">
+<p>Consider a <span class="math inline">\(3 \times 3\)</span> gridworld where the agent starts in the center and aims to reach the top-left corner (reward <span class="math inline">\(+1\)</span>) or bottom-right corner (reward <span class="math inline">\(-1\)</span>). All other transitions have reward <span class="math inline">\(0\)</span>. The agent can move up, down, left, or right; moves hitting walls stay in place.</p>
+<p>Using value iteration with <span class="math inline">\(\gamma = 0.9\)</span>:</p>
+<p><strong>Iteration 0</strong>: <span class="math inline">\(V(s) = 0\)</span> for all <span class="math inline">\(s\)</span>.</p>
+<p><strong>Iteration 1</strong>: - Top-left corner: <span class="math inline">\(V(s) = \max_a [1 + 0.9 \cdot 0] = 1\)</span>. - Bottom-right corner: <span class="math inline">\(V(s) = \max_a [-1 + 0.9 \cdot 0] = -1\)</span>. - Others: <span class="math inline">\(V(s) = 0\)</span> (no immediate reward; neighbors have value 0).</p>
+<p><strong>Iteration 2</strong>: - Neighbors of corners now have value <span class="math inline">\(0 + 0.9 \times (\text{neighbor value}) &gt; 0\)</span> or <span class="math inline">\(&lt; 0\)</span>. - Values propagate outward.</p>
+<p>After convergence, the optimal policy tells the agent: move toward the top-left corner (positive reward) and away from the bottom-right (negative). The center cell has intermediate value reflecting the balance of both corners.</p>
+</div>
+</section>
+<section id="policy-gradient-methods-brief-mention" class="level2" data-number="16.11">
+<h2 data-number="16.11" class="anchored" data-anchor-id="policy-gradient-methods-brief-mention"><span class="header-section-number">16.11</span> Policy Gradient Methods (Brief Mention)</h2>
+<p>Rather than learning values, <strong>policy gradient</strong> methods directly optimize the policy <span class="math inline">\(\pi_\theta(a | s)\)</span> by gradient ascent on the expected return:</p>
+<p><span class="math display">\[\theta \leftarrow \theta + \alpha \nabla_\theta \mathbb{E}[G_t | \pi_\theta].\]</span></p>
+<p><strong>REINFORCE</strong> is a classic on-policy method. Advantages: Can handle continuous action spaces, stochastic policies. Disadvantages: Higher variance, slower convergence than value-based methods. Modern algorithms like actor-critic and trust region methods (PPO, TRPO) combine policy gradient with value estimates to reduce variance.</p>
+</section>
+<section id="summary" class="level2" data-number="16.12">
+<h2 data-number="16.12" class="anchored" data-anchor-id="summary"><span class="header-section-number">16.12</span> Summary</h2>
+<p>Reinforcement learning addresses sequential decision-making under uncertainty:</p>
+<ul>
+<li><strong>MDPs</strong> formalize the problem with states, actions, transitions, and rewards.</li>
+<li><strong>Value functions</strong> quantify expected long-term payoff; the <strong>Bellman equation</strong> decomposes them recursively.</li>
+<li><strong>Dynamic programming</strong> solves known MDPs via policy iteration or value iteration.</li>
+<li><strong>Temporal difference learning</strong> (TD, SARSA, Q-learning) learns from experience without knowing the MDP.</li>
+<li><strong>Exploration vs.&nbsp;exploitation</strong> is fundamental; <span class="math inline">\(\epsilon\)</span>-greedy and softmax offer practical trade-offs.</li>
+<li><strong>Deep Q-Networks</strong> combine function approximation with RL, enabling learning on high-dimensional problems (e.g., raw images).</li>
+<li><strong>Policy gradient methods</strong> directly optimize the policy, offering flexibility for continuous control.</li>
+</ul>
+<p>RL has achieved remarkable results in games (AlphaGo, Atari), robotics, and autonomous systems, but remains challenging due to sample efficiency, stability, and the exploration-exploitation trade-off.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/14-clustering.html" class="pagination-link" aria-label="Clustering">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Clustering</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/16-proofs.html" class="pagination-link" aria-label="Part III --- Exam Preparation: Proofs">
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Proofs</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Reinforcement Learning"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Motivation: The Agent-Environment Loop</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Unlike supervised learning (labels provided) and unsupervised learning (structure discovery), **reinforcement learning (RL)** uses **rewards** as the training signal. An **agent** interacts with an **environment**, takes **actions**, receives **rewards**, and transitions to new **states**. The goal is to learn a **policy** (decision rule) that maximizes cumulative reward over time.</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Key challenges unique to RL:</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Credit assignment**: How do we attribute delayed rewards to earlier actions? (The reward for winning a chess game comes long after the opening move.)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Exploration vs. exploitation**: Should we exploit what we know works, or explore to discover better strategies?</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Non-stationarity**: The distribution of states and rewards may change as we learn.</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## Markov Decision Processes</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>The foundation of RL is the **Markov Decision Process (MDP)**, which formalizes sequential decision-making under uncertainty.</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>:::{.definition name="Markov Decision Process"}</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>An MDP is a tuple $(S, A, P, R, \gamma)$:</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**State space** $S$: Set of possible states the environment can occupy.</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Action space** $A$: Set of actions the agent can take.</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Transition dynamics** $P$: For each state $s$ and action $a$, $P(s' | s, a)$ is the probability of transitioning to state $s'$.</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Reward function** $R$: $R(s, a, s')$ or $R(s, a)$ is the immediate reward for taking action $a$ in state $s$.</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Discount factor** $\gamma \in [0, 1)$: Weighting future vs. immediate rewards.</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>The **Markov property** states: $P(s_{t+1} | s_t, a_t, s_{t-1}, a_{t-1}, \ldots) = P(s_{t+1} | s_t, a_t)$. The future depends only on the current state and action, not history.</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>**Intuition**: The MDP captures the essential structure of decision-making: state (where we are), action (what we do), consequence (next state), and payoff (reward).</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Return and Discount Factor</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>When an agent follows a sequence of actions over time, it accumulates rewards. We define the **return** (cumulative discounted reward) starting from time $t$:</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>$$G_t = r_{t+1} + \gamma r_{t+2} + \gamma^2 r_{t+3} + \cdots = \sum_{k=0}^{\infty} \gamma^k r_{t+k+1}.$$</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>The discount factor $\gamma$ has two interpretations:</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Time preference**: $\gamma$ close to 0 prioritizes immediate rewards; $\gamma$ close to 1 values long-term payoffs equally.</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Convergence**: For infinite-horizon problems, $\gamma &lt; 1$ ensures the sum converges (assuming bounded rewards).</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>For finite-horizon problems (where the episode ends after $T$ steps), we can use $\gamma = 1$.</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Value Functions</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>A **policy** $\pi$ maps states to actions (deterministically) or to probability distributions over actions (stochastically).</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>:::{.definition name="Value functions"}</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**State-value function** under policy $\pi$:</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>$$V^\pi(s) = \mathbb{E}_\pi[G_t | s_t = s] = \mathbb{E}_\pi\left[\sum_{k=0}^{\infty} \gamma^k r_{t+k+1} \,\Big|\, s_t = s\right].$$</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>The expected return starting from state $s$ and following $\pi$.</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Action-value function** (Q-value) under policy $\pi$:</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>$$Q^\pi(s, a) = \mathbb{E}_\pi<span class="co">[</span><span class="ot">G_t | s_t = s, a_t = a</span><span class="co">]</span>.$$</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>The expected return after taking action $a$ in state $s$, then following $\pi$.</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>The **optimal value functions** are:</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>$$V^*(s) = \max_\pi V^\pi(s), \quad Q^*(s, a) = \max_\pi Q^\pi(s, a).$$</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>**Intuition**: Value functions quantify the goodness of states and state-action pairs. An agent aims to reach high-value states and choose high-value actions.</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bellman Equation</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>The recursive structure of returns yields the **Bellman equation**, which relates a state's value to its successors' values:</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>:::{.theorem name="Bellman equation"}</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>For any policy $\pi$ and any state $s$:</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>$$V^\pi(s) = \sum_a \pi(a|s) \sum_{s'} P(s'|s,a) \left<span class="co">[</span><span class="ot">R(s,a,s') + \gamma V^\pi(s')\right</span><span class="co">]</span>.$$</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>For the optimal policy:</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>$$V^*(s) = \max_a \left[R(s,a) + \gamma \sum_{s'} P(s'|s,a) V^*(s')\right].$$</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>The second form is the **Bellman optimality equation**: the optimal value of a state equals the immediate reward of the best action plus the (discounted) optimal value of the resulting state.</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>**Intuition**: Value is a sum of immediate payoff and future payoff. This decomposition enables dynamic programming---we can solve for value functions without full lookahead.</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dynamic Programming Solutions</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>When the MDP is fully known (we have $P, R$), we can solve for the optimal policy using **dynamic programming**.</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="fu">### Policy Evaluation</span></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>Given a policy $\pi$, compute its value function by iterating the Bellman equation:</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>$$V_{k+1}(s) = \sum_a \pi(a|s) \sum_{s'} P(s'|s,a) \left<span class="co">[</span><span class="ot">R(s,a,s') + \gamma V_k(s')\right</span><span class="co">]</span>.$$</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>Repeat until convergence: $V_k \approx V^\pi$.</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="fu">### Policy Improvement</span></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>Given a value function, extract a greedy policy:</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>$$\pi'(s) = \arg\max_a \left<span class="co">[</span><span class="ot">R(s,a) + \gamma \sum_{s'} P(s'|s,a) V(s')\right</span><span class="co">]</span>.$$</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="fu">### Policy Iteration</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>Alternate between evaluation and improvement until the policy stabilizes:</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Initialize** $\pi$ arbitrarily.</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Repeat**:</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Policy Evaluation: Compute $V^\pi$ (or approximate it).</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Policy Improvement: $\pi \gets \arg\max_a <span class="co">[</span><span class="ot">\cdots</span><span class="co">]</span>$ using $V^\pi$.</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>**Stop** if $\pi$ doesn't change.</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>**Complexity**: Polynomial in state and action space sizes. **Convergence**: Guaranteed to the optimal policy in finite MDPs.</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="fu">### Value Iteration</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>Alternatively, directly iterate the Bellman optimality equation:</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>$$V_{k+1}(s) = \max_a \left<span class="co">[</span><span class="ot">R(s,a) + \gamma \sum_{s'} P(s'|s,a) V_k(s')\right</span><span class="co">]</span>.$$</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>Repeat until convergence. This is simpler (single loop) and also converges to $V^*$.</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="fu">## Model-Free Temporal Difference Learning</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>In practice, the MDP is unknown---we don't have $P$ or $R$. Instead, we learn from experience. **Temporal Difference (TD)** methods combine ideas from Monte Carlo methods and dynamic programming.</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="fu">### TD(0) Update</span></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>When the agent observes a transition $(s, a, r, s')$ with immediate reward $r$ and next state $s'$, update:</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>$$V(s) \leftarrow V(s) + \alpha \left<span class="co">[</span><span class="ot">r + \gamma V(s') - V(s)\right</span><span class="co">]</span>,$$</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>where $\alpha$ is the learning rate (typically $\alpha \in (0, 1)$ and decaying over time).</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>The term $\delta = r + \gamma V(s') - V(s)$ is the **temporal difference error**---the mismatch between predicted and actual return. We nudge $V(s)$ toward $r + \gamma V(s')$, the one-step-ahead estimate.</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>**Convergence**: Under mild conditions on learning rates and state/action visitation, TD(0) converges to the true value function $V^\pi$ with probability 1.</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="fu">### SARSA: On-Policy TD Control</span></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>To learn the optimal policy, we estimate Q-values on-policy. **SARSA** (State-Action-Reward-State-Action) learns $Q(s, a)$ by updating after each experience:</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>$$Q(s, a) \leftarrow Q(s, a) + \alpha \left<span class="co">[</span><span class="ot">r + \gamma Q(s', a') - Q(s, a)\right</span><span class="co">]</span>,$$</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>where $(s', a')$ is the next state-action pair chosen by the current policy (typically $\epsilon$-greedy).</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>**Limitation**: Because SARSA uses the action chosen by the current policy (which may be exploratory), it is **on-policy**. It tends to learn a policy that avoids risky paths, even if they lead to high rewards. (SARSA avoids the "optimal move that risks a penalty.")</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="fu">### Q-Learning: Off-Policy TD Control</span></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>**Q-learning** decouples the action used for exploration from the action used for updating:</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>$$Q(s, a) \leftarrow Q(s, a) + \alpha \left<span class="co">[</span><span class="ot">r + \gamma \max_{a'} Q(s', a') - Q(s, a)\right</span><span class="co">]</span>.$$</span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>Here, the update uses the **greedy** best action $\arg\max_{a'} Q(s', a')$ regardless of which action we actually took. This is **off-policy**: we can learn the optimal policy from data collected under a different (e.g., more exploratory) policy.</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>**Convergence**: Under standard assumptions, Q-learning converges to $Q^*$ with probability 1.</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>**Advantage**: Q-learning often outperforms SARSA in practice because it learns the optimal policy even when following an exploratory policy.</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exploration vs. Exploitation</span></span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>A fundamental trade-off in RL:</span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Exploitation**: Choose the action with the highest estimated Q-value (greedy).</span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Exploration**: Try other actions to learn if they're better.</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a><span class="fu">### $\epsilon$-Greedy Exploration</span></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>A simple strategy:</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>With probability $1 - \epsilon$, choose $a = \arg\max_{a'} Q(s, a')$ (exploit).</span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>With probability $\epsilon$, choose a random action (explore).</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>Typically, $\epsilon$ decays over time (e.g., $\epsilon_t = \epsilon_0 / t$), prioritizing exploration early and exploitation later.</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="fu">### Softmax Exploration</span></span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>Choose action $a$ with probability:</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>$$P(a | s) = \frac{\exp(Q(s, a) / \tau)}{\sum_{a'} \exp(Q(s, a') / \tau)},$$</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>where $\tau$ is a temperature parameter. High $\tau$ makes probabilities uniform (more exploration); low $\tau$ concentrates on high-Q actions (more exploitation).</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a><span class="fu">## Deep Q-Networks (DQN) and Curse of Dimensionality</span></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Curse of Dimensionality</span></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>As state space grows exponentially with dimensionality, tabular methods (storing $Q(s, a)$ for each state-action pair) become infeasible. For a $20 \times 20$ pixel image with 256 grayscale levels, there are $256^{400}$ possible states---astronomically large.</span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a><span class="fu">### Function Approximation and Deep Learning</span></span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>Instead of a table, use a **neural network** to approximate $Q(s, a) \approx Q_\theta(s, a)$, where $\theta$ are network weights. Update $\theta$ using gradient descent on the TD error:</span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>$$\theta \leftarrow \theta - \alpha \nabla_\theta \left<span class="co">[</span><span class="ot">r + \gamma \max_{a'} Q_{\theta'}(s', a') - Q_\theta(s, a)\right</span><span class="co">]</span>^2.$$</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a><span class="fu">### DQN Innovations</span></span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>Combining neural networks with Q-learning naively causes **instability** (samples are correlated and non-stationary). **Deep Q-Networks (DQN)** address this with:</span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>:::{.remark}</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Experience replay**: Store transitions $(s, a, r, s')$ in a buffer. Sample minibatches uniformly at random to break temporal correlations, making training more stable.</span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Target network**: Maintain a separate "target" network $Q_{\theta^-}$ with frozen weights, updated infrequently (every $C$ steps) to $Q_\theta$. Use $Q_{\theta^-}$ in the Bellman target $r + \gamma \max_{a'} Q_{\theta^-}(s', a')$ to reduce non-stationarity.</span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>These techniques allowed DQN to learn directly from raw pixels on Atari games, achieving superhuman performance on many games.</span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Worked Example: Gridworld Value Iteration</span></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>:::{.example name="Simple gridworld policy"}</span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>Consider a $3 \times 3$ gridworld where the agent starts in the center and aims to reach the top-left corner (reward $+1$) or bottom-right corner (reward $-1$). All other transitions have reward $0$. The agent can move up, down, left, or right; moves hitting walls stay in place.</span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>Using value iteration with $\gamma = 0.9$:</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>**Iteration 0**: $V(s) = 0$ for all $s$.</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>**Iteration 1**:</span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Top-left corner: $V(s) = \max_a <span class="co">[</span><span class="ot">1 + 0.9 \cdot 0</span><span class="co">]</span> = 1$.</span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Bottom-right corner: $V(s) = \max_a <span class="co">[</span><span class="ot">-1 + 0.9 \cdot 0</span><span class="co">]</span> = -1$.</span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Others: $V(s) = 0$ (no immediate reward; neighbors have value 0).</span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>**Iteration 2**:</span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Neighbors of corners now have value $0 + 0.9 \times (\text{neighbor value}) &gt; 0$ or $&lt; 0$.</span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Values propagate outward.</span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>After convergence, the optimal policy tells the agent: move toward the top-left corner (positive reward) and away from the bottom-right (negative). The center cell has intermediate value reflecting the balance of both corners.</span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a><span class="fu">## Policy Gradient Methods (Brief Mention)</span></span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>Rather than learning values, **policy gradient** methods directly optimize the policy $\pi_\theta(a | s)$ by gradient ascent on the expected return:</span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>$$\theta \leftarrow \theta + \alpha \nabla_\theta \mathbb{E}<span class="co">[</span><span class="ot">G_t | \pi_\theta</span><span class="co">]</span>.$$</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>**REINFORCE** is a classic on-policy method. Advantages: Can handle continuous action spaces, stochastic policies. Disadvantages: Higher variance, slower convergence than value-based methods. Modern algorithms like actor-critic and trust region methods (PPO, TRPO) combine policy gradient with value estimates to reduce variance.</span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>Reinforcement learning addresses sequential decision-making under uncertainty:</span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**MDPs** formalize the problem with states, actions, transitions, and rewards.</span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Value functions** quantify expected long-term payoff; the **Bellman equation** decomposes them recursively.</span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Dynamic programming** solves known MDPs via policy iteration or value iteration.</span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Temporal difference learning** (TD, SARSA, Q-learning) learns from experience without knowing the MDP.</span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Exploration vs. exploitation** is fundamental; $\epsilon$-greedy and softmax offer practical trade-offs.</span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Deep Q-Networks** combine function approximation with RL, enabling learning on high-dimensional problems (e.g., raw images).</span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Policy gradient methods** directly optimize the policy, offering flexibility for continuous control.</span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>RL has achieved remarkable results in games (AlphaGo, Atari), robotics, and autonomous systems, but remains challenging due to sample efficiency, stability, and the exploration-exploitation trade-off.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

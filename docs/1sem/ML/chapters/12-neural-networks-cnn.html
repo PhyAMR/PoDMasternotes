@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>13&nbsp; Neural Networks and Convolutional Neural Networks – Machine Learning — Lecture Notes</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/13-pca.html" rel="next">
+<link href="../chapters/11-boosting-trees-rf.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-intro.html">Supervised Learning</a></li><li class="breadcrumb-item"><a href="../chapters/12-neural-networks-cnn.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Neural Networks and Convolutional Neural Networks</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Machine Learning — Lecture Notes</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Supervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction &amp; ML Models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-pac-learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">PAC Learning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-uniform-convergence.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Uniform Convergence</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-bias-complexity-tradeoff.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Bias-Complexity Tradeoff</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-vc-dimension.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">VC Dimension</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-model-selection.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Model Selection</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-linear-predictors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Linear Predictors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-stochastic-gradient-descent.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Stochastic Gradient Descent</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-support-vector-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Support Vector Machines</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-kernel-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Kernel Methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-boosting-trees-rf.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Boosting, Decision Trees and Random Forests</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-neural-networks-cnn.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Neural Networks and Convolutional Neural Networks</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Unsupervised Learning</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-pca.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Clustering</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-reinforcement-learning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Reinforcement Learning</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Exam Preparation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16-proofs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Proofs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17-exam-exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Part III — Exam Preparation: Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#neural-network-architecture" id="toc-neural-network-architecture" class="nav-link active" data-scroll-target="#neural-network-architecture"><span class="header-section-number">13.1</span> Neural Network Architecture</a>
+  <ul class="collapse">
+  <li><a href="#feedforward-architecture" id="toc-feedforward-architecture" class="nav-link" data-scroll-target="#feedforward-architecture"><span class="header-section-number">13.1.1</span> Feedforward Architecture</a></li>
+  <li><a href="#layer-computation" id="toc-layer-computation" class="nav-link" data-scroll-target="#layer-computation"><span class="header-section-number">13.1.2</span> Layer Computation</a></li>
+  <li><a href="#activation-functions" id="toc-activation-functions" class="nav-link" data-scroll-target="#activation-functions"><span class="header-section-number">13.1.3</span> Activation Functions</a></li>
+  </ul></li>
+  <li><a href="#universal-approximation-theorem" id="toc-universal-approximation-theorem" class="nav-link" data-scroll-target="#universal-approximation-theorem"><span class="header-section-number">13.2</span> Universal Approximation Theorem</a></li>
+  <li><a href="#backpropagation-algorithm" id="toc-backpropagation-algorithm" class="nav-link" data-scroll-target="#backpropagation-algorithm"><span class="header-section-number">13.3</span> Backpropagation Algorithm</a>
+  <ul class="collapse">
+  <li><a href="#backpropagation-recurrence" id="toc-backpropagation-recurrence" class="nav-link" data-scroll-target="#backpropagation-recurrence"><span class="header-section-number">13.3.1</span> Backpropagation Recurrence</a></li>
+  <li><a href="#example-two-layer-network" id="toc-example-two-layer-network" class="nav-link" data-scroll-target="#example-two-layer-network"><span class="header-section-number">13.3.2</span> Example: Two-Layer Network</a></li>
+  </ul></li>
+  <li><a href="#practical-training-techniques" id="toc-practical-training-techniques" class="nav-link" data-scroll-target="#practical-training-techniques"><span class="header-section-number">13.4</span> Practical Training Techniques</a></li>
+  <li><a href="#convolutional-neural-networks-cnns" id="toc-convolutional-neural-networks-cnns" class="nav-link" data-scroll-target="#convolutional-neural-networks-cnns"><span class="header-section-number">13.5</span> Convolutional Neural Networks (CNNs)</a>
+  <ul class="collapse">
+  <li><a href="#key-ideas" id="toc-key-ideas" class="nav-link" data-scroll-target="#key-ideas"><span class="header-section-number">13.5.1</span> Key Ideas</a></li>
+  <li><a href="#convolution-operation" id="toc-convolution-operation" class="nav-link" data-scroll-target="#convolution-operation"><span class="header-section-number">13.5.2</span> Convolution Operation</a></li>
+  <li><a href="#pooling" id="toc-pooling" class="nav-link" data-scroll-target="#pooling"><span class="header-section-number">13.5.3</span> Pooling</a></li>
+  <li><a href="#computational-savings" id="toc-computational-savings" class="nav-link" data-scroll-target="#computational-savings"><span class="header-section-number">13.5.4</span> Computational Savings</a></li>
+  <li><a href="#reference-architectures" id="toc-reference-architectures" class="nav-link" data-scroll-target="#reference-architectures"><span class="header-section-number">13.5.5</span> Reference Architectures</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">13.6</span> Summary</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-intro.html">Supervised Learning</a></li><li class="breadcrumb-item"><a href="../chapters/12-neural-networks-cnn.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Neural Networks and Convolutional Neural Networks</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Neural Networks and Convolutional Neural Networks</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="neural-network-architecture" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="neural-network-architecture"><span class="header-section-number">13.1</span> Neural Network Architecture</h2>
+<p>A neural network is a directed graph of interconnected neurons (nodes), where each connection has an associated learnable weight. The network is typically organized in layers, allowing for efficient hierarchical computation.</p>
+<section id="feedforward-architecture" class="level3" data-number="13.1.1">
+<h3 data-number="13.1.1" class="anchored" data-anchor-id="feedforward-architecture"><span class="header-section-number">13.1.1</span> Feedforward Architecture</h3>
+<p>In a <strong>feedforward neural network</strong>, neurons are organized into layers <span class="math inline">\(\mathcal{L}_0, \mathcal{L}_1, \ldots, \mathcal{L}_T\)</span> where: - Layer 0 is the input layer - Layers 1 to <span class="math inline">\(T-1\)</span> are hidden layers - Layer <span class="math inline">\(T\)</span> is the output layer - Each neuron in layer <span class="math inline">\(t\)</span> receives inputs only from layer <span class="math inline">\(t-1\)</span></p>
+</section>
+<section id="layer-computation" class="level3" data-number="13.1.2">
+<h3 data-number="13.1.2" class="anchored" data-anchor-id="layer-computation"><span class="header-section-number">13.1.2</span> Layer Computation</h3>
+<p>For a neuron <span class="math inline">\(i\)</span> in layer <span class="math inline">\(t\)</span>, the computation is:</p>
+<ol type="1">
+<li><p><strong>Pre-activation (weighted sum):</strong> <span class="math display">\[z_i^{(t)} = \sum_{j} w_{ij}^{(t)} a_j^{(t-1)} + b_i^{(t)}\]</span> where <span class="math inline">\(a_j^{(t-1)}\)</span> are activations from the previous layer, <span class="math inline">\(w_{ij}^{(t)}\)</span> are weights, and <span class="math inline">\(b_i^{(t)}\)</span> is the bias.</p></li>
+<li><p><strong>Activation:</strong> <span class="math display">\[a_i^{(t)} = \sigma(z_i^{(t)})\]</span> where <span class="math inline">\(\sigma\)</span> is an activation function.</p></li>
+</ol>
+<p>In matrix form for a full layer: <span class="math display">\[\mathbf{a}^{(t)} = \sigma(W^{(t)} \mathbf{a}^{(t-1)} + \mathbf{b}^{(t)})\]</span></p>
+</section>
+<section id="activation-functions" class="level3" data-number="13.1.3">
+<h3 data-number="13.1.3" class="anchored" data-anchor-id="activation-functions"><span class="header-section-number">13.1.3</span> Activation Functions</h3>
+<p>Different activation functions provide different properties:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 21%">
+<col style="width: 26%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Function</th>
+<th>Formula</th>
+<th>Derivative</th>
+<th>Properties</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Sigmoid</strong></td>
+<td><span class="math inline">\(\sigma(z) = \frac{1}{1+e^{-z}}\)</span></td>
+<td><span class="math inline">\(\sigma'(z) = \sigma(z)(1-\sigma(z))\)</span></td>
+<td>Smooth, bounded <span class="math inline">\([0,1]\)</span>; can saturate (small gradients when <span class="math inline">\(z\)</span> large/small)</td>
+</tr>
+<tr class="even">
+<td><strong>Tanh</strong></td>
+<td><span class="math inline">\(\sigma(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}\)</span></td>
+<td><span class="math inline">\(\sigma'(z) = 1 - \sigma^2(z)\)</span></td>
+<td>Smooth, centered at 0, bounded <span class="math inline">\([-1,1]\)</span>; similar saturation issues as sigmoid</td>
+</tr>
+<tr class="odd">
+<td><strong>ReLU</strong></td>
+<td><span class="math inline">\(\sigma(z) = \max(0, z)\)</span></td>
+<td><span class="math inline">\(\sigma'(z) = \mathbb{1}_{z &gt; 0}\)</span></td>
+<td>Simple, fast; sparse activation; dead ReLU problem when <span class="math inline">\(z &lt; 0\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Softmax</strong></td>
+<td><span class="math inline">\(\sigma(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}\)</span></td>
+<td>Element-wise Jacobian</td>
+<td>For output layer in multiclass; outputs sum to 1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>ReLU</strong> is the most commonly used activation in modern networks due to computational simplicity and fewer saturation issues.</p>
+</section>
+</section>
+<section id="universal-approximation-theorem" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="universal-approximation-theorem"><span class="header-section-number">13.2</span> Universal Approximation Theorem</h2>
+<div class="theorem" name="Universal Approximation (Cybenko)">
+<p>Let <span class="math inline">\(\sigma\)</span> be any non-polynomial activation function (e.g., sigmoid, tanh). Then for any continuous function <span class="math inline">\(f: [0,1]^d \to \mathbb{R}\)</span> and any <span class="math inline">\(\varepsilon &gt; 0\)</span>, there exists a feedforward network with a single hidden layer such that the network output <span class="math inline">\(\hat{f}\)</span> satisfies:</p>
+<p><span class="math display">\[
+|\hat{f}(\mathbf{x}) - f(\mathbf{x})| &lt; \varepsilon \text{ for all } \mathbf{x} \in [0,1]^d
+\]</span></p>
+</div>
+<p>This fundamental result guarantees that neural networks with one hidden layer can approximate any continuous function. However, it says nothing about the number of neurons required, which can be exponentially large. In practice, deep networks (many layers) can be much more efficient for certain functions, which is why deep learning is powerful.</p>
+</section>
+<section id="backpropagation-algorithm" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="backpropagation-algorithm"><span class="header-section-number">13.3</span> Backpropagation Algorithm</h2>
+<p>Backpropagation computes gradients of the loss with respect to all weights by applying the chain rule recursively from the output layer backward to the input layer.</p>
+<section id="backpropagation-recurrence" class="level3" data-number="13.3.1">
+<h3 data-number="13.3.1" class="anchored" data-anchor-id="backpropagation-recurrence"><span class="header-section-number">13.3.1</span> Backpropagation Recurrence</h3>
+<p>Let <span class="math inline">\(L\)</span> denote the loss function. Define the <strong>error signal</strong> (or delta) for layer <span class="math inline">\(t\)</span> as:</p>
+<p><span class="math display">\[
+    \delta_i^{(t)} = \frac{\partial L}{\partial z_i^{(t)}}
+\]</span></p>
+<p><strong>For the output layer <span class="math inline">\(T\)</span>:</strong> <span class="math display">\[
+    \delta_i^{(T)} = \frac{\partial L}{\partial a_i^{(T)}} \cdot \sigma'(z_i^{(T)})
+\]</span></p>
+<p><strong>For hidden layer <span class="math inline">\(t &lt; T\)</span></strong> (recursive): <span class="math display">\[
+    \delta_i^{(t)} = \left(\sum_j w_{ji}^{(t+1)} \delta_j^{(t+1)}\right) \cdot \sigma'(z_i^{(t)})
+\]</span></p>
+<p><strong>Weight gradients:</strong> <span class="math display">\[
+    \frac{\partial L}{\partial w_{ij}^{(t)}} = \delta_i^{(t)} a_j^{(t-1)}
+\]</span></p>
+<p>The backpropagation algorithm computes these deltas in reverse topological order, then updates weights using gradient descent or a variant like Adam.</p>
+</section>
+<section id="example-two-layer-network" class="level3" data-number="13.3.2">
+<h3 data-number="13.3.2" class="anchored" data-anchor-id="example-two-layer-network"><span class="header-section-number">13.3.2</span> Example: Two-Layer Network</h3>
+<div class="example" name="Two-layer MLP">
+<p>Consider a network: input (<span class="math inline">\(d\)</span> dims) <span class="math inline">\(\to\)</span> hidden layer (<span class="math inline">\(h\)</span> neurons) <span class="math inline">\(\to\)</span> output (1 neuron, regression).</p>
+<p><strong>Forward pass:</strong> - <span class="math inline">\(\mathbf{z}^{(1)} = W^{(1)} \mathbf{x} + \mathbf{b}^{(1)}\)</span> - <span class="math inline">\(\mathbf{a}^{(1)} = \text{ReLU}(\mathbf{z}^{(1)})\)</span> - <span class="math inline">\(z^{(2)} = \mathbf{w}^{(2)} \mathbf{a}^{(1)} + b^{(2)}\)</span> - <span class="math inline">\(\hat{y} = z^{(2)}\)</span> (linear output for regression) - Loss: <span class="math inline">\(L = \frac{1}{2}(\hat{y} - y)^2\)</span></p>
+<p><strong>Backward pass:</strong> - <span class="math inline">\(\delta^{(2)} = \frac{\partial L}{\partial z^{(2)}} = \hat{y} - y\)</span> - <span class="math inline">\(\delta_i^{(1)} = \mathbf{w}_i^{(2)} \delta^{(2)} \cdot \mathbb{1}_{z_i^{(1)} &gt; 0}\)</span> (ReLU derivative) - <span class="math inline">\(\frac{\partial L}{\partial W^{(2)}} = \delta^{(2)} (\mathbf{a}^{(1)})^T\)</span> - <span class="math inline">\(\frac{\partial L}{\partial W^{(1)}} = \boldsymbol{\delta}^{(1)} \mathbf{x}^T\)</span></p>
+</div>
+</section>
+</section>
+<section id="practical-training-techniques" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="practical-training-techniques"><span class="header-section-number">13.4</span> Practical Training Techniques</h2>
+<p>Modern neural network training requires several techniques for stability and efficiency:</p>
+<ul>
+<li><strong>Mini-batch training:</strong> Compute gradients on small batches (e.g., 32 samples) instead of the full dataset, reducing memory and adding regularization via noise.</li>
+<li><strong>Momentum:</strong> Accumulate gradients over steps: <span class="math inline">\(\mathbf{v}_{t+1} = \mu \mathbf{v}_t - \eta \nabla L\)</span>, then <span class="math inline">\(\boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t + \mathbf{v}_{t+1}\)</span>. Helps escape shallow local minima.</li>
+<li><strong>Dropout:</strong> Randomly zero out activations with probability <span class="math inline">\(p\)</span> during training to prevent co-adaptation and reduce overfitting.</li>
+<li><strong>Glorot initialization:</strong> Initialize weights from <span class="math inline">\(U[-\sqrt{6/(n_{\text{in}}+n_{\text{out}})}, \sqrt{6/(n_{\text{in}}+n_{\text{out}})}]\)</span> to maintain stable gradient flow across layers.</li>
+<li><strong>Weight decay (L2 regularization):</strong> Add <span class="math inline">\(\lambda \|\boldsymbol{\theta}\|^2\)</span> to the loss to prevent large weights.</li>
+<li><strong>Batch normalization:</strong> Normalize layer activations to have zero mean and unit variance within each batch, reducing internal covariate shift and allowing higher learning rates.</li>
+</ul>
+</section>
+<section id="convolutional-neural-networks-cnns" class="level2" data-number="13.5">
+<h2 data-number="13.5" class="anchored" data-anchor-id="convolutional-neural-networks-cnns"><span class="header-section-number">13.5</span> Convolutional Neural Networks (CNNs)</h2>
+<p>For image and grid-like data, fully connected networks are inefficient (huge parameter count). <strong>Convolutional Neural Networks</strong> exploit spatial structure through local connectivity and weight sharing.</p>
+<section id="key-ideas" class="level3" data-number="13.5.1">
+<h3 data-number="13.5.1" class="anchored" data-anchor-id="key-ideas"><span class="header-section-number">13.5.1</span> Key Ideas</h3>
+<ol type="1">
+<li><strong>Local connectivity:</strong> Each neuron connects only to a small local region (receptive field) of the previous layer.</li>
+<li><strong>Weight sharing:</strong> The same filter (weights) is applied across all spatial positions, detecting the same feature everywhere.</li>
+<li><strong>Feature maps:</strong> Multiple filters create multiple feature maps, each detecting different patterns.</li>
+<li><strong>Pooling:</strong> Downsampling layers reduce spatial dimension and aggregate information.</li>
+</ol>
+</section>
+<section id="convolution-operation" class="level3" data-number="13.5.2">
+<h3 data-number="13.5.2" class="anchored" data-anchor-id="convolution-operation"><span class="header-section-number">13.5.2</span> Convolution Operation</h3>
+<p>A <strong>convolution</strong> with a filter <span class="math inline">\(F\)</span> of size <span class="math inline">\(k \times k\)</span>, stride <span class="math inline">\(s\)</span>, and padding <span class="math inline">\(p\)</span> produces output of size:</p>
+<p><span class="math display">\[
+    \text{output size} = \left\lfloor \frac{\text{input size} - k + 2p}{s} \right\rfloor + 1
+\]</span></p>
+<p>Each output element is the dot product of the filter with a corresponding patch of the input:</p>
+<p><span class="math display">\[
+    \text{out}[i, j] = \sum_{u=0}^{k-1} \sum_{v=0}^{k-1} F[u, v] \cdot \text{input}[i \cdot s + u, j \cdot s + v]
+\]</span></p>
+<p><strong>Stride</strong> controls how much the filter shifts (larger stride <span class="math inline">\(\to\)</span> smaller output); <strong>padding</strong> adds zeros around the input border.</p>
+</section>
+<section id="pooling" class="level3" data-number="13.5.3">
+<h3 data-number="13.5.3" class="anchored" data-anchor-id="pooling"><span class="header-section-number">13.5.3</span> Pooling</h3>
+<p><strong>Max pooling</strong> downsamples by taking the maximum value in each <span class="math inline">\(p \times p\)</span> receptive field:</p>
+<p><span class="math display">\[
+    \text{out}[i, j] = \max_{u, v \in \text{field}} \text{input}[i \cdot s + u, j \cdot s + v]
+\]</span></p>
+<p>Pooling provides translation invariance and reduces computation in deeper layers. A <strong>receptive field</strong> grows by <span class="math inline">\(2k-1\)</span> per convolution layer (for stride 1), allowing deep networks to capture large-scale context.</p>
+</section>
+<section id="computational-savings" class="level3" data-number="13.5.4">
+<h3 data-number="13.5.4" class="anchored" data-anchor-id="computational-savings"><span class="header-section-number">13.5.4</span> Computational Savings</h3>
+<p>Convolution is vastly more efficient than fully connected layers: - <strong>Fully connected:</strong> <span class="math inline">\(d_{\text{in}} \times d_{\text{out}}\)</span> parameters - <strong>Convolution:</strong> <span class="math inline">\(k \times k \times c_{\text{in}} \times c_{\text{out}}\)</span> parameters (independent of spatial size)</p>
+<p>For a <span class="math inline">\(28 \times 28\)</span> image with 32 output channels and <span class="math inline">\(3 \times 3\)</span> filters: only <span class="math inline">\(3 \times 3 \times 32 \approx 3000\)</span> parameters per filter, vs.&nbsp;millions for fully connected.</p>
+</section>
+<section id="reference-architectures" class="level3" data-number="13.5.5">
+<h3 data-number="13.5.5" class="anchored" data-anchor-id="reference-architectures"><span class="header-section-number">13.5.5</span> Reference Architectures</h3>
+<ul>
+<li><strong>LeNet (1998):</strong> Conv <span class="math inline">\(\to\)</span> Pool <span class="math inline">\(\to\)</span> Conv <span class="math inline">\(\to\)</span> Pool <span class="math inline">\(\to\)</span> FC <span class="math inline">\(\to\)</span> FC. Pioneered CNNs for MNIST digit classification.</li>
+<li><strong>AlexNet (2012):</strong> 5 convolutional layers (with ReLU) + 3 fully connected layers. Won ImageNet competition; enabled the deep learning revolution with GPU training.</li>
+<li><strong>VGG (2014):</strong> Simple, deep architecture (up to 19 layers) using <span class="math inline">\(3 \times 3\)</span> convolutions. Demonstrated that depth is crucial; still widely used as a feature extractor.</li>
+</ul>
+<p>Modern architectures (ResNet, EfficientNet, ViT) add residual connections, attention mechanisms, and better optimization to go even deeper while maintaining trainability.</p>
+</section>
+</section>
+<section id="summary" class="level2" data-number="13.6">
+<h2 data-number="13.6" class="anchored" data-anchor-id="summary"><span class="header-section-number">13.6</span> Summary</h2>
+<p>Neural networks compose linear transformations and nonlinearities to learn complex mappings. <strong>Backpropagation</strong> efficiently computes gradients layer-by-layer. <strong>Practical techniques</strong> (momentum, dropout, batch norm, Glorot init) are essential for successful training. <strong>CNNs</strong> leverage spatial locality and weight sharing for dramatic efficiency gains on image tasks, making them the standard for computer vision.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/11-boosting-trees-rf.html" class="pagination-link" aria-label="Boosting, Decision Trees and Random Forests">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Boosting, Decision Trees and Random Forests</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/13-pca.html" class="pagination-link" aria-label="Principal Component Analysis">
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Principal Component Analysis</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Neural Networks and Convolutional Neural Networks"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Neural Network Architecture</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>A neural network is a directed graph of interconnected neurons (nodes), where each connection has an associated learnable weight. The network is typically organized in layers, allowing for efficient hierarchical computation.</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">### Feedforward Architecture</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>In a **feedforward neural network**, neurons are organized into layers $\mathcal{L}_0, \mathcal{L}_1, \ldots, \mathcal{L}_T$ where:</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Layer 0 is the input layer</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Layers 1 to $T-1$ are hidden layers</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Layer $T$ is the output layer</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Each neuron in layer $t$ receives inputs only from layer $t-1$</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">### Layer Computation</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>For a neuron $i$ in layer $t$, the computation is:</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Pre-activation (weighted sum):** $$z_i^{(t)} = \sum_{j} w_{ij}^{(t)} a_j^{(t-1)} + b_i^{(t)}$$</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>   where $a_j^{(t-1)}$ are activations from the previous layer, $w_{ij}^{(t)}$ are weights, and $b_i^{(t)}$ is the bias.</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Activation:** $$a_i^{(t)} = \sigma(z_i^{(t)})$$</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>   where $\sigma$ is an activation function.</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>In matrix form for a full layer: $$\mathbf{a}^{(t)} = \sigma(W^{(t)} \mathbf{a}^{(t-1)} + \mathbf{b}^{(t)})$$</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">### Activation Functions</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>Different activation functions provide different properties:</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Function <span class="pp">|</span> Formula <span class="pp">|</span> Derivative <span class="pp">|</span> Properties <span class="pp">|</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|----------|---------|-----------|-----------|</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Sigmoid** <span class="pp">|</span> $\sigma(z) = \frac{1}{1+e^{-z}}$ <span class="pp">|</span> $\sigma'(z) = \sigma(z)(1-\sigma(z))$ <span class="pp">|</span> Smooth, bounded $<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$; can saturate (small gradients when $z$ large/small) <span class="pp">|</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Tanh** <span class="pp">|</span> $\sigma(z) = \frac{e^z - e^{-z}}{e^z + e^{-z}}$ <span class="pp">|</span> $\sigma'(z) = 1 - \sigma^2(z)$ <span class="pp">|</span> Smooth, centered at 0, bounded $<span class="co">[</span><span class="ot">-1,1</span><span class="co">]</span>$; similar saturation issues as sigmoid <span class="pp">|</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **ReLU** <span class="pp">|</span> $\sigma(z) = \max(0, z)$ <span class="pp">|</span> $\sigma'(z) = \mathbb{1}_{z &gt; 0}$ <span class="pp">|</span> Simple, fast; sparse activation; dead ReLU problem when $z &lt; 0$ <span class="pp">|</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Softmax** <span class="pp">|</span> $\sigma(z_i) = \frac{e^{z_i}}{\sum_j e^{z_j}}$ <span class="pp">|</span> Element-wise Jacobian <span class="pp">|</span> For output layer in multiclass; outputs sum to 1 <span class="pp">|</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>**ReLU** is the most commonly used activation in modern networks due to computational simplicity and fewer saturation issues.</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Universal Approximation Theorem</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>:::{.theorem name="Universal Approximation (Cybenko)"}</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>Let $\sigma$ be any non-polynomial activation function (e.g., sigmoid, tanh). Then for any continuous function $f: <span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>^d \to \mathbb{R}$ and any $\varepsilon &gt; 0$, there exists a feedforward network with a single hidden layer such that the network output $\hat{f}$ satisfies:</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>\hat{f}(\mathbf{x}) - f(\mathbf{x})<span class="pp">|</span> &lt; \varepsilon \text{ for all } \mathbf{x} \in <span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>^d</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>This fundamental result guarantees that neural networks with one hidden layer can approximate any continuous function. However, it says nothing about the number of neurons required, which can be exponentially large. In practice, deep networks (many layers) can be much more efficient for certain functions, which is why deep learning is powerful.</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">## Backpropagation Algorithm</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>Backpropagation computes gradients of the loss with respect to all weights by applying the chain rule recursively from the output layer backward to the input layer.</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="fu">### Backpropagation Recurrence</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>Let $L$ denote the loss function. Define the **error signal** (or delta) for layer $t$ as:</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>    \delta_i^{(t)} = \frac{\partial L}{\partial z_i^{(t)}}</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>**For the output layer $T$:**</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>    \delta_i^{(T)} = \frac{\partial L}{\partial a_i^{(T)}} \cdot \sigma'(z_i^{(T)})</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>**For hidden layer $t &lt; T$** (recursive):</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>    \delta_i^{(t)} = \left(\sum_j w_{ji}^{(t+1)} \delta_j^{(t+1)}\right) \cdot \sigma'(z_i^{(t)})</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>**Weight gradients:**</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    \frac{\partial L}{\partial w_{ij}^{(t)}} = \delta_i^{(t)} a_j^{(t-1)}</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>The backpropagation algorithm computes these deltas in reverse topological order, then updates weights using gradient descent or a variant like Adam.</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example: Two-Layer Network</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>:::{.example name="Two-layer MLP"}</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>Consider a network: input ($d$ dims) $\to$ hidden layer ($h$ neurons) $\to$ output (1 neuron, regression).</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>**Forward pass:**</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\mathbf{z}^{(1)} = W^{(1)} \mathbf{x} + \mathbf{b}^{(1)}$</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\mathbf{a}^{(1)} = \text{ReLU}(\mathbf{z}^{(1)})$</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$z^{(2)} = \mathbf{w}^{(2)} \mathbf{a}^{(1)} + b^{(2)}$</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\hat{y} = z^{(2)}$ (linear output for regression)</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Loss: $L = \frac{1}{2}(\hat{y} - y)^2$</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>**Backward pass:**</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\delta^{(2)} = \frac{\partial L}{\partial z^{(2)}} = \hat{y} - y$</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\delta_i^{(1)} = \mathbf{w}_i^{(2)} \delta^{(2)} \cdot \mathbb{1}_{z_i^{(1)} &gt; 0}$ (ReLU derivative)</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\frac{\partial L}{\partial W^{(2)}} = \delta^{(2)} (\mathbf{a}^{(1)})^T$</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\frac{\partial L}{\partial W^{(1)}} = \boldsymbol{\delta}^{(1)} \mathbf{x}^T$</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="fu">## Practical Training Techniques</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>Modern neural network training requires several techniques for stability and efficiency:</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Mini-batch training:** Compute gradients on small batches (e.g., 32 samples) instead of the full dataset, reducing memory and adding regularization via noise.</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Momentum:** Accumulate gradients over steps: $\mathbf{v}_{t+1} = \mu \mathbf{v}_t - \eta \nabla L$, then $\boldsymbol{\theta}_{t+1} = \boldsymbol{\theta}_t + \mathbf{v}_{t+1}$. Helps escape shallow local minima.</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Dropout:** Randomly zero out activations with probability $p$ during training to prevent co-adaptation and reduce overfitting.</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Glorot initialization:** Initialize weights from $U<span class="co">[</span><span class="ot">-\sqrt{6/(n_{\text{in}}+n_{\text{out}})}, \sqrt{6/(n_{\text{in}}+n_{\text{out}})}</span><span class="co">]</span>$ to maintain stable gradient flow across layers.</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Weight decay (L2 regularization):** Add $\lambda <span class="sc">\|</span>\boldsymbol{\theta}<span class="sc">\|</span>^2$ to the loss to prevent large weights.</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Batch normalization:** Normalize layer activations to have zero mean and unit variance within each batch, reducing internal covariate shift and allowing higher learning rates.</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="fu">## Convolutional Neural Networks (CNNs)</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>For image and grid-like data, fully connected networks are inefficient (huge parameter count). **Convolutional Neural Networks** exploit spatial structure through local connectivity and weight sharing.</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="fu">### Key Ideas</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Local connectivity:** Each neuron connects only to a small local region (receptive field) of the previous layer.</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Weight sharing:** The same filter (weights) is applied across all spatial positions, detecting the same feature everywhere.</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Feature maps:** Multiple filters create multiple feature maps, each detecting different patterns.</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Pooling:** Downsampling layers reduce spatial dimension and aggregate information.</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="fu">### Convolution Operation</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>A **convolution** with a filter $F$ of size $k \times k$, stride $s$, and padding $p$ produces output of size:</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>    \text{output size} = \left\lfloor \frac{\text{input size} - k + 2p}{s} \right\rfloor + 1</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>Each output element is the dot product of the filter with a corresponding patch of the input:</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>    \text{out}<span class="co">[</span><span class="ot">i, j</span><span class="co">]</span> = \sum_{u=0}^{k-1} \sum_{v=0}^{k-1} F<span class="co">[</span><span class="ot">u, v</span><span class="co">]</span> \cdot \text{input}<span class="co">[</span><span class="ot">i \cdot s + u, j \cdot s + v</span><span class="co">]</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>**Stride** controls how much the filter shifts (larger stride $\to$ smaller output); **padding** adds zeros around the input border.</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pooling</span></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>**Max pooling** downsamples by taking the maximum value in each $p \times p$ receptive field:</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>    \text{out}<span class="co">[</span><span class="ot">i, j</span><span class="co">]</span> = \max_{u, v \in \text{field}} \text{input}<span class="co">[</span><span class="ot">i \cdot s + u, j \cdot s + v</span><span class="co">]</span></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>Pooling provides translation invariance and reduces computation in deeper layers. A **receptive field** grows by $2k-1$ per convolution layer (for stride 1), allowing deep networks to capture large-scale context.</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computational Savings</span></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>Convolution is vastly more efficient than fully connected layers:</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Fully connected:** $d_{\text{in}} \times d_{\text{out}}$ parameters</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Convolution:** $k \times k \times c_{\text{in}} \times c_{\text{out}}$ parameters (independent of spatial size)</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>For a $28 \times 28$ image with 32 output channels and $3 \times 3$ filters: only $3 \times 3 \times 32 \approx 3000$ parameters per filter, vs. millions for fully connected.</span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a><span class="fu">### Reference Architectures</span></span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**LeNet (1998):** Conv $\to$ Pool $\to$ Conv $\to$ Pool $\to$ FC $\to$ FC. Pioneered CNNs for MNIST digit classification.</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**AlexNet (2012):** 5 convolutional layers (with ReLU) + 3 fully connected layers. Won ImageNet competition; enabled the deep learning revolution with GPU training.</span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**VGG (2014):** Simple, deep architecture (up to 19 layers) using $3 \times 3$ convolutions. Demonstrated that depth is crucial; still widely used as a feature extractor.</span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>Modern architectures (ResNet, EfficientNet, ViT) add residual connections, attention mechanisms, and better optimization to go even deeper while maintaining trainability.</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>Neural networks compose linear transformations and nonlinearities to learn complex mappings. **Backpropagation** efficiently computes gradients layer-by-layer. **Practical techniques** (momentum, dropout, batch norm, Glorot init) are essential for successful training. **CNNs** leverage spatial locality and weight sharing for dramatic efficiency gains on image tasks, making them the standard for computer vision.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>
