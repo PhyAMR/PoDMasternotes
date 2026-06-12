@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Kafka + Spark Structured Streaming – Notes of the course Manegement and Anlaisys of Physical Datasets Moudlue B</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/11-dask.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/08-processing-intro.html">Processing</a></li><li class="breadcrumb-item"><a href="../chapters/12-kafka.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Kafka Consumer</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Notes of the course Manegement and Anlaisys of Physical Datasets Moudlue B</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Management</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Data Manegment</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-datasets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">From Data to Datasets</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-storage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Storage</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-reliability-security.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reliability and Security</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-file-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">File System</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-distributed-file-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Distributed File System</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/MySQL.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">RDBMS - Hands on MySQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-nosql-databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">NoSQL Databases</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Processing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-processing-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Processing and Concurrency</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-distributed-processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Distributed Processing and MapReduce</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-spark.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Lecture 3: Stream processing with Spark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Continuing on the Dask Data structures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-kafka.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Kafka Consumer</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-to-message-streaming" id="toc-introduction-to-message-streaming" class="nav-link active" data-scroll-target="#introduction-to-message-streaming"><span class="header-section-number">13.1</span> Introduction to Message Streaming</a>
+  <ul class="collapse">
+  <li><a href="#core-concepts" id="toc-core-concepts" class="nav-link" data-scroll-target="#core-concepts"><span class="header-section-number">13.1.1</span> Core Concepts</a></li>
+  </ul></li>
+  <li><a href="#kafka-architecture" id="toc-kafka-architecture" class="nav-link" data-scroll-target="#kafka-architecture"><span class="header-section-number">13.2</span> Kafka Architecture</a>
+  <ul class="collapse">
+  <li><a href="#brokers-and-clusters" id="toc-brokers-and-clusters" class="nav-link" data-scroll-target="#brokers-and-clusters"><span class="header-section-number">13.2.1</span> Brokers and Clusters</a></li>
+  <li><a href="#consumer-offset-management" id="toc-consumer-offset-management" class="nav-link" data-scroll-target="#consumer-offset-management"><span class="header-section-number">13.2.2</span> Consumer Offset Management</a></li>
+  </ul></li>
+  <li><a href="#delivery-semantics" id="toc-delivery-semantics" class="nav-link" data-scroll-target="#delivery-semantics"><span class="header-section-number">13.3</span> Delivery Semantics</a>
+  <ul class="collapse">
+  <li><a href="#pubsub-decoupling" id="toc-pubsub-decoupling" class="nav-link" data-scroll-target="#pubsub-decoupling"><span class="header-section-number">13.3.1</span> Pub/Sub Decoupling</a></li>
+  <li><a href="#partitions-and-keys" id="toc-partitions-and-keys" class="nav-link" data-scroll-target="#partitions-and-keys"><span class="header-section-number">13.3.2</span> Partitions and Keys</a></li>
+  </ul></li>
+  <li><a href="#hands-on-apache-kafka" id="toc-hands-on-apache-kafka" class="nav-link" data-scroll-target="#hands-on-apache-kafka"><span class="header-section-number">13.4</span> Hands-on: Apache Kafka</a>
+  <ul class="collapse">
+  <li><a href="#producer" id="toc-producer" class="nav-link" data-scroll-target="#producer"><span class="header-section-number">13.4.1</span> Producer</a></li>
+  </ul></li>
+  <li><a href="#interacting-with-kafka-producer-from-the-shell" id="toc-interacting-with-kafka-producer-from-the-shell" class="nav-link" data-scroll-target="#interacting-with-kafka-producer-from-the-shell"><span class="header-section-number">13.5</span> Interacting with Kafka Producer from the Shell</a></li>
+  <li><a href="#programmatically-produce-messages-to-kafka-with-python" id="toc-programmatically-produce-messages-to-kafka-with-python" class="nav-link" data-scroll-target="#programmatically-produce-messages-to-kafka-with-python"><span class="header-section-number">13.6</span> Programmatically produce messages to Kafka with Python</a></li>
+  <li><a href="#messages-with-key" id="toc-messages-with-key" class="nav-link" data-scroll-target="#messages-with-key"><span class="header-section-number">13.7</span> Messages with Key</a></li>
+  <li><a href="#create-a-topic-from-kafka-python" id="toc-create-a-topic-from-kafka-python" class="nav-link" data-scroll-target="#create-a-topic-from-kafka-python"><span class="header-section-number">13.8</span> Create a topic from kafka-python</a></li>
+  <li><a href="#publish-messages-for-the-spark-structured-streaming-example" id="toc-publish-messages-for-the-spark-structured-streaming-example" class="nav-link" data-scroll-target="#publish-messages-for-the-spark-structured-streaming-example"><span class="header-section-number">13.9</span> Publish messages for the Spark Structured Streaming example</a>
+  <ul class="collapse">
+  <li><a href="#consumer" id="toc-consumer" class="nav-link" data-scroll-target="#consumer"><span class="header-section-number">13.9.1</span> Consumer</a></li>
+  </ul></li>
+  <li><a href="#creating-a-consumer-accessing-only-one-partition" id="toc-creating-a-consumer-accessing-only-one-partition" class="nav-link" data-scroll-target="#creating-a-consumer-accessing-only-one-partition"><span class="header-section-number">13.10</span> Creating a Consumer Accessing Only One Partition</a></li>
+  <li><a href="#creating-a-consumer-group" id="toc-creating-a-consumer-group" class="nav-link" data-scroll-target="#creating-a-consumer-group"><span class="header-section-number">13.11</span> Creating a Consumer Group</a>
+  <ul class="collapse">
+  <li><a href="#consuming-messages-as-a-group" id="toc-consuming-messages-as-a-group" class="nav-link" data-scroll-target="#consuming-messages-as-a-group"><span class="header-section-number">13.11.1</span> Consuming messages as a group</a></li>
+  </ul></li>
+  <li><a href="#reading-from-the-kafkaspark-results-topic" id="toc-reading-from-the-kafkaspark-results-topic" class="nav-link" data-scroll-target="#reading-from-the-kafkaspark-results-topic"><span class="header-section-number">13.12</span> Reading from the Kafka+Spark results topic</a>
+  <ul class="collapse">
+  <li><a href="#consumer-groups" id="toc-consumer-groups" class="nav-link" data-scroll-target="#consumer-groups"><span class="header-section-number">13.12.1</span> Consumer Groups</a></li>
+  <li><a href="#kafka-and-spark-structured-streaming" id="toc-kafka-and-spark-structured-streaming" class="nav-link" data-scroll-target="#kafka-and-spark-structured-streaming"><span class="header-section-number">13.12.2</span> Kafka and Spark Structured Streaming</a></li>
+  </ul></li>
+  <li><a href="#read-data-from-kafka" id="toc-read-data-from-kafka" class="nav-link" data-scroll-target="#read-data-from-kafka"><span class="header-section-number">13.13</span> Read data from Kafka</a></li>
+  <li><a href="#simple-fraud-detection-kafka-sink" id="toc-simple-fraud-detection-kafka-sink" class="nav-link" data-scroll-target="#simple-fraud-detection-kafka-sink"><span class="header-section-number">13.14</span> Simple Fraud Detection + Kafka Sink</a></li>
+  <li><a href="#stop-worker-and-master" id="toc-stop-worker-and-master" class="nav-link" data-scroll-target="#stop-worker-and-master"><span class="header-section-number">13.15</span> Stop worker and master</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/08-processing-intro.html">Processing</a></li><li class="breadcrumb-item"><a href="../chapters/12-kafka.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Kafka Consumer</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Kafka + Spark Structured Streaming</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction-to-message-streaming" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="introduction-to-message-streaming"><span class="header-section-number">13.1</span> Introduction to Message Streaming</h2>
+<p>Modern applications increasingly rely on the ability to ingest, route, and process continuous data streams in real time — sensor networks, financial transactions, application event logs, IoT devices, and more. A dedicated <strong>message broker</strong> is often placed at the centre of such architectures.</p>
+<p><strong>Apache Kafka</strong> is a distributed event streaming platform originally developed at LinkedIn (2011) and later open-sourced through the Apache Software Foundation. It provides:</p>
+<ul>
+<li><strong>High-throughput, low-latency</strong> publish/subscribe messaging.</li>
+<li><strong>Durable, fault-tolerant</strong> storage of streams as ordered logs.</li>
+<li><strong>Scalable</strong> partitioned architecture that distributes load across many brokers.</li>
+</ul>
+<section id="core-concepts" class="level3" data-number="13.1.1">
+<h3 data-number="13.1.1" class="anchored" data-anchor-id="core-concepts"><span class="header-section-number">13.1.1</span> Core Concepts</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Concept</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Topic</strong></td>
+<td>A named channel to which producers publish and from which consumers read. Topics are partitioned across broker nodes.</td>
+</tr>
+<tr class="even">
+<td><strong>Partition</strong></td>
+<td>An ordered, immutable log of records within a topic. New messages are always appended.</td>
+</tr>
+<tr class="odd">
+<td><strong>Offset</strong></td>
+<td>The position of a message within a partition. Consumers track their reading offset.</td>
+</tr>
+<tr class="even">
+<td><strong>Producer</strong></td>
+<td>An application that publishes messages to Kafka topics.</td>
+</tr>
+<tr class="odd">
+<td><strong>Consumer</strong></td>
+<td>An application that subscribes to topics and reads messages.</td>
+</tr>
+<tr class="even">
+<td><strong>Consumer Group</strong></td>
+<td>A set of consumers that cooperate to read from a topic; each partition is assigned to exactly one consumer in the group.</td>
+</tr>
+<tr class="odd">
+<td><strong>Broker</strong></td>
+<td>A Kafka server that stores and serves partitions. A cluster has multiple brokers for fault tolerance.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="kafka-architecture" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="kafka-architecture"><span class="header-section-number">13.2</span> Kafka Architecture</h2>
+<section id="brokers-and-clusters" class="level3" data-number="13.2.1">
+<h3 data-number="13.2.1" class="anchored" data-anchor-id="brokers-and-clusters"><span class="header-section-number">13.2.1</span> Brokers and Clusters</h3>
+<p>A Kafka cluster consists of multiple <strong>brokers</strong> — server processes that store and serve partitions. Topics are spread across brokers; each partition lives on exactly one broker at a time (its <strong>leader</strong>), with additional <strong>follower</strong> copies on other brokers for fault tolerance.</p>
+<pre><code>Topic "events" — 3 partitions, replication factor 2:
+
+  Broker 1         Broker 2         Broker 3
+  ──────────────   ──────────────   ──────────────
+  Partition 0 (L)  Partition 0 (F)
+                   Partition 1 (L)  Partition 1 (F)
+  Partition 2 (F)                   Partition 2 (L)
+
+  L = Leader  (handles all reads and writes for that partition)
+  F = Follower (replicates the leader; takes over if leader fails)</code></pre>
+<p>The <strong>replication factor</strong> (number of copies of each partition) is set per topic. A replication factor of 3 tolerates 2 broker failures without data loss.</p>
+</section>
+<section id="consumer-offset-management" class="level3" data-number="13.2.2">
+<h3 data-number="13.2.2" class="anchored" data-anchor-id="consumer-offset-management"><span class="header-section-number">13.2.2</span> Consumer Offset Management</h3>
+<p>Each consumer tracks its position in a partition using an <strong>offset</strong> — the sequence number of the last message processed. Offsets are committed back to Kafka so that a consumer can resume after a restart.</p>
+<p>The <code>auto_offset_reset</code> parameter controls where a consumer starts when no committed offset exists:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Value</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>'earliest'</code></td>
+<td>Start from the very beginning of the partition log</td>
+</tr>
+<tr class="even">
+<td><code>'latest'</code></td>
+<td>Start from the next new message (default)</td>
+</tr>
+<tr class="odd">
+<td><code>'none'</code></td>
+<td>Raise an error if no committed offset is found</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="delivery-semantics" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="delivery-semantics"><span class="header-section-number">13.3</span> Delivery Semantics</h2>
+<p>Kafka provides three delivery guarantees, depending on how producers and consumers are configured:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Semantic</th>
+<th>Description</th>
+<th>Configuration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>At-most-once</strong></td>
+<td>Messages may be lost; never duplicated</td>
+<td>Producer: <code>acks=0</code>; Consumer: auto-commit before processing</td>
+</tr>
+<tr class="even">
+<td><strong>At-least-once</strong></td>
+<td>Messages are never lost; may be delivered more than once</td>
+<td>Producer: <code>acks=all</code> + retries; Consumer: commit after processing</td>
+</tr>
+<tr class="odd">
+<td><strong>Exactly-once</strong></td>
+<td>Messages processed exactly once — no loss, no duplication</td>
+<td>Transactional producer + idempotent consumer; requires Kafka ≥ 0.11</td>
+</tr>
+</tbody>
+</table>
+<p>Most applications use <strong>at-least-once</strong> semantics and make their processing logic <strong>idempotent</strong> (safe to re-execute with the same message). True exactly-once requires transactional APIs and is more complex to implement.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>Delivery semantics are a key concern when Kafka feeds a Spark Structured Streaming pipeline (as shown in the <code>KafkaSpark_StructuredStreaming</code> notebook). Spark’s checkpointing mechanism can achieve end-to-end exactly-once semantics when combined with an idempotent sink and Kafka’s transactional API.</p>
+</div>
+</div>
+</div>
+<section id="pubsub-decoupling" class="level3" data-number="13.3.1">
+<h3 data-number="13.3.1" class="anchored" data-anchor-id="pubsub-decoupling"><span class="header-section-number">13.3.1</span> Pub/Sub Decoupling</h3>
+<p>A key architectural feature of Kafka is the <strong>complete decoupling</strong> of producers and consumers. A producer does not need to know which consumers exist; a consumer does not need to know which producers are publishing. Messages are written to the topic log and remain available for consumption according to retention policy (time- or size-based), not according to whether a consumer has read them.</p>
+<p>This enables flexible, scalable architectures: new consumers can read from the beginning of a topic log without affecting producers or other consumers.</p>
+</section>
+<section id="partitions-and-keys" class="level3" data-number="13.3.2">
+<h3 data-number="13.3.2" class="anchored" data-anchor-id="partitions-and-keys"><span class="header-section-number">13.3.2</span> Partitions and Keys</h3>
+<p>When a producer sends a message without a key, Kafka distributes messages across partitions using a round-robin (or load-based) strategy. When a message includes a <strong>key</strong>, Kafka uses a hash of the key to consistently route all messages with the same key to the same partition — guaranteeing ordering within that group.</p>
+<p>Partitioning provides both <strong>scalability</strong> (different partitions can be processed by different consumers in parallel) and <strong>ordering guarantees</strong> (within a partition).</p>
+<hr>
+</section>
+</section>
+<section id="hands-on-apache-kafka" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="hands-on-apache-kafka"><span class="header-section-number">13.4</span> Hands-on: Apache Kafka</h2>
+<p>The following notebooks use a Kafka cluster deployed via Docker Compose. The Kafka broker is accessible at <code>kafka-broker:9092</code>.</p>
+<blockquote class="blockquote">
+<p><strong>Note:</strong> These notebooks require the Docker cluster to be running and are not executed during book rendering.</p>
+</blockquote>
+<hr>
+<section id="producer" class="level3" data-number="13.4.1">
+<h3 data-number="13.4.1" class="anchored" data-anchor-id="producer"><span class="header-section-number">13.4.1</span> Producer</h3>
+</section>
+</section>
+<section id="interacting-with-kafka-producer-from-the-shell" class="level2" data-number="13.5">
+<h2 data-number="13.5" class="anchored" data-anchor-id="interacting-with-kafka-producer-from-the-shell"><span class="header-section-number">13.5</span> Interacting with Kafka Producer from the Shell</h2>
+<p>The Producer is the Kafka abstraction for publishing data <em>to</em> a Kafka topic.</p>
+<p>It is completely detached from any possible Consumer process; therefore, there is no need to directly connect a Producer (Sender) and a Consumer (Receiver) in Kafka due to its Pub/Sub messaging model.</p>
+<p>However, for a Producer to publish a message, we need to specify at least two things: 1. The <strong>topic</strong> to which the messages will be published. 2. The <strong>entry point of the cluster</strong> over the network.</p>
+<p>The goal is to work with Kafka programmatically (from Python/C/etc.) to interface it with other applications. However, initially, we will interact with the Kafka cluster in <em>interactive mode</em> from the shell.</p>
+<p>Apache Kafka provides a set of bash scripts to interact with and operate the cluster for basic operations and testing, such as: - Topic creation, configuration, and inspection. - Shell-based message producer. - Shell-based message consumer. - Shell-based performance testing. - …</p>
+<p>Let’s first connect to the Kafka cluster from the shell by logging into the Kafka-Broker container:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> docker exec <span class="at">-it</span> <span class="op">&lt;</span>your_kafka-broker_container_name<span class="op">&gt;</span> bash</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>e.g.:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> docker exec <span class="at">-it</span> kafka-kafka-broker-1 bash</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The Kafka installation is located in the folder whose path is stored as an environmental variable <code>$KAFKA_HOME</code>. Inside that folder, you can find the binaries (the “executables”) to use Kafka directly.</p>
+<p>To navigate to the <code>bin</code> folder, use the following command:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$KAFKA_HOME</span>/bin</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>From there, you can use the basic Kafka binaries from the shell to issue commands such as:</p>
+<ul>
+<li>List all available topics:</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--list</span> <span class="at">--bootstrap-server</span> kafka-broker:9092</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Create a new topic:</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--create</span> <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Describe a specific topic:</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--describe</span> <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can also use the shell to send messages to the newly created topic:</p>
+<p>To start the Kafka console producer, use the following command:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-console-producer.sh</span> <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>At this point, you should be able to send messages to the topic you just created via the <code>kafka-console-producer</code>.</p>
+<p>So far, no consumer is available to process or display those messages. However, the messages are successfully sent to the topic, increasing the log(s) in the partition(s).</p>
+<p>Let’s create a console consumer and subscribe to the topic.</p>
+<p>To do this, connect to the same Docker container running the Kafka broker and navigate to the folder containing the Kafka binaries.</p>
+<p>From there, you can:</p>
+<ul>
+<li>Consume the messages from our previously created topic:</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-console-consumer.sh</span> <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092 <span class="pp">[--</span><span class="ss">from</span><span class="pp">-</span><span class="ss">beginning</span><span class="pp">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Note</strong>: We can instruct the Consumer to go back and read data from the beginning, but the Producer can only append new data to the log.</p>
+</section>
+<section id="programmatically-produce-messages-to-kafka-with-python" class="level2" data-number="13.6">
+<h2 data-number="13.6" class="anchored" data-anchor-id="programmatically-produce-messages-to-kafka-with-python"><span class="header-section-number">13.6</span> Programmatically produce messages to Kafka with Python</h2>
+<p>There are various Python modules available to interact with Kafka programmatically, including: - <code>kafka-python</code> - <code>confluent-kafka</code> - <code>pyKafka</code></p>
+<p>The differences between these modules are relatively minor. As always, take your time to review the documentation of all alternatives before starting a project.</p>
+<p>For now, we’ll use <code>kafka-python</code> to handle topics and producers.</p>
+<div id="03d11095" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> pip install kafka<span class="op">-</span>python <span class="co"># confluent-kafka</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>To instantiate a Kafka producer using <code>kafka-python</code>, you can use the following code:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaProducer</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Kafka producer instance</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>producer <span class="op">=</span> KafkaProducer(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    bootstrap_servers<span class="op">=</span>[<span class="st">'62.30.10.23:9092'</span>],  <span class="co"># List of brokers</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    security_protocol<span class="op">=</span><span class="st">"SSL"</span>,                 <span class="co"># Security protocol (if any) </span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    ssl_cafile<span class="op">=</span><span class="st">"./ca.pem"</span>,                   <span class="co"># Certificate details (if any)</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    ssl_certfile<span class="op">=</span><span class="st">"./service.cert"</span>,           <span class="co"># ...</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    ssl_keyfile<span class="op">=</span><span class="st">"./service.key"</span>,             <span class="co"># ...</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    value_serializer<span class="op">=</span>msgpack.dumps           <span class="co"># Message value serialization function </span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                                             <span class="co"># (e.g., interpreting the message as a specific format)</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We’ll work with the vanilla version of the producer, which does not require any certificates or specific serialization in this example.</p>
+<p>Here’s an example of a simple producer instantiated by pointing it to the Kafka brokers:</p>
+<div id="94ce6000" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the list of brokers in the cluster</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>KAFKA_BOOTSTRAP_SERVERS <span class="op">=</span> [<span class="st">'kafka-broker:9092'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="a5fd4ca4" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaProducer</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Kafka producer instance</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>producer <span class="op">=</span> KafkaProducer(bootstrap_servers<span class="op">=</span>KAFKA_BOOTSTRAP_SERVERS)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Let’s publish a message to the topic we previously created <em>without specifying any key</em>.</p>
+<div id="98754fab" class="cell" data-scrolled="true">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># publish a message to a topic without a key</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>producer.send(topic<span class="op">=</span><span class="st">'my_awesome_topic'</span>, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>              value<span class="op">=</span><span class="st">b'message 1'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The output message <code>&lt;kafka.producer.future...&gt;</code> explicitly tells us that the record has been created and will be sent at some point.</p>
+<p>However, when we pressed return on the previous cell, the message had not been sent yet.</p>
+<p>The <code>KafkaProducer.send()</code> method is <em>asynchronous</em>, which means it enqueues the message on an internal queue. The actual sending of the message to the broker happens later, based on tunable parameters like the maximum buffering time or the number of messages.</p>
+<p>This behavior is beneficial because packing multiple messages in small batches improves data transfer efficiency. While sending a single message may not show noticeable performance differences, imagine sending billions of messages per day, which translates to millions of messages per second. Optimizing data transfer and minimizing communication overhead between producers and topics becomes crucial.</p>
+<p>It’s important to be aware that messages won’t necessarily be sent immediately. If a high message rate is sent and the <code>exit()</code> command is issued right after a <code>producer.send()</code> call, it’s possible that no messages are actually sent because the maximum buffering time or the number of messages has not been reached before the program exits.</p>
+<p>To send messages synchronously, you can use the <code>flush()</code> method of the producer. It ensures that all outstanding messages are sent before proceeding.</p>
+<p>For more information on the tunable parameters and additional functionalities, you can refer to the KafkaProducer API documentation: <a href="https://kafka-python.readthedocs.io/en/master/apidoc/KafkaProducer.html">link to KafkaProducer API</a>.</p>
+<div id="8b819d66" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># publish a message and flush the queue right away</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>producer.send(<span class="st">'my_awesome_topic'</span>, <span class="st">b'a new message'</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>producer.flush()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>It’s important to realize that producers and consumers are completely decoupled in Kafka. This means that the functioning of a consumer is not affected even if a producer “dies”.</p>
+<p>The decoupled nature of Kafka allows consumers to access the topic and consume messages regardless of the state of the producer.</p>
+<p>Even if a producer becomes unavailable or experiences an issue, the messages previously sent and stored on the brokers are still accessible to consumers. This ensures data durability and enables fault tolerance in the Kafka ecosystem. Consumers can continue to consume messages from the topic without any interruption, as long as the messages are available on the brokers.</p>
+<p>This decoupling of producers and consumers in Kafka is a key architectural feature that enables scalability, fault tolerance, and flexibility in building distributed systems.</p>
+<p>It’s worth noting that while consumers are not directly impacted by the state of the producer, they may experience delays in receiving messages if there are any disruptions, such as network issues or producer errors, affecting the producer’s ability to send messages. However, once the producer resumes normal operation, the consumers can continue consuming messages from where they left off.</p>
+<p>This decoupled nature of Kafka makes it well-suited for building robust and scalable distributed systems where producers and consumers can operate independently and asynchronously.</p>
+<div id="03d468d7" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stop the producer</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>producer.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="9feb12d4" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new Kafka producer and send a new message to the same topic</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>producer <span class="op">=</span> KafkaProducer(bootstrap_servers<span class="op">=</span>KAFKA_BOOTSTRAP_SERVERS)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>producer.send(<span class="st">'my_awesome_topic'</span>, <span class="st">b'a message from a newly revived producer'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="messages-with-key" class="level2" data-number="13.7">
+<h2 data-number="13.7" class="anchored" data-anchor-id="messages-with-key"><span class="header-section-number">13.7</span> Messages with Key</h2>
+<p>In Kafka, messages are structured as <code>&lt;key, value&gt;</code> pairs.</p>
+<p>So far, we have produced messages only with a given <code>value</code>, but it’s also possible to include a <code>key</code> for each message. The <code>key</code> serves as an optional identifier for the message and can be used for various purposes, such as routing messages to specific partitions within a topic.</p>
+<p>When a producer sends a message with a key, Kafka uses the key to determine the partition to which the message should be assigned. By default, Kafka uses a <em>hashing algorithm</em> to evenly distribute messages across partitions based on their keys. This ensures that messages with the same key are always assigned to the same partition, providing a form of message ordering within a partition.</p>
+<p>Adding a key to messages can be useful in scenarios where you want to ensure ordering or group related messages together based on a common key. It enables consumers to process messages in a consistent and predictable manner.</p>
+<p>To include a key when producing messages, you can modify the previous code example as follows:</p>
+<div id="b0dd86bf" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># send messages to Kafka using a specific key</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>producer.send(topic<span class="op">=</span><span class="st">'my_awesome_topic'</span>, </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>              key<span class="op">=</span><span class="st">b'some_key'</span>, </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>              value<span class="op">=</span><span class="st">b'a message with key'</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>producer.flush()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="create-a-topic-from-kafka-python" class="level2" data-number="13.8">
+<h2 data-number="13.8" class="anchored" data-anchor-id="create-a-topic-from-kafka-python"><span class="header-section-number">13.8</span> Create a topic from kafka-python</h2>
+<p>Using the kafka-python library, you can administer a Kafka cluster and create new topics with specific configuration parameters, such as the replication factor.</p>
+<div id="ce061a41" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import the necessary packages to administer the Kafka cluster</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka.admin <span class="im">import</span> KafkaAdminClient, NewTopic</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># connect to the cluster to run admin functions</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>kafka_admin <span class="op">=</span> KafkaAdminClient(</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    bootstrap_servers<span class="op">=</span>KAFKA_BOOTSTRAP_SERVERS,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>It is possible to retrieve the list of topics, equivalent of issuing the following using the Kafka binaries from shell:</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--list</span> <span class="at">--bootstrap-server</span> kafka-broker:9092</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="14c1d291" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list the available topics</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>kafka_admin.list_topics()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Topics in Kafka are partitioned entities. Each topic is divided into multiple partitions, and within each partition, events are added to the end of a log, resulting in an ordered list of records.</p>
+<p>When you publish a new message to a partitioned topic, the message is appended to the end of the log retained by the owner of the specific partition to which the message is assigned.</p>
+<p>Each partition has one leader and zero or more follower replicas. If replication is enabled for the topic, the message will be replicated and distributed to the follower replicas of the partition.</p>
+<p>The leader partition handles all read and write operations for the partition, while the follower replicas replicate the log from the leader to ensure fault tolerance and high availability. If the leader partition fails, one of the follower replicas will be elected as the new leader to continue processing messages for that partition.</p>
+<p>The use of partitions provides several benefits in Kafka including scalability and parallelism.</p>
+<p>It’s important to note that the distribution and replication of messages across partitions are managed internally by Kafka and are transparent to the producer and consumer applications. The producer only needs to specify the topic and optionally the key for a message, and Kafka takes care of routing the message to the appropriate partition.</p>
+<div id="1c8481b5" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new topic with the following parameters:</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#    number of partitions = 2</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#    replication factor   = 1 (i.e. no replication)</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>a_new_topic <span class="op">=</span> NewTopic(name<span class="op">=</span><span class="st">'a_partitioned_topic'</span>, </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                       num_partitions<span class="op">=</span><span class="dv">2</span>, </span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                       replication_factor<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>kafka_admin.create_topics(new_topics<span class="op">=</span>[a_new_topic])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="fe283971" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list the available topics</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>kafka_admin.list_topics()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="publish-messages-for-the-spark-structured-streaming-example" class="level2" data-number="13.9">
+<h2 data-number="13.9" class="anchored" data-anchor-id="publish-messages-for-the-spark-structured-streaming-example"><span class="header-section-number">13.9</span> Publish messages for the Spark Structured Streaming example</h2>
+<p>Kafka can be used as a source for incoming messages in Spark Streaming and Structured Streaming.</p>
+<p>We’ll use the pySpark <code>Structured Streaming</code> API to implement the example previously seen in the Spark hands-on sessions.</p>
+<div id="9301ceb4" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>first_names <span class="op">=</span> (<span class="st">'John'</span>, <span class="st">'Andy'</span>, <span class="st">'Joe'</span>, <span class="st">'Alice'</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>last_names <span class="op">=</span> (<span class="st">'Johnson'</span>, <span class="st">'Smith'</span>, <span class="st">'Jones'</span>, <span class="st">'Millers'</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co"># while 1: # Uncomment this to send a continuous stream of messages</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">20</span>):</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    msg <span class="op">=</span> {</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">'name'</span>: random.choice(first_names),                           <span class="co"># Select a random first name</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">'surname'</span>: random.choice(last_names),                         <span class="co"># Select a random last name</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">'amount'</span>: <span class="bu">float</span>(<span class="st">'</span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(random.random() <span class="op">*</span> <span class="dv">1000</span>)),     <span class="co"># Generate a random amount</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">'delta_t'</span>: <span class="bu">float</span>(<span class="st">'</span><span class="sc">{:.2f}</span><span class="st">'</span>.<span class="bu">format</span>(random.random() <span class="op">*</span> <span class="dv">10</span>)),      <span class="co"># Generate a random delta_t</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">'flag'</span>: random.choices([<span class="dv">0</span>, <span class="dv">1</span>], weights<span class="op">=</span>[<span class="fl">0.8</span>, <span class="fl">0.2</span>])[<span class="dv">0</span>]         <span class="co"># Randomly choose a flag value</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    producer.send(<span class="st">'a_partitioned_topic'</span>,</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>                  json.dumps(msg).encode(<span class="st">'utf-8'</span>)  <span class="co"># Convert the message to JSON and encode as UTF-8</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>                  )</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    producer.flush()  <span class="co"># Flush the producer buffer</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>    time.sleep(<span class="fl">0.25</span>)  <span class="co"># Sleep for a short duration before sending the next message</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Let’s create a new topic to store the <code>results</code> of the Spark processing of the Kafka stream.</p>
+<div id="65145005" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new topic</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>a_new_topic <span class="op">=</span> NewTopic(name<span class="op">=</span><span class="st">'results'</span>, </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>                       num_partitions<span class="op">=</span><span class="dv">2</span>, </span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>                       replication_factor<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># create the new topic</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>kafka_admin.create_topics(new_topics<span class="op">=</span>[a_new_topic])</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># check the list of available topics</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>kafka_admin.list_topics()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<section id="consumer" class="level3" data-number="13.9.1">
+<h3 data-number="13.9.1" class="anchored" data-anchor-id="consumer"><span class="header-section-number">13.9.1</span> Consumer</h3>
+<p>Using the <code>kafka-python</code> module, Kafka consumers can be instantiated via the <code>KafkaConsumer</code> class:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaConsumer</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Kafka consumer instance</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>consumer <span class="op">=</span> KafkaConsumer(</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    bootstrap_servers<span class="op">=</span>[<span class="st">'62.30.10.23:9092'</span>],  <span class="co"># list of brokers</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    security_protocol<span class="op">=</span><span class="st">"SSL"</span>,                 <span class="co"># security protocol (if any) </span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    ssl_cafile<span class="op">=</span><span class="st">"./ca.pem"</span>,                   <span class="co"># certificate details (if any)</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    ssl_certfile<span class="op">=</span><span class="st">"./service.cert"</span>,           <span class="co">#           ...</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    ssl_keyfile<span class="op">=</span><span class="st">"./service.key"</span>,             <span class="co">#           ...</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    value_deserializer<span class="op">=</span>msgpack.unpackb,      <span class="co"># message value deserialization function (e.g. unpack the message from a specific format)</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>    auto_offset_reset<span class="op">=</span><span class="st">'earliest'</span>,            <span class="co"># automatically bring the reading offset to the earliest message</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    group_id<span class="op">=</span><span class="st">"group_A"</span>,                      <span class="co"># identify this consumer as part of group_A</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Once more, we’ll use a simple implementation of the consumer, with no specific configurations used in this example.</p>
+<div id="49c29d70" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the list of brokers in the cluster</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>KAFKA_BOOTSTRAP_SERVERS <span class="op">=</span> [<span class="st">'kafka-broker:9092'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="b13e9e6c" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaConsumer</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create a Kafka consumer instance</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>consumer <span class="op">=</span> KafkaConsumer(</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    bootstrap_servers<span class="op">=</span>KAFKA_BOOTSTRAP_SERVERS,  <span class="co"># list of Kafka brokers</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>                   <span class="co"># maximum time to wait for a new message </span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                                                <span class="co"># before stopping the consumer</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Inspect the available topics on the brokers:</p>
+<div id="503fdeba" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list all available topics on the kafka brokers</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>consumer.topics()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In the Publish/Subscribe (Pub/Sub) model, before consuming messages from a specific topic, you need to subscribe to that topic. By subscribing, the consumer expresses its interest in receiving messages from the specified topic.</p>
+<p>It’s important to note that subscribing to a topic doesn’t immediately consume any messages.</p>
+<p>Instead, it establishes a connection between the consumer and the partitions of the subscribed topic hosted on the Kafka brokers. This connection allows the consumer to start polling for messages from those partitions.</p>
+<p>Once you have subscribed to the topic, the consumer can start polling for messages, fetching messages from the subscribed partitions and return them to the consumer for further processing.</p>
+<div id="ca9831bc" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># subscribe to a topic</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>consumer.subscribe([<span class="st">'my_awesome_topic'</span>])</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># check the active subscriptions</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>consumer.subscription()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The <code>KafkaConsumer</code> class also offers the possibility to inspect topics (for instance, in terms of the number of partitions), but <strong>not</strong> to modify them.</p>
+<p>We can inspect how many partitions the specific topic is made of:</p>
+<div id="704546bb" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print the list of partition IDs </span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="co"># e.g. a topic with tree partitions will have partition IDs {0, 1, 2}</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>consumer.partitions_for_topic(<span class="st">'my_awesome_topic'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We can instruct the consumer to <code>poll</code> (i.e., ask for all new messages stored in the topic) with a given cadence or logic.</p>
+<p>For instance, we can set the consumer to read only 10 messages at a time, with a timeout between subsequent readouts of a given <span class="math inline">\(\Delta t\)</span>.</p>
+<div id="f3ef8071" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set up the polling strategy for the consumer</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>consumer.poll(timeout_ms<span class="op">=</span><span class="dv">0</span>,         <span class="co"># do not enable dead-times before one poll to the next</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>              max_records<span class="op">=</span><span class="va">None</span>,     <span class="co"># do not limit the number of records to consume at once </span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>              update_offsets<span class="op">=</span><span class="va">True</span>   <span class="co"># update the reading offsets on this topic</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>             )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Now the consumer is ready to poll messages (until it is stopped or it reaches a timeout).</p>
+<p>Let’s look for all messages in the consumer:</p>
+<div id="e47f9340" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this consumer will keep polling for messages </span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co"># until stopped by the user</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># (or reaches the consumer_timeout_ms, if specified)</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> message <span class="kw">in</span> consumer:</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span> (message)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The reading offset can also be reset to the beginning of the topic, allowing for re-reading the entire topic:</p>
+<div id="b7f3cb26" class="cell" data-scrolled="true">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># go back to the beginning of the topic</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>consumer.seek_to_beginning()</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># read the entire topic and print it out</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> message <span class="kw">in</span> consumer:</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span> (message)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The message content (<code>ConsumerRecord</code>) can be quite messy, but it can be easily inspected by parsing only the relevant information.</p>
+<div id="f65486f1" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import packages to interpret dates</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># go back to the beginning of the topic</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>consumer.seek_to_beginning()</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># break down the message into its main components</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> message <span class="kw">in</span> consumer:</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span> (<span class="st">"</span><span class="sc">%d</span><span class="st">[</span><span class="sc">%d</span><span class="st">] @</span><span class="sc">%s</span><span class="st"> k=</span><span class="sc">%s</span><span class="st"> v=</span><span class="sc">%s</span><span class="st">"</span> <span class="op">%</span> (message.partition,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>                          message.offset,</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>                          datetime.fromtimestamp(message.timestamp<span class="op">/</span><span class="dv">1000</span>).time(),</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>                          message.key,</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>                          message.value))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Let’s change the topic to which the consumer is subscribed and make it a partitioned one:</p>
+<div id="b9390443" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># subscribe to a partitioned topic</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>consumer.subscribe([<span class="st">'a_partitioned_topic'</span>])</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>consumer.subscription()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>By inspecting the number of partitions for this topic, we can now see that there are 2 partitions: partition #0 and partition #1.</p>
+<div id="7072f945" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the partitions in the partitioned topic</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>consumer.partitions_for_topic(<span class="st">'a_partitioned_topic'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>When reading from a partitioned topic, it’s easy to observe that the messages are sent to the two partitions in a seemingly arbitrary way.</p>
+<div id="a9ecfac4" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import json to unpack json strings</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="co"># go back to the beginning of the topic</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>consumer.seek_to_beginning()</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co"># read messages from the beginning of the topic</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="co"># decode the json into the python dictionary format</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> message <span class="kw">in</span> consumer:</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>message<span class="sc">.</span>partition<span class="sc">}</span><span class="ss">[</span><span class="sc">{</span>message<span class="sc">.</span>offset<span class="sc">}</span><span class="ss">]</span><span class="ch">\t</span><span class="ss"> </span><span class="sc">{</span>json<span class="sc">.</span>loads(message.value)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="creating-a-consumer-accessing-only-one-partition" class="level2" data-number="13.10">
+<h2 data-number="13.10" class="anchored" data-anchor-id="creating-a-consumer-accessing-only-one-partition"><span class="header-section-number">13.10</span> Creating a Consumer Accessing Only One Partition</h2>
+<p>Publishing records to a partitioned topic is typically transparent to the user: the producer publishes to the topic, and the Kafka cluster will redirect the message to the partition leader, later replicating it to the followers.</p>
+<p>The same applies to a generic consumer. As we have just seen, data is consumed from all partitions within the topic.</p>
+<p>In some cases, however, it may be more suitable to instantiate multiple consumers, with each one reading from a specific partition of a topic.</p>
+<p>Let’s create a consumer specifically designed to access the data from partition #0 of the previous partitioned topic.</p>
+<div id="196024b9" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import TopicPartition to be able to assign a partition to a consumer</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> TopicPartition</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create a standard consumer with a timeout of 10 seconds</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>consumer_part_0 <span class="op">=</span> KafkaConsumer(bootstrap_servers<span class="op">=</span>KAFKA_BOOTSTRAP_SERVERS,</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>                                client_id<span class="op">=</span><span class="st">'consumer_n_0'</span>,</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>                                consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="co"># assign the consumer to a specific topic-partition combination</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>consumer_part_0.assign([TopicPartition(topic     <span class="op">=</span> <span class="st">'a_partitioned_topic'</span>, <span class="co"># topic</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>                                       partition <span class="op">=</span> <span class="dv">0</span>                      <span class="co"># partition id</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>                                      )]</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>                      ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="0d896be9" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># go back to the beginning of the topic (for this specific partition)</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>consumer_part_0.seek_to_beginning()</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># read messages from the beginning of the topic (for this specific partition)</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co"># decode the json into the python dictionary format</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> message <span class="kw">in</span> consumer_part_0:</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>message<span class="sc">.</span>partition<span class="sc">}</span><span class="ss">[</span><span class="sc">{</span>message<span class="sc">.</span>offset<span class="sc">}</span><span class="ss">]</span><span class="ch">\t</span><span class="ss"> </span><span class="sc">{</span>json<span class="sc">.</span>loads(message.value)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="creating-a-consumer-group" class="level2" data-number="13.11">
+<h2 data-number="13.11" class="anchored" data-anchor-id="creating-a-consumer-group"><span class="header-section-number">13.11</span> Creating a Consumer Group</h2>
+<p>Multiple consumers can read from the same topic.</p>
+<p>In Kafka, every consumer is part of a consumer group (even a single consumer is part of its own consumer group).</p>
+<p>A consumer group consists of one or more cooperating consumers that gather data from the same topic. The consumer group dynamically balances the load across its members and redistributes the consume calls.</p>
+<p>If a consumer within a consumer group fails, the remaining consumers in the same group will continue to read the entire data from the subscribed topic.</p>
+<div id="d495b6a0" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create `consumer_one` to read from a specific partition</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="co"># assign this consumer to a group</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>consumer_one <span class="op">=</span> KafkaConsumer(bootstrap_servers<span class="op">=</span>KAFKA_BOOTSTRAP_SERVERS,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                             client_id<span class="op">=</span><span class="st">'consumer_one'</span>,</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>                             group_id<span class="op">=</span><span class="st">'my_group'</span>,                       <span class="co"># the same group will be used by all consumers</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>                             auto_offset_reset<span class="op">=</span><span class="st">'earliest'</span>,</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>                             consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="bc0fec86" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># subscribe `consumer_one` to the partitioned topic</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>consumer_one.subscribe([<span class="st">'a_partitioned_topic'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<section id="consuming-messages-as-a-group" class="level3" data-number="13.11.1">
+<h3 data-number="13.11.1" class="anchored" data-anchor-id="consuming-messages-as-a-group"><span class="header-section-number">13.11.1</span> Consuming messages as a group</h3>
+<p>Use the <code>ConsumerGroup</code> notebook to: 1. create a second consumer <code>consumer_two</code> 2. assign it to the same consumer group <code>my_group</code> 3. subscribe to the same topic <code>a_partitioned_topic</code></p>
+<p>Each consumer within a group is going to be an independent process (should be run in parallel from the others) and will provide access to a fraction of the incoming data</p>
+<div id="18629749" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the partitions assigned to `consumer_one`</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>consumer_one.assignment()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Start the two consumers and process data in parallel from the two partitions.</p>
+<p>Typically, one would achieve this by running the two consumers in separate threads, processes, or executors, depending on the desired computing architecture.</p>
+<div id="22e0f70a" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use multiple consumers in parallel (`consumer_one` in this notebook)</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> message <span class="kw">in</span> consumer_one:</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>message<span class="sc">.</span>partition<span class="sc">}</span><span class="ss">[</span><span class="sc">{</span>message<span class="sc">.</span>offset<span class="sc">}</span><span class="ss">]</span><span class="ch">\t</span><span class="ss"> </span><span class="sc">{</span>json<span class="sc">.</span>loads(message.value)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="906178d6" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the partitions assigned to `consumer_one`</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>consumer_one.assignment()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+</section>
+<section id="reading-from-the-kafkaspark-results-topic" class="level2" data-number="13.12">
+<h2 data-number="13.12" class="anchored" data-anchor-id="reading-from-the-kafkaspark-results-topic"><span class="header-section-number">13.12</span> Reading from the Kafka+Spark results topic</h2>
+<p>Let’s subscribe to the <code>results</code> topic and monitor the frauds</p>
+<div id="c03dab9b" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>consumer.subscribe([<span class="st">'results'</span>])</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> message <span class="kw">in</span> consumer:</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span> (<span class="st">"</span><span class="sc">%d</span><span class="st">[</span><span class="sc">%d</span><span class="st">] k=</span><span class="sc">%s</span><span class="st"> v=</span><span class="sc">%s</span><span class="st">"</span> <span class="op">%</span> (message.partition,</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>                          message.offset,</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>                          message.key,</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>                          message.value))</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span> (<span class="st">'      --&gt; sending alert message to user </span><span class="sc">{}</span><span class="ch">\n</span><span class="st">'</span>.<span class="bu">format</span>(message.key.decode(<span class="st">'ascii'</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+<section id="consumer-groups" class="level3" data-number="13.12.1">
+<h3 data-number="13.12.1" class="anchored" data-anchor-id="consumer-groups"><span class="header-section-number">13.12.1</span> Consumer Groups</h3>
+<div id="e9e0b891" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the list of brokers in the cluster</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>KAFKA_BOOTSTRAP_SERVERS <span class="op">=</span> [<span class="st">'kafka-broker:9092'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="e8683436" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaConsumer</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create `consumer_two` to read from a specific partition</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="co"># assign this consumer to a group</span></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>consumer_two <span class="op">=</span> KafkaConsumer(bootstrap_servers<span class="op">=</span>KAFKA_BOOTSTRAP_SERVERS,</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>                             client_id<span class="op">=</span><span class="st">'consumer_two'</span>,</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>                             group_id<span class="op">=</span><span class="st">'my_group'</span>,                       <span class="co"># the same group will be used by all consumers</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>                             auto_offset_reset<span class="op">=</span><span class="st">'earliest'</span>,</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>                             consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="502e793d" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="co"># subscribe `consumer_two` to the partitioned topic</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>consumer_two.subscribe([<span class="st">'a_partitioned_topic'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="bc901807" class="cell" data-scrolled="true">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the partitions assigned to `consumer_two`</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>consumer_two.assignment()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="3381b629" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use multiple consumers in parallel (`consumer_two` in this notebook)</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> message <span class="kw">in</span> consumer_two:</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>message<span class="sc">.</span>partition<span class="sc">}</span><span class="ss">[</span><span class="sc">{</span>message<span class="sc">.</span>offset<span class="sc">}</span><span class="ss">]</span><span class="ch">\t</span><span class="ss"> </span><span class="sc">{</span>json<span class="sc">.</span>loads(message.value)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="d50acf85" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the partitions assigned to `consumer_two`</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>consumer_two.assignment()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<hr>
+</section>
+<section id="kafka-and-spark-structured-streaming" class="level3" data-number="13.12.2">
+<h3 data-number="13.12.2" class="anchored" data-anchor-id="kafka-and-spark-structured-streaming"><span class="header-section-number">13.12.2</span> Kafka and Spark Structured Streaming</h3>
+<p>The final hands-on section (<code>KafkaSpark_StructuredStreaming</code>) demonstrates Kafka acting as both a <strong>Source</strong> and a <strong>Sink</strong> for a Spark Structured Streaming pipeline. This connects the Source/Sink abstraction introduced in <a href="../chapters/10-spark.html">Apache Spark</a> with Kafka’s pub/sub model:</p>
+<ul>
+<li><strong>Source</strong>: Spark reads a stream of JSON messages from a Kafka topic using <code>.readStream.format("kafka")</code></li>
+<li><strong>Transform</strong>: Spark parses, filters, and aggregates the stream using DataFrame operations</li>
+<li><strong>Sink</strong>: results are written back to a Kafka topic or to the console using <code>.writeStream</code></li>
+</ul>
+<p>Achieving end-to-end <strong>exactly-once</strong> semantics requires: (1) Kafka’s transactional producer, (2) Spark checkpointing, and (3) an idempotent sink.</p>
+<p>Kafka can be integrated relatively easily with the streaming APIs of Spark to act as either a <code>source</code> or a <code>sink</code> for the streaming data.</p>
+<!-- broken Jupyter-attachment reference removed (no extracted image file
+     exists on disk for `Screenshot from 2021-05-19 23-02-42.png`).
+     Drop the original screenshot into this folder under that name and
+     restore the reference if needed. -->
+<p>We’ll reproduce the PySpark example we discussed when testing the <code>Structured Streaming</code>, now interfacing both the <code>source</code> and the <code>sink</code> of Spark with Kafka topics.</p>
+<div id="cf85abae" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the list of brokers in the cluster</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>KAFKA_BOOTSTRAP_SERVERS <span class="op">=</span> <span class="st">'kafka-broker:9092'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="a83873a0" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> SparkSession</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>spark <span class="op">=</span> SparkSession.builder <span class="op">\</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>    .master(<span class="st">"spark://spark-master:7077"</span>)<span class="op">\</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>    .appName(<span class="st">"Spark structured streaming application"</span>)<span class="op">\</span></span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>    .config(<span class="st">"spark.executor.memory"</span>, <span class="st">"512m"</span>)<span class="op">\</span></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>    .config(<span class="st">"spark.sql.execution.arrow.pyspark.enabled"</span>, <span class="st">"true"</span>)<span class="op">\</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>    .config(<span class="st">"spark.sql.adaptive.enabled"</span>, <span class="st">"false"</span>)<span class="op">\</span></span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>    .config(<span class="st">"spark.sql.execution.arrow.pyspark.fallback.enabled"</span>, <span class="st">"false"</span>)<span class="op">\</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>    .config(<span class="st">"spark.sql.shuffle.partitions"</span>, <span class="dv">4</span>)<span class="op">\</span></span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>    .config(<span class="st">"spark.jars.packages"</span>,<span class="st">"org.apache.spark:spark-sql-kafka-0-10_2.13:4.1.1"</span>)<span class="op">\</span></span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>    .getOrCreate()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="835fa40a" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>sc <span class="op">=</span> spark.sparkContext</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>sc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="read-data-from-kafka" class="level2" data-number="13.13">
+<h2 data-number="13.13" class="anchored" data-anchor-id="read-data-from-kafka"><span class="header-section-number">13.13</span> Read data from Kafka</h2>
+<p>First, we create a DataFrame representing the stream of input lines from Kafka by connecting to the appropriate servers and topic.</p>
+<p><code>readStream</code> and <code>format("kafka")</code> are the key components for connecting to the data source.</p>
+<div id="457d28e0" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>rawMessagesDf <span class="op">=</span> spark<span class="op">\</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>    .readStream<span class="op">\</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">format</span>(<span class="st">"kafka"</span>)<span class="op">\</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>    .option(<span class="st">"kafka.bootstrap.servers"</span>, KAFKA_BOOTSTRAP_SERVERS)<span class="op">\</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>    .option(<span class="st">"kafkaConsumer.pollTimeoutMs"</span>, <span class="dv">4000</span>)<span class="op">\</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>    .option(<span class="st">"startingOffsets"</span>, <span class="st">"latest"</span>) <span class="op">\</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>    .option(<span class="st">"subscribe"</span>, <span class="st">"a_partitioned_topic"</span>)<span class="op">\</span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>    .option(<span class="st">"failOnDataLoss"</span>, <span class="st">"false"</span>)<span class="op">\</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>    .load()    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>At this stage, nothing happens because the streaming has not started yet. We have only defined the source of the streaming application.</p>
+<p>The <code>rawMessagesDf</code> can be treated as if it were a static DataFrame in Spark, <strong>but</strong> it is a streaming DataFrame that continuously grows.</p>
+<div id="e6a52799" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>rawMessagesDf.isStreaming</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Currently, <code>rawMessagesDf</code> contains the messages from Kafka, which are further composed of a <code>&lt;key, value&gt;</code> pair, a timestamp, and other information.</p>
+<div id="646832d7" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>rawMessagesDf.printSchema()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>We are clearly interested in the <code>value</code> of the message, which is in JSON format.</p>
+<p>We can utilize the <code>pyspark.sql</code> functions to define a schema for our structured data and interpret the data accordingly.</p>
+<div id="1e232402" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql.functions <span class="im">import</span> from_json, col</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql.types <span class="im">import</span> StructField, StructType, StringType, DoubleType, IntegerType</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a><span class="co"># the schema of the json data format used to create the messages</span></span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>schema <span class="op">=</span> StructType(</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>        [</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>                StructField(<span class="st">"name"</span>, StringType()),</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>                StructField(<span class="st">"surname"</span>, StringType()),</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>                StructField(<span class="st">"amount"</span>, DoubleType()),</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>                StructField(<span class="st">"delta_t"</span>, DoubleType()),</span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>                StructField(<span class="st">"flag"</span>, IntegerType())</span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>        ]</span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb59-15"><a href="#cb59-15" aria-hidden="true" tabindex="-1"></a><span class="co"># a new DF can be created from the previous by using the pyspark.sql functions</span></span>
+<span id="cb59-16"><a href="#cb59-16" aria-hidden="true" tabindex="-1"></a>parsedDf <span class="op">=</span> (</span>
+<span id="cb59-17"><a href="#cb59-17" aria-hidden="true" tabindex="-1"></a>    rawMessagesDf</span>
+<span id="cb59-18"><a href="#cb59-18" aria-hidden="true" tabindex="-1"></a>    .select(</span>
+<span id="cb59-19"><a href="#cb59-19" aria-hidden="true" tabindex="-1"></a>        from_json(col(<span class="st">"value"</span>).alias(<span class="st">"value"</span>).cast(<span class="st">"string"</span>), schema)</span>
+<span id="cb59-20"><a href="#cb59-20" aria-hidden="true" tabindex="-1"></a>        .alias(<span class="st">"data"</span>)</span>
+<span id="cb59-21"><a href="#cb59-21" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb59-22"><a href="#cb59-22" aria-hidden="true" tabindex="-1"></a>    .select(col(<span class="st">"data.*"</span>))</span>
+<span id="cb59-23"><a href="#cb59-23" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="6fc9842b" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>parsedDf.printSchema()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>It’s possible to inspect the data actually reaching the <code>parsedDf</code> by starting a stream with a <code>console</code> sink. The output of the streaming processing in this case will be displayed in the shell running the Jupyter Notebook.</p>
+<p>We should expect a DataFrame with a single column, containing a JSON-like object per message.</p>
+<div id="8b19836a" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> (</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>    parsedDf.writeStream<span class="op">\</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>            .outputMode(<span class="st">"append"</span>)<span class="op">\</span></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>            .<span class="bu">format</span>(<span class="st">"console"</span>)<span class="op">\</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>            .start()</span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="8e54c224" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>query.stop()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="simple-fraud-detection-kafka-sink" class="level2" data-number="13.14">
+<h2 data-number="13.14" class="anchored" data-anchor-id="simple-fraud-detection-kafka-sink"><span class="header-section-number">13.14</span> Simple Fraud Detection + Kafka Sink</h2>
+<p>Let’s integrate the same simplistic “fraud detection” logic we previously used in our Spark Streaming example.</p>
+<p>We might be interested in having Spark perform the heavy lifting and then allowing other consumers to access the results of these operations. For example, we can display the results on a dashboard or trigger some action.</p>
+<p>We can use Kafka as a sink for the resulting data.</p>
+<div id="03501606" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql.functions <span class="im">import</span> concat, col, lit, countDistinct</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a><span class="co"># find number of transactions for each user when flag = 1 </span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>num_transactions <span class="op">=</span> parsedDf <span class="op">\</span></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>    .where(col(<span class="st">'flag'</span>)<span class="op">==</span><span class="dv">1</span>) <span class="op">\</span></span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>    .withColumn(<span class="st">'id'</span>, concat(col(<span class="st">'name'</span>), col(<span class="st">'surname'</span>))) <span class="op">\</span></span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>    .groupBy(<span class="st">'id'</span>) <span class="op">\</span></span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>    .count() </span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a><span class="co"># find suspicious transactions</span></span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a>sus_transactions <span class="op">=</span> num_transactions <span class="op">\</span></span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>    .where(col(<span class="st">'count'</span>)<span class="op">&gt;</span><span class="dv">1</span>) <span class="op">\</span></span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>    .withColumn(<span class="st">'fraud'</span>, lit(<span class="dv">1</span>)) <span class="op">\</span></span>
+<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a>    .select(col(<span class="st">"id"</span>).alias(<span class="st">"key"</span>),</span>
+<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a>            col(<span class="st">"fraud"</span>).cast(StringType()).alias(<span class="st">"value"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>At this point, it may seem that these newly derived DataFrames are not connected in any way or form to the input streaming Kafka source.</p>
+<p>However, we can verify this by using the <code>isStreaming</code> method on a DataFrame.</p>
+<div id="27527f6b" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>sus_transactions.isStreaming</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="03cffbbe" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>sus_transactions.printSchema()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>The <code>sus_transactions</code> DataFrame is still a streaming DataFrame. It can be seen as the result of the transformations applied to the original <code>inputDF</code> derived from the streaming source.</p>
+<div id="bd3c21fb" class="cell" data-scrolled="true">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> (</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>    sus_transactions.writeStream<span class="op">\</span></span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>                    .outputMode(<span class="st">"update"</span>)<span class="op">\</span></span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>                    .<span class="bu">format</span>(<span class="st">"console"</span>)<span class="op">\</span></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>                    .start()</span>
+<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="a8900fd6" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>query.stop()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Finally, let’s wrap up the message and write it to a <code>results</code> topic back to Kafka, so that other consumers can make use of its data.</p>
+<div id="c4dd9167" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> (</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>    sus_transactions.writeStream<span class="op">\</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>                    .outputMode(<span class="st">"update"</span>)<span class="op">\</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>                    .<span class="bu">format</span>(<span class="st">"kafka"</span>) <span class="op">\</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>                    .option(<span class="st">"kafka.bootstrap.servers"</span>, KAFKA_BOOTSTRAP_SERVERS) <span class="op">\</span></span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>                    .option(<span class="st">"topic"</span>, <span class="st">"results"</span>) <span class="op">\</span></span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>                    .option(<span class="st">"checkpointLocation"</span>, <span class="st">"checkpoint"</span>) <span class="op">\</span></span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>                    .option(<span class="st">"failOnDataLoss"</span>, <span class="st">"false"</span>) <span class="op">\</span></span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a>                    .start()</span>
+<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="54c0134e" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>query.stop()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="stop-worker-and-master" class="level2" data-number="13.15">
+<h2 data-number="13.15" class="anchored" data-anchor-id="stop-worker-and-master"><span class="header-section-number">13.15</span> Stop worker and master</h2>
+<div id="a7b4b733" class="cell">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stop the running Spark context and Spark session</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>sc.stop()</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>spark.stop()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>Finally, use <code>docker compose down</code> to stop and clear all running containers.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/11-dask.html" class="pagination-link" aria-label="Continuing on the Dask Data structures">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Continuing on the Dask Data structures</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb71" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a><span class="co">  enabled: false</span></span>
+<span id="cb71-4"><a href="#cb71-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb71-5"><a href="#cb71-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-6"><a href="#cb71-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Apache Kafka</span></span>
+<span id="cb71-7"><a href="#cb71-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-8"><a href="#cb71-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction to Message Streaming</span></span>
+<span id="cb71-9"><a href="#cb71-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-10"><a href="#cb71-10" aria-hidden="true" tabindex="-1"></a>Modern applications increasingly rely on the ability to ingest, route, and process continuous data streams in real time — sensor networks, financial transactions, application event logs, IoT devices, and more. A dedicated **message broker** is often placed at the centre of such architectures.</span>
+<span id="cb71-11"><a href="#cb71-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-12"><a href="#cb71-12" aria-hidden="true" tabindex="-1"></a>**Apache Kafka** is a distributed event streaming platform originally developed at LinkedIn (2011) and later open-sourced through the Apache Software Foundation. It provides:</span>
+<span id="cb71-13"><a href="#cb71-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-14"><a href="#cb71-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**High-throughput, low-latency** publish/subscribe messaging.</span>
+<span id="cb71-15"><a href="#cb71-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Durable, fault-tolerant** storage of streams as ordered logs.</span>
+<span id="cb71-16"><a href="#cb71-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Scalable** partitioned architecture that distributes load across many brokers.</span>
+<span id="cb71-17"><a href="#cb71-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-18"><a href="#cb71-18" aria-hidden="true" tabindex="-1"></a><span class="fu">### Core Concepts</span></span>
+<span id="cb71-19"><a href="#cb71-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-20"><a href="#cb71-20" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Concept <span class="pp">|</span> Description <span class="pp">|</span></span>
+<span id="cb71-21"><a href="#cb71-21" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb71-22"><a href="#cb71-22" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Topic** <span class="pp">|</span> A named channel to which producers publish and from which consumers read. Topics are partitioned across broker nodes. <span class="pp">|</span></span>
+<span id="cb71-23"><a href="#cb71-23" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Partition** <span class="pp">|</span> An ordered, immutable log of records within a topic. New messages are always appended. <span class="pp">|</span></span>
+<span id="cb71-24"><a href="#cb71-24" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Offset** <span class="pp">|</span> The position of a message within a partition. Consumers track their reading offset. <span class="pp">|</span></span>
+<span id="cb71-25"><a href="#cb71-25" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Producer** <span class="pp">|</span> An application that publishes messages to Kafka topics. <span class="pp">|</span></span>
+<span id="cb71-26"><a href="#cb71-26" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Consumer** <span class="pp">|</span> An application that subscribes to topics and reads messages. <span class="pp">|</span></span>
+<span id="cb71-27"><a href="#cb71-27" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Consumer Group** <span class="pp">|</span> A set of consumers that cooperate to read from a topic; each partition is assigned to exactly one consumer in the group. <span class="pp">|</span></span>
+<span id="cb71-28"><a href="#cb71-28" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Broker** <span class="pp">|</span> A Kafka server that stores and serves partitions. A cluster has multiple brokers for fault tolerance. <span class="pp">|</span></span>
+<span id="cb71-29"><a href="#cb71-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-30"><a href="#cb71-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## Kafka Architecture</span></span>
+<span id="cb71-31"><a href="#cb71-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-32"><a href="#cb71-32" aria-hidden="true" tabindex="-1"></a><span class="fu">### Brokers and Clusters</span></span>
+<span id="cb71-33"><a href="#cb71-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-34"><a href="#cb71-34" aria-hidden="true" tabindex="-1"></a>A Kafka cluster consists of multiple **brokers** — server processes that store and serve partitions. Topics are spread across brokers; each partition lives on exactly one broker at a time (its **leader**), with additional **follower** copies on other brokers for fault tolerance.</span>
+<span id="cb71-35"><a href="#cb71-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-36"><a href="#cb71-36" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb71-37"><a href="#cb71-37" aria-hidden="true" tabindex="-1"></a><span class="in">Topic "events" — 3 partitions, replication factor 2:</span></span>
+<span id="cb71-38"><a href="#cb71-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-39"><a href="#cb71-39" aria-hidden="true" tabindex="-1"></a><span class="in">  Broker 1         Broker 2         Broker 3</span></span>
+<span id="cb71-40"><a href="#cb71-40" aria-hidden="true" tabindex="-1"></a><span class="in">  ──────────────   ──────────────   ──────────────</span></span>
+<span id="cb71-41"><a href="#cb71-41" aria-hidden="true" tabindex="-1"></a><span class="in">  Partition 0 (L)  Partition 0 (F)</span></span>
+<span id="cb71-42"><a href="#cb71-42" aria-hidden="true" tabindex="-1"></a><span class="in">                   Partition 1 (L)  Partition 1 (F)</span></span>
+<span id="cb71-43"><a href="#cb71-43" aria-hidden="true" tabindex="-1"></a><span class="in">  Partition 2 (F)                   Partition 2 (L)</span></span>
+<span id="cb71-44"><a href="#cb71-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-45"><a href="#cb71-45" aria-hidden="true" tabindex="-1"></a><span class="in">  L = Leader  (handles all reads and writes for that partition)</span></span>
+<span id="cb71-46"><a href="#cb71-46" aria-hidden="true" tabindex="-1"></a><span class="in">  F = Follower (replicates the leader; takes over if leader fails)</span></span>
+<span id="cb71-47"><a href="#cb71-47" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb71-48"><a href="#cb71-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-49"><a href="#cb71-49" aria-hidden="true" tabindex="-1"></a>The **replication factor** (number of copies of each partition) is set per topic. A replication factor of 3 tolerates 2 broker failures without data loss.</span>
+<span id="cb71-50"><a href="#cb71-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-51"><a href="#cb71-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### Consumer Offset Management</span></span>
+<span id="cb71-52"><a href="#cb71-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-53"><a href="#cb71-53" aria-hidden="true" tabindex="-1"></a>Each consumer tracks its position in a partition using an **offset** — the sequence number of the last message processed. Offsets are committed back to Kafka so that a consumer can resume after a restart.</span>
+<span id="cb71-54"><a href="#cb71-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-55"><a href="#cb71-55" aria-hidden="true" tabindex="-1"></a>The <span class="in">`auto_offset_reset`</span> parameter controls where a consumer starts when no committed offset exists:</span>
+<span id="cb71-56"><a href="#cb71-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-57"><a href="#cb71-57" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Value <span class="pp">|</span> Behaviour <span class="pp">|</span></span>
+<span id="cb71-58"><a href="#cb71-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb71-59"><a href="#cb71-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`'earliest'`</span> <span class="pp">|</span> Start from the very beginning of the partition log <span class="pp">|</span></span>
+<span id="cb71-60"><a href="#cb71-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`'latest'`</span> <span class="pp">|</span> Start from the next new message (default) <span class="pp">|</span></span>
+<span id="cb71-61"><a href="#cb71-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`'none'`</span> <span class="pp">|</span> Raise an error if no committed offset is found <span class="pp">|</span></span>
+<span id="cb71-62"><a href="#cb71-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-63"><a href="#cb71-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## Delivery Semantics</span></span>
+<span id="cb71-64"><a href="#cb71-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-65"><a href="#cb71-65" aria-hidden="true" tabindex="-1"></a>Kafka provides three delivery guarantees, depending on how producers and consumers are configured:</span>
+<span id="cb71-66"><a href="#cb71-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-67"><a href="#cb71-67" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Semantic <span class="pp">|</span> Description <span class="pp">|</span> Configuration <span class="pp">|</span></span>
+<span id="cb71-68"><a href="#cb71-68" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb71-69"><a href="#cb71-69" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **At-most-once** <span class="pp">|</span> Messages may be lost; never duplicated <span class="pp">|</span> Producer: <span class="in">`acks=0`</span>; Consumer: auto-commit before processing <span class="pp">|</span></span>
+<span id="cb71-70"><a href="#cb71-70" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **At-least-once** <span class="pp">|</span> Messages are never lost; may be delivered more than once <span class="pp">|</span> Producer: <span class="in">`acks=all`</span> + retries; Consumer: commit after processing <span class="pp">|</span></span>
+<span id="cb71-71"><a href="#cb71-71" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Exactly-once** <span class="pp">|</span> Messages processed exactly once — no loss, no duplication <span class="pp">|</span> Transactional producer + idempotent consumer; requires Kafka ≥ 0.11 <span class="pp">|</span></span>
+<span id="cb71-72"><a href="#cb71-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-73"><a href="#cb71-73" aria-hidden="true" tabindex="-1"></a>Most applications use **at-least-once** semantics and make their processing logic **idempotent** (safe to re-execute with the same message). True exactly-once requires transactional APIs and is more complex to implement.</span>
+<span id="cb71-74"><a href="#cb71-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-75"><a href="#cb71-75" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb71-76"><a href="#cb71-76" aria-hidden="true" tabindex="-1"></a>Delivery semantics are a key concern when Kafka feeds a Spark Structured Streaming pipeline (as shown in the <span class="in">`KafkaSpark_StructuredStreaming`</span> notebook). Spark's checkpointing mechanism can achieve end-to-end exactly-once semantics when combined with an idempotent sink and Kafka's transactional API.</span>
+<span id="cb71-77"><a href="#cb71-77" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb71-78"><a href="#cb71-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-79"><a href="#cb71-79" aria-hidden="true" tabindex="-1"></a><span class="fu">### Pub/Sub Decoupling</span></span>
+<span id="cb71-80"><a href="#cb71-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-81"><a href="#cb71-81" aria-hidden="true" tabindex="-1"></a>A key architectural feature of Kafka is the **complete decoupling** of producers and consumers. A producer does not need to know which consumers exist; a consumer does not need to know which producers are publishing. Messages are written to the topic log and remain available for consumption according to retention policy (time- or size-based), not according to whether a consumer has read them.</span>
+<span id="cb71-82"><a href="#cb71-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-83"><a href="#cb71-83" aria-hidden="true" tabindex="-1"></a>This enables flexible, scalable architectures: new consumers can read from the beginning of a topic log without affecting producers or other consumers.</span>
+<span id="cb71-84"><a href="#cb71-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-85"><a href="#cb71-85" aria-hidden="true" tabindex="-1"></a><span class="fu">### Partitions and Keys</span></span>
+<span id="cb71-86"><a href="#cb71-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-87"><a href="#cb71-87" aria-hidden="true" tabindex="-1"></a>When a producer sends a message without a key, Kafka distributes messages across partitions using a round-robin (or load-based) strategy. When a message includes a **key**, Kafka uses a hash of the key to consistently route all messages with the same key to the same partition — guaranteeing ordering within that group.</span>
+<span id="cb71-88"><a href="#cb71-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-89"><a href="#cb71-89" aria-hidden="true" tabindex="-1"></a>Partitioning provides both **scalability** (different partitions can be processed by different consumers in parallel) and **ordering guarantees** (within a partition).</span>
+<span id="cb71-90"><a href="#cb71-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-91"><a href="#cb71-91" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb71-92"><a href="#cb71-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-93"><a href="#cb71-93" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hands-on: Apache Kafka</span></span>
+<span id="cb71-94"><a href="#cb71-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-95"><a href="#cb71-95" aria-hidden="true" tabindex="-1"></a>The following notebooks use a Kafka cluster deployed via Docker Compose. The Kafka broker is accessible at <span class="in">`kafka-broker:9092`</span>.</span>
+<span id="cb71-96"><a href="#cb71-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-97"><a href="#cb71-97" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Note:** These notebooks require the Docker cluster to be running and are not executed during book rendering.</span></span>
+<span id="cb71-98"><a href="#cb71-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-99"><a href="#cb71-99" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb71-100"><a href="#cb71-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-101"><a href="#cb71-101" aria-hidden="true" tabindex="-1"></a><span class="fu">### Producer</span></span>
+<span id="cb71-102"><a href="#cb71-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-103"><a href="#cb71-103" aria-hidden="true" tabindex="-1"></a>{{&lt; include ../kafka/notebooks/Producer.qmd &gt;}}</span>
+<span id="cb71-104"><a href="#cb71-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-105"><a href="#cb71-105" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb71-106"><a href="#cb71-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-107"><a href="#cb71-107" aria-hidden="true" tabindex="-1"></a><span class="fu">### Consumer</span></span>
+<span id="cb71-108"><a href="#cb71-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-109"><a href="#cb71-109" aria-hidden="true" tabindex="-1"></a>{{&lt; include ../kafka/notebooks/Consumer.qmd &gt;}}</span>
+<span id="cb71-110"><a href="#cb71-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-111"><a href="#cb71-111" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb71-112"><a href="#cb71-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-113"><a href="#cb71-113" aria-hidden="true" tabindex="-1"></a><span class="fu">### Consumer Groups</span></span>
+<span id="cb71-114"><a href="#cb71-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-115"><a href="#cb71-115" aria-hidden="true" tabindex="-1"></a>{{&lt; include ../kafka/notebooks/ConsumerGroup.qmd &gt;}}</span>
+<span id="cb71-116"><a href="#cb71-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-117"><a href="#cb71-117" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb71-118"><a href="#cb71-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-119"><a href="#cb71-119" aria-hidden="true" tabindex="-1"></a><span class="fu">### Kafka and Spark Structured Streaming</span></span>
+<span id="cb71-120"><a href="#cb71-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-121"><a href="#cb71-121" aria-hidden="true" tabindex="-1"></a>The final hands-on section (<span class="in">`KafkaSpark_StructuredStreaming`</span>) demonstrates Kafka acting as both a **Source** and a **Sink** for a Spark Structured Streaming pipeline. This connects the Source/Sink abstraction introduced in <span class="co">[</span><span class="ot">Apache Spark</span><span class="co">](10-spark.qmd)</span> with Kafka's pub/sub model:</span>
+<span id="cb71-122"><a href="#cb71-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-123"><a href="#cb71-123" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Source**: Spark reads a stream of JSON messages from a Kafka topic using <span class="in">`.readStream.format("kafka")`</span></span>
+<span id="cb71-124"><a href="#cb71-124" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Transform**: Spark parses, filters, and aggregates the stream using DataFrame operations</span>
+<span id="cb71-125"><a href="#cb71-125" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sink**: results are written back to a Kafka topic or to the console using <span class="in">`.writeStream`</span></span>
+<span id="cb71-126"><a href="#cb71-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-127"><a href="#cb71-127" aria-hidden="true" tabindex="-1"></a>Achieving end-to-end **exactly-once** semantics requires: (1) Kafka's transactional producer, (2) Spark checkpointing, and (3) an idempotent sink.</span>
+<span id="cb71-128"><a href="#cb71-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-129"><a href="#cb71-129" aria-hidden="true" tabindex="-1"></a>{{&lt; include ../kafka/notebooks/KafkaSpark_StructuredStreaming.qmd &gt;}}</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

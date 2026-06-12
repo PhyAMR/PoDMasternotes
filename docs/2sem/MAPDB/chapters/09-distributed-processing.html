@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>10&nbsp; Distributed Processing and MapReduce – Notes of the course Manegement and Anlaisys of Physical Datasets Moudlue B</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/10-spark.html" rel="next">
+<link href="../chapters/08-processing-intro.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/08-processing-intro.html">Processing</a></li><li class="breadcrumb-item"><a href="../chapters/09-distributed-processing.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Distributed Processing and MapReduce</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Notes of the course Manegement and Anlaisys of Physical Datasets Moudlue B</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Management</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Data Manegment</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-datasets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">From Data to Datasets</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-storage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Storage</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-reliability-security.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reliability and Security</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-file-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">File System</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-distributed-file-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Distributed File System</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/MySQL.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">RDBMS - Hands on MySQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-nosql-databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">NoSQL Databases</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Processing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-processing-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Processing and Concurrency</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-distributed-processing.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Distributed Processing and MapReduce</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-spark.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Lecture 3: Stream processing with Spark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Continuing on the Dask Data structures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-kafka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Kafka Consumer</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#scaling-processing" id="toc-scaling-processing" class="nav-link active" data-scroll-target="#scaling-processing"><span class="header-section-number">10.1</span> Scaling Processing</a></li>
+  <li><a href="#parallel-computing-architectures" id="toc-parallel-computing-architectures" class="nav-link" data-scroll-target="#parallel-computing-architectures"><span class="header-section-number">10.2</span> Parallel Computing Architectures</a>
+  <ul class="collapse">
+  <li><a href="#shared-memory-multiprocessor-smp" id="toc-shared-memory-multiprocessor-smp" class="nav-link" data-scroll-target="#shared-memory-multiprocessor-smp"><span class="header-section-number">10.2.1</span> Shared Memory Multiprocessor (SMP)</a></li>
+  <li><a href="#distributed-memory-multiprocessor-cluster" id="toc-distributed-memory-multiprocessor-cluster" class="nav-link" data-scroll-target="#distributed-memory-multiprocessor-cluster"><span class="header-section-number">10.2.2</span> Distributed Memory Multiprocessor (Cluster)</a></li>
+  </ul></li>
+  <li><a href="#distributed-computing-clusters" id="toc-distributed-computing-clusters" class="nav-link" data-scroll-target="#distributed-computing-clusters"><span class="header-section-number">10.3</span> Distributed Computing: Clusters</a>
+  <ul class="collapse">
+  <li><a href="#supercomputers-as-clusters" id="toc-supercomputers-as-clusters" class="nav-link" data-scroll-target="#supercomputers-as-clusters"><span class="header-section-number">10.3.1</span> Supercomputers as Clusters</a></li>
+  </ul></li>
+  <li><a href="#batch-systems" id="toc-batch-systems" class="nav-link" data-scroll-target="#batch-systems"><span class="header-section-number">10.4</span> Batch Systems</a></li>
+  <li><a href="#programming-frameworks-for-parallel-distributed-systems" id="toc-programming-frameworks-for-parallel-distributed-systems" class="nav-link" data-scroll-target="#programming-frameworks-for-parallel-distributed-systems"><span class="header-section-number">10.5</span> Programming Frameworks for Parallel-Distributed Systems</a></li>
+  <li><a href="#big-data-and-the-3-vs" id="toc-big-data-and-the-3-vs" class="nav-link" data-scroll-target="#big-data-and-the-3-vs"><span class="header-section-number">10.6</span> Big Data and the 3 Vs</a></li>
+  <li><a href="#hadoop" id="toc-hadoop" class="nav-link" data-scroll-target="#hadoop"><span class="header-section-number">10.7</span> Hadoop</a></li>
+  <li><a href="#hdfs-a-reminder" id="toc-hdfs-a-reminder" class="nav-link" data-scroll-target="#hdfs-a-reminder"><span class="header-section-number">10.8</span> HDFS: A Reminder</a></li>
+  <li><a href="#the-mapreduce-paradigm" id="toc-the-mapreduce-paradigm" class="nav-link" data-scroll-target="#the-mapreduce-paradigm"><span class="header-section-number">10.9</span> The MapReduce Paradigm</a>
+  <ul class="collapse">
+  <li><a href="#map" id="toc-map" class="nav-link" data-scroll-target="#map"><span class="header-section-number">10.9.1</span> 1. Map</a></li>
+  <li><a href="#reduce" id="toc-reduce" class="nav-link" data-scroll-target="#reduce"><span class="header-section-number">10.9.2</span> 2. Reduce</a></li>
+  <li><a href="#word-count-example" id="toc-word-count-example" class="nav-link" data-scroll-target="#word-count-example"><span class="header-section-number">10.9.3</span> Word Count Example</a></li>
+  </ul></li>
+  <li><a href="#mapreduce-in-hadoop" id="toc-mapreduce-in-hadoop" class="nav-link" data-scroll-target="#mapreduce-in-hadoop"><span class="header-section-number">10.10</span> MapReduce in Hadoop</a>
+  <ul class="collapse">
+  <li><a href="#map-phase" id="toc-map-phase" class="nav-link" data-scroll-target="#map-phase"><span class="header-section-number">10.10.1</span> Map Phase</a></li>
+  <li><a href="#reduce-phase" id="toc-reduce-phase" class="nav-link" data-scroll-target="#reduce-phase"><span class="header-section-number">10.10.2</span> Reduce Phase</a></li>
+  </ul></li>
+  <li><a href="#yarn-yet-another-resource-negotiator" id="toc-yarn-yet-another-resource-negotiator" class="nav-link" data-scroll-target="#yarn-yet-another-resource-negotiator"><span class="header-section-number">10.11</span> YARN: Yet Another Resource Negotiator</a></li>
+  <li><a href="#hadoop-higher-level-abstractions" id="toc-hadoop-higher-level-abstractions" class="nav-link" data-scroll-target="#hadoop-higher-level-abstractions"><span class="header-section-number">10.12</span> Hadoop Higher-Level Abstractions</a></li>
+  <li><a href="#the-hadoop-ecosystem" id="toc-the-hadoop-ecosystem" class="nav-link" data-scroll-target="#the-hadoop-ecosystem"><span class="header-section-number">10.13</span> The Hadoop Ecosystem</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/08-processing-intro.html">Processing</a></li><li class="breadcrumb-item"><a href="../chapters/09-distributed-processing.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Distributed Processing and MapReduce</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Distributed Processing and MapReduce</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="scaling-processing" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="scaling-processing"><span class="header-section-number">10.1</span> Scaling Processing</h2>
+<p>As discussed in the previous chapter, processing performance can scale with the number of processing units, provided that the computation is at least partially parallelisable. Speedup studies typically confirm that wall-time scales favourably with <span class="math inline">\(n\)</span> for heavily data-parallel tasks (SPMD-style).</p>
+<p>The natural next step is to tackle very large, possibly distributed, datasets by increasing <span class="math inline">\(n\)</span> beyond what a single machine can offer. Two fundamental strategies exist:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Strategy</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Vertical scaling (Scale Up)</strong></td>
+<td>Increase the capacity or performance of existing hardware — buy a faster machine.</td>
+</tr>
+<tr class="even">
+<td><strong>Horizontal scaling (Scale Out)</strong></td>
+<td>Add more machines — buy more commodity hardware.</td>
+</tr>
+</tbody>
+</table>
+<p>Horizontal scaling is almost always preferred for large-scale data processing: commodity hardware is cost-effective, and the system can grow incrementally.</p>
+</section>
+<section id="parallel-computing-architectures" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="parallel-computing-architectures"><span class="header-section-number">10.2</span> Parallel Computing Architectures</h2>
+<p>Different memory-sharing architectures lead to different trade-offs in performance and scalability.</p>
+<section id="shared-memory-multiprocessor-smp" class="level3" data-number="10.2.1">
+<h3 data-number="10.2.1" class="anchored" data-anchor-id="shared-memory-multiprocessor-smp"><span class="header-section-number">10.2.1</span> Shared Memory Multiprocessor (SMP)</h3>
+<p>In a <strong>Shared Memory Multiprocessor</strong>, a set of CPUs share a common memory space connected by a high-speed bus or fabric.</p>
+<pre><code>   CPU      CPU
+    |        |
+  NETWORK/BUS
+    |        |
+  SHARED MEMORY
+    |        |
+   CPU      CPU</code></pre>
+<ul>
+<li>All modern workstations (including smartphones) are SMP systems.</li>
+<li>Memory access is uniform and transparent to the programmer.</li>
+<li>Scaling this architecture to a very large number of processors is expensive and technically demanding.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+NUMA: Non-Uniform Memory Access
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Multi-socket servers partition memory into <strong>NUMA nodes</strong> — one per CPU socket, each with local RAM. The <code>lscpu</code> output for a dual-socket server shows <code>NUMA node(s): 2</code>.</p>
+<p>Accessing local memory (same NUMA node as the running core) is significantly faster than accessing remote memory (on the other socket). The OS and job schedulers can pin processes to specific NUMA nodes with <code>numactl</code>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">numactl</span> <span class="at">--cpunodebind</span><span class="op">=</span>0 <span class="at">--membind</span><span class="op">=</span>0 python3 my_script.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>NUMA topology is a key consideration when scaling shared-memory parallelism beyond a single socket.</p>
+</div>
+</div>
+</section>
+<section id="distributed-memory-multiprocessor-cluster" class="level3" data-number="10.2.2">
+<h3 data-number="10.2.2" class="anchored" data-anchor-id="distributed-memory-multiprocessor-cluster"><span class="header-section-number">10.2.2</span> Distributed Memory Multiprocessor (Cluster)</h3>
+<p>In a <strong>cluster</strong>, each processor has its own local memory — a complete unit called a <strong>node</strong>. All nodes are connected via a high-speed network.</p>
+<pre><code>  MEM.    MEM.
+   |       |
+  CPU     CPU
+    \     /
+   NETWORK/BUS
+    /     \
+  CPU     CPU
+   |       |
+  MEM.    MEM.</code></pre>
+<ul>
+<li>Good overall performance even from commodity hardware.</li>
+<li>The complexity lies in the communication across nodes.</li>
+<li>Scales horizontally to thousands or millions of nodes.</li>
+</ul>
+</section>
+</section>
+<section id="distributed-computing-clusters" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="distributed-computing-clusters"><span class="header-section-number">10.3</span> Distributed Computing: Clusters</h2>
+<p>A cluster distributes the processing workload across multiple networked nodes, exposing itself to users as a single virtual machine.</p>
+<p>Typical cluster components:</p>
+<ul>
+<li><strong>Head node</strong> — the access point for users; distributes workload to compute nodes.</li>
+<li><strong>Computing nodes (CN)</strong> — where the actual processing runs; usually invisible to users.</li>
+<li><strong>Interactive nodes</strong> — accessible to users as standard computers for testing, storage access, or launching jobs.</li>
+<li><strong>Specialised nodes</strong> — nodes equipped with specific hardware (GPUs, large RAM, fast NVMe) for particular workloads.</li>
+</ul>
+<section id="supercomputers-as-clusters" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="supercomputers-as-clusters"><span class="header-section-number">10.3.1</span> Supercomputers as Clusters</h3>
+<p>Most of today’s supercomputers are clusters:</p>
+<blockquote class="blockquote">
+<p><strong>CINECA LEONARDO</strong> (world’s #10 in November 2025) - 1 536 nodes with 2× Intel Sapphire Rapids (56-core CPUs) - 3 456 nodes with 1× Intel Xeon 8358 (32-core CPU) and 4× NVIDIA Ampere GPUs</p>
+</blockquote>
+<p>On the opposite extreme, clusters of Raspberry Pi boards or repurposed desktop PCs (<strong>COTS — Commodity Off-The-Shelf</strong> hardware) can efficiently tackle a wide range of parallel problems through <strong>opportunistic computing</strong> (using shared resources when they are idle).</p>
+</section>
+</section>
+<section id="batch-systems" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="batch-systems"><span class="header-section-number">10.4</span> Batch Systems</h2>
+<p>Users typically submit jobs to a cluster through a <strong>batch system</strong> rather than logging in interactively:</p>
+<ol type="1">
+<li>A job consists of an executable, optional arguments, and resource requirements (CPUs, memory, walltime, etc.).</li>
+<li>The batch scheduler accepts the job and places it in a queue.</li>
+<li>The scheduler selects which job runs next based on priority, previous resource usage, and availability.</li>
+<li>The job’s tasks are dispatched to computing nodes for execution.</li>
+</ol>
+<p>Popular batch schedulers include <strong>PBS</strong>, <strong>SLURM</strong>, <strong>LSF</strong>, and <strong>HTCondor</strong>. Example HTCondor submission:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> condor_submit my_job.sub</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Submitting</span> job<span class="er">(</span><span class="ex">s</span><span class="kw">)</span><span class="bu">.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">50</span> job<span class="er">(</span><span class="ex">s</span><span class="kw">)</span> <span class="ex">submitted</span> to cluster 5146936.</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> condor_q</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="ex">OWNER</span>     BATCH_NAME  SUBMITTED  DONE  RUN  IDLE  TOTAL  JOB_IDS</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ex">jpazzini</span>  ID:5146936  10/4 17:29   12   25    13     50   5146936.0-49</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>An HTCondor submit file:</p>
+<pre><code>executable              = my_exec
+arguments               = --input input_file_$(ProcId).txt
+transfer_input_files    = input_file_$(ProcId).txt
+log                     = my_job_$(ProcId).log
+error                   = my_job_$(ProcId).err
+output                  = my_job_$(ProcId).out
+request_disk            = 8GB
+request_memory          = 2GB
+queue 50</code></pre>
+</section>
+<section id="programming-frameworks-for-parallel-distributed-systems" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="programming-frameworks-for-parallel-distributed-systems"><span class="header-section-number">10.5</span> Programming Frameworks for Parallel-Distributed Systems</h2>
+<p>Optimising complex tasks for parallel and distributed execution requires knowledge of specific programming standards:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Framework</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>OpenMP</strong></td>
+<td>Parallelisation directives for shared-memory multi-core CPUs on a single node</td>
+</tr>
+<tr class="even">
+<td><strong>MPI</strong> (Message Passing Interface)</td>
+<td>Communication and synchronisation across nodes of a cluster</td>
+</tr>
+<tr class="odd">
+<td><strong>CUDA / HIP</strong></td>
+<td>Vector/matrix processing on NVIDIA and AMD GPUs</td>
+</tr>
+</tbody>
+</table>
+<p>In this course we focus on higher-level, Python-accessible frameworks that abstract away the inner workings of distributed communication — in particular, the <strong>MapReduce</strong> paradigm and its implementations in Hadoop and Spark.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+GPU Computing: Going Further
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This course focuses on CPU-based parallelism and distributed processing. GPU programming (CUDA, OpenCL, HIP, Numba, CuPy) and heterogeneous CPU+GPU architectures are covered in the optional companion course <strong>“Modern Computing for Physics”</strong>, which addresses SIMD/vectorisation, GPU kernel programming, and MPI+GPU hybrid models.</p>
+</div>
+</div>
+<hr>
+</section>
+<section id="big-data-and-the-3-vs" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="big-data-and-the-3-vs"><span class="header-section-number">10.6</span> Big Data and the 3 Vs</h2>
+<p>From the early 2000s, a wave of data-processing innovations emerged, driven largely by technology companies that needed to handle datasets at an unprecedented scale. These are often summarised as <strong>Big Data</strong>, characterised by the three Vs:</p>
+<ul>
+<li><strong>Volume</strong> — datasets at the scale of terabytes, petabytes, or beyond.</li>
+<li><strong>Velocity</strong> — data arriving at high speed (streaming sensors, transactions, logs).</li>
+<li><strong>Variety</strong> — structured, semi-structured, and unstructured data.</li>
+</ul>
+<p>The five key ingredients of a BigData processing stack are:</p>
+<ol type="1">
+<li><strong>APIs / programming language</strong> — the interface developers use.</li>
+<li><strong>Software framework</strong> for distributed processing.</li>
+<li><strong>Cluster orchestrator / scheduler</strong> — resource management.</li>
+<li><strong>Distributed file system (DFS)</strong> — storage layer.</li>
+<li><strong>Computing nodes</strong> — physical or cloud hardware.</li>
+</ol>
+</section>
+<section id="hadoop" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="hadoop"><span class="header-section-number">10.7</span> Hadoop</h2>
+<p><strong>Hadoop</strong> was born in 2006 within Yahoo! and was based on a 2003 Google paper on the Google Distributed File System. It rapidly became the de facto standard for BigData storage and processing.</p>
+<p>Large-scale real-world deployments have included:</p>
+<ul>
+<li><strong>Facebook</strong>: 1 100-node cluster (8 800 cores, ~12 PB storage); 300-node cluster (~3 PB)</li>
+<li><strong>Twitter</strong>: clusters storing over 500 PB, largest with &gt;10 000 nodes</li>
+<li><strong>Yahoo!</strong>: &gt;100 000 CPUs across &gt;40 000 computers</li>
+</ul>
+<p>Hadoop is open source (Apache Foundation), written in Java, and designed to scale horizontally. Its main components are:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Hadoop Common</strong></td>
+<td>Java-based shared libraries and utilities</td>
+</tr>
+<tr class="even">
+<td><strong>HDFS</strong></td>
+<td>Hadoop Distributed File System — storage</td>
+</tr>
+<tr class="odd">
+<td><strong>YARN</strong></td>
+<td>Yet Another Resource Negotiator — cluster manager and scheduler</td>
+</tr>
+<tr class="even">
+<td><strong>Hadoop MapReduce</strong></td>
+<td>Distributed programming model</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="hdfs-a-reminder" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="hdfs-a-reminder"><span class="header-section-number">10.8</span> HDFS: A Reminder</h2>
+<p>HDFS stores data as large blocks distributed across data nodes, with the name node keeping metadata:</p>
+<pre><code>                  Metadata (names, blocks, replicas, …)
+                 ┌─────────────────────────────────────┐
+Client ──────────► Name Node         Secondary Name Node
+                 │                   (checkpoints, backup)
+                 │  Block write
+                 ▼
+          Data Node   Data Node   Data Node   Data Node
+               └──── Replication ─────┘</code></pre>
+<ul>
+<li>The <strong>Name Node</strong> manages the filesystem namespace and metadata.</li>
+<li>The <strong>Secondary Name Node</strong> periodically checkpoints the metadata.</li>
+<li><strong>Data Nodes</strong> store the actual data blocks and replicate them for fault tolerance.</li>
+</ul>
+</section>
+<section id="the-mapreduce-paradigm" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="the-mapreduce-paradigm"><span class="header-section-number">10.9</span> The MapReduce Paradigm</h2>
+<p><strong>MapReduce</strong> is not a programming language, but a <strong>paradigm</strong> for developing distributed algorithms on potentially very large datasets. It decomposes computation into two phases:</p>
+<section id="map" class="level3" data-number="10.9.1">
+<h3 data-number="10.9.1" class="anchored" data-anchor-id="map"><span class="header-section-number">10.9.1</span> 1. Map</h3>
+<p>Split the input data into <code>&lt;key, value&gt;</code> pairs, and apply a user-defined map function to each pair, producing a list of intermediate <code>&lt;key, value&gt;</code> pairs:</p>
+<p><span class="math display">\[
+\text{map}(k_\text{in}, v_\text{in}) \rightarrow \text{list}[(k_1, v_1),\, (k_2, v_2),\, \ldots]
+\]</span></p>
+<p>Each key-value pair is processed <strong>independently</strong>, enabling full data parallelism across the cluster.</p>
+</section>
+<section id="reduce" class="level3" data-number="10.9.2">
+<h3 data-number="10.9.2" class="anchored" data-anchor-id="reduce"><span class="header-section-number">10.9.2</span> 2. Reduce</h3>
+<p>Collect all intermediate pairs with the same key, then apply a user-defined aggregation function to produce a final result:</p>
+<p><span class="math display">\[
+\text{reduce}(\text{list}[(k, v_1), (k, v_2), \ldots]) \rightarrow [(k, v_\text{out})]
+\]</span></p>
+</section>
+<section id="word-count-example" class="level3" data-number="10.9.3">
+<h3 data-number="10.9.3" class="anchored" data-anchor-id="word-count-example"><span class="header-section-number">10.9.3</span> Word Count Example</h3>
+<p>The canonical example: count the occurrences of each word in a text corpus.</p>
+<pre><code>Input: "Car Car River Deer Car Bear"
+
+Map phase:
+  ("Car", 1), ("Car", 1), ("River", 1), ("Deer", 1), ("Car", 1), ("Bear", 1)
+
+Shuffle &amp; Sort (grouping by key):
+  "Bear" → [1]
+  "Car"  → [1, 1, 1]
+  "Deer" → [1]
+  "River"→ [1]
+
+Reduce phase (sum):
+  Bear  → 1
+  Car   → 3
+  Deer  → 1
+  River → 1</code></pre>
+</section>
+</section>
+<section id="mapreduce-in-hadoop" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="mapreduce-in-hadoop"><span class="header-section-number">10.10</span> MapReduce in Hadoop</h2>
+<section id="map-phase" class="level3" data-number="10.10.1">
+<h3 data-number="10.10.1" class="anchored" data-anchor-id="map-phase"><span class="header-section-number">10.10.1</span> Map Phase</h3>
+<p>Data is read from HDFS, partitioned among computing nodes, and sent to each node as a set of key-value pairs. The Map tasks process input records <strong>independently</strong> and write intermediate results to the <strong>local disk</strong> of the node. This <strong>data locality</strong> principle — bringing computation to the data rather than the data to the computation — is central to Hadoop’s performance.</p>
+</section>
+<section id="reduce-phase" class="level3" data-number="10.10.2">
+<h3 data-number="10.10.2" class="anchored" data-anchor-id="reduce-phase"><span class="header-section-number">10.10.2</span> Reduce Phase</h3>
+<p>Once all Map tasks complete, a <strong>shuffle and sort</strong> step groups and transfers the intermediate key-value pairs to the Reduce tasks. The Reduce tasks then apply the aggregation function to each group.</p>
+</section>
+</section>
+<section id="yarn-yet-another-resource-negotiator" class="level2" data-number="10.11">
+<h2 data-number="10.11" class="anchored" data-anchor-id="yarn-yet-another-resource-negotiator"><span class="header-section-number">10.11</span> YARN: Yet Another Resource Negotiator</h2>
+<p>YARN acts as the “operating system” of the Hadoop cluster, managing the scheduling and execution of jobs.</p>
+<p>Key components:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Resource Manager (RM)</strong></td>
+<td>Manages cluster-wide resource allocation; contains the Scheduler and the Application Manager</td>
+</tr>
+<tr class="even">
+<td><strong>Application Master (AM)</strong></td>
+<td>Negotiates resources from the RM and coordinates the execution of a single application</td>
+</tr>
+<tr class="odd">
+<td><strong>Node Manager (NM)</strong></td>
+<td>Manages the user processes on each individual machine</td>
+</tr>
+<tr class="even">
+<td><strong>Container</strong></td>
+<td>A set of allocated resources (memory, CPU) used to run a specific task</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="hadoop-higher-level-abstractions" class="level2" data-number="10.12">
+<h2 data-number="10.12" class="anchored" data-anchor-id="hadoop-higher-level-abstractions"><span class="header-section-number">10.12</span> Hadoop Higher-Level Abstractions</h2>
+<p>Writing raw MapReduce jobs in Java is verbose. Higher-level tools provide more accessible interfaces:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tool</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Pig</strong></td>
+<td>High-level scripting language translated into MapReduce programs (Yahoo!, latest release 2017)</td>
+</tr>
+<tr class="even">
+<td><strong>Hive</strong></td>
+<td>SQL-like query language (HiveQL) for data stored in HDFS (Facebook/Netflix)</td>
+</tr>
+<tr class="odd">
+<td><strong>Oozie</strong></td>
+<td>Workflow scheduler for chaining multiple MapReduce jobs</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="the-hadoop-ecosystem" class="level2" data-number="10.13">
+<h2 data-number="10.13" class="anchored" data-anchor-id="the-hadoop-ecosystem"><span class="header-section-number">10.13</span> The Hadoop Ecosystem</h2>
+<p>Hadoop grew into a rich ecosystem covering the full BigData stack:</p>
+<ul>
+<li><strong>APIs / programming language</strong>: Pig, Hive, custom Java/Python</li>
+<li><strong>Distributed processing framework</strong>: Hadoop MapReduce</li>
+<li><strong>Cluster orchestrator</strong>: YARN</li>
+<li><strong>Distributed file system</strong>: HDFS</li>
+</ul>
+<p>The broader BigData landscape includes many additional tools (Spark, Kafka, Cassandra, HBase, etc.) that either complement or replace individual components of the Hadoop stack depending on the use case.</p>
+<p>The full BigData stack can be visualised as five layers, with Hadoop occupying all four lower layers and higher-level tools sitting on top:</p>
+<pre><code>┌────────────────────────────────────────────────────────────────┐
+│  APIs / Languages    │ Pig · Hive · HiveQL · custom Java/Python │
+├──────────────────────┼─────────────────────────────────────────┤
+│  Processing          │ Hadoop MapReduce · Apache Spark · Storm  │
+├──────────────────────┼─────────────────────────────────────────┤
+│  Cluster Scheduler   │ YARN · Mesos · Kubernetes                │
+├──────────────────────┼─────────────────────────────────────────┤
+│  Distributed FS      │ HDFS · Amazon S3 · Azure Data Lake       │
+├──────────────────────┼─────────────────────────────────────────┤
+│  Computing Hardware  │ Commodity nodes · Cloud VMs · Bare metal │
+└────────────────────────────────────────────────────────────────┘</code></pre>
+<p>Beyond this core stack, the broader ecosystem includes: <strong>Kafka</strong> (streaming), <strong>HBase</strong> / <strong>Cassandra</strong> (wide-column NoSQL), <strong>ZooKeeper</strong> (distributed coordination), <strong>Sqoop</strong> (RDBMS ↔︎ HDFS transfer), <strong>Oozie</strong> (workflow scheduling), and <strong>Mahout</strong> (distributed machine learning).</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/08-processing-intro.html" class="pagination-link" aria-label="Processing and Concurrency">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Processing and Concurrency</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/10-spark.html" class="pagination-link" aria-label="Lecture 3: Stream processing with Spark">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Lecture 3: Stream processing with Spark</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb9" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">  enabled: false</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Distributed Processing and MapReduce</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">## Scaling Processing</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>As discussed in the previous chapter, processing performance can scale with the number of processing units, provided that the computation is at least partially parallelisable. Speedup studies typically confirm that wall-time scales favourably with $n$ for heavily data-parallel tasks (SPMD-style).</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>The natural next step is to tackle very large, possibly distributed, datasets by increasing $n$ beyond what a single machine can offer. Two fundamental strategies exist:</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Strategy <span class="pp">|</span> Description <span class="pp">|</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Vertical scaling (Scale Up)** <span class="pp">|</span> Increase the capacity or performance of existing hardware — buy a faster machine. <span class="pp">|</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Horizontal scaling (Scale Out)** <span class="pp">|</span> Add more machines — buy more commodity hardware. <span class="pp">|</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>Horizontal scaling is almost always preferred for large-scale data processing: commodity hardware is cost-effective, and the system can grow incrementally.</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="fu">## Parallel Computing Architectures</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>Different memory-sharing architectures lead to different trade-offs in performance and scalability.</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="fu">### Shared Memory Multiprocessor (SMP)</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>In a **Shared Memory Multiprocessor**, a set of CPUs share a common memory space connected by a high-speed bus or fabric.</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="in">   CPU      CPU</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="in">    |        |</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="in">  NETWORK/BUS</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="in">    |        |</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="in">  SHARED MEMORY</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="in">    |        |</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a><span class="in">   CPU      CPU</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>All modern workstations (including smartphones) are SMP systems.</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Memory access is uniform and transparent to the programmer.</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Scaling this architecture to a very large number of processors is expensive and technically demanding.</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## NUMA: Non-Uniform Memory Access</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>Multi-socket servers partition memory into **NUMA nodes** — one per CPU socket, each with local RAM. The <span class="in">`lscpu`</span> output for a dual-socket server shows <span class="in">`NUMA node(s): 2`</span>.</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>Accessing local memory (same NUMA node as the running core) is significantly faster than accessing remote memory (on the other socket). The OS and job schedulers can pin processes to specific NUMA nodes with <span class="in">`numactl`</span>:</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a><span class="ex">numactl</span> <span class="at">--cpunodebind</span><span class="op">=</span>0 <span class="at">--membind</span><span class="op">=</span>0 python3 my_script.py</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>NUMA topology is a key consideration when scaling shared-memory parallelism beyond a single socket.</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="fu">### Distributed Memory Multiprocessor (Cluster)</span></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>In a **cluster**, each processor has its own local memory — a complete unit called a **node**. All nodes are connected via a high-speed network.</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="in">  MEM.    MEM.</span></span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a><span class="in">   |       |</span></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a><span class="in">  CPU     CPU</span></span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a><span class="in">    \     /</span></span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a><span class="in">   NETWORK/BUS</span></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a><span class="in">    /     \</span></span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a><span class="in">  CPU     CPU</span></span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a><span class="in">   |       |</span></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a><span class="in">  MEM.    MEM.</span></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Good overall performance even from commodity hardware.</span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The complexity lies in the communication across nodes.</span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Scales horizontally to thousands or millions of nodes.</span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a><span class="fu">## Distributed Computing: Clusters</span></span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a>A cluster distributes the processing workload across multiple networked nodes, exposing itself to users as a single virtual machine.</span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a>Typical cluster components:</span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Head node** — the access point for users; distributes workload to compute nodes.</span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Computing nodes (CN)** — where the actual processing runs; usually invisible to users.</span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Interactive nodes** — accessible to users as standard computers for testing, storage access, or launching jobs.</span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Specialised nodes** — nodes equipped with specific hardware (GPUs, large RAM, fast NVMe) for particular workloads.</span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a><span class="fu">### Supercomputers as Clusters</span></span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>Most of today's supercomputers are clusters:</span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **CINECA LEONARDO** (world's </span><span class="sc">\#</span><span class="at">10 in November 2025)</span></span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; - 1 536 nodes with 2× Intel Sapphire Rapids (56-core CPUs)</span></span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; - 3 456 nodes with 1× Intel Xeon 8358 (32-core CPU) and 4× NVIDIA Ampere GPUs</span></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>On the opposite extreme, clusters of Raspberry Pi boards or repurposed desktop PCs (**COTS — Commodity Off-The-Shelf** hardware) can efficiently tackle a wide range of parallel problems through **opportunistic computing** (using shared resources when they are idle).</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a><span class="fu">## Batch Systems</span></span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>Users typically submit jobs to a cluster through a **batch system** rather than logging in interactively:</span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>A job consists of an executable, optional arguments, and resource requirements (CPUs, memory, walltime, etc.).</span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>The batch scheduler accepts the job and places it in a queue.</span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>The scheduler selects which job runs next based on priority, previous resource usage, and availability.</span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>The job's tasks are dispatched to computing nodes for execution.</span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a>Popular batch schedulers include **PBS**, **SLURM**, **LSF**, and **HTCondor**. Example HTCondor submission:</span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> condor_submit my_job.sub</span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a><span class="ex">Submitting</span> job<span class="er">(</span><span class="ex">s</span><span class="kw">)</span><span class="bu">.</span></span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a><span class="ex">50</span> job<span class="er">(</span><span class="ex">s</span><span class="kw">)</span> <span class="ex">submitted</span> to cluster 5146936.</span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-113"><a href="#cb9-113" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> condor_q</span>
+<span id="cb9-114"><a href="#cb9-114" aria-hidden="true" tabindex="-1"></a><span class="ex">OWNER</span>     BATCH_NAME  SUBMITTED  DONE  RUN  IDLE  TOTAL  JOB_IDS</span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a><span class="ex">jpazzini</span>  ID:5146936  10/4 17:29   12   25    13     50   5146936.0-49</span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a>An HTCondor submit file:</span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a><span class="in">executable              = my_exec</span></span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a><span class="in">arguments               = --input input_file_$(ProcId).txt</span></span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a><span class="in">transfer_input_files    = input_file_$(ProcId).txt</span></span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a><span class="in">log                     = my_job_$(ProcId).log</span></span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a><span class="in">error                   = my_job_$(ProcId).err</span></span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a><span class="in">output                  = my_job_$(ProcId).out</span></span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a><span class="in">request_disk            = 8GB</span></span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a><span class="in">request_memory          = 2GB</span></span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a><span class="in">queue 50</span></span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a><span class="fu">## Programming Frameworks for Parallel-Distributed Systems</span></span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a>Optimising complex tasks for parallel and distributed execution requires knowledge of specific programming standards:</span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Framework <span class="pp">|</span> Purpose <span class="pp">|</span></span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **OpenMP** <span class="pp">|</span> Parallelisation directives for shared-memory multi-core CPUs on a single node <span class="pp">|</span></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **MPI** (Message Passing Interface) <span class="pp">|</span> Communication and synchronisation across nodes of a cluster <span class="pp">|</span></span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **CUDA / HIP** <span class="pp">|</span> Vector/matrix processing on NVIDIA and AMD GPUs <span class="pp">|</span></span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a>In this course we focus on higher-level, Python-accessible frameworks that abstract away the inner workings of distributed communication — in particular, the **MapReduce** paradigm and its implementations in Hadoop and Spark.</span>
+<span id="cb9-143"><a href="#cb9-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-144"><a href="#cb9-144" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb9-145"><a href="#cb9-145" aria-hidden="true" tabindex="-1"></a><span class="fu">## GPU Computing: Going Further</span></span>
+<span id="cb9-146"><a href="#cb9-146" aria-hidden="true" tabindex="-1"></a>This course focuses on CPU-based parallelism and distributed processing. GPU programming (CUDA, OpenCL, HIP, Numba, CuPy) and heterogeneous CPU+GPU architectures are covered in the optional companion course **"Modern Computing for Physics"**, which addresses SIMD/vectorisation, GPU kernel programming, and MPI+GPU hybrid models.</span>
+<span id="cb9-147"><a href="#cb9-147" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-148"><a href="#cb9-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-149"><a href="#cb9-149" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb9-150"><a href="#cb9-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-151"><a href="#cb9-151" aria-hidden="true" tabindex="-1"></a><span class="fu">## Big Data and the 3 Vs</span></span>
+<span id="cb9-152"><a href="#cb9-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-153"><a href="#cb9-153" aria-hidden="true" tabindex="-1"></a>From the early 2000s, a wave of data-processing innovations emerged, driven largely by technology companies that needed to handle datasets at an unprecedented scale. These are often summarised as **Big Data**, characterised by the three Vs:</span>
+<span id="cb9-154"><a href="#cb9-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-155"><a href="#cb9-155" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Volume** — datasets at the scale of terabytes, petabytes, or beyond.</span>
+<span id="cb9-156"><a href="#cb9-156" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Velocity** — data arriving at high speed (streaming sensors, transactions, logs).</span>
+<span id="cb9-157"><a href="#cb9-157" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Variety** — structured, semi-structured, and unstructured data.</span>
+<span id="cb9-158"><a href="#cb9-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-159"><a href="#cb9-159" aria-hidden="true" tabindex="-1"></a>The five key ingredients of a BigData processing stack are:</span>
+<span id="cb9-160"><a href="#cb9-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-161"><a href="#cb9-161" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**APIs / programming language** — the interface developers use.</span>
+<span id="cb9-162"><a href="#cb9-162" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Software framework** for distributed processing.</span>
+<span id="cb9-163"><a href="#cb9-163" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Cluster orchestrator / scheduler** — resource management.</span>
+<span id="cb9-164"><a href="#cb9-164" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Distributed file system (DFS)** — storage layer.</span>
+<span id="cb9-165"><a href="#cb9-165" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Computing nodes** — physical or cloud hardware.</span>
+<span id="cb9-166"><a href="#cb9-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-167"><a href="#cb9-167" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hadoop</span></span>
+<span id="cb9-168"><a href="#cb9-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-169"><a href="#cb9-169" aria-hidden="true" tabindex="-1"></a>**Hadoop** was born in 2006 within Yahoo! and was based on a 2003 Google paper on the Google Distributed File System. It rapidly became the de facto standard for BigData storage and processing.</span>
+<span id="cb9-170"><a href="#cb9-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-171"><a href="#cb9-171" aria-hidden="true" tabindex="-1"></a>Large-scale real-world deployments have included:</span>
+<span id="cb9-172"><a href="#cb9-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-173"><a href="#cb9-173" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Facebook**: 1 100-node cluster (8 800 cores, ~12 PB storage); 300-node cluster (~3 PB)</span>
+<span id="cb9-174"><a href="#cb9-174" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Twitter**: clusters storing over 500 PB, largest with &gt;10 000 nodes</span>
+<span id="cb9-175"><a href="#cb9-175" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Yahoo!**: &gt;100 000 CPUs across &gt;40 000 computers</span>
+<span id="cb9-176"><a href="#cb9-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-177"><a href="#cb9-177" aria-hidden="true" tabindex="-1"></a>Hadoop is open source (Apache Foundation), written in Java, and designed to scale horizontally. Its main components are:</span>
+<span id="cb9-178"><a href="#cb9-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-179"><a href="#cb9-179" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Component <span class="pp">|</span> Role <span class="pp">|</span></span>
+<span id="cb9-180"><a href="#cb9-180" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb9-181"><a href="#cb9-181" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Hadoop Common** <span class="pp">|</span> Java-based shared libraries and utilities <span class="pp">|</span></span>
+<span id="cb9-182"><a href="#cb9-182" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **HDFS** <span class="pp">|</span> Hadoop Distributed File System — storage <span class="pp">|</span></span>
+<span id="cb9-183"><a href="#cb9-183" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **YARN** <span class="pp">|</span> Yet Another Resource Negotiator — cluster manager and scheduler <span class="pp">|</span></span>
+<span id="cb9-184"><a href="#cb9-184" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Hadoop MapReduce** <span class="pp">|</span> Distributed programming model <span class="pp">|</span></span>
+<span id="cb9-185"><a href="#cb9-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-186"><a href="#cb9-186" aria-hidden="true" tabindex="-1"></a><span class="fu">## HDFS: A Reminder</span></span>
+<span id="cb9-187"><a href="#cb9-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-188"><a href="#cb9-188" aria-hidden="true" tabindex="-1"></a>HDFS stores data as large blocks distributed across data nodes, with the name node keeping metadata:</span>
+<span id="cb9-189"><a href="#cb9-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-190"><a href="#cb9-190" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-191"><a href="#cb9-191" aria-hidden="true" tabindex="-1"></a><span class="in">                  Metadata (names, blocks, replicas, …)</span></span>
+<span id="cb9-192"><a href="#cb9-192" aria-hidden="true" tabindex="-1"></a><span class="in">                 ┌─────────────────────────────────────┐</span></span>
+<span id="cb9-193"><a href="#cb9-193" aria-hidden="true" tabindex="-1"></a><span class="in">Client ──────────► Name Node         Secondary Name Node</span></span>
+<span id="cb9-194"><a href="#cb9-194" aria-hidden="true" tabindex="-1"></a><span class="in">                 │                   (checkpoints, backup)</span></span>
+<span id="cb9-195"><a href="#cb9-195" aria-hidden="true" tabindex="-1"></a><span class="in">                 │  Block write</span></span>
+<span id="cb9-196"><a href="#cb9-196" aria-hidden="true" tabindex="-1"></a><span class="in">                 ▼</span></span>
+<span id="cb9-197"><a href="#cb9-197" aria-hidden="true" tabindex="-1"></a><span class="in">          Data Node   Data Node   Data Node   Data Node</span></span>
+<span id="cb9-198"><a href="#cb9-198" aria-hidden="true" tabindex="-1"></a><span class="in">               └──── Replication ─────┘</span></span>
+<span id="cb9-199"><a href="#cb9-199" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-200"><a href="#cb9-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-201"><a href="#cb9-201" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The **Name Node** manages the filesystem namespace and metadata.</span>
+<span id="cb9-202"><a href="#cb9-202" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The **Secondary Name Node** periodically checkpoints the metadata.</span>
+<span id="cb9-203"><a href="#cb9-203" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Data Nodes** store the actual data blocks and replicate them for fault tolerance.</span>
+<span id="cb9-204"><a href="#cb9-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-205"><a href="#cb9-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## The MapReduce Paradigm</span></span>
+<span id="cb9-206"><a href="#cb9-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-207"><a href="#cb9-207" aria-hidden="true" tabindex="-1"></a>**MapReduce** is not a programming language, but a **paradigm** for developing distributed algorithms on potentially very large datasets. It decomposes computation into two phases:</span>
+<span id="cb9-208"><a href="#cb9-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-209"><a href="#cb9-209" aria-hidden="true" tabindex="-1"></a><span class="fu">### 1. Map</span></span>
+<span id="cb9-210"><a href="#cb9-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-211"><a href="#cb9-211" aria-hidden="true" tabindex="-1"></a>Split the input data into <span class="in">`&lt;key, value&gt;`</span> pairs, and apply a user-defined map function to each pair, producing a list of intermediate <span class="in">`&lt;key, value&gt;`</span> pairs:</span>
+<span id="cb9-212"><a href="#cb9-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-213"><a href="#cb9-213" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb9-214"><a href="#cb9-214" aria-hidden="true" tabindex="-1"></a>\text{map}(k_\text{in}, v_\text{in}) \rightarrow \text{list}<span class="co">[</span><span class="ot">(k_1, v_1),\, (k_2, v_2),\, \ldots</span><span class="co">]</span></span>
+<span id="cb9-215"><a href="#cb9-215" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb9-216"><a href="#cb9-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-217"><a href="#cb9-217" aria-hidden="true" tabindex="-1"></a>Each key-value pair is processed **independently**, enabling full data parallelism across the cluster.</span>
+<span id="cb9-218"><a href="#cb9-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-219"><a href="#cb9-219" aria-hidden="true" tabindex="-1"></a><span class="fu">### 2. Reduce</span></span>
+<span id="cb9-220"><a href="#cb9-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-221"><a href="#cb9-221" aria-hidden="true" tabindex="-1"></a>Collect all intermediate pairs with the same key, then apply a user-defined aggregation function to produce a final result:</span>
+<span id="cb9-222"><a href="#cb9-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-223"><a href="#cb9-223" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb9-224"><a href="#cb9-224" aria-hidden="true" tabindex="-1"></a>\text{reduce}(\text{list}<span class="co">[</span><span class="ot">(k, v_1), (k, v_2), \ldots</span><span class="co">]</span>) \rightarrow <span class="co">[</span><span class="ot">(k, v_\text{out})</span><span class="co">]</span></span>
+<span id="cb9-225"><a href="#cb9-225" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb9-226"><a href="#cb9-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-227"><a href="#cb9-227" aria-hidden="true" tabindex="-1"></a><span class="fu">### Word Count Example</span></span>
+<span id="cb9-228"><a href="#cb9-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-229"><a href="#cb9-229" aria-hidden="true" tabindex="-1"></a>The canonical example: count the occurrences of each word in a text corpus.</span>
+<span id="cb9-230"><a href="#cb9-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-231"><a href="#cb9-231" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-232"><a href="#cb9-232" aria-hidden="true" tabindex="-1"></a><span class="in">Input: "Car Car River Deer Car Bear"</span></span>
+<span id="cb9-233"><a href="#cb9-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-234"><a href="#cb9-234" aria-hidden="true" tabindex="-1"></a><span class="in">Map phase:</span></span>
+<span id="cb9-235"><a href="#cb9-235" aria-hidden="true" tabindex="-1"></a><span class="in">  ("Car", 1), ("Car", 1), ("River", 1), ("Deer", 1), ("Car", 1), ("Bear", 1)</span></span>
+<span id="cb9-236"><a href="#cb9-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-237"><a href="#cb9-237" aria-hidden="true" tabindex="-1"></a><span class="in">Shuffle &amp; Sort (grouping by key):</span></span>
+<span id="cb9-238"><a href="#cb9-238" aria-hidden="true" tabindex="-1"></a><span class="in">  "Bear" → [1]</span></span>
+<span id="cb9-239"><a href="#cb9-239" aria-hidden="true" tabindex="-1"></a><span class="in">  "Car"  → [1, 1, 1]</span></span>
+<span id="cb9-240"><a href="#cb9-240" aria-hidden="true" tabindex="-1"></a><span class="in">  "Deer" → [1]</span></span>
+<span id="cb9-241"><a href="#cb9-241" aria-hidden="true" tabindex="-1"></a><span class="in">  "River"→ [1]</span></span>
+<span id="cb9-242"><a href="#cb9-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-243"><a href="#cb9-243" aria-hidden="true" tabindex="-1"></a><span class="in">Reduce phase (sum):</span></span>
+<span id="cb9-244"><a href="#cb9-244" aria-hidden="true" tabindex="-1"></a><span class="in">  Bear  → 1</span></span>
+<span id="cb9-245"><a href="#cb9-245" aria-hidden="true" tabindex="-1"></a><span class="in">  Car   → 3</span></span>
+<span id="cb9-246"><a href="#cb9-246" aria-hidden="true" tabindex="-1"></a><span class="in">  Deer  → 1</span></span>
+<span id="cb9-247"><a href="#cb9-247" aria-hidden="true" tabindex="-1"></a><span class="in">  River → 1</span></span>
+<span id="cb9-248"><a href="#cb9-248" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-249"><a href="#cb9-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-250"><a href="#cb9-250" aria-hidden="true" tabindex="-1"></a><span class="fu">## MapReduce in Hadoop</span></span>
+<span id="cb9-251"><a href="#cb9-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-252"><a href="#cb9-252" aria-hidden="true" tabindex="-1"></a><span class="fu">### Map Phase</span></span>
+<span id="cb9-253"><a href="#cb9-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-254"><a href="#cb9-254" aria-hidden="true" tabindex="-1"></a>Data is read from HDFS, partitioned among computing nodes, and sent to each node as a set of key-value pairs. The Map tasks process input records **independently** and write intermediate results to the **local disk** of the node. This **data locality** principle — bringing computation to the data rather than the data to the computation — is central to Hadoop's performance.</span>
+<span id="cb9-255"><a href="#cb9-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-256"><a href="#cb9-256" aria-hidden="true" tabindex="-1"></a><span class="fu">### Reduce Phase</span></span>
+<span id="cb9-257"><a href="#cb9-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-258"><a href="#cb9-258" aria-hidden="true" tabindex="-1"></a>Once all Map tasks complete, a **shuffle and sort** step groups and transfers the intermediate key-value pairs to the Reduce tasks. The Reduce tasks then apply the aggregation function to each group.</span>
+<span id="cb9-259"><a href="#cb9-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-260"><a href="#cb9-260" aria-hidden="true" tabindex="-1"></a><span class="fu">## YARN: Yet Another Resource Negotiator</span></span>
+<span id="cb9-261"><a href="#cb9-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-262"><a href="#cb9-262" aria-hidden="true" tabindex="-1"></a>YARN acts as the "operating system" of the Hadoop cluster, managing the scheduling and execution of jobs.</span>
+<span id="cb9-263"><a href="#cb9-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-264"><a href="#cb9-264" aria-hidden="true" tabindex="-1"></a>Key components:</span>
+<span id="cb9-265"><a href="#cb9-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-266"><a href="#cb9-266" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Component <span class="pp">|</span> Role <span class="pp">|</span></span>
+<span id="cb9-267"><a href="#cb9-267" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb9-268"><a href="#cb9-268" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Resource Manager (RM)** <span class="pp">|</span> Manages cluster-wide resource allocation; contains the Scheduler and the Application Manager <span class="pp">|</span></span>
+<span id="cb9-269"><a href="#cb9-269" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Application Master (AM)** <span class="pp">|</span> Negotiates resources from the RM and coordinates the execution of a single application <span class="pp">|</span></span>
+<span id="cb9-270"><a href="#cb9-270" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Node Manager (NM)** <span class="pp">|</span> Manages the user processes on each individual machine <span class="pp">|</span></span>
+<span id="cb9-271"><a href="#cb9-271" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Container** <span class="pp">|</span> A set of allocated resources (memory, CPU) used to run a specific task <span class="pp">|</span></span>
+<span id="cb9-272"><a href="#cb9-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-273"><a href="#cb9-273" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hadoop Higher-Level Abstractions</span></span>
+<span id="cb9-274"><a href="#cb9-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-275"><a href="#cb9-275" aria-hidden="true" tabindex="-1"></a>Writing raw MapReduce jobs in Java is verbose. Higher-level tools provide more accessible interfaces:</span>
+<span id="cb9-276"><a href="#cb9-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-277"><a href="#cb9-277" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tool <span class="pp">|</span> Description <span class="pp">|</span></span>
+<span id="cb9-278"><a href="#cb9-278" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb9-279"><a href="#cb9-279" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Pig** <span class="pp">|</span> High-level scripting language translated into MapReduce programs (Yahoo!, latest release 2017) <span class="pp">|</span></span>
+<span id="cb9-280"><a href="#cb9-280" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Hive** <span class="pp">|</span> SQL-like query language (HiveQL) for data stored in HDFS (Facebook/Netflix) <span class="pp">|</span></span>
+<span id="cb9-281"><a href="#cb9-281" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Oozie** <span class="pp">|</span> Workflow scheduler for chaining multiple MapReduce jobs <span class="pp">|</span></span>
+<span id="cb9-282"><a href="#cb9-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-283"><a href="#cb9-283" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Hadoop Ecosystem</span></span>
+<span id="cb9-284"><a href="#cb9-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-285"><a href="#cb9-285" aria-hidden="true" tabindex="-1"></a>Hadoop grew into a rich ecosystem covering the full BigData stack:</span>
+<span id="cb9-286"><a href="#cb9-286" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-287"><a href="#cb9-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**APIs / programming language**: Pig, Hive, custom Java/Python</span>
+<span id="cb9-288"><a href="#cb9-288" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Distributed processing framework**: Hadoop MapReduce</span>
+<span id="cb9-289"><a href="#cb9-289" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Cluster orchestrator**: YARN</span>
+<span id="cb9-290"><a href="#cb9-290" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Distributed file system**: HDFS</span>
+<span id="cb9-291"><a href="#cb9-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-292"><a href="#cb9-292" aria-hidden="true" tabindex="-1"></a>The broader BigData landscape includes many additional tools (Spark, Kafka, Cassandra, HBase, etc.) that either complement or replace individual components of the Hadoop stack depending on the use case.</span>
+<span id="cb9-293"><a href="#cb9-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-294"><a href="#cb9-294" aria-hidden="true" tabindex="-1"></a>The full BigData stack can be visualised as five layers, with Hadoop occupying all four lower layers and higher-level tools sitting on top:</span>
+<span id="cb9-295"><a href="#cb9-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-296"><a href="#cb9-296" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-297"><a href="#cb9-297" aria-hidden="true" tabindex="-1"></a><span class="in">┌────────────────────────────────────────────────────────────────┐</span></span>
+<span id="cb9-298"><a href="#cb9-298" aria-hidden="true" tabindex="-1"></a><span class="in">│  APIs / Languages    │ Pig · Hive · HiveQL · custom Java/Python │</span></span>
+<span id="cb9-299"><a href="#cb9-299" aria-hidden="true" tabindex="-1"></a><span class="in">├──────────────────────┼─────────────────────────────────────────┤</span></span>
+<span id="cb9-300"><a href="#cb9-300" aria-hidden="true" tabindex="-1"></a><span class="in">│  Processing          │ Hadoop MapReduce · Apache Spark · Storm  │</span></span>
+<span id="cb9-301"><a href="#cb9-301" aria-hidden="true" tabindex="-1"></a><span class="in">├──────────────────────┼─────────────────────────────────────────┤</span></span>
+<span id="cb9-302"><a href="#cb9-302" aria-hidden="true" tabindex="-1"></a><span class="in">│  Cluster Scheduler   │ YARN · Mesos · Kubernetes                │</span></span>
+<span id="cb9-303"><a href="#cb9-303" aria-hidden="true" tabindex="-1"></a><span class="in">├──────────────────────┼─────────────────────────────────────────┤</span></span>
+<span id="cb9-304"><a href="#cb9-304" aria-hidden="true" tabindex="-1"></a><span class="in">│  Distributed FS      │ HDFS · Amazon S3 · Azure Data Lake       │</span></span>
+<span id="cb9-305"><a href="#cb9-305" aria-hidden="true" tabindex="-1"></a><span class="in">├──────────────────────┼─────────────────────────────────────────┤</span></span>
+<span id="cb9-306"><a href="#cb9-306" aria-hidden="true" tabindex="-1"></a><span class="in">│  Computing Hardware  │ Commodity nodes · Cloud VMs · Bare metal │</span></span>
+<span id="cb9-307"><a href="#cb9-307" aria-hidden="true" tabindex="-1"></a><span class="in">└────────────────────────────────────────────────────────────────┘</span></span>
+<span id="cb9-308"><a href="#cb9-308" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-309"><a href="#cb9-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-310"><a href="#cb9-310" aria-hidden="true" tabindex="-1"></a>Beyond this core stack, the broader ecosystem includes: **Kafka** (streaming), **HBase** / **Cassandra** (wide-column NoSQL), **ZooKeeper** (distributed coordination), **Sqoop** (RDBMS ↔ HDFS transfer), **Oozie** (workflow scheduling), and **Mahout** (distributed machine learning).</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

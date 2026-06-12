@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Reliability and Security – Notes of the course Manegement and Anlaisys of Physical Datasets Moudlue B</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/04-file-system.html" rel="next">
+<link href="../chapters/02-storage.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-datasets.html">Data Manegment</a></li><li class="breadcrumb-item"><a href="../chapters/03-reliability-security.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reliability and Security</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Notes of the course Manegement and Anlaisys of Physical Datasets Moudlue B</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Management</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Data Manegment</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-datasets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">From Data to Datasets</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-storage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Storage</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-reliability-security.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reliability and Security</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-file-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">File System</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-distributed-file-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Distributed File System</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/MySQL.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">RDBMS - Hands on MySQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-nosql-databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">NoSQL Databases</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Processing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-processing-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Processing and Concurrency</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-distributed-processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Distributed Processing and MapReduce</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-spark.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Lecture 3: Stream processing with Spark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Continuing on the Dask Data structures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-kafka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Kafka Consumer</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#failure-rate-lifecycle-the-bathtub-curve" id="toc-failure-rate-lifecycle-the-bathtub-curve" class="nav-link active" data-scroll-target="#failure-rate-lifecycle-the-bathtub-curve"><span class="header-section-number">3.0.1</span> Failure Rate Lifecycle: The Bathtub Curve</a></li>
+  <li><a href="#reliability-strategies" id="toc-reliability-strategies" class="nav-link" data-scroll-target="#reliability-strategies"><span class="header-section-number">3.1</span> Reliability Strategies</a>
+  <ul class="collapse">
+  <li><a href="#raid-0" id="toc-raid-0" class="nav-link" data-scroll-target="#raid-0"><span class="header-section-number">3.1.1</span> RAID 0</a></li>
+  <li><a href="#raid-1" id="toc-raid-1" class="nav-link" data-scroll-target="#raid-1"><span class="header-section-number">3.1.2</span> RAID 1</a></li>
+  <li><a href="#raid-10" id="toc-raid-10" class="nav-link" data-scroll-target="#raid-10"><span class="header-section-number">3.1.3</span> RAID 1+0</a></li>
+  <li><a href="#raid-5" id="toc-raid-5" class="nav-link" data-scroll-target="#raid-5"><span class="header-section-number">3.1.4</span> RAID 5</a></li>
+  <li><a href="#raid-6" id="toc-raid-6" class="nav-link" data-scroll-target="#raid-6"><span class="header-section-number">3.1.5</span> RAID 6</a></li>
+  </ul></li>
+  <li><a href="#cryptography" id="toc-cryptography" class="nav-link" data-scroll-target="#cryptography"><span class="header-section-number">3.2</span> Cryptography</a></li>
+  <li><a href="#authentication-and-authorization" id="toc-authentication-and-authorization" class="nav-link" data-scroll-target="#authentication-and-authorization"><span class="header-section-number">3.3</span> Authentication and Authorization</a></li>
+  <li><a href="#encoding-and-decoding-of-information" id="toc-encoding-and-decoding-of-information" class="nav-link" data-scroll-target="#encoding-and-decoding-of-information"><span class="header-section-number">3.4</span> Encoding and Decoding of Information</a></li>
+  <li><a href="#hash-functions" id="toc-hash-functions" class="nav-link" data-scroll-target="#hash-functions"><span class="header-section-number">3.5</span> Hash Functions</a></li>
+  <li><a href="#encryption-vs-hashing-summary" id="toc-encryption-vs-hashing-summary" class="nav-link" data-scroll-target="#encryption-vs-hashing-summary"><span class="header-section-number">3.6</span> Encryption vs Hashing: Summary</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">3.7</span> Exercises</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-datasets.html">Data Manegment</a></li><li class="breadcrumb-item"><a href="../chapters/03-reliability-security.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reliability and Security</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reliability and Security</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Physical media contain our data, but what matters is the integrity of the data, not of the memory units themselves. The threats from which we must protect data are of three types:</p>
+<ol type="1">
+<li><strong>Data loss</strong>: if a memory device is subject to a failure (electrical or mechanical), usually all the data contained within it are lost.</li>
+<li><strong>Data corruption</strong>: certain environmental factors (lowering of the input voltage, increase in ambient temperature, cosmic radiation) can cause a <em>bit-flip</em>, that is the inversion of a bit. For HDDs, on average there is a bit-flip every <span class="math inline">\(10^{14}\)</span> bits involved in read or write cycles. A 10 TB read therefore spans roughly <span class="math inline">\(10^{14}\)</span> bits — meaning a single full scan of a 10 TB disk could produce one silent, undetected data corruption.</li>
+<li><strong>Transfer errors</strong>: occur when there are no adequate checks in the copy or transfer of data.</li>
+</ol>
+<div class="definition" name="Reliability">
+<p><strong>Reliability</strong> corresponds to the probability that a system will continue to operate correctly beyond a certain period of time or a certain number of operations.</p>
+</div>
+<p>In quantitative terms:</p>
+<ul>
+<li><strong>MTTF</strong> (<em>Mean Time To Failure</em>): the average time that elapses between the first power-on of the device and the moment a failure occurs.</li>
+<li><strong>MTBF</strong> (<em>Mean Time Between Failure</em>): defined for <em>repairable</em> systems, the average time that elapses between one failure and the next.</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/MTTF_e_MTBF.png" class="img-fluid figure-img"></p>
+<figcaption>MTTF and MTBF as a function of time</figcaption>
+</figure>
+</div>
+<section id="failure-rate-lifecycle-the-bathtub-curve" class="level3" data-number="3.0.1">
+<h3 data-number="3.0.1" class="anchored" data-anchor-id="failure-rate-lifecycle-the-bathtub-curve"><span class="header-section-number">3.0.1</span> Failure Rate Lifecycle: The Bathtub Curve</h3>
+<p>The failure rate of hardware components is not constant over time. It follows a characteristic pattern known as the <strong>bathtub curve</strong>:</p>
+<pre><code>Failure
+  Rate
+   │
+   │\                                    /│
+   │ \   Early failures               /  │
+   │  \  (burn-in)                  /    │  Wearout
+   │   \____________________________/     │
+   │       Standard operations            │
+   └──────────────────────────────────────┴─── Time</code></pre>
+<ul>
+<li><strong>Early failure period (burn-in)</strong>: newly deployed components have an elevated failure rate due to manufacturing defects; these typically manifest within the first hours or days of operation.</li>
+<li><strong>Useful life period</strong>: failure rate is low and roughly constant; this is the expected operating lifetime quoted by manufacturers.</li>
+<li><strong>Wearout period</strong>: as components age, mechanical wear, electromigration, and cell degradation cause the failure rate to rise again.</li>
+</ul>
+<p>MTTF and MTBF statistics are measured during the useful life period and do not capture burn-in or wearout behaviour.</p>
+<p>Realistically, the MTTF of an HDD is about ten years. Assuming an equally distributed probability of failure:</p>
+<p><span class="math display">\[p = \frac{1}{10 \cdot 365} = 0.00027\]</span></p>
+<p>Considering <span class="math inline">\(5000\)</span> independent HDDs:</p>
+<p><span class="math display">\[5000 \cdot 0.00027 = 1.35\]</span></p>
+<p>So, on average, it is expected that every day an HDD will fail and have to be replaced. At CERN, with <span class="math inline">\(\sim 100\,000\)</span> HDDs in daily use, that translates to about <span class="math inline">\(27\)</span> damaged memory units per day.</p>
+</section>
+<section id="reliability-strategies" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="reliability-strategies"><span class="header-section-number">3.1</span> Reliability Strategies</h2>
+<p>To store data securely, three main strategies are used:</p>
+<ol type="1">
+<li><strong>Mirroring</strong>: the data are replicated on different devices, sometimes located in different places.</li>
+<li><strong>Striping</strong>: the data are divided into “pieces” and distributed on different memory elements.</li>
+<li><strong>Checking</strong>: errors relating to the consistency of the data within the devices are identified (and possibly corrected), such as a <em>checksum</em> or a <em>parity check</em>.</li>
+</ol>
+<p>The basis on which to apply these strategies is the so-called <em>disk redundancy</em>, indicated by the acronym <strong>RAID</strong> (<em>Redundant Array of Independent Disks</em>), in which multiple devices are combined to form a single <em>logical</em> device in order to improve reliability and performance.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Software RAID
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>RAID can be implemented entirely in software without dedicated hardware. On Linux, the <code>mdadm</code> utility manages software RAID arrays:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a RAID 5 array across three devices</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">mdadm</span> <span class="at">--create</span> /dev/md0 <span class="at">--level</span><span class="op">=</span>5 <span class="at">--raid-devices</span><span class="op">=</span>3 /dev/sdb /dev/sdc /dev/sdd</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check array status</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">mdadm</span> <span class="at">--detail</span> /dev/md0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Software RAID is less expensive than hardware RAID controllers and is widely used in commodity server deployments.</p>
+</div>
+</div>
+<section id="raid-0" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="raid-0"><span class="header-section-number">3.1.1</span> RAID 0</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Strategies</td>
+<td><strong>Striping</strong> (no mirroring, no checking)</td>
+</tr>
+<tr class="even">
+<td>Min. disks</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>Total capacity</td>
+<td>Lowest single disk capacity × number of disks</td>
+</tr>
+<tr class="even">
+<td>Throughput</td>
+<td>Conditioned by simultaneous read/write from all disks</td>
+</tr>
+</tbody>
+</table>
+<p>Prioritizes performance over reliability — losing a disk implies losing all data.</p>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/raid-0.png" class="img-fluid figure-img"></p>
+<figcaption>RAID 0 diagram</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/raid-0-esempio.png" class="img-fluid figure-img"></p>
+<figcaption>RAID 0 example</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="raid-1" class="level3" data-number="3.1.2">
+<h3 data-number="3.1.2" class="anchored" data-anchor-id="raid-1"><span class="header-section-number">3.1.2</span> RAID 1</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Strategies</td>
+<td><strong>Mirroring</strong> (no striping, no checking)</td>
+</tr>
+<tr class="even">
+<td>Min. disks</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>Total capacity</td>
+<td>Lowest single disk capacity</td>
+</tr>
+<tr class="even">
+<td>Throughput</td>
+<td>Throughput of the single lowest disk</td>
+</tr>
+</tbody>
+</table>
+<p>Prioritizes reliability over performance — data is safe as long as at least one disk is operational.</p>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/raid-1.png" class="img-fluid figure-img"></p>
+<figcaption>RAID 1 diagram</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/raid-1-esempio.png" class="img-fluid figure-img"></p>
+<figcaption>RAID 1 example</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="raid-10" class="level3" data-number="3.1.3">
+<h3 data-number="3.1.3" class="anchored" data-anchor-id="raid-10"><span class="header-section-number">3.1.3</span> RAID 1+0</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Strategies</td>
+<td><strong>Mirroring and striping</strong> (no checking)</td>
+</tr>
+<tr class="even">
+<td>Min. disks</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>Total capacity</td>
+<td>Lowest RAID 1 unit capacity × number of RAID 1 units</td>
+</tr>
+<tr class="even">
+<td>Throughput</td>
+<td>Read: RAID 0 speed (fast); Write: RAID 1 speed (slow)</td>
+</tr>
+</tbody>
+</table>
+<p>Maintains the high performance of RAID 0 while improving reliability with mirroring.</p>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/raid-10.png" class="img-fluid figure-img"></p>
+<figcaption>RAID 1+0 diagram</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/raid-10-esempio.png" class="img-fluid figure-img"></p>
+<figcaption>RAID 1+0 example</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="raid-5" class="level3" data-number="3.1.4">
+<h3 data-number="3.1.4" class="anchored" data-anchor-id="raid-5"><span class="header-section-number">3.1.4</span> RAID 5</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Strategies</td>
+<td><strong>Striping and parity checking</strong> (no mirroring)</td>
+</tr>
+<tr class="even">
+<td>Min. disks</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td>Total capacity</td>
+<td>Lowest single disk capacity × (number of disks − 1)</td>
+</tr>
+<tr class="even">
+<td>Throughput</td>
+<td>Non-trivial due to parity read/write overhead</td>
+</tr>
+</tbody>
+</table>
+<p>A portion of each disk is “sacrificed” in favor of parity information, so the data can be recovered if a single disk fails. The parity is calculated through a chain of XORs:</p>
+<p><span class="math display">\[p = D_1 \oplus D_2 \oplus \dots \oplus D_n\]</span></p>
+<p><strong>Parity recovery by XOR inversion:</strong></p>
+<p>XOR is self-inverse: <code>A ⊕ B ⊕ B = A</code>. If disk D2 fails, the missing data is recovered as:</p>
+<p><span class="math display">\[D2 = p \oplus D1 \oplus D3\]</span></p>
+<p>Concrete 4-bit example:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Block</th>
+<th>Bits</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>D1</td>
+<td><code>1010</code></td>
+</tr>
+<tr class="even">
+<td>D2</td>
+<td><code>1100</code> (failed)</td>
+</tr>
+<tr class="odd">
+<td>D3</td>
+<td><code>0111</code></td>
+</tr>
+<tr class="even">
+<td>p = D1 ⊕ D2 ⊕ D3</td>
+<td><code>0001</code></td>
+</tr>
+</tbody>
+</table>
+<p>Recovery: <code>p ⊕ D1 ⊕ D3 = 0001 ⊕ 1010 ⊕ 0111 = 1100</code> ✓</p>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/raid-5.png" class="img-fluid figure-img"></p>
+<figcaption>RAID 5 diagram</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/raid-5-esempio.png" class="img-fluid figure-img"></p>
+<figcaption>RAID 5 example</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="raid-6" class="level3" data-number="3.1.5">
+<h3 data-number="3.1.5" class="anchored" data-anchor-id="raid-6"><span class="header-section-number">3.1.5</span> RAID 6</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Strategies</td>
+<td><strong>Striping and parity checking</strong> (no mirroring)</td>
+</tr>
+<tr class="even">
+<td>Min. disks</td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>Total capacity</td>
+<td>Lowest single disk capacity × (number of disks − 2)</td>
+</tr>
+<tr class="even">
+<td>Throughput</td>
+<td>Non-trivial due to parity read/write overhead</td>
+</tr>
+</tbody>
+</table>
+<p>A portion of two disks is “sacrificed” in favor of the parity information, encoded in two bits per section. In order for the data to be recoverable after the failure of two disks, these parity bits must be <em>linearly independent</em> — the Reed-Solomon code is the most famous solution:</p>
+<p><span class="math display">\[p = D_1 \oplus D_2 \oplus D_3\]</span> <span class="math display">\[q = D_1 \oplus (D_2 \ll 1) \oplus (D_3 \ll 2)\]</span></p>
+<p>where <span class="math inline">\(p\)</span> is the standard XOR parity (identical to RAID 5) and <span class="math inline">\(q\)</span> is a second independent parity computed using Galois-field bit-shifts (<code>≪</code>). Because <span class="math inline">\(p\)</span> and <span class="math inline">\(q\)</span> are linearly independent, the system has enough information to solve for any <strong>two simultaneously failed disks</strong> — RAID 6 tolerates any two disk losses without data loss.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/raid-6.png" class="img-fluid figure-img"></p>
+<figcaption>RAID 6 diagram</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="cryptography" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="cryptography"><span class="header-section-number">3.2</span> Cryptography</h2>
+<p><strong>Cryptography</strong> is a field of mathematics that deals with encoding information in order to make it secure and intelligible only to people authorized to access it.</p>
+<p>The main actions involving security are:</p>
+<ul>
+<li>Protect the data saved on a device</li>
+<li>Establish secure connections with remote servers</li>
+<li>Exchange information between two <em>peers</em></li>
+<li>Prevent malicious users from tampering with the data</li>
+</ul>
+<p>For a message exchange to be considered <em>secure</em>, we must answer the following questions:</p>
+<ul>
+<li>Am I sure I know who I’m talking to?</li>
+<li>Can someone else intercept the data? (<em>Yes — it is <strong>always</strong> possible.</em> This is the basis of the security systems to be implemented.)</li>
+<li>Is the message I received identical to the one sent?</li>
+<li>Is the user I am talking to responsible for the message sent?</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/sicurezza-visualizzazione.png" class="img-fluid figure-img"></p>
+<figcaption>Schematic of the message exchange with all the dangers that threaten its integrity and reliability</figcaption>
+</figure>
+</div>
+<p>The main concepts of cryptography in data management:</p>
+<ol type="1">
+<li><strong>Confidentiality</strong>: ensuring that no one can extract information even by intercepting the entire conversation.</li>
+<li><strong>Integrity</strong>: ensuring that the message has not been modified during the transfer.</li>
+<li><strong>Authenticity</strong>: verifying that you are communicating with the entity you think is at the other end.</li>
+<li><strong>Identity</strong>: verifying the identity of the specific individual.</li>
+<li><strong>Non-repudiation</strong>: ensuring that the individual responsible for a certain activity cannot deny being associated with it.</li>
+</ol>
+<p>The five properties can be summarised as follows:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Confidentiality</strong></td>
+<td>Information is accessible only to authorised parties</td>
+</tr>
+<tr class="even">
+<td><strong>Integrity</strong></td>
+<td>Data has not been altered without authorisation</td>
+</tr>
+<tr class="odd">
+<td><strong>Authenticity</strong></td>
+<td>The identity of the communicating party is verified</td>
+</tr>
+<tr class="even">
+<td><strong>Identity</strong></td>
+<td>The ability to uniquely identify an entity in the system</td>
+</tr>
+<tr class="odd">
+<td><strong>Non-repudiation</strong></td>
+<td>A party cannot deny having performed an action</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="authentication-and-authorization" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="authentication-and-authorization"><span class="header-section-number">3.3</span> Authentication and Authorization</h2>
+<ul>
+<li><strong>Authentication</strong>: identifying users and validating their identities. Methods include username/password, certificates, keys, SSO, and biometric data (fingerprints, facial recognition, etc.).</li>
+<li><strong>Authorization</strong>: granting a user permissions to access or use certain resources.</li>
+</ul>
+<p>Authentication typically takes place through an <em>authorization server</em>, which certifies the user’s identity; only after authentication does the system verify the user’s permissions through an <em>Access Control List</em>, contained in the <em>resource server</em>.</p>
+</section>
+<section id="encoding-and-decoding-of-information" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="encoding-and-decoding-of-information"><span class="header-section-number">3.4</span> Encoding and Decoding of Information</h2>
+<p>All messages exchanged through computer tools are constantly exposed. The only way to prevent information from being extracted is to modify the message so that an interceptor cannot understand it.</p>
+<p>The most basic idea is to apply a <em>mask</em> — called a <strong>key</strong> — to the message, which shuffles and reassembles it. In cryptography these actions are called <strong>encrypting</strong> and <strong>decrypting</strong>.</p>
+<p><strong>Symmetric key encryption</strong> (<em>private-key cryptography</em>) uses a single shared key (applied for example via XOR or AES-128/192/256). It is simple to implement but both parties must share the same key, which is a security risk.</p>
+<p><strong>Asymmetric key encryption</strong> (<em>public-key cryptography</em>) uses two keys: a <em>public</em> key for encrypting and a <em>private</em> key for decrypting. They are produced together by the same algorithm (RSA, ECC, etc.) so that from one key it is impossible to derive the other. The public key is made openly available; only the intended recipient can decrypt with their private key. This is slower computationally but far more secure, and is today considered the standard.</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Standard Cryptographic Algorithm Families
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Category</th>
+<th>Algorithms</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Symmetric</strong></td>
+<td>AES-128, AES-192, AES-256</td>
+</tr>
+<tr class="even">
+<td><strong>Asymmetric</strong></td>
+<td>RSA, ECC (Elliptic Curve Cryptography)</td>
+</tr>
+<tr class="odd">
+<td><strong>Hashing</strong></td>
+<td>MD5 <em>(deprecated)</em>, SHA-1 <em>(deprecated)</em>, SHA-2 family (SHA-256, SHA-512)</td>
+</tr>
+</tbody>
+</table>
+<p>Symmetric algorithms are fast and suitable for bulk data encryption once a secure channel is established. Asymmetric algorithms are slower but allow secure key exchange without a pre-shared secret. Hashing algorithms are one-way and produce a fixed-length digest regardless of input size.</p>
+</div>
+</div>
+<div class="quarto-layout-panel" data-layout-ncol="2">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/symmetric-key-encryption.png" class="img-fluid figure-img"></p>
+<figcaption>Symmetric key encryption</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/asymmetric-key-encryption.png" class="img-fluid figure-img"></p>
+<figcaption>Asymmetric key encryption</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+SSH in Practice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Asymmetric key authentication is the standard mechanism for connecting to remote Linux servers. A typical connection to a cloud VM using a private key:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-i</span> ~/private/my_private_key.pem ubuntu@10.67.22.231</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>When the server is behind a gateway (jump host), use the <code>-J</code> flag:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-J</span> gate.cloudveneto.it <span class="at">-i</span> ~/private/my_private_key.pem ubuntu@10.67.22.231</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The private key file must have restricted permissions (<code>chmod 400</code>). The server stores only the corresponding public key in <code>~/.ssh/authorized_keys</code>.</p>
+</div>
+</div>
+</section>
+<section id="hash-functions" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="hash-functions"><span class="header-section-number">3.5</span> Hash Functions</h2>
+<p><strong>Hash functions</strong> apply <em>hashing</em> to the data — scrambling them to the point that the original form <em>can no longer be reproduced</em>. Hashing algorithms (MD5, SHA-1, SHA-2) produce a <strong>digest</strong> of fixed length for all inputs. Modifying the input even slightly will completely change the final digest.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/hashing-piccola-modifica.png" class="img-fluid figure-img"></p>
+<figcaption>Digest of two very similar data sets</figcaption>
+</figure>
+</div>
+<p>A hash function maps an <strong>infinite input space</strong> to a <strong>finite output space</strong> (for example, <span class="math inline">\(2^{256}\)</span> possible digests for SHA-256). By the <strong>pigeonhole principle</strong>, collisions must therefore exist in theory: given enough distinct inputs, at least two will always map to the same digest. A cryptographically secure hash function does not eliminate collisions — it makes finding them computationally infeasible, meaning no practical algorithm can produce a collision in a tractable amount of time.</p>
+<p>What the algorithms must prevent are <strong>hash collisions</strong> — cases in which two different data sets give rise to the same digest — since the uniqueness of each digest is their primary purpose.</p>
+<p>The three main uses of hashing:</p>
+<ul>
+<li><strong>Data protection</strong>: sensitive data such as passwords are stored as hashes, not in plaintext. Authentication systems compare input hashes with stored hashes.</li>
+<li><strong>Data integrity check</strong>: comparing the hash of a received file with the expected hash confirms that the file was not tampered with during transfer.</li>
+<li><strong>Digital signatures</strong>: due to their uniqueness and irreproducibility, hashes are used to certify documents stored in digital systems.</li>
+</ul>
+</section>
+<section id="encryption-vs-hashing-summary" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="encryption-vs-hashing-summary"><span class="header-section-number">3.6</span> Encryption vs Hashing: Summary</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Encryption</th>
+<th>Hashing</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Reversible?</strong></td>
+<td>Yes (with key)</td>
+<td>No (one-way function)</td>
+</tr>
+<tr class="even">
+<td><strong>Purpose</strong></td>
+<td>Confidentiality — protect data in transit/at rest</td>
+<td>Integrity — verify data has not changed</td>
+</tr>
+<tr class="odd">
+<td><strong>Output size</strong></td>
+<td>Same order as input</td>
+<td>Fixed size (e.g.&nbsp;256 bits for SHA-256)</td>
+</tr>
+<tr class="even">
+<td><strong>Key required?</strong></td>
+<td>Yes (symmetric) or key pair (asymmetric)</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td><strong>Use when</strong></td>
+<td>Storing sensitive data, securing communications</td>
+<td>Storing passwords, verifying file integrity, digital signatures</td>
+</tr>
+<tr class="even">
+<td><strong>Examples</strong></td>
+<td>AES-256, RSA, ECC</td>
+<td>SHA-256, SHA-3, bcrypt</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="exercises" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="exercises"><span class="header-section-number">3.7</span> Exercises</h2>
+<div class="exercise" name="Mirroring, Striping, Parity">
+<p>Define mirroring, striping, and parity check. Discuss the pros and cons of each technique, and compare them in terms of reliability in RAID configurations.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="RAID 0 vs RAID 1">
+<p>What is the performance impact of using RAID 0 vs RAID 1? What factors should be considered when choosing between them?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="RAID 0 Throughput and Risks">
+<p>How does RAID 0 increase data throughput, and what are the risks associated with this configuration?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="RAID 5 Capacity">
+<p>You have five disks with sizes <span class="math inline">\(x_1, x_2, x_3, x_4, x_5\)</span>. If you arrange them in a RAID 5 system, what will be the usable storage capacity of the system? Express the answer in terms of the individual disk sizes.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Parity Placement">
+<p>Can you store the parity of a data block on the same disk as the data block itself? Explain your answer in the context of RAID reliability.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="RAID 6 Configuration">
+<p>You have a RAID 6 configuration with 5 disks. What is the usable storage capacity of the filesystem (expressed as a fraction of total raw capacity)? How many disks can fail simultaneously without data loss?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="RAID 10 vs RAID 6">
+<p>Compare RAID 10 and RAID 6 in terms of pros and cons regarding storage efficiency and reliability (fault tolerance).</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="RAID Configuration Exercise (1)">
+<p>You are tasked with choosing a RAID configuration to store a 3.5 TB dataset. You have 6 disks available with the following capacities:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Disk</th>
+<th>Capacity (TB)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Disk-0</td>
+<td>1.0</td>
+</tr>
+<tr class="even">
+<td>Disk-1</td>
+<td>1.0</td>
+</tr>
+<tr class="odd">
+<td>Disk-2</td>
+<td>1.2</td>
+</tr>
+<tr class="even">
+<td>Disk-3</td>
+<td>1.5</td>
+</tr>
+<tr class="odd">
+<td>Disk-4</td>
+<td>1.5</td>
+</tr>
+<tr class="even">
+<td>Disk-5</td>
+<td>1.8</td>
+</tr>
+</tbody>
+</table>
+<p>The dataset needs to be stored with high reliability and fault tolerance. Which RAID configuration would you choose, and why? Consider both the storage requirements and fault tolerance.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="RAID Configuration Exercise (2)">
+<p>Arrange the following 6 disks in a RAID 10 configuration:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Disk</th>
+<th>Capacity (GB)</th>
+<th>Throughput (MB/s)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td>750</td>
+<td>120</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>640</td>
+<td>200</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td>500</td>
+<td>250</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td>640</td>
+<td>150</td>
+</tr>
+<tr class="odd">
+<td>4</td>
+<td>1000</td>
+<td>120</td>
+</tr>
+<tr class="even">
+<td>5</td>
+<td>720</td>
+<td>160</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>How can the 6 disks be arranged into mirrored pairs?</li>
+<li>What is the estimated overall usable storage capacity?</li>
+<li>How many disks can fail without incurring data loss in this configuration?</li>
+</ul>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Encryption vs Hashing">
+<p>What is the difference between encryption and hashing? Why are both techniques important and useful for ensuring data security? Give an example use case for each.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Symmetric vs Asymmetric Encryption">
+<p>What are the differences between symmetric and asymmetric encryption? In what scenarios is each type preferable?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Asymmetric Encryption Vulnerabilities">
+<p>How can data be compromised in an asymmetric key encryption scheme? Describe at least two attack vectors or points of failure.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Data Confidentiality in Network Communications">
+<p>What common methods are used for protecting data confidentiality in network communications? Name and briefly describe at least three techniques.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Authentication vs Authorisation">
+<p>What is the difference between authentication and authorisation? Provide a concrete example illustrating the distinction.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Data Integrity">
+<p>What is integrity in data security, and what strategies can be used to ensure it? Describe at least two mechanisms used in practice.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Confidentiality in Cryptography">
+<p>Describe how confidentiality can be ensured through cryptographic techniques. What properties must a secure encryption algorithm have?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Cloud Confidentiality for Patient Data">
+<p>How could confidentiality be ensured in a Cloud system that contains sensitive data about patients? What technical and organisational measures would you implement?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Managing a Sensitive Physics Dataset">
+<p>You are tasked with defining the strategy to manage and share with others (e.g., physicists) a large dataset of potentially sensitive data, such as records of hospital patients. What techniques and strategies would you consider effective? Consider data access control, anonymisation, encryption, and audit trails.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Hash Collisions">
+<p>What is a hash collision? Why do we want to avoid it, and is it totally avoidable? How do modern hash functions (e.g.&nbsp;SHA-256) minimise the probability of collisions?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Parity Checks and Checksums">
+<p>What is the role of parity checks and checksums in data management? In what contexts are they used, and what are their limitations?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+<div class="exercise" name="Brute-Force Cracking Exercises">
+<p>Answer the following two sub-questions:</p>
+<p><strong>(a)</strong> Imagine your password is hashed via the SHA-256 algorithm and it contains 10 characters drawn from a standard alphanumeric character set (letters a–z, A–Z, digits 0–9: 62 characters total). A hacker can try 1,000 different hash combinations per hour. How much time does it take for the hacker to crack your password in the worst case?</p>
+<p><strong>(b)</strong> If you use SHA-256 hashing on a text and an algorithm can guess at a rate of <span class="math inline">\(2 \times 10^{18}\)</span> guesses per second, how long will the algorithm take in the worst case to find the original input? (Recall that SHA-256 produces a 256-bit digest, giving <span class="math inline">\(2^{256}\)</span> possible hash values.)</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+</div>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/02-storage.html" class="pagination-link" aria-label="Storage">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Storage</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/04-file-system.html" class="pagination-link" aria-label="File System">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">File System</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb5" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Reliability and Security</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>Physical media contain our data, but what matters is the integrity of the data, not of the memory units themselves. The threats from which we must protect data are of three types:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Data loss**: if a memory device is subject to a failure (electrical or mechanical), usually all the data contained within it are lost.</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Data corruption**: certain environmental factors (lowering of the input voltage, increase in ambient temperature, cosmic radiation) can cause a *bit-flip*, that is the inversion of a bit. For HDDs, on average there is a bit-flip every $10^{14}$ bits involved in read or write cycles. A 10 TB read therefore spans roughly $10^{14}$ bits — meaning a single full scan of a 10 TB disk could produce one silent, undetected data corruption.</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Transfer errors**: occur when there are no adequate checks in the copy or transfer of data.</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Reliability"}</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>**Reliability** corresponds to the probability that a system will continue to operate correctly beyond a certain period of time or a certain number of operations.</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>In quantitative terms:</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**MTTF** (*Mean Time To Failure*): the average time that elapses between the first power-on of the device and the moment a failure occurs.</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**MTBF** (*Mean Time Between Failure*): defined for *repairable* systems, the average time that elapses between one failure and the next.</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="al">![MTTF and MTBF as a function of time](../Grafiche/Immagini/MTTF_e_MTBF.png)</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="fu">### Failure Rate Lifecycle: The Bathtub Curve</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>The failure rate of hardware components is not constant over time. It follows a characteristic pattern known as the **bathtub curve**:</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="in">Failure</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="in">  Rate</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="in">   │</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="in">   │\                                    /│</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="in">   │ \   Early failures               /  │</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="in">   │  \  (burn-in)                  /    │  Wearout</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="in">   │   \____________________________/     │</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="in">   │       Standard operations            │</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="in">   └──────────────────────────────────────┴─── Time</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Early failure period (burn-in)**: newly deployed components have an elevated failure rate due to manufacturing defects; these typically manifest within the first hours or days of operation.</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Useful life period**: failure rate is low and roughly constant; this is the expected operating lifetime quoted by manufacturers.</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Wearout period**: as components age, mechanical wear, electromigration, and cell degradation cause the failure rate to rise again.</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>MTTF and MTBF statistics are measured during the useful life period and do not capture burn-in or wearout behaviour.</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>Realistically, the MTTF of an HDD is about ten years. Assuming an equally distributed probability of failure:</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>$$p = \frac{1}{10 \cdot 365} = 0.00027$$</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>Considering $5000$ independent HDDs:</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>$$5000 \cdot 0.00027 = 1.35$$</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>So, on average, it is expected that every day an HDD will fail and have to be replaced. At CERN, with $\sim 100\,000$ HDDs in daily use, that translates to about $27$ damaged memory units per day.</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## Reliability Strategies</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>To store data securely, three main strategies are used:</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Mirroring**: the data are replicated on different devices, sometimes located in different places.</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Striping**: the data are divided into "pieces" and distributed on different memory elements.</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Checking**: errors relating to the consistency of the data within the devices are identified (and possibly corrected), such as a *checksum* or a *parity check*.</span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>The basis on which to apply these strategies is the so-called *disk redundancy*, indicated by the acronym **RAID** (*Redundant Array of Independent Disks*), in which multiple devices are combined to form a single *logical* device in order to improve reliability and performance.</span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## Software RAID</span></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>RAID can be implemented entirely in software without dedicated hardware. On Linux, the <span class="in">`mdadm`</span> utility manages software RAID arrays:</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a RAID 5 array across three devices</span></span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a><span class="ex">mdadm</span> <span class="at">--create</span> /dev/md0 <span class="at">--level</span><span class="op">=</span>5 <span class="at">--raid-devices</span><span class="op">=</span>3 /dev/sdb /dev/sdc /dev/sdd</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Check array status</span></span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a><span class="ex">mdadm</span> <span class="at">--detail</span> /dev/md0</span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>Software RAID is less expensive than hardware RAID controllers and is widely used in commodity server deployments.</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a><span class="fu">### RAID 0</span></span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Property <span class="pp">|</span> Value <span class="pp">|</span></span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Strategies <span class="pp">|</span> **Striping** (no mirroring, no checking) <span class="pp">|</span></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Min. disks <span class="pp">|</span> 2 <span class="pp">|</span></span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Total capacity <span class="pp">|</span> Lowest single disk capacity × number of disks <span class="pp">|</span></span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Throughput <span class="pp">|</span> Conditioned by simultaneous read/write from all disks <span class="pp">|</span></span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>Prioritizes performance over reliability — losing a disk implies losing all data.</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>::: {layout-ncol=2}</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a><span class="al">![RAID 0 diagram](../Grafiche/Immagini/raid-0.png)</span></span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a><span class="al">![RAID 0 example](../Grafiche/Immagini/raid-0-esempio.png)</span></span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a><span class="fu">### RAID 1</span></span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Property <span class="pp">|</span> Value <span class="pp">|</span></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Strategies <span class="pp">|</span> **Mirroring** (no striping, no checking) <span class="pp">|</span></span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Min. disks <span class="pp">|</span> 2 <span class="pp">|</span></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Total capacity <span class="pp">|</span> Lowest single disk capacity <span class="pp">|</span></span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Throughput <span class="pp">|</span> Throughput of the single lowest disk <span class="pp">|</span></span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>Prioritizes reliability over performance — data is safe as long as at least one disk is operational.</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a>::: {layout-ncol=2}</span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a><span class="al">![RAID 1 diagram](../Grafiche/Immagini/raid-1.png)</span></span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a><span class="al">![RAID 1 example](../Grafiche/Immagini/raid-1-esempio.png)</span></span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a><span class="fu">### RAID 1+0</span></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Property <span class="pp">|</span> Value <span class="pp">|</span></span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Strategies <span class="pp">|</span> **Mirroring and striping** (no checking) <span class="pp">|</span></span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Min. disks <span class="pp">|</span> 4 <span class="pp">|</span></span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Total capacity <span class="pp">|</span> Lowest RAID 1 unit capacity × number of RAID 1 units <span class="pp">|</span></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Throughput <span class="pp">|</span> Read: RAID 0 speed (fast); Write: RAID 1 speed (slow) <span class="pp">|</span></span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>Maintains the high performance of RAID 0 while improving reliability with mirroring.</span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>::: {layout-ncol=2}</span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a><span class="al">![RAID 1+0 diagram](../Grafiche/Immagini/raid-10.png)</span></span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a><span class="al">![RAID 1+0 example](../Grafiche/Immagini/raid-10-esempio.png)</span></span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a><span class="fu">### RAID 5</span></span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Property <span class="pp">|</span> Value <span class="pp">|</span></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Strategies <span class="pp">|</span> **Striping and parity checking** (no mirroring) <span class="pp">|</span></span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Min. disks <span class="pp">|</span> 3 <span class="pp">|</span></span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Total capacity <span class="pp">|</span> Lowest single disk capacity × (number of disks − 1) <span class="pp">|</span></span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Throughput <span class="pp">|</span> Non-trivial due to parity read/write overhead <span class="pp">|</span></span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a>A portion of each disk is "sacrificed" in favor of parity information, so the data can be recovered if a single disk fails. The parity is calculated through a chain of XORs:</span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>$$p = D_1 \oplus D_2 \oplus \dots \oplus D_n$$</span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a>**Parity recovery by XOR inversion:**</span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>XOR is self-inverse: <span class="in">`A ⊕ B ⊕ B = A`</span>. If disk D2 fails, the missing data is recovered as:</span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>$$D2 = p \oplus D1 \oplus D3$$</span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>Concrete 4-bit example:</span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Block <span class="pp">|</span> Bits <span class="pp">|</span></span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> D1 <span class="pp">|</span> <span class="in">`1010`</span> <span class="pp">|</span></span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> D2 <span class="pp">|</span> <span class="in">`1100`</span> (failed) <span class="pp">|</span></span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> D3 <span class="pp">|</span> <span class="in">`0111`</span> <span class="pp">|</span></span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> p = D1 ⊕ D2 ⊕ D3 <span class="pp">|</span> <span class="in">`0001`</span> <span class="pp">|</span></span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a>Recovery: <span class="in">`p ⊕ D1 ⊕ D3 = 0001 ⊕ 1010 ⊕ 0111 = 1100`</span> ✓</span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a>::: {layout-ncol=2}</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a><span class="al">![RAID 5 diagram](../Grafiche/Immagini/raid-5.png)</span></span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a><span class="al">![RAID 5 example](../Grafiche/Immagini/raid-5-esempio.png)</span></span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a><span class="fu">### RAID 6</span></span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Property <span class="pp">|</span> Value <span class="pp">|</span></span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Strategies <span class="pp">|</span> **Striping and parity checking** (no mirroring) <span class="pp">|</span></span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Min. disks <span class="pp">|</span> 5 <span class="pp">|</span></span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Total capacity <span class="pp">|</span> Lowest single disk capacity × (number of disks − 2) <span class="pp">|</span></span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Throughput <span class="pp">|</span> Non-trivial due to parity read/write overhead <span class="pp">|</span></span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a>A portion of two disks is "sacrificed" in favor of the parity information, encoded in two bits per section. In order for the data to be recoverable after the failure of two disks, these parity bits must be *linearly independent* — the Reed-Solomon code is the most famous solution:</span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a>$$p = D_1 \oplus D_2 \oplus D_3$$</span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a>$$q = D_1 \oplus (D_2 \ll 1) \oplus (D_3 \ll 2)$$</span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a>where $p$ is the standard XOR parity (identical to RAID 5) and $q$ is a second independent parity computed using Galois-field bit-shifts (<span class="in">`≪`</span>). Because $p$ and $q$ are linearly independent, the system has enough information to solve for any **two simultaneously failed disks** — RAID 6 tolerates any two disk losses without data loss.</span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a><span class="al">![RAID 6 diagram](../Grafiche/Immagini/raid-6.png)</span></span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-182"><a href="#cb5-182" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cryptography</span></span>
+<span id="cb5-183"><a href="#cb5-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-184"><a href="#cb5-184" aria-hidden="true" tabindex="-1"></a>**Cryptography** is a field of mathematics that deals with encoding information in order to make it secure and intelligible only to people authorized to access it.</span>
+<span id="cb5-185"><a href="#cb5-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-186"><a href="#cb5-186" aria-hidden="true" tabindex="-1"></a>The main actions involving security are:</span>
+<span id="cb5-187"><a href="#cb5-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-188"><a href="#cb5-188" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Protect the data saved on a device</span>
+<span id="cb5-189"><a href="#cb5-189" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Establish secure connections with remote servers</span>
+<span id="cb5-190"><a href="#cb5-190" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Exchange information between two *peers*</span>
+<span id="cb5-191"><a href="#cb5-191" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Prevent malicious users from tampering with the data</span>
+<span id="cb5-192"><a href="#cb5-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-193"><a href="#cb5-193" aria-hidden="true" tabindex="-1"></a>For a message exchange to be considered *secure*, we must answer the following questions:</span>
+<span id="cb5-194"><a href="#cb5-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-195"><a href="#cb5-195" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Am I sure I know who I'm talking to?</span>
+<span id="cb5-196"><a href="#cb5-196" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Can someone else intercept the data? (*Yes — it is **always** possible.* This is the basis of the security systems to be implemented.)</span>
+<span id="cb5-197"><a href="#cb5-197" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Is the message I received identical to the one sent?</span>
+<span id="cb5-198"><a href="#cb5-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Is the user I am talking to responsible for the message sent?</span>
+<span id="cb5-199"><a href="#cb5-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-200"><a href="#cb5-200" aria-hidden="true" tabindex="-1"></a><span class="al">![Schematic of the message exchange with all the dangers that threaten its integrity and reliability](../Grafiche/Immagini/sicurezza-visualizzazione.png)</span></span>
+<span id="cb5-201"><a href="#cb5-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-202"><a href="#cb5-202" aria-hidden="true" tabindex="-1"></a>The main concepts of cryptography in data management:</span>
+<span id="cb5-203"><a href="#cb5-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-204"><a href="#cb5-204" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Confidentiality**: ensuring that no one can extract information even by intercepting the entire conversation.</span>
+<span id="cb5-205"><a href="#cb5-205" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Integrity**: ensuring that the message has not been modified during the transfer.</span>
+<span id="cb5-206"><a href="#cb5-206" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Authenticity**: verifying that you are communicating with the entity you think is at the other end.</span>
+<span id="cb5-207"><a href="#cb5-207" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Identity**: verifying the identity of the specific individual.</span>
+<span id="cb5-208"><a href="#cb5-208" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Non-repudiation**: ensuring that the individual responsible for a certain activity cannot deny being associated with it.</span>
+<span id="cb5-209"><a href="#cb5-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-210"><a href="#cb5-210" aria-hidden="true" tabindex="-1"></a>The five properties can be summarised as follows:</span>
+<span id="cb5-211"><a href="#cb5-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-212"><a href="#cb5-212" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Property <span class="pp">|</span> Description <span class="pp">|</span></span>
+<span id="cb5-213"><a href="#cb5-213" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb5-214"><a href="#cb5-214" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Confidentiality** <span class="pp">|</span> Information is accessible only to authorised parties <span class="pp">|</span></span>
+<span id="cb5-215"><a href="#cb5-215" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Integrity** <span class="pp">|</span> Data has not been altered without authorisation <span class="pp">|</span></span>
+<span id="cb5-216"><a href="#cb5-216" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Authenticity** <span class="pp">|</span> The identity of the communicating party is verified <span class="pp">|</span></span>
+<span id="cb5-217"><a href="#cb5-217" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Identity** <span class="pp">|</span> The ability to uniquely identify an entity in the system <span class="pp">|</span></span>
+<span id="cb5-218"><a href="#cb5-218" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Non-repudiation** <span class="pp">|</span> A party cannot deny having performed an action <span class="pp">|</span></span>
+<span id="cb5-219"><a href="#cb5-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-220"><a href="#cb5-220" aria-hidden="true" tabindex="-1"></a><span class="fu">## Authentication and Authorization</span></span>
+<span id="cb5-221"><a href="#cb5-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-222"><a href="#cb5-222" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Authentication**: identifying users and validating their identities. Methods include username/password, certificates, keys, SSO, and biometric data (fingerprints, facial recognition, etc.).</span>
+<span id="cb5-223"><a href="#cb5-223" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Authorization**: granting a user permissions to access or use certain resources.</span>
+<span id="cb5-224"><a href="#cb5-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-225"><a href="#cb5-225" aria-hidden="true" tabindex="-1"></a>Authentication typically takes place through an *authorization server*, which certifies the user's identity; only after authentication does the system verify the user's permissions through an *Access Control List*, contained in the *resource server*.</span>
+<span id="cb5-226"><a href="#cb5-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-227"><a href="#cb5-227" aria-hidden="true" tabindex="-1"></a><span class="fu">## Encoding and Decoding of Information</span></span>
+<span id="cb5-228"><a href="#cb5-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-229"><a href="#cb5-229" aria-hidden="true" tabindex="-1"></a>All messages exchanged through computer tools are constantly exposed. The only way to prevent information from being extracted is to modify the message so that an interceptor cannot understand it.</span>
+<span id="cb5-230"><a href="#cb5-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-231"><a href="#cb5-231" aria-hidden="true" tabindex="-1"></a>The most basic idea is to apply a *mask* — called a **key** — to the message, which shuffles and reassembles it. In cryptography these actions are called **encrypting** and **decrypting**.</span>
+<span id="cb5-232"><a href="#cb5-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-233"><a href="#cb5-233" aria-hidden="true" tabindex="-1"></a>**Symmetric key encryption** (*private-key cryptography*) uses a single shared key (applied for example via XOR or AES-128/192/256). It is simple to implement but both parties must share the same key, which is a security risk.</span>
+<span id="cb5-234"><a href="#cb5-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-235"><a href="#cb5-235" aria-hidden="true" tabindex="-1"></a>**Asymmetric key encryption** (*public-key cryptography*) uses two keys: a *public* key for encrypting and a *private* key for decrypting. They are produced together by the same algorithm (RSA, ECC, etc.) so that from one key it is impossible to derive the other. The public key is made openly available; only the intended recipient can decrypt with their private key. This is slower computationally but far more secure, and is today considered the standard.</span>
+<span id="cb5-236"><a href="#cb5-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-237"><a href="#cb5-237" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb5-238"><a href="#cb5-238" aria-hidden="true" tabindex="-1"></a><span class="fu">## Standard Cryptographic Algorithm Families</span></span>
+<span id="cb5-239"><a href="#cb5-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-240"><a href="#cb5-240" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Category <span class="pp">|</span> Algorithms <span class="pp">|</span></span>
+<span id="cb5-241"><a href="#cb5-241" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb5-242"><a href="#cb5-242" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Symmetric** <span class="pp">|</span> AES-128, AES-192, AES-256 <span class="pp">|</span></span>
+<span id="cb5-243"><a href="#cb5-243" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Asymmetric** <span class="pp">|</span> RSA, ECC (Elliptic Curve Cryptography) <span class="pp">|</span></span>
+<span id="cb5-244"><a href="#cb5-244" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Hashing** <span class="pp">|</span> MD5 *(deprecated)*, SHA-1 *(deprecated)*, SHA-2 family (SHA-256, SHA-512) <span class="pp">|</span></span>
+<span id="cb5-245"><a href="#cb5-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-246"><a href="#cb5-246" aria-hidden="true" tabindex="-1"></a>Symmetric algorithms are fast and suitable for bulk data encryption once a secure channel is established. Asymmetric algorithms are slower but allow secure key exchange without a pre-shared secret. Hashing algorithms are one-way and produce a fixed-length digest regardless of input size.</span>
+<span id="cb5-247"><a href="#cb5-247" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-248"><a href="#cb5-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-249"><a href="#cb5-249" aria-hidden="true" tabindex="-1"></a>::: {layout-ncol=2}</span>
+<span id="cb5-250"><a href="#cb5-250" aria-hidden="true" tabindex="-1"></a><span class="al">![Symmetric key encryption](../Grafiche/Immagini/symmetric-key-encryption.png)</span></span>
+<span id="cb5-251"><a href="#cb5-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-252"><a href="#cb5-252" aria-hidden="true" tabindex="-1"></a><span class="al">![Asymmetric key encryption](../Grafiche/Immagini/asymmetric-key-encryption.png)</span></span>
+<span id="cb5-253"><a href="#cb5-253" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-254"><a href="#cb5-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-255"><a href="#cb5-255" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb5-256"><a href="#cb5-256" aria-hidden="true" tabindex="-1"></a><span class="fu">## SSH in Practice</span></span>
+<span id="cb5-257"><a href="#cb5-257" aria-hidden="true" tabindex="-1"></a>Asymmetric key authentication is the standard mechanism for connecting to remote Linux servers. A typical connection to a cloud VM using a private key:</span>
+<span id="cb5-258"><a href="#cb5-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-259"><a href="#cb5-259" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb5-260"><a href="#cb5-260" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-i</span> ~/private/my_private_key.pem ubuntu@10.67.22.231</span>
+<span id="cb5-261"><a href="#cb5-261" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-262"><a href="#cb5-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-263"><a href="#cb5-263" aria-hidden="true" tabindex="-1"></a>When the server is behind a gateway (jump host), use the <span class="in">`-J`</span> flag:</span>
+<span id="cb5-264"><a href="#cb5-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-265"><a href="#cb5-265" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb5-266"><a href="#cb5-266" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-J</span> gate.cloudveneto.it <span class="at">-i</span> ~/private/my_private_key.pem ubuntu@10.67.22.231</span>
+<span id="cb5-267"><a href="#cb5-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb5-268"><a href="#cb5-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-269"><a href="#cb5-269" aria-hidden="true" tabindex="-1"></a>The private key file must have restricted permissions (<span class="in">`chmod 400`</span>). The server stores only the corresponding public key in <span class="in">`~/.ssh/authorized_keys`</span>.</span>
+<span id="cb5-270"><a href="#cb5-270" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-271"><a href="#cb5-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-272"><a href="#cb5-272" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hash Functions</span></span>
+<span id="cb5-273"><a href="#cb5-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-274"><a href="#cb5-274" aria-hidden="true" tabindex="-1"></a>**Hash functions** apply *hashing* to the data — scrambling them to the point that the original form *can no longer be reproduced*. Hashing algorithms (MD5, SHA-1, SHA-2) produce a **digest** of fixed length for all inputs. Modifying the input even slightly will completely change the final digest.</span>
+<span id="cb5-275"><a href="#cb5-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-276"><a href="#cb5-276" aria-hidden="true" tabindex="-1"></a><span class="al">![Digest of two very similar data sets](../Grafiche/Immagini/hashing-piccola-modifica.png)</span></span>
+<span id="cb5-277"><a href="#cb5-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-278"><a href="#cb5-278" aria-hidden="true" tabindex="-1"></a>A hash function maps an **infinite input space** to a **finite output space** (for example, $2^{256}$ possible digests for SHA-256). By the **pigeonhole principle**, collisions must therefore exist in theory: given enough distinct inputs, at least two will always map to the same digest. A cryptographically secure hash function does not eliminate collisions — it makes finding them computationally infeasible, meaning no practical algorithm can produce a collision in a tractable amount of time.</span>
+<span id="cb5-279"><a href="#cb5-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-280"><a href="#cb5-280" aria-hidden="true" tabindex="-1"></a>What the algorithms must prevent are **hash collisions** — cases in which two different data sets give rise to the same digest — since the uniqueness of each digest is their primary purpose.</span>
+<span id="cb5-281"><a href="#cb5-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-282"><a href="#cb5-282" aria-hidden="true" tabindex="-1"></a>The three main uses of hashing:</span>
+<span id="cb5-283"><a href="#cb5-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-284"><a href="#cb5-284" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Data protection**: sensitive data such as passwords are stored as hashes, not in plaintext. Authentication systems compare input hashes with stored hashes.</span>
+<span id="cb5-285"><a href="#cb5-285" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Data integrity check**: comparing the hash of a received file with the expected hash confirms that the file was not tampered with during transfer.</span>
+<span id="cb5-286"><a href="#cb5-286" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Digital signatures**: due to their uniqueness and irreproducibility, hashes are used to certify documents stored in digital systems.</span>
+<span id="cb5-287"><a href="#cb5-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-288"><a href="#cb5-288" aria-hidden="true" tabindex="-1"></a><span class="fu">## Encryption vs Hashing: Summary</span></span>
+<span id="cb5-289"><a href="#cb5-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-290"><a href="#cb5-290" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> Encryption <span class="pp">|</span> Hashing <span class="pp">|</span></span>
+<span id="cb5-291"><a href="#cb5-291" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|</span></span>
+<span id="cb5-292"><a href="#cb5-292" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Reversible?** <span class="pp">|</span> Yes (with key) <span class="pp">|</span> No (one-way function) <span class="pp">|</span></span>
+<span id="cb5-293"><a href="#cb5-293" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Purpose** <span class="pp">|</span> Confidentiality — protect data in transit/at rest <span class="pp">|</span> Integrity — verify data has not changed <span class="pp">|</span></span>
+<span id="cb5-294"><a href="#cb5-294" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Output size** <span class="pp">|</span> Same order as input <span class="pp">|</span> Fixed size (e.g. 256 bits for SHA-256) <span class="pp">|</span></span>
+<span id="cb5-295"><a href="#cb5-295" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Key required?** <span class="pp">|</span> Yes (symmetric) or key pair (asymmetric) <span class="pp">|</span> No <span class="pp">|</span></span>
+<span id="cb5-296"><a href="#cb5-296" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Use when** <span class="pp">|</span> Storing sensitive data, securing communications <span class="pp">|</span> Storing passwords, verifying file integrity, digital signatures <span class="pp">|</span></span>
+<span id="cb5-297"><a href="#cb5-297" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Examples** <span class="pp">|</span> AES-256, RSA, ECC <span class="pp">|</span> SHA-256, SHA-3, bcrypt <span class="pp">|</span></span>
+<span id="cb5-298"><a href="#cb5-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-299"><a href="#cb5-299" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb5-300"><a href="#cb5-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-301"><a href="#cb5-301" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Mirroring, Striping, Parity"}</span>
+<span id="cb5-302"><a href="#cb5-302" aria-hidden="true" tabindex="-1"></a>Define mirroring, striping, and parity check. Discuss the pros and cons of each technique, and compare them in terms of reliability in RAID configurations.</span>
+<span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 0 vs RAID 1"}</span>
+<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a>What is the performance impact of using RAID 0 vs RAID 1? What factors should be considered when choosing between them?</span>
+<span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 0 Throughput and Risks"}</span>
+<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a>How does RAID 0 increase data throughput, and what are the risks associated with this configuration?</span>
+<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 5 Capacity"}</span>
+<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a>You have five disks with sizes $x_1, x_2, x_3, x_4, x_5$. If you arrange them in a RAID 5 system, what will be the usable storage capacity of the system? Express the answer in terms of the individual disk sizes.</span>
+<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Parity Placement"}</span>
+<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a>Can you store the parity of a data block on the same disk as the data block itself? Explain your answer in the context of RAID reliability.</span>
+<span id="cb5-335"><a href="#cb5-335" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 6 Configuration"}</span>
+<span id="cb5-342"><a href="#cb5-342" aria-hidden="true" tabindex="-1"></a>You have a RAID 6 configuration with 5 disks. What is the usable storage capacity of the filesystem (expressed as a fraction of total raw capacity)? How many disks can fail simultaneously without data loss?</span>
+<span id="cb5-343"><a href="#cb5-343" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-344"><a href="#cb5-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-345"><a href="#cb5-345" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-346"><a href="#cb5-346" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-347"><a href="#cb5-347" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-348"><a href="#cb5-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-349"><a href="#cb5-349" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 10 vs RAID 6"}</span>
+<span id="cb5-350"><a href="#cb5-350" aria-hidden="true" tabindex="-1"></a>Compare RAID 10 and RAID 6 in terms of pros and cons regarding storage efficiency and reliability (fault tolerance).</span>
+<span id="cb5-351"><a href="#cb5-351" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-352"><a href="#cb5-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-353"><a href="#cb5-353" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-354"><a href="#cb5-354" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-355"><a href="#cb5-355" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-356"><a href="#cb5-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-357"><a href="#cb5-357" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID Configuration Exercise (1)"}</span>
+<span id="cb5-358"><a href="#cb5-358" aria-hidden="true" tabindex="-1"></a>You are tasked with choosing a RAID configuration to store a 3.5 TB dataset. You have 6 disks available with the following capacities:</span>
+<span id="cb5-359"><a href="#cb5-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-360"><a href="#cb5-360" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk <span class="pp">|</span> Capacity (TB) <span class="pp">|</span></span>
+<span id="cb5-361"><a href="#cb5-361" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|--------------|</span></span>
+<span id="cb5-362"><a href="#cb5-362" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-0 <span class="pp">|</span> 1.0 <span class="pp">|</span></span>
+<span id="cb5-363"><a href="#cb5-363" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-1 <span class="pp">|</span> 1.0 <span class="pp">|</span></span>
+<span id="cb5-364"><a href="#cb5-364" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-2 <span class="pp">|</span> 1.2 <span class="pp">|</span></span>
+<span id="cb5-365"><a href="#cb5-365" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-3 <span class="pp">|</span> 1.5 <span class="pp">|</span></span>
+<span id="cb5-366"><a href="#cb5-366" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-4 <span class="pp">|</span> 1.5 <span class="pp">|</span></span>
+<span id="cb5-367"><a href="#cb5-367" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-5 <span class="pp">|</span> 1.8 <span class="pp">|</span></span>
+<span id="cb5-368"><a href="#cb5-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-369"><a href="#cb5-369" aria-hidden="true" tabindex="-1"></a>The dataset needs to be stored with high reliability and fault tolerance. Which RAID configuration would you choose, and why? Consider both the storage requirements and fault tolerance.</span>
+<span id="cb5-370"><a href="#cb5-370" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-371"><a href="#cb5-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-372"><a href="#cb5-372" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-373"><a href="#cb5-373" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-374"><a href="#cb5-374" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-375"><a href="#cb5-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-376"><a href="#cb5-376" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID Configuration Exercise (2)"}</span>
+<span id="cb5-377"><a href="#cb5-377" aria-hidden="true" tabindex="-1"></a>Arrange the following 6 disks in a RAID 10 configuration:</span>
+<span id="cb5-378"><a href="#cb5-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-379"><a href="#cb5-379" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk <span class="pp">|</span> Capacity (GB) <span class="pp">|</span> Throughput (MB/s) <span class="pp">|</span></span>
+<span id="cb5-380"><a href="#cb5-380" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|--------------|-------------------|</span></span>
+<span id="cb5-381"><a href="#cb5-381" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 0 <span class="pp">|</span> 750 <span class="pp">|</span> 120 <span class="pp">|</span></span>
+<span id="cb5-382"><a href="#cb5-382" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="pp">|</span> 640 <span class="pp">|</span> 200 <span class="pp">|</span></span>
+<span id="cb5-383"><a href="#cb5-383" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2 <span class="pp">|</span> 500 <span class="pp">|</span> 250 <span class="pp">|</span></span>
+<span id="cb5-384"><a href="#cb5-384" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> 640 <span class="pp">|</span> 150 <span class="pp">|</span></span>
+<span id="cb5-385"><a href="#cb5-385" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 4 <span class="pp">|</span> 1000 <span class="pp">|</span> 120 <span class="pp">|</span></span>
+<span id="cb5-386"><a href="#cb5-386" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 5 <span class="pp">|</span> 720 <span class="pp">|</span> 160 <span class="pp">|</span></span>
+<span id="cb5-387"><a href="#cb5-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-388"><a href="#cb5-388" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>How can the 6 disks be arranged into mirrored pairs?</span>
+<span id="cb5-389"><a href="#cb5-389" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>What is the estimated overall usable storage capacity?</span>
+<span id="cb5-390"><a href="#cb5-390" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>How many disks can fail without incurring data loss in this configuration?</span>
+<span id="cb5-391"><a href="#cb5-391" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-392"><a href="#cb5-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-393"><a href="#cb5-393" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-394"><a href="#cb5-394" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-395"><a href="#cb5-395" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-396"><a href="#cb5-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-397"><a href="#cb5-397" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Encryption vs Hashing"}</span>
+<span id="cb5-398"><a href="#cb5-398" aria-hidden="true" tabindex="-1"></a>What is the difference between encryption and hashing? Why are both techniques important and useful for ensuring data security? Give an example use case for each.</span>
+<span id="cb5-399"><a href="#cb5-399" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-400"><a href="#cb5-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-401"><a href="#cb5-401" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-402"><a href="#cb5-402" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-403"><a href="#cb5-403" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-404"><a href="#cb5-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-405"><a href="#cb5-405" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Symmetric vs Asymmetric Encryption"}</span>
+<span id="cb5-406"><a href="#cb5-406" aria-hidden="true" tabindex="-1"></a>What are the differences between symmetric and asymmetric encryption? In what scenarios is each type preferable?</span>
+<span id="cb5-407"><a href="#cb5-407" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-408"><a href="#cb5-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-409"><a href="#cb5-409" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-410"><a href="#cb5-410" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-411"><a href="#cb5-411" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-412"><a href="#cb5-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-413"><a href="#cb5-413" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Asymmetric Encryption Vulnerabilities"}</span>
+<span id="cb5-414"><a href="#cb5-414" aria-hidden="true" tabindex="-1"></a>How can data be compromised in an asymmetric key encryption scheme? Describe at least two attack vectors or points of failure.</span>
+<span id="cb5-415"><a href="#cb5-415" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-416"><a href="#cb5-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-417"><a href="#cb5-417" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-418"><a href="#cb5-418" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-419"><a href="#cb5-419" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-420"><a href="#cb5-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-421"><a href="#cb5-421" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Data Confidentiality in Network Communications"}</span>
+<span id="cb5-422"><a href="#cb5-422" aria-hidden="true" tabindex="-1"></a>What common methods are used for protecting data confidentiality in network communications? Name and briefly describe at least three techniques.</span>
+<span id="cb5-423"><a href="#cb5-423" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-424"><a href="#cb5-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-425"><a href="#cb5-425" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-426"><a href="#cb5-426" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-427"><a href="#cb5-427" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-428"><a href="#cb5-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-429"><a href="#cb5-429" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Authentication vs Authorisation"}</span>
+<span id="cb5-430"><a href="#cb5-430" aria-hidden="true" tabindex="-1"></a>What is the difference between authentication and authorisation? Provide a concrete example illustrating the distinction.</span>
+<span id="cb5-431"><a href="#cb5-431" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-432"><a href="#cb5-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-433"><a href="#cb5-433" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-434"><a href="#cb5-434" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-435"><a href="#cb5-435" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-436"><a href="#cb5-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-437"><a href="#cb5-437" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Data Integrity"}</span>
+<span id="cb5-438"><a href="#cb5-438" aria-hidden="true" tabindex="-1"></a>What is integrity in data security, and what strategies can be used to ensure it? Describe at least two mechanisms used in practice.</span>
+<span id="cb5-439"><a href="#cb5-439" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-440"><a href="#cb5-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-441"><a href="#cb5-441" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-442"><a href="#cb5-442" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-443"><a href="#cb5-443" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-444"><a href="#cb5-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-445"><a href="#cb5-445" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Confidentiality in Cryptography"}</span>
+<span id="cb5-446"><a href="#cb5-446" aria-hidden="true" tabindex="-1"></a>Describe how confidentiality can be ensured through cryptographic techniques. What properties must a secure encryption algorithm have?</span>
+<span id="cb5-447"><a href="#cb5-447" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-448"><a href="#cb5-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-449"><a href="#cb5-449" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-450"><a href="#cb5-450" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-451"><a href="#cb5-451" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-452"><a href="#cb5-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-453"><a href="#cb5-453" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Cloud Confidentiality for Patient Data"}</span>
+<span id="cb5-454"><a href="#cb5-454" aria-hidden="true" tabindex="-1"></a>How could confidentiality be ensured in a Cloud system that contains sensitive data about patients? What technical and organisational measures would you implement?</span>
+<span id="cb5-455"><a href="#cb5-455" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-456"><a href="#cb5-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-457"><a href="#cb5-457" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-458"><a href="#cb5-458" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-459"><a href="#cb5-459" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-460"><a href="#cb5-460" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-461"><a href="#cb5-461" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Managing a Sensitive Physics Dataset"}</span>
+<span id="cb5-462"><a href="#cb5-462" aria-hidden="true" tabindex="-1"></a>You are tasked with defining the strategy to manage and share with others (e.g., physicists) a large dataset of potentially sensitive data, such as records of hospital patients. What techniques and strategies would you consider effective? Consider data access control, anonymisation, encryption, and audit trails.</span>
+<span id="cb5-463"><a href="#cb5-463" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-464"><a href="#cb5-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-465"><a href="#cb5-465" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-466"><a href="#cb5-466" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-467"><a href="#cb5-467" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-468"><a href="#cb5-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-469"><a href="#cb5-469" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Hash Collisions"}</span>
+<span id="cb5-470"><a href="#cb5-470" aria-hidden="true" tabindex="-1"></a>What is a hash collision? Why do we want to avoid it, and is it totally avoidable? How do modern hash functions (e.g. SHA-256) minimise the probability of collisions?</span>
+<span id="cb5-471"><a href="#cb5-471" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-472"><a href="#cb5-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-473"><a href="#cb5-473" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-474"><a href="#cb5-474" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-475"><a href="#cb5-475" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-476"><a href="#cb5-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-477"><a href="#cb5-477" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Parity Checks and Checksums"}</span>
+<span id="cb5-478"><a href="#cb5-478" aria-hidden="true" tabindex="-1"></a>What is the role of parity checks and checksums in data management? In what contexts are they used, and what are their limitations?</span>
+<span id="cb5-479"><a href="#cb5-479" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-480"><a href="#cb5-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-481"><a href="#cb5-481" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-482"><a href="#cb5-482" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-483"><a href="#cb5-483" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-484"><a href="#cb5-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-485"><a href="#cb5-485" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Brute-Force Cracking Exercises"}</span>
+<span id="cb5-486"><a href="#cb5-486" aria-hidden="true" tabindex="-1"></a>Answer the following two sub-questions:</span>
+<span id="cb5-487"><a href="#cb5-487" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-488"><a href="#cb5-488" aria-hidden="true" tabindex="-1"></a>**(a)** Imagine your password is hashed via the SHA-256 algorithm and it contains 10 characters drawn from a standard alphanumeric character set (letters a–z, A–Z, digits 0–9: 62 characters total). A hacker can try 1,000 different hash combinations per hour. How much time does it take for the hacker to crack your password in the worst case?</span>
+<span id="cb5-489"><a href="#cb5-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-490"><a href="#cb5-490" aria-hidden="true" tabindex="-1"></a>**(b)** If you use SHA-256 hashing on a text and an algorithm can guess at a rate of $2 \times 10^{18}$ guesses per second, how long will the algorithm take in the worst case to find the original input? (Recall that SHA-256 produces a 256-bit digest, giving $2^{256}$ possible hash values.)</span>
+<span id="cb5-491"><a href="#cb5-491" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-492"><a href="#cb5-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-493"><a href="#cb5-493" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-494"><a href="#cb5-494" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-495"><a href="#cb5-495" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>
