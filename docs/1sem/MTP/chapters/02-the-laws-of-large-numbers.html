@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; The Laws of Large Numbers – In Search of the Hidden M-Bombs Treasure</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/03-laplace-method.html" rel="next">
+<link href="../chapters/01-gaussian-integrals.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-gaussian-integrals.html">Mathematics</a></li><li class="breadcrumb-item"><a href="../chapters/02-the-laws-of-large-numbers.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Laws of Large Numbers</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">In Search of the Hidden M-Bombs Treasure</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Mathematics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-gaussian-integrals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Gaussian integrals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-the-laws-of-large-numbers.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Laws of Large Numbers</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-laplace-method.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Laplace method</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-general-odes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ordinary differential equation systems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Diffusion</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-diffusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Diffusion</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stochastic Processes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-stochastic-processes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Stochastic Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-wiener-path-integral.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Path integrals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-stochastic-differential-equations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Stochastic differential equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-ornstein-uhlenbeck-process.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ornstein-Uhlenbeck Process</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-fokker-planck-equation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Fokker-Planck Equation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-classical-mechanics-applications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Applications in classical mechanics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-birth-and-death-processes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Birth and Death Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-odes-chemical-reactions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ordinary differential equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">14-Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Advanced Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-turing-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Pattern di Turing</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-laws-of-large-numbers" id="toc-the-laws-of-large-numbers" class="nav-link active" data-scroll-target="#the-laws-of-large-numbers"><span class="header-section-number">4</span> The Laws of Large Numbers</a>
+  <ul class="collapse">
+  <li><a href="#joint-distribution" id="toc-joint-distribution" class="nav-link" data-scroll-target="#joint-distribution"><span class="header-section-number">4.1</span> Joint Distribution</a></li>
+  <li><a href="#convolution" id="toc-convolution" class="nav-link" data-scroll-target="#convolution"><span class="header-section-number">4.2</span> Convolution</a>
+  <ul class="collapse">
+  <li><a href="#characteristic-function-of-the-sum-of-variables" id="toc-characteristic-function-of-the-sum-of-variables" class="nav-link" data-scroll-target="#characteristic-function-of-the-sum-of-variables"><span class="header-section-number">4.2.1</span> Characteristic function of the sum of variables</a></li>
+  </ul></li>
+  <li><a href="#the-weak-law-of-large-numbers" id="toc-the-weak-law-of-large-numbers" class="nav-link" data-scroll-target="#the-weak-law-of-large-numbers"><span class="header-section-number">4.3</span> The Weak Law of Large Numbers</a></li>
+  <li><a href="#the-strong-law-of-large-numbers" id="toc-the-strong-law-of-large-numbers" class="nav-link" data-scroll-target="#the-strong-law-of-large-numbers"><span class="header-section-number">4.4</span> The Strong Law of Large Numbers</a></li>
+  <li><a href="#central-limit-theorem" id="toc-central-limit-theorem" class="nav-link" data-scroll-target="#central-limit-theorem"><span class="header-section-number">4.5</span> Central Limit Theorem</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-gaussian-integrals.html">Mathematics</a></li><li class="breadcrumb-item"><a href="../chapters/02-the-laws-of-large-numbers.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Laws of Large Numbers</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Laws of Large Numbers</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="the-laws-of-large-numbers" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> The Laws of Large Numbers</h1>
+<section id="joint-distribution" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="joint-distribution"><span class="header-section-number">4.1</span> Joint Distribution</h2>
+<p>Let’s imagine we have two random variables <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> that are <em>independent</em> and also <em>identically distributed</em>, meaning they follow the same distribution law.</p>
+<p>The <strong>joint distribution</strong> of these two variables, being independent, can be factored into the product of the individual distributions:</p>
+<p><span class="math display">\[\begin{equation*}
+    p\left(x_1,x_2\right)=p_1\left(x_1\right)p_2\left(x_2\right)
+\end{equation*}\]</span></p>
+<p>Specifically, being identically distributed, we can write:</p>
+<p><span class="math display">\[\begin{equation*}
+    p_1(x)=p_2(x)=q(x) \ \Longrightarrow \ p\left(x_1,x_2\right)=q\left(x_1\right)q\left(x_2\right)
+\end{equation*}\]</span></p>
+</section>
+<section id="convolution" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="convolution"><span class="header-section-number">4.2</span> Convolution</h2>
+<p>At this point, we can calculate the distribution of the sum <span class="math inline">\(x_1+x_2\)</span> through the following reasoning: let’s imagine extracting <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> according to their distribution <span class="math inline">\(q(x)\)</span>; for the same outcome <span class="math inline">\(x\)</span>, different combinations of outcomes are possible, and all these outcomes must therefore be weighted according to the corresponding probability:</p>
+<p><span class="math display">\[\begin{equation*}
+    p(x)=\int\delta\left[x-\left(x_1+x_2\right)\right]q\left(x_1\right)q\left(x_2\right)dx_1dx_2\equiv\left\langle\delta\left(x-x_1-x_2\right)\right\rangle
+\end{equation*}\]</span></p>
+<p>Rearranging the terms inside the delta function we have</p>
+<p><span class="math display">\[\begin{equation*}
+    p(x)=\int q\left(x_1\right)dx_1\int\delta\left[\left(x-x_1\right)-x_2\right]q\left(x_2\right)dx_2=\int q\left(x-x_1\right)q\left(x_1\right)dx_1
+\end{equation*}\]</span></p>
+<p>Choosing the final integral with the variable <span class="math inline">\(x_1\)</span> or <span class="math inline">\(x_2\)</span> is completely arbitrary, so we rename this variable <span class="math inline">\(y\)</span>, thus obtaining</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{p(x)=\int q(x-y)q(y)dy}
+\end{equation}\]</span></p>
+<p>The expression obtained is called a <strong>convolution</strong>.</p>
+<div class="exercise">
+<p><em>Calculate the distribution of <span class="math inline">\(x=x_0+x_1\)</span> where <span class="math inline">\(x_0\)</span> and <span class="math inline">\(x_1\)</span> are two independent and identically distributed variables according to</em></p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<pre><code>\begin{enumerate}
+    \item Since $x_1,x_2\in[0,1]$ then $x\in[0,2]$. Intuitively, we understand that $x$ cannot follow a uniform distribution, since the number of possible combinations for the extreme values ($0$ and $2$) is only one, while for the intermediate values there are certainly more.
+
+    Referring to equation (eq:convoluzione), the functions $q(x-y)$ and $q(y)$ are non-zero only when both $x-y$ and $y$ belong to the interval $[0,1]$. Making the interval for the first variable explicit with respect to $y$:
+
+    \begin{equation*}
+        0\leqslant x-y\leqslant1 \ \iff \ -x\leqslant-y\leqslant1-x \ \iff \ x-1\leqslant y\leqslant x
+    \end{equation*}
+
+    We know that $x\in[0,2]$, so the lower limit will be $x-1\in[-1,1]$. We distinguish the negative case from the positive one:
+
+    \begin{itemize}
+        \item $x-1\in[-1,0] \ \iff \ x\in[0,1]$
+
+        $y$ cannot be negative, so the lower limit can only be $0$; as for the upper limit, however, the entire interval of $x$ is valid:
+
+        \begin{equation*}
+            p(x)=\int_0^x1\cdot1dy=y|_0^x=x
+        \end{equation*}
+
+        \item $x-1\in(0,1] \ \iff \ x\in[1,2]$
+
+        This time the interval for the lower limit is entirely valid, while for the upper limit only $1$ is valid, since $y$ cannot exceed $1$:
+
+        \begin{equation*}
+            p(x)=\int_{x-1}^11\cdot1dy=y|_{x-1}^1=1-x+1=2-x
+        \end{equation*}
+    \end{itemize}
+
+    The final pdf, therefore, is the following:
+
+    \begin{equation*}
+        p(x)=
+        \begin{cases}
+            0 \ &amp;x\in(-\infty,0)\cup(2,+\infty)\\
+            x &amp; x\in[0,1]\\
+            2-x &amp; x\in(1,2]
+        \end{cases}
+    \end{equation*}
+
+    \item This time we have no limits for the variables since they are defined in all of $\mathbb{R}$.
+
+    \begin{align*}
+        p(x)&amp;=\int_{-\infty}^{+\infty}\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-y-\mu)^2}{2\sigma^2}}\cdot\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(y-\mu)^2}{2\sigma^2}}dy=\\
+        &amp;=\frac{1}{2\pi\sigma^2}\int_{-\infty}^{+\infty}e^{-\frac{1}{2\sigma^2}\left[(x-y-\mu)^2+(y-\mu)^2\right]}dy
+    \end{align*}
+
+    Let's make the exponent explicit, always keeping in mind that the variable is $y$:
+
+    \begin{align*}
+        &amp;(x-y-\mu)^2+(y-\mu)^2=\\
+        &amp;=x^2+y^2+\mu^2-2xy-2x\mu\cancel{+2y\mu}+y^2+\mu^2\cancel{-2y\mu}=\\
+        &amp;=2y^2-2xy+x^2-2x\mu+2\mu^2
+    \end{align*}
+
+    Let's substitute in the exponent, trying to get back to the formula (eq:integrali-gaussiani-forma-generale):
+
+    \begin{equation*}
+        p(x)=\frac{1}{2\pi\sigma^2}e^{-\frac{x^2-2x\mu+2\mu^2}{2\sigma^2}}\int_{-\infty}^{+\infty}e^{-\frac{1}{2}\cdot\frac{2}{\sigma^2}y^2+\frac{x}{\sigma^2}y}dy
+    \end{equation*}
+
+    Comparing with (eq:integrali-gaussiani-forma-generale) we find the result of the integral:
+
+    \begin{align*}
+        \begin{cases}
+            a=\frac{2}{\sigma^2}\\
+            b=\frac{x}{\sigma^2}
+        \end{cases}
+        \Longrightarrow \ \ \ p(x)&amp;=\frac{1}{2\pi\sigma^2}e^{-\frac{x^2-2x\mu+2\mu^2}{2\sigma^2}}\cdot\sqrt{\frac{2\pi\sigma^2}{2}}e^{\frac{\frac{x^2}{\sigma^4}}{2\frac{2}{\sigma^2}}}=\\
+        &amp;=\frac{1}{\sqrt{2}\sigma\sqrt{2\pi}}e^{-\frac{x^2-2x\mu+2\mu^2}{2\sigma^2}+\frac{x^2}{4\sigma^2}}
+    \end{align*}
+
+    Let's perform the calculations in the exponent:
+
+    \begin{align*}
+        -\frac{x^2-2x\mu+2\mu^2}{2\sigma^2}+\frac{x^2}{4\sigma^2}&amp;=-\frac{2x^2-4x\mu+4\mu^2-x^2}{4\sigma^2}=\\
+        &amp;=-\frac{x^2-4x\mu+4\mu^2}{4\sigma^2}
+    \end{align*}
+
+    Substituting:
+
+    \begin{equation*}
+        p(x)=\frac{1}{\sqrt{2}\sigma\sqrt{2\pi}}e^{-\frac{x^2-4x\mu+4\mu^2}{4\sigma^2}}
+    \end{equation*}
+
+    In order to obtain a Gaussian function, let's make the following substitutions:
+
+    \begin{equation*}
+        \begin{cases}
+            \mu'=2\mu
+            \sigma'=\sqrt{2}\sigma
+        \end{cases}
+    \end{equation*}
+
+    In this way we obtain the final distribution, which is precisely a Gaussian:
+
+    \begin{equation*}
+        p(x)=\frac{1}{\sigma'\sqrt{2\pi}}e^{-\frac{x^2-2x\mu'+\mu'^2}{2\sigma'^2}}=\frac{1}{\sigma'\sqrt{2\pi}}e^{-\frac{(x-\mu')^2}{2\sigma'^2}}
+    \end{equation*}
+
+    \item Exponentially distributed variables can only take non-negative values, and to ensure this, the integration must take place in the interval $[0,x]$, similarly to what was done for uniformly distributed variables.
+
+    \begin{equation*}
+        p(x)=\int_0^x\lambda e^{-\lambda(x-y)}\cdot\lambda e^{-\lambda y}dy=\lambda^2\int_0^xe^{-\lambda(x\cancel{-y}\cancel{+y})}dy=
+    \end{equation*}
+
+    From which it follows:
+
+    \begin{equation*}
+        p(x)=\lambda^2e^{-\lambda x}\int_0^xdy=\lambda^2xe^{-\lambda x}
+    \end{equation*}
+\end{enumerate}</code></pre>
+</div>
+<div class="exercise">
+<p><em>Calculate the distribution of</em> <span class="math inline">\(x=x_1x_2\)</span> <em>where</em> <span class="math inline">\(x_1\)</span> <em>and</em> <span class="math inline">\(x_2\)</span> <em>are two positive, independent, and identically distributed variables.</em></p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Following the same reasoning seen at the beginning of the section:</p>
+<pre><code>\begin{align*}
+    p(x)&amp;=\int\delta\left(x-x_1x_2\right)q\left(x_1\right)q\left(x_2\right)dx_1dx_2=\\
+    &amp;=\int q\left(x_1\right)dx_1\int\delta\left(x-x_1x_2\right)q\left(x_2\right)dx_2
+\end{align*}
+
+Let's make the following substitution:
+
+\begin{equation*}
+    z=x_1x_2 \ \iff \ x_2=\frac{z}{x_1} \ \Longrightarrow \ dx_2=\frac{1}{x_1}dz
+\end{equation*}
+
+\begin{equation*}
+    p(x)=\int q\left(x_1\right)dx_1\int\delta(x-z)q\left(\frac{z}{x_1}\right)\frac{1}{x_1}dz=\int q\left(\frac{x}{x_1}\right)q\left(x_1\right)\frac{1}{x_1}dx_1
+\end{equation*}
+
+Substituting $x_1$ with the generic variable $y$ we find:
+
+\begin{equation}
+    p(x)=\int q\left(\frac{x}{y}\right)q\left(y\right)\frac{1}{y}dy
+\end{equation}</code></pre>
+</div>
+<section id="characteristic-function-of-the-sum-of-variables" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="characteristic-function-of-the-sum-of-variables"><span class="header-section-number">4.2.1</span> Characteristic function of the sum of variables</h3>
+<p>Calculating a convolution, in general, is not simple. For this reason, it is convenient to calculate the characteristic function associated with it:</p>
+<p><span class="math display">\[\begin{align*}
+    \varphi(k)&amp;=\int p(x)e^{ikx}dx=\int\delta\left[x-\left(x_1+x_2\right)\right]q\left(x_1\right)q\left(x_2\right)e^{ikx}dx_1dx_2dx=\\
+    &amp;=\int q\left(x_1\right)q\left(x_2\right)e^{ik\left(x_1+x_2\right)}dx_1dx_2
+\end{align*}\]</span></p>
+<p>Since the variables are independent, we can factor the double integral into a product of integrals:</p>
+<p><span class="math display">\[\begin{equation*}
+    \varphi(k)=\int q\left(x_1\right)e^{ikx_1}dx_1\int q\left(x_2\right)e^{ikx_2}dx_2
+\end{equation*}\]</span></p>
+<p>Since the distribution functions are the same, the result of the integral is the same for both. Again, choosing <span class="math inline">\(x_1\)</span> or <span class="math inline">\(x_2\)</span> is arbitrary, so we can generally denote the <span class="math inline">\(i\)</span>-th variable as <span class="math inline">\(x_i\)</span>.</p>
+<p><span class="math display">\[\begin{equation*}
+    \varphi(k)=\left(\int q\left(x_i\right)e^{ikx_i}dx_i\right)^2=\varphi_i^2(k)
+\end{equation*}\]</span></p>
+<p>Obviously, the reasoning can be extended to <span class="math inline">\(n\)</span> independent variables, provided they all have the same distribution function. We thus discover that, under these conditions, we have</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{\varphi(k)=\varphi_i^n(k)}
+\end{equation}\]</span></p>
+<p>which in words translates to:</p>
+<div class="definition">
+<pre><code>The characteristic function associated with the sum of $n$ independent and identically distributed variables is given by the **$\boldsymbol{n-**$th power of the characteristic function} associated with the distribution function</code></pre>
+</div>
+<p>The same reasoning can be repeated with independent but not identically distributed variables. In that case too, we have the simple product of the individual characteristic functions, which this time, however, will differ from each other:</p>
+<div class="definition">
+<pre><code>The characteristic function associated with the sum of $n$ independent *but not identically distributed* variables is given by the **product of the characteristic functions** associated with each distribution function</code></pre>
+</div>
+<div class="exercise">
+<pre><code>*Revisiting point $2.$ of exercise (ex:leggi-dei-grandi-numeri-somma-variabili-casuali*, verify the same result using characteristic functions.)
+
+First of all, we must revisit equation (eq:integrali-gaussiani-funzione-caratteristica-calcolo), considering that this time we will have to consider the distribution centered not at $0$ but at $\mu$:
+
+\begin{equation*}
+    \varphi(k)=\frac{1}{\sqrt{2\pi\sigma^2}}\int_{-\infty}^{+\infty}e^{-\frac{(x-\mu)^2}{2\sigma^2}}e^{ikx}dx
+\end{equation*}
+
+It is sufficient to set $x'=x-\mu$ and we find the form known to us:
+
+\begin{equation*}
+    \varphi(k)=\frac{1}{\sqrt{2\pi\sigma^2}}\int_{-\infty}^{+\infty}e^{-\frac{x'^2}{2\sigma^2}}e^{ik(x'+\mu)}dx'=e^{-\frac{\sigma^2}{2}k^2}\cdot e^{ik\mu}=e^{-\frac{\sigma^2}{2}k^2+ik\mu}
+\end{equation*}
+
+At this point, we just need to use (eq:leggi-dei-grandi-numeri-somma-variabili-gaussiane-funzione-caratteristica):
+
+\begin{equation*}
+    \varphi(k)=e^{-\sigma^2k^2+2ik\mu}
+\end{equation*}
+
+By setting $\mu'=2\mu$ and $\sigma'=\sqrt{2}\sigma$ we obtain the characteristic function of a Gaussian, similarly to what was seen in the last exercise.</code></pre>
+</div>
+</section>
+</section>
+<section id="the-weak-law-of-large-numbers" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="the-weak-law-of-large-numbers"><span class="header-section-number">4.3</span> The Weak Law of Large Numbers</h2>
+<p>We now have all the tools we need to deal with the law of large numbers; actually, we will initially give a proof of a weaker formulation of it, and then state the stronger one.</p>
+<p>The law is useful for establishing the behavior of the empirical mean of <span class="math inline">\(n\)</span> independent and identically distributed variables as <span class="math inline">\(n\)</span> itself increases, that is, of the values extracted from the distribution that is the same for all. In mathematical terms, we are interested in calculating:</p>
+<p><span class="math display">\[\begin{equation}
+    \lim_{n\to\infty}\frac{1}{n}\sum_{i=1}^nx_i
+\end{equation}\]</span></p>
+<p>We will prove that, if <span class="math inline">\(\mu\)</span> is the mean of the distribution of each random variable, the result of the limit coincides precisely with <span class="math inline">\(\mu\)</span>. In reality, we will not prove the direct convergence of the limit to <span class="math inline">\(\mu\)</span> but the so-called <strong>convergence in distribution</strong>, which is obtained through the characteristic function of the pdf: in this sense the law is interpreted as <em>weak</em>.</p>
+<p>Let’s therefore write the characteristic function associated with the empirical mean <span class="math inline">\(x\)</span>:</p>
+<p><span class="math display">\[\begin{align}
+    \begin{split}
+        \varphi(k)&amp;=\left\langle e^{ikx}\right\rangle=\left\langle e^{i\frac{k}{n}\sum\limits_{i=1}^nx_i}\right\rangle=\int q\left(x_1\right)\dots q\left(x_n\right)e^{i\frac{k}{n}\sum\limits_{i=1}^nx_i}dx_1\dots dx_n=\\
+        &amp;=\int q\left(x_1\right)e^{i\frac{k}{n}x_1}dx_1\dotsc \int q\left(x_n\right)e^{i\frac{k}{n}x_n}dx_n=\varphi_i^n\left(\frac{k}{n}\right)
+    \end{split}
+\end{align}\]</span></p>
+<p>where the index <span class="math inline">\(i\)</span> indicates a generic value from <span class="math inline">\(1\)</span> to <span class="math inline">\(n\)</span>, as all characteristic functions are equal since the variables are identically distributed.</p>
+<p>Let’s make <span class="math inline">\(\varphi_i\left(\frac{k}{n}\right)\)</span> explicit and expand the exponential in a Taylor series:</p>
+<p><span class="math display">\[\begin{align*}
+    \varphi_i\left(\frac{k}{n}\right)&amp;=\int q\left(x_i\right)e^{i\frac{k}{n}x_i}dx_i=\int q\left(x_i\right)\left[1+i\frac{k}{n}x_i+\mathcal{O}\left(\frac{1}{n^2}\right)\right]dx_i=\\
+    &amp;=\int q\left(x_i\right)dx_i+i\frac{k}{n}\int x_iq\left(x_i\right)dx_i+\mathcal{O}\left(\frac{1}{n^2}\right)=1+i\frac{k}{n}\left\langle x_i\right\rangle+\mathcal{O}\left(\frac{1}{n^2}\right)
+\end{align*}\]</span></p>
+<p>But having assumed <span class="math inline">\(\left\langle x_i\right\rangle=\mu\)</span> then</p>
+<p><span class="math display">\[\begin{equation*}
+    \varphi_i\left(\frac{k}{n}\right)=1+i\frac{k}{n}\mu+\mathcal{O}\left(\frac{1}{n^2}\right)
+\end{equation*}\]</span></p>
+<p>Returning to (eq:legge-dei-grandi-numeri-debole-funzione-caratteristica):</p>
+<p><span class="math display">\[\begin{equation*}
+    \varphi(k)=\varphi_i^n\left(\frac{k}{n}\right)=\left[1+i\frac{k}{n}\mu+\mathcal{O}\left(\frac{1}{n^2}\right)\right]^n
+\end{equation*}\]</span></p>
+<p>Finally, passing to the limit <span class="math inline">\(n\to\infty\)</span> we are able to state that</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{\varphi(k)=\left\langle e^{i\frac{k}{n}\sum\limits_{i=1}^nx_i}\right\rangle\to e^{ik\mu}}
+\end{equation}\]</span></p>
+<p>This means that, at the limit, the empirical mean is not in turn a random variable, but is a fixed number equal to <span class="math inline">\(\mu\)</span>. Mathematically we can therefore state that the distribution function of <span class="math inline">\(x\)</span> at the limit is nothing more than a delta function, so much so that we can write:</p>
+<p><span class="math display">\[\begin{equation*}
+    e^{ik\mu}=\int\delta(x-\mu)e^{ikx}dx
+\end{equation*}\]</span></p>
+<p>Intuitively, we can imagine a decrease in statistical fluctuations around the mean <span class="math inline">\(\mu\)</span> as the number of extractions of variables from the distribution increases.</p>
+</section>
+<section id="the-strong-law-of-large-numbers" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="the-strong-law-of-large-numbers"><span class="header-section-number">4.4</span> The Strong Law of Large Numbers</h2>
+<p>In reality, it is possible to prove that convergence does not only occur through the characteristic function, but it is the empirical mean itself that converges to <span class="math inline">\(\mu\)</span>; in this formulation, the law of large numbers is called <em>strong</em>.</p>
+<p>Before we can write this law, it is necessary to introduce two concepts: that of <em>convergence in probability</em> and that of <em>almost sure convergence</em>.</p>
+<div class="definition">
+<pre><code>A sequence of random variables $x_n$ **converges in probability** to a random variable $x$ if
+
+\begin{equation}
+    \lim_{n\to\infty}P\left(\abs{x_n-x}&gt;\epsilon\right)=0   \forall\epsilon&gt;0
+\end{equation}</code></pre>
+</div>
+<p>In this way, the probability that <span class="math inline">\(x_n\)</span> deviates from <span class="math inline">\(x\)</span> by an amount greater than <span class="math inline">\(\epsilon\)</span> goes to zero as the number of variables considered increases. However, this does not guarantee that <span class="math inline">\(x_n\)</span> converges to <span class="math inline">\(x\)</span> for <span class="math inline">\(n\to\infty\)</span>; to understand why, let’s consider the following example of a sequence of random variables:</p>
+<p><span class="math display">\[\begin{equation*}
+    x_n=
+    \begin{cases}
+        0 \ \   \text{with probability} \ p(n)=\frac{1}{n}\\
+        1 \ \   \text{with probability} \ 1-p(n)=1-\frac{1}{n}
+    \end{cases}
+\end{equation*}\]</span></p>
+<p>A <em>realization</em> of such a sequence will consist of <span class="math inline">\(0\)</span>s and <span class="math inline">\(1\)</span>s in sequence, with the various <span class="math inline">\(1\)</span>s becoming increasingly rare:</p>
+<p><span class="math display">\[\begin{equation*}
+    010010000010000000000100000000000000\dots
+\end{equation*}\]</span></p>
+<p>The sequence converges in probability according to the definition, and it is equally evident that, regardless of the number <span class="math inline">\(n\)</span>, it will <em>always</em> be possible to draw a <span class="math inline">\(1\)</span>, however small that probability may be. If there existed a number <span class="math inline">\(N\)</span> such that for every <span class="math inline">\(n&gt;N\)</span> we had <span class="math inline">\(x_n=0\)</span> with probability equal to <span class="math inline">\(1\)</span> (or similarly <span class="math inline">\(x_n=1\)</span> with probability <span class="math inline">\(0\)</span>) the convergence would be called <strong>almost certain</strong>.</p>
+<div class="definition">
+<pre><code>A sequence of random variables $x_n$ **converges almost surely** to a random variable $x$ if
+
+\begin{equation}
+    P\left(\lim_{n\to\infty}x_n=x\right)=1
+\end{equation}</code></pre>
+</div>
+<p>We can easily guess that</p>
+<p><span class="math display">\[\begin{equation*}
+    \text{**Almost sure convergence**}\ \ \ \genfrac{}{}{0pt}{}{\Longrightarrow}{\cancel{\Longleftarrow}} \ \ \ \text{**Convergence in probability**}
+\end{equation*}\]</span></p>
+<p>The strong law of large numbers makes use of almost sure convergence, stating that</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{\lim_{n\to\infty}\frac{1}{n}\sum_{i=1}^nx_i=\mu \ \              \text{**almost surely**}}
+\end{equation}\]</span></p>
+<p>The proof in this case is very elaborate and is therefore not reported.</p>
+</section>
+<section id="central-limit-theorem" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="central-limit-theorem"><span class="header-section-number">4.5</span> Central Limit Theorem</h2>
+<p>With the law of large numbers we know that as <span class="math inline">\(n\)</span> grows we have</p>
+<p><span class="math display">\[\begin{equation*}
+    \sum_{i=1}^nx_i\sim n\mu
+\end{equation*}\]</span></p>
+<p>This means that for a finite <span class="math inline">\(n\)</span>, that is, when not at the limit, the difference <span class="math inline">\(\sum x_i-n\mu\)</span> will return non-zero values that coincide with the statistical fluctuations around <span class="math inline">\(n\mu\)</span>.</p>
+<p>In this regard, it is natural to ask what trend these fluctuations have, that is, how that difference behaves. A first important result is that, as <span class="math inline">\(n\)</span> increases, it is shown that</p>
+<p><span class="math display">\[\begin{equation*}
+    \sum_{i=1}^nx_i-n\mu\sim\sqrt{n}
+\end{equation*}\]</span></p>
+<p>Knowing this trend, it is therefore possible to “normalize” the difference at the limit by dividing by <span class="math inline">\(\sqrt{n}\)</span>. The study of this normalized difference, moreover, allows us to demonstrate that its distribution converges to a normalized Gaussian with <span class="math inline">\(\mu=0\)</span> and <span class="math inline">\(\sigma=1\)</span> <strong>regardless of the distribution followed by the</strong> <span class="math inline">\(\boldsymbol{x_i}\)</span>.</p>
+<p>It is important to underline that the two results just written are valid only if the variance <span class="math inline">\(\sigma^2\)</span> associated with the variables <span class="math inline">\(x_i\)</span> is <strong>finite</strong>.</p>
+<p>What is written is the heart of one of the most important theorems in statistics and probability theory: the <strong>central limit theorem</strong>.</p>
+<div class="theorem" name="Central Limit Theorem">
+<pre><code>Given $n$ *independent* and *identically distributed* random variables with a finite mean $\mu$ and a finite and non-zero variance $\sigma^2$, we have that
+
+\begin{equation}
+   \boxed{Y_n=\frac{\sum\limits_{i=1}^nx_i-n\mu}{\sqrt{n}\sigma}\xrightarrow{\text{$n\to\infty$}} \ \mathcal{N}(0,1)}
+\end{equation}
+
+where $\mathcal{N}(0,1)$ is a Gaussian distribution with $\mu=0$ and $\sigma=1$</code></pre>
+</div>
+<p>Before proceeding with the proof, it is useful to calculate the mean and variance of <span class="math inline">\(Y_n\)</span> at the limit for <span class="math inline">\(n\to\infty\)</span>, using the result obtained from the central limit theorem:</p>
+<p><span class="math display">\[\begin{align*}
+    &amp;\left\langle Y_n\right\rangle=\frac{\sum\limits_{i=1}^n\left\langle x_i\right\rangle-n\mu}{\sqrt{n}\sigma}=\frac{n\mu-n\mu}{\sqrt{n}\sigma}\to0\\
+    &amp;Var\left(Y_n\right)=\frac{Var\left(\sum\limits_{i=1}^nx_i-n\mu\right)}{n\sigma^2}=\frac{Var\left(\sum\limits_{i=1}^nx_i\right)}{n\sigma^2}=\frac{\sum\limits_{i=1}^nVar\left(x_i\right)}{n\sigma^2}=\frac{n\sigma^2}{n\sigma^2}\to1
+\end{align*}\]</span></p>
+<p>In particular for the variance, the following properties have been exploited:</p>
+<p><span class="math display">\[\begin{align*}
+    &amp;Var(ax)=a^2Var(x)\\   &amp;Var(x+b)=Var(x)
+\end{align*}\]</span></p>
+<p>where <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> are constants.</p>
+<p>Let’s now proceed with the proof.</p>
+<div class="theorem">
+<pre><code>First, let's calculate the characteristic function $\varphi(k)$ associated with $Y_n$:
+
+\begin{equation*}
+    \varphi(k)=\left\langle e^{ikY_n}\right\rangle=\int q\left(x_1\right)\dots q\left(x_n\right)e^{ik\frac{\sum\limits_{i=1}^nx_i-n\mu}{\sqrt{n}\sigma}}dx_1\dots dx_n
+\end{equation*}
+
+We can now factor out $e^{-i\frac{kn}{\sqrt{n}\sigma}\mu}=e^{-i\frac{k\sqrt{n}}{\sigma}\mu}$ and factorize the multiple integral exactly as we did in (eq:legge-dei-grandi-numeri-debole-funzione-caratteristica):
+
+\begin{align}
+    \begin{split}
+        \varphi(k)&amp;=e^{-i\frac{k\sqrt{n}}{\sigma}\mu}\int q\left(x_1\right)e^{i\frac{k}{\sqrt{n}\sigma}x_1}dx_1\dotsc\int q\left(x_n\right)e^{i\frac{k}{\sqrt{n}\sigma}x_n}dx_n=\\
+        &amp;=e^{-i\frac{k\sqrt{n}}{\sigma}\mu}\left(\int q\left(x_i\right)e^{i\frac{k}{\sqrt{n}\sigma}x_i}dx_i\right)^n=e^{-i\frac{k\sqrt{n}}{\sigma}\mu}\varphi_i^n\left(\frac{k}{\sqrt{n}\sigma}\right)
+    \end{split}
+\end{align}
+
+Continuing in the direction of the proof of the weak law of large numbers, we expand the $i$-th characteristic function found in series:
+
+\begin{align*}
+    \varphi_i\left(\frac{k}{\sqrt{n}\sigma}\right)&amp;=\int q\left(x_i\right)e^{i\frac{k}{\sqrt{n}\sigma}x_i}dx_i=\
+    &amp;=\int q\left(x_i\right)\left[1+i\frac{k}{\sqrt{n}\sigma}x_i-\frac{k^2}{2n\sigma^2}x_i^2+\mathcal{O}\left(\frac{1}{\sqrt{n^3}}\right)\right]dx_i=\\
+    &amp;=1+i\frac{k}{\sqrt{n}\sigma}\left\langle x_i\right\rangle-\frac{k^2}{2n\sigma^2}\left\langle x_i^2\right\rangle+\mathcal{O}\left(\frac{1}{\sqrt{n^3}}\right)
+\end{align*}
+
+Substituting $\mu=\left\langle x_i\right\rangle$ and $\sigma^2=\left\langle x_i^2\right\rangle-\left\langle x_i\right\rangle^2 \ \iff \ \left\langle x_i^2\right\rangle=\sigma^2+\mu^2$ we find:
+
+\begin{align*}
+    \varphi_i\left(\frac{k}{\sqrt{n}\sigma}\right)&amp;=1+i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n\sigma^2}\left(\sigma^2+\mu^2\right)+\mathcal{O}\left(\frac{1}{\sqrt{n^3}}\right)=\\
+    &amp;=1+i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n}-\frac{k^2}{2n\sigma^2}\mu^2+\mathcal{O}\left(\frac{1}{\sqrt{n^3}}\right)
+\end{align*}
+
+What is written is nothing more than the series expansion of the following exponential:
+
+\begin{align*}
+    e^{i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n}}&amp;\simeq1+i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n}+\frac{1}{2}\left(i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n}\right)^2=\\
+    &amp;=1+i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n}-\frac{k^2}{2n\sigma^2}\mu^2+\mathcal{O}\left(\frac{1}{\sqrt{n^3}}\right)
+\end{align*}
+
+Substituting in (eq:leggi-dei-grandi-numeri-funzione-caratteristica-limite-centrale) the characteristic function finally results in:
+
+\begin{equation*}
+    \varphi(k)=e^{-i\frac{k\sqrt{n}}{\sigma}\mu}\cdot e^{i\frac{kn}{\sqrt{n}\sigma}\mu-\frac{k^2n}{2n}}=e^{-\cancel{i\frac{k\sqrt{n}}{\sigma}\mu}+\cancel{i\frac{k\sqrt{n}}{\sigma}\mu}-\frac{k^2}{2}}=e^{-\frac{k^2}{2}}
+\end{equation*}
+
+that is, the characteristic function associated with the normalized Gaussian with $\mu=0$ and $\sigma=1$, just as predicted by the theorem.</code></pre>
+</div>
+<div class="exercise">
+<p><em>Show that</em></p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<pre><code>From the central limit theorem we know that
+
+\begin{equation*}
+    \frac{\sum\limits_{i=1}^nx_i-n\mu}{\sqrt{n}\sigma}\sim\mathcal{N}(0,1)
+\end{equation*}
+
+Multiplying both sides by $\sqrt{n}\sigma$:
+
+\begin{equation*}
+    \sum_{i=1}^nx_i-n\mu\sim\sqrt{n}\sigma\mathcal{N}(0,1)=\mathcal{N}\left(0,n\sigma^2\right)
+\end{equation*}
+
+Adding $n\mu$ to both sides:
+
+\begin{equation*}
+    \sum_{i=1}^nx_i\sim\mathcal{N}\left(0,n\sigma^2\right)+n\mu=\mathcal{N}\left(n\mu,n\sigma^2\right)
+\end{equation*}
+
+In this way we have proved the first relation; to obtain the second one it is sufficient to divide both sides of the last equation by $n$:
+
+\begin{equation*}
+    \frac{1}{n}\sum_{i=1}^nx_i\sim\frac{1}{n}\mathcal{N}\left(n\mu,n\sigma^2\right)=\mathcal{N}\left(\frac{n\mu}{n},\frac{n\sigma^2}{n^2}\right)=\mathcal{N}\left(\mu,\frac{\sigma^2}{n}\right)
+\end{equation*}</code></pre>
+</div>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/01-gaussian-integrals.html" class="pagination-link" aria-label="Gaussian integrals">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Gaussian integrals</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/03-laplace-method.html" class="pagination-link" aria-label="The Laplace method">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Laplace method</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb11" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "The Laws of Large Numbers"</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu"># The Laws of Large Numbers</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Joint Distribution</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>Let's imagine we have two random variables $x_1$ and $x_2$ that are *independent* and also *identically distributed*, meaning they follow the same distribution law.</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>The **joint distribution** of these two variables, being independent, can be factored into the product of the individual distributions:</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    p\left(x_1,x_2\right)=p_1\left(x_1\right)p_2\left(x_2\right)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>Specifically, being identically distributed, we can write:</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    p_1(x)=p_2(x)=q(x) \ \Longrightarrow \ p\left(x_1,x_2\right)=q\left(x_1\right)q\left(x_2\right)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## Convolution</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>At this point, we can calculate the distribution of the sum $x_1+x_2$ through the following reasoning: let's imagine extracting $x_1$ and $x_2$ according to their distribution $q(x)$; for the same outcome $x$, different combinations of outcomes are possible, and all these outcomes must therefore be weighted according to the corresponding probability:</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    p(x)=\int\delta\left<span class="co">[</span><span class="ot">x-\left(x_1+x_2\right)\right</span><span class="co">]</span>q\left(x_1\right)q\left(x_2\right)dx_1dx_2\equiv\left\langle\delta\left(x-x_1-x_2\right)\right\rangle</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>Rearranging the terms inside the delta function we have</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    p(x)=\int q\left(x_1\right)dx_1\int\delta\left<span class="co">[</span><span class="ot">\left(x-x_1\right)-x_2\right</span><span class="co">]</span>q\left(x_2\right)dx_2=\int q\left(x-x_1\right)q\left(x_1\right)dx_1</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>Choosing the final integral with the variable $x_1$ or $x_2$ is completely arbitrary, so we rename this variable $y$, thus obtaining</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>    \boxed{p(x)=\int q(x-y)q(y)dy}</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>The expression obtained is called a **convolution**.</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>*Calculate the distribution of $x=x_0+x_1$ where $x_0$ and $x_1$ are two independent and identically distributed variables according to*</span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>\begin{enumerate}</span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>        \item *a uniform distribution* $\mathcal{U}(<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>)$</span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>        \item *a Gaussian distribution* $\mathcal{N}(\mu,\sigma)$</span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>        \item *an exponential distribution* $\mathcal{E}(\lambda)$</span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>    \end{enumerate}</span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{enumerate}</span></span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a><span class="in">        \item Since $x_1,x_2\in[0,1]$ then $x\in[0,2]$. Intuitively, we understand that $x$ cannot follow a uniform distribution, since the number of possible combinations for the extreme values ($0$ and $2$) is only one, while for the intermediate values there are certainly more.</span></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a><span class="in">        Referring to equation (eq:convoluzione), the functions $q(x-y)$ and $q(y)$ are non-zero only when both $x-y$ and $y$ belong to the interval $[0,1]$. Making the interval for the first variable explicit with respect to $y$:</span></span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{equation*}</span></span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a><span class="in">            0\leqslant x-y\leqslant1 \ \iff \ -x\leqslant-y\leqslant1-x \ \iff \ x-1\leqslant y\leqslant x</span></span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{equation*}</span></span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a><span class="in">        We know that $x\in[0,2]$, so the lower limit will be $x-1\in[-1,1]$. We distinguish the negative case from the positive one:</span></span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{itemize}</span></span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a><span class="in">            \item $x-1\in[-1,0] \ \iff \ x\in[0,1]$</span></span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a><span class="in">            $y$ cannot be negative, so the lower limit can only be $0$; as for the upper limit, however, the entire interval of $x$ is valid:</span></span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a><span class="in">            \begin{equation*}</span></span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a><span class="in">                p(x)=\int_0^x1\cdot1dy=y|_0^x=x</span></span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a><span class="in">            \end{equation*}</span></span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a><span class="in">            \item $x-1\in(0,1] \ \iff \ x\in[1,2]$</span></span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="in">            This time the interval for the lower limit is entirely valid, while for the upper limit only $1$ is valid, since $y$ cannot exceed $1$:</span></span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="in">            \begin{equation*}</span></span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a><span class="in">                p(x)=\int_{x-1}^11\cdot1dy=y|_{x-1}^1=1-x+1=2-x</span></span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="in">            \end{equation*}</span></span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{itemize}</span></span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a><span class="in">        The final pdf, therefore, is the following:</span></span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{equation*}</span></span>
+<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a><span class="in">            p(x)=</span></span>
+<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a><span class="in">            \begin{cases}</span></span>
+<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a><span class="in">                0 \ &amp;x\in(-\infty,0)\cup(2,+\infty)\\</span></span>
+<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a><span class="in">                x &amp; x\in[0,1]\\</span></span>
+<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a><span class="in">                2-x &amp; x\in(1,2]</span></span>
+<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a><span class="in">            \end{cases}</span></span>
+<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{equation*}</span></span>
+<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a><span class="in">        \item This time we have no limits for the variables since they are defined in all of $\mathbb{R}$.</span></span>
+<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{align*}</span></span>
+<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a><span class="in">            p(x)&amp;=\int_{-\infty}^{+\infty}\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(x-y-\mu)^2}{2\sigma^2}}\cdot\frac{1}{\sigma\sqrt{2\pi}}e^{-\frac{(y-\mu)^2}{2\sigma^2}}dy=\\</span></span>
+<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a><span class="in">            &amp;=\frac{1}{2\pi\sigma^2}\int_{-\infty}^{+\infty}e^{-\frac{1}{2\sigma^2}\left[(x-y-\mu)^2+(y-\mu)^2\right]}dy</span></span>
+<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{align*}</span></span>
+<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a><span class="in">        Let's make the exponent explicit, always keeping in mind that the variable is $y$:</span></span>
+<span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{align*}</span></span>
+<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a><span class="in">            &amp;(x-y-\mu)^2+(y-\mu)^2=\\</span></span>
+<span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a><span class="in">            &amp;=x^2+y^2+\mu^2-2xy-2x\mu\cancel{+2y\mu}+y^2+\mu^2\cancel{-2y\mu}=\\</span></span>
+<span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a><span class="in">            &amp;=2y^2-2xy+x^2-2x\mu+2\mu^2</span></span>
+<span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{align*}</span></span>
+<span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a><span class="in">        Let's substitute in the exponent, trying to get back to the formula (eq:integrali-gaussiani-forma-generale):</span></span>
+<span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-114"><a href="#cb11-114" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{equation*}</span></span>
+<span id="cb11-115"><a href="#cb11-115" aria-hidden="true" tabindex="-1"></a><span class="in">            p(x)=\frac{1}{2\pi\sigma^2}e^{-\frac{x^2-2x\mu+2\mu^2}{2\sigma^2}}\int_{-\infty}^{+\infty}e^{-\frac{1}{2}\cdot\frac{2}{\sigma^2}y^2+\frac{x}{\sigma^2}y}dy</span></span>
+<span id="cb11-116"><a href="#cb11-116" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{equation*}</span></span>
+<span id="cb11-117"><a href="#cb11-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-118"><a href="#cb11-118" aria-hidden="true" tabindex="-1"></a><span class="in">        Comparing with (eq:integrali-gaussiani-forma-generale) we find the result of the integral:</span></span>
+<span id="cb11-119"><a href="#cb11-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-120"><a href="#cb11-120" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{align*}</span></span>
+<span id="cb11-121"><a href="#cb11-121" aria-hidden="true" tabindex="-1"></a><span class="in">            \begin{cases}</span></span>
+<span id="cb11-122"><a href="#cb11-122" aria-hidden="true" tabindex="-1"></a><span class="in">                a=\frac{2}{\sigma^2}\\</span></span>
+<span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a><span class="in">                b=\frac{x}{\sigma^2}</span></span>
+<span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a><span class="in">            \end{cases}</span></span>
+<span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a><span class="in">            \Longrightarrow \ \ \ p(x)&amp;=\frac{1}{2\pi\sigma^2}e^{-\frac{x^2-2x\mu+2\mu^2}{2\sigma^2}}\cdot\sqrt{\frac{2\pi\sigma^2}{2}}e^{\frac{\frac{x^2}{\sigma^4}}{2\frac{2}{\sigma^2}}}=\\</span></span>
+<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a><span class="in">            &amp;=\frac{1}{\sqrt{2}\sigma\sqrt{2\pi}}e^{-\frac{x^2-2x\mu+2\mu^2}{2\sigma^2}+\frac{x^2}{4\sigma^2}}</span></span>
+<span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{align*}</span></span>
+<span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a><span class="in">        Let's perform the calculations in the exponent:</span></span>
+<span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-131"><a href="#cb11-131" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{align*}</span></span>
+<span id="cb11-132"><a href="#cb11-132" aria-hidden="true" tabindex="-1"></a><span class="in">            -\frac{x^2-2x\mu+2\mu^2}{2\sigma^2}+\frac{x^2}{4\sigma^2}&amp;=-\frac{2x^2-4x\mu+4\mu^2-x^2}{4\sigma^2}=\\</span></span>
+<span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a><span class="in">            &amp;=-\frac{x^2-4x\mu+4\mu^2}{4\sigma^2}</span></span>
+<span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{align*}</span></span>
+<span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a><span class="in">        Substituting:</span></span>
+<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{equation*}</span></span>
+<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a><span class="in">            p(x)=\frac{1}{\sqrt{2}\sigma\sqrt{2\pi}}e^{-\frac{x^2-4x\mu+4\mu^2}{4\sigma^2}}</span></span>
+<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{equation*}</span></span>
+<span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a><span class="in">        In order to obtain a Gaussian function, let's make the following substitutions:</span></span>
+<span id="cb11-143"><a href="#cb11-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-144"><a href="#cb11-144" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{equation*}</span></span>
+<span id="cb11-145"><a href="#cb11-145" aria-hidden="true" tabindex="-1"></a><span class="in">            \begin{cases}</span></span>
+<span id="cb11-146"><a href="#cb11-146" aria-hidden="true" tabindex="-1"></a><span class="in">                \mu'=2\mu</span></span>
+<span id="cb11-147"><a href="#cb11-147" aria-hidden="true" tabindex="-1"></a><span class="in">                \sigma'=\sqrt{2}\sigma</span></span>
+<span id="cb11-148"><a href="#cb11-148" aria-hidden="true" tabindex="-1"></a><span class="in">            \end{cases}</span></span>
+<span id="cb11-149"><a href="#cb11-149" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{equation*}</span></span>
+<span id="cb11-150"><a href="#cb11-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-151"><a href="#cb11-151" aria-hidden="true" tabindex="-1"></a><span class="in">        In this way we obtain the final distribution, which is precisely a Gaussian:</span></span>
+<span id="cb11-152"><a href="#cb11-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-153"><a href="#cb11-153" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{equation*}</span></span>
+<span id="cb11-154"><a href="#cb11-154" aria-hidden="true" tabindex="-1"></a><span class="in">            p(x)=\frac{1}{\sigma'\sqrt{2\pi}}e^{-\frac{x^2-2x\mu'+\mu'^2}{2\sigma'^2}}=\frac{1}{\sigma'\sqrt{2\pi}}e^{-\frac{(x-\mu')^2}{2\sigma'^2}}</span></span>
+<span id="cb11-155"><a href="#cb11-155" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{equation*}</span></span>
+<span id="cb11-156"><a href="#cb11-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-157"><a href="#cb11-157" aria-hidden="true" tabindex="-1"></a><span class="in">        \item Exponentially distributed variables can only take non-negative values, and to ensure this, the integration must take place in the interval $[0,x]$, similarly to what was done for uniformly distributed variables.</span></span>
+<span id="cb11-158"><a href="#cb11-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-159"><a href="#cb11-159" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{equation*}</span></span>
+<span id="cb11-160"><a href="#cb11-160" aria-hidden="true" tabindex="-1"></a><span class="in">            p(x)=\int_0^x\lambda e^{-\lambda(x-y)}\cdot\lambda e^{-\lambda y}dy=\lambda^2\int_0^xe^{-\lambda(x\cancel{-y}\cancel{+y})}dy=</span></span>
+<span id="cb11-161"><a href="#cb11-161" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{equation*}</span></span>
+<span id="cb11-162"><a href="#cb11-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-163"><a href="#cb11-163" aria-hidden="true" tabindex="-1"></a><span class="in">        From which it follows:</span></span>
+<span id="cb11-164"><a href="#cb11-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-165"><a href="#cb11-165" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{equation*}</span></span>
+<span id="cb11-166"><a href="#cb11-166" aria-hidden="true" tabindex="-1"></a><span class="in">            p(x)=\lambda^2e^{-\lambda x}\int_0^xdy=\lambda^2xe^{-\lambda x}</span></span>
+<span id="cb11-167"><a href="#cb11-167" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{equation*}</span></span>
+<span id="cb11-168"><a href="#cb11-168" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{enumerate}</span></span>
+<span id="cb11-169"><a href="#cb11-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-170"><a href="#cb11-170" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-171"><a href="#cb11-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-172"><a href="#cb11-172" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb11-173"><a href="#cb11-173" aria-hidden="true" tabindex="-1"></a>*Calculate the distribution of* $x=x_1x_2$ *where* $x_1$ *and* $x_2$ *are two positive, independent, and identically distributed variables.*</span>
+<span id="cb11-174"><a href="#cb11-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-175"><a href="#cb11-175" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-176"><a href="#cb11-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-177"><a href="#cb11-177" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb11-178"><a href="#cb11-178" aria-hidden="true" tabindex="-1"></a>Following the same reasoning seen at the beginning of the section:</span>
+<span id="cb11-179"><a href="#cb11-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-180"><a href="#cb11-180" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{align*}</span></span>
+<span id="cb11-181"><a href="#cb11-181" aria-hidden="true" tabindex="-1"></a><span class="in">        p(x)&amp;=\int\delta\left(x-x_1x_2\right)q\left(x_1\right)q\left(x_2\right)dx_1dx_2=\\</span></span>
+<span id="cb11-182"><a href="#cb11-182" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=\int q\left(x_1\right)dx_1\int\delta\left(x-x_1x_2\right)q\left(x_2\right)dx_2</span></span>
+<span id="cb11-183"><a href="#cb11-183" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{align*}</span></span>
+<span id="cb11-184"><a href="#cb11-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-185"><a href="#cb11-185" aria-hidden="true" tabindex="-1"></a><span class="in">    Let's make the following substitution:</span></span>
+<span id="cb11-186"><a href="#cb11-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-187"><a href="#cb11-187" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-188"><a href="#cb11-188" aria-hidden="true" tabindex="-1"></a><span class="in">        z=x_1x_2 \ \iff \ x_2=\frac{z}{x_1} \ \Longrightarrow \ dx_2=\frac{1}{x_1}dz</span></span>
+<span id="cb11-189"><a href="#cb11-189" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-190"><a href="#cb11-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-191"><a href="#cb11-191" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-192"><a href="#cb11-192" aria-hidden="true" tabindex="-1"></a><span class="in">        p(x)=\int q\left(x_1\right)dx_1\int\delta(x-z)q\left(\frac{z}{x_1}\right)\frac{1}{x_1}dz=\int q\left(\frac{x}{x_1}\right)q\left(x_1\right)\frac{1}{x_1}dx_1</span></span>
+<span id="cb11-193"><a href="#cb11-193" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-194"><a href="#cb11-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-195"><a href="#cb11-195" aria-hidden="true" tabindex="-1"></a><span class="in">    Substituting $x_1$ with the generic variable $y$ we find:</span></span>
+<span id="cb11-196"><a href="#cb11-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-197"><a href="#cb11-197" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation}</span></span>
+<span id="cb11-198"><a href="#cb11-198" aria-hidden="true" tabindex="-1"></a><span class="in">        p(x)=\int q\left(\frac{x}{y}\right)q\left(y\right)\frac{1}{y}dy</span></span>
+<span id="cb11-199"><a href="#cb11-199" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation}</span></span>
+<span id="cb11-200"><a href="#cb11-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-201"><a href="#cb11-201" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-202"><a href="#cb11-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-203"><a href="#cb11-203" aria-hidden="true" tabindex="-1"></a><span class="fu">### Characteristic function of the sum of variables</span></span>
+<span id="cb11-204"><a href="#cb11-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-205"><a href="#cb11-205" aria-hidden="true" tabindex="-1"></a>Calculating a convolution, in general, is not simple. For this reason, it is convenient to calculate the characteristic function associated with it:</span>
+<span id="cb11-206"><a href="#cb11-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-207"><a href="#cb11-207" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb11-208"><a href="#cb11-208" aria-hidden="true" tabindex="-1"></a>    \varphi(k)&amp;=\int p(x)e^{ikx}dx=\int\delta\left<span class="co">[</span><span class="ot">x-\left(x_1+x_2\right)\right</span><span class="co">]</span>q\left(x_1\right)q\left(x_2\right)e^{ikx}dx_1dx_2dx=<span class="sc">\\</span></span>
+<span id="cb11-209"><a href="#cb11-209" aria-hidden="true" tabindex="-1"></a>    &amp;=\int q\left(x_1\right)q\left(x_2\right)e^{ik\left(x_1+x_2\right)}dx_1dx_2</span>
+<span id="cb11-210"><a href="#cb11-210" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb11-211"><a href="#cb11-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-212"><a href="#cb11-212" aria-hidden="true" tabindex="-1"></a>Since the variables are independent, we can factor the double integral into a product of integrals:</span>
+<span id="cb11-213"><a href="#cb11-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-214"><a href="#cb11-214" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-215"><a href="#cb11-215" aria-hidden="true" tabindex="-1"></a>    \varphi(k)=\int q\left(x_1\right)e^{ikx_1}dx_1\int q\left(x_2\right)e^{ikx_2}dx_2</span>
+<span id="cb11-216"><a href="#cb11-216" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-217"><a href="#cb11-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-218"><a href="#cb11-218" aria-hidden="true" tabindex="-1"></a>Since the distribution functions are the same, the result of the integral is the same for both. Again, choosing $x_1$ or $x_2$ is arbitrary, so we can generally denote the $i$-th variable as $x_i$.</span>
+<span id="cb11-219"><a href="#cb11-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-220"><a href="#cb11-220" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-221"><a href="#cb11-221" aria-hidden="true" tabindex="-1"></a>    \varphi(k)=\left(\int q\left(x_i\right)e^{ikx_i}dx_i\right)^2=\varphi_i^2(k)</span>
+<span id="cb11-222"><a href="#cb11-222" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-223"><a href="#cb11-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-224"><a href="#cb11-224" aria-hidden="true" tabindex="-1"></a>Obviously, the reasoning can be extended to $n$ independent variables, provided they all have the same distribution function. We thus discover that, under these conditions, we have</span>
+<span id="cb11-225"><a href="#cb11-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-226"><a href="#cb11-226" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb11-227"><a href="#cb11-227" aria-hidden="true" tabindex="-1"></a>    \boxed{\varphi(k)=\varphi_i^n(k)}</span>
+<span id="cb11-228"><a href="#cb11-228" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb11-229"><a href="#cb11-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-230"><a href="#cb11-230" aria-hidden="true" tabindex="-1"></a>which in words translates to:</span>
+<span id="cb11-231"><a href="#cb11-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-232"><a href="#cb11-232" aria-hidden="true" tabindex="-1"></a>::: {.definition}</span>
+<span id="cb11-233"><a href="#cb11-233" aria-hidden="true" tabindex="-1"></a>    The characteristic function associated with the sum of $n$ independent and identically distributed variables is given by the **$\boldsymbol{n-**$th power of the characteristic function} associated with the distribution function</span>
+<span id="cb11-234"><a href="#cb11-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-235"><a href="#cb11-235" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-236"><a href="#cb11-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-237"><a href="#cb11-237" aria-hidden="true" tabindex="-1"></a>The same reasoning can be repeated with independent but not identically distributed variables. In that case too, we have the simple product of the individual characteristic functions, which this time, however, will differ from each other:</span>
+<span id="cb11-238"><a href="#cb11-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-239"><a href="#cb11-239" aria-hidden="true" tabindex="-1"></a>::: {.definition}</span>
+<span id="cb11-240"><a href="#cb11-240" aria-hidden="true" tabindex="-1"></a>    The characteristic function associated with the sum of $n$ independent *but not identically distributed* variables is given by the **product of the characteristic functions** associated with each distribution function</span>
+<span id="cb11-241"><a href="#cb11-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-242"><a href="#cb11-242" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-243"><a href="#cb11-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-244"><a href="#cb11-244" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb11-245"><a href="#cb11-245" aria-hidden="true" tabindex="-1"></a>    *Revisiting point $2.$ of exercise (ex:leggi-dei-grandi-numeri-somma-variabili-casuali*, verify the same result using characteristic functions.)</span>
+<span id="cb11-246"><a href="#cb11-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-247"><a href="#cb11-247" aria-hidden="true" tabindex="-1"></a><span class="in">    First of all, we must revisit equation (eq:integrali-gaussiani-funzione-caratteristica-calcolo), considering that this time we will have to consider the distribution centered not at $0$ but at $\mu$:</span></span>
+<span id="cb11-248"><a href="#cb11-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-249"><a href="#cb11-249" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-250"><a href="#cb11-250" aria-hidden="true" tabindex="-1"></a><span class="in">        \varphi(k)=\frac{1}{\sqrt{2\pi\sigma^2}}\int_{-\infty}^{+\infty}e^{-\frac{(x-\mu)^2}{2\sigma^2}}e^{ikx}dx</span></span>
+<span id="cb11-251"><a href="#cb11-251" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-252"><a href="#cb11-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-253"><a href="#cb11-253" aria-hidden="true" tabindex="-1"></a><span class="in">    It is sufficient to set $x'=x-\mu$ and we find the form known to us:</span></span>
+<span id="cb11-254"><a href="#cb11-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-255"><a href="#cb11-255" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-256"><a href="#cb11-256" aria-hidden="true" tabindex="-1"></a><span class="in">        \varphi(k)=\frac{1}{\sqrt{2\pi\sigma^2}}\int_{-\infty}^{+\infty}e^{-\frac{x'^2}{2\sigma^2}}e^{ik(x'+\mu)}dx'=e^{-\frac{\sigma^2}{2}k^2}\cdot e^{ik\mu}=e^{-\frac{\sigma^2}{2}k^2+ik\mu}</span></span>
+<span id="cb11-257"><a href="#cb11-257" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-258"><a href="#cb11-258" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-259"><a href="#cb11-259" aria-hidden="true" tabindex="-1"></a><span class="in">    At this point, we just need to use (eq:leggi-dei-grandi-numeri-somma-variabili-gaussiane-funzione-caratteristica):</span></span>
+<span id="cb11-260"><a href="#cb11-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-261"><a href="#cb11-261" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-262"><a href="#cb11-262" aria-hidden="true" tabindex="-1"></a><span class="in">        \varphi(k)=e^{-\sigma^2k^2+2ik\mu}</span></span>
+<span id="cb11-263"><a href="#cb11-263" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-264"><a href="#cb11-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-265"><a href="#cb11-265" aria-hidden="true" tabindex="-1"></a><span class="in">    By setting $\mu'=2\mu$ and $\sigma'=\sqrt{2}\sigma$ we obtain the characteristic function of a Gaussian, similarly to what was seen in the last exercise.</span></span>
+<span id="cb11-266"><a href="#cb11-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-267"><a href="#cb11-267" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-268"><a href="#cb11-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-269"><a href="#cb11-269" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Weak Law of Large Numbers</span></span>
+<span id="cb11-270"><a href="#cb11-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-271"><a href="#cb11-271" aria-hidden="true" tabindex="-1"></a>We now have all the tools we need to deal with the law of large numbers; actually, we will initially give a proof of a weaker formulation of it, and then state the stronger one.</span>
+<span id="cb11-272"><a href="#cb11-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-273"><a href="#cb11-273" aria-hidden="true" tabindex="-1"></a>The law is useful for establishing the behavior of the empirical mean of $n$ independent and identically distributed variables as $n$ itself increases, that is, of the values extracted from the distribution that is the same for all. In mathematical terms, we are interested in calculating:</span>
+<span id="cb11-274"><a href="#cb11-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-275"><a href="#cb11-275" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb11-276"><a href="#cb11-276" aria-hidden="true" tabindex="-1"></a>    \lim_{n\to\infty}\frac{1}{n}\sum_{i=1}^nx_i</span>
+<span id="cb11-277"><a href="#cb11-277" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb11-278"><a href="#cb11-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-279"><a href="#cb11-279" aria-hidden="true" tabindex="-1"></a>We will prove that, if $\mu$ is the mean of the distribution of each random variable, the result of the limit coincides precisely with $\mu$. In reality, we will not prove the direct convergence of the limit to $\mu$ but the so-called **convergence in distribution**, which is obtained through the characteristic function of the pdf: in this sense the law is interpreted as *weak*.</span>
+<span id="cb11-280"><a href="#cb11-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-281"><a href="#cb11-281" aria-hidden="true" tabindex="-1"></a>Let's therefore write the characteristic function associated with the empirical mean $x$:</span>
+<span id="cb11-282"><a href="#cb11-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-283"><a href="#cb11-283" aria-hidden="true" tabindex="-1"></a>\begin{align}</span>
+<span id="cb11-284"><a href="#cb11-284" aria-hidden="true" tabindex="-1"></a>    \begin{split}</span>
+<span id="cb11-285"><a href="#cb11-285" aria-hidden="true" tabindex="-1"></a>        \varphi(k)&amp;=\left\langle e^{ikx}\right\rangle=\left\langle e^{i\frac{k}{n}\sum\limits_{i=1}^nx_i}\right\rangle=\int q\left(x_1\right)\dots q\left(x_n\right)e^{i\frac{k}{n}\sum\limits_{i=1}^nx_i}dx_1\dots dx_n=<span class="sc">\\</span></span>
+<span id="cb11-286"><a href="#cb11-286" aria-hidden="true" tabindex="-1"></a>        &amp;=\int q\left(x_1\right)e^{i\frac{k}{n}x_1}dx_1\dotsc \int q\left(x_n\right)e^{i\frac{k}{n}x_n}dx_n=\varphi_i^n\left(\frac{k}{n}\right)</span>
+<span id="cb11-287"><a href="#cb11-287" aria-hidden="true" tabindex="-1"></a>    \end{split}</span>
+<span id="cb11-288"><a href="#cb11-288" aria-hidden="true" tabindex="-1"></a>\end{align}</span>
+<span id="cb11-289"><a href="#cb11-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-290"><a href="#cb11-290" aria-hidden="true" tabindex="-1"></a>where the index $i$ indicates a generic value from $1$ to $n$, as all characteristic functions are equal since the variables are identically distributed.</span>
+<span id="cb11-291"><a href="#cb11-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-292"><a href="#cb11-292" aria-hidden="true" tabindex="-1"></a>Let's make $\varphi_i\left(\frac{k}{n}\right)$ explicit and expand the exponential in a Taylor series:</span>
+<span id="cb11-293"><a href="#cb11-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-294"><a href="#cb11-294" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb11-295"><a href="#cb11-295" aria-hidden="true" tabindex="-1"></a>    \varphi_i\left(\frac{k}{n}\right)&amp;=\int q\left(x_i\right)e^{i\frac{k}{n}x_i}dx_i=\int q\left(x_i\right)\left<span class="co">[</span><span class="ot">1+i\frac{k}{n}x_i+\mathcal{O}\left(\frac{1}{n^2}\right)\right</span><span class="co">]</span>dx_i=<span class="sc">\\</span></span>
+<span id="cb11-296"><a href="#cb11-296" aria-hidden="true" tabindex="-1"></a>    &amp;=\int q\left(x_i\right)dx_i+i\frac{k}{n}\int x_iq\left(x_i\right)dx_i+\mathcal{O}\left(\frac{1}{n^2}\right)=1+i\frac{k}{n}\left\langle x_i\right\rangle+\mathcal{O}\left(\frac{1}{n^2}\right)</span>
+<span id="cb11-297"><a href="#cb11-297" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb11-298"><a href="#cb11-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-299"><a href="#cb11-299" aria-hidden="true" tabindex="-1"></a>But having assumed $\left\langle x_i\right\rangle=\mu$ then</span>
+<span id="cb11-300"><a href="#cb11-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-301"><a href="#cb11-301" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-302"><a href="#cb11-302" aria-hidden="true" tabindex="-1"></a>    \varphi_i\left(\frac{k}{n}\right)=1+i\frac{k}{n}\mu+\mathcal{O}\left(\frac{1}{n^2}\right)</span>
+<span id="cb11-303"><a href="#cb11-303" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-304"><a href="#cb11-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-305"><a href="#cb11-305" aria-hidden="true" tabindex="-1"></a>Returning to (eq:legge-dei-grandi-numeri-debole-funzione-caratteristica):</span>
+<span id="cb11-306"><a href="#cb11-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-307"><a href="#cb11-307" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-308"><a href="#cb11-308" aria-hidden="true" tabindex="-1"></a>    \varphi(k)=\varphi_i^n\left(\frac{k}{n}\right)=\left<span class="co">[</span><span class="ot">1+i\frac{k}{n}\mu+\mathcal{O}\left(\frac{1}{n^2}\right)\right</span><span class="co">]</span>^n</span>
+<span id="cb11-309"><a href="#cb11-309" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-310"><a href="#cb11-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-311"><a href="#cb11-311" aria-hidden="true" tabindex="-1"></a>Finally, passing to the limit $n\to\infty$ we are able to state that</span>
+<span id="cb11-312"><a href="#cb11-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-313"><a href="#cb11-313" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb11-314"><a href="#cb11-314" aria-hidden="true" tabindex="-1"></a>    \boxed{\varphi(k)=\left\langle e^{i\frac{k}{n}\sum\limits_{i=1}^nx_i}\right\rangle\to e^{ik\mu}}</span>
+<span id="cb11-315"><a href="#cb11-315" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb11-316"><a href="#cb11-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-317"><a href="#cb11-317" aria-hidden="true" tabindex="-1"></a>This means that, at the limit, the empirical mean is not in turn a random variable, but is a fixed number equal to $\mu$. Mathematically we can therefore state that the distribution function of $x$ at the limit is nothing more than a delta function, so much so that we can write:</span>
+<span id="cb11-318"><a href="#cb11-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-319"><a href="#cb11-319" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-320"><a href="#cb11-320" aria-hidden="true" tabindex="-1"></a>    e^{ik\mu}=\int\delta(x-\mu)e^{ikx}dx</span>
+<span id="cb11-321"><a href="#cb11-321" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-322"><a href="#cb11-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-323"><a href="#cb11-323" aria-hidden="true" tabindex="-1"></a>Intuitively, we can imagine a decrease in statistical fluctuations around the mean $\mu$ as the number of extractions of variables from the distribution increases.</span>
+<span id="cb11-324"><a href="#cb11-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-325"><a href="#cb11-325" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Strong Law of Large Numbers</span></span>
+<span id="cb11-326"><a href="#cb11-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-327"><a href="#cb11-327" aria-hidden="true" tabindex="-1"></a>In reality, it is possible to prove that convergence does not only occur through the characteristic function, but it is the empirical mean itself that converges to $\mu$; in this formulation, the law of large numbers is called *strong*.</span>
+<span id="cb11-328"><a href="#cb11-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-329"><a href="#cb11-329" aria-hidden="true" tabindex="-1"></a>Before we can write this law, it is necessary to introduce two concepts: that of *convergence in probability* and that of *almost sure convergence*.</span>
+<span id="cb11-330"><a href="#cb11-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-331"><a href="#cb11-331" aria-hidden="true" tabindex="-1"></a>::: {.definition}</span>
+<span id="cb11-332"><a href="#cb11-332" aria-hidden="true" tabindex="-1"></a>    A sequence of random variables $x_n$ **converges in probability** to a random variable $x$ if</span>
+<span id="cb11-333"><a href="#cb11-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-334"><a href="#cb11-334" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation}</span></span>
+<span id="cb11-335"><a href="#cb11-335" aria-hidden="true" tabindex="-1"></a><span class="in">        \lim_{n\to\infty}P\left(\abs{x_n-x}&gt;\epsilon\right)=0   \forall\epsilon&gt;0</span></span>
+<span id="cb11-336"><a href="#cb11-336" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation}</span></span>
+<span id="cb11-337"><a href="#cb11-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-338"><a href="#cb11-338" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-339"><a href="#cb11-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-340"><a href="#cb11-340" aria-hidden="true" tabindex="-1"></a>In this way, the probability that $x_n$ deviates from $x$ by an amount greater than $\epsilon$ goes to zero as the number of variables considered increases. However, this does not guarantee that $x_n$ converges to $x$ for $n\to\infty$; to understand why, let's consider the following example of a sequence of random variables:</span>
+<span id="cb11-341"><a href="#cb11-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-342"><a href="#cb11-342" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-343"><a href="#cb11-343" aria-hidden="true" tabindex="-1"></a>    x_n=</span>
+<span id="cb11-344"><a href="#cb11-344" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb11-345"><a href="#cb11-345" aria-hidden="true" tabindex="-1"></a>        0 \ \   \text{with probability} \ p(n)=\frac{1}{n}<span class="sc">\\</span></span>
+<span id="cb11-346"><a href="#cb11-346" aria-hidden="true" tabindex="-1"></a>        1 \ \   \text{with probability} \ 1-p(n)=1-\frac{1}{n}</span>
+<span id="cb11-347"><a href="#cb11-347" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb11-348"><a href="#cb11-348" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-349"><a href="#cb11-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-350"><a href="#cb11-350" aria-hidden="true" tabindex="-1"></a>A *realization*\footnote{That is, a specific value assumed by the sequence for a particular experiment or observation.} of such a sequence will consist of $0$s and $1$s in sequence, with the various $1$s becoming increasingly rare:</span>
+<span id="cb11-351"><a href="#cb11-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-352"><a href="#cb11-352" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-353"><a href="#cb11-353" aria-hidden="true" tabindex="-1"></a>    010010000010000000000100000000000000\dots</span>
+<span id="cb11-354"><a href="#cb11-354" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-355"><a href="#cb11-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-356"><a href="#cb11-356" aria-hidden="true" tabindex="-1"></a>The sequence converges in probability according to the definition, and it is equally evident that, regardless of the number $n$, it will *always* be possible to draw a $1$, however small that probability may be. If there existed a number $N$ such that for every $n&gt;N$ we had $x_n=0$ with probability equal to $1$ (or similarly $x_n=1$ with probability $0$) the convergence would be called **almost certain**.\footnote{Obviously the written reasoning is only of a qualitative nature, but through the second Borel-Cantelli lemma it is possible to rigorously prove what has been written.}</span>
+<span id="cb11-357"><a href="#cb11-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-358"><a href="#cb11-358" aria-hidden="true" tabindex="-1"></a>::: {.definition}</span>
+<span id="cb11-359"><a href="#cb11-359" aria-hidden="true" tabindex="-1"></a>    A sequence of random variables $x_n$ **converges almost surely** to a random variable $x$ if</span>
+<span id="cb11-360"><a href="#cb11-360" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-361"><a href="#cb11-361" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation}</span></span>
+<span id="cb11-362"><a href="#cb11-362" aria-hidden="true" tabindex="-1"></a><span class="in">        P\left(\lim_{n\to\infty}x_n=x\right)=1</span></span>
+<span id="cb11-363"><a href="#cb11-363" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation}</span></span>
+<span id="cb11-364"><a href="#cb11-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-365"><a href="#cb11-365" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-366"><a href="#cb11-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-367"><a href="#cb11-367" aria-hidden="true" tabindex="-1"></a>We can easily guess that</span>
+<span id="cb11-368"><a href="#cb11-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-369"><a href="#cb11-369" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-370"><a href="#cb11-370" aria-hidden="true" tabindex="-1"></a>    \text{**Almost sure convergence**}\ \ \ \genfrac{}{}{0pt}{}{\Longrightarrow}{\cancel{\Longleftarrow}} \ \ \ \text{**Convergence in probability**}</span>
+<span id="cb11-371"><a href="#cb11-371" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-372"><a href="#cb11-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-373"><a href="#cb11-373" aria-hidden="true" tabindex="-1"></a>The strong law of large numbers makes use of almost sure convergence, stating that</span>
+<span id="cb11-374"><a href="#cb11-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-375"><a href="#cb11-375" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb11-376"><a href="#cb11-376" aria-hidden="true" tabindex="-1"></a>    \boxed{\lim_{n\to\infty}\frac{1}{n}\sum_{i=1}^nx_i=\mu \ \              \text{**almost surely**}}</span>
+<span id="cb11-377"><a href="#cb11-377" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb11-378"><a href="#cb11-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-379"><a href="#cb11-379" aria-hidden="true" tabindex="-1"></a>The proof in this case is very elaborate and is therefore not reported.</span>
+<span id="cb11-380"><a href="#cb11-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-381"><a href="#cb11-381" aria-hidden="true" tabindex="-1"></a><span class="fu">## Central Limit Theorem</span></span>
+<span id="cb11-382"><a href="#cb11-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-383"><a href="#cb11-383" aria-hidden="true" tabindex="-1"></a>With the law of large numbers we know that as $n$ grows we have</span>
+<span id="cb11-384"><a href="#cb11-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-385"><a href="#cb11-385" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-386"><a href="#cb11-386" aria-hidden="true" tabindex="-1"></a>    \sum_{i=1}^nx_i\sim n\mu</span>
+<span id="cb11-387"><a href="#cb11-387" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-388"><a href="#cb11-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-389"><a href="#cb11-389" aria-hidden="true" tabindex="-1"></a>This means that for a finite $n$, that is, when not at the limit, the difference $\sum x_i-n\mu$ will return non-zero values that coincide with the statistical fluctuations around $n\mu$.</span>
+<span id="cb11-390"><a href="#cb11-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-391"><a href="#cb11-391" aria-hidden="true" tabindex="-1"></a>In this regard, it is natural to ask what trend these fluctuations have, that is, how that difference behaves. A first important result is that, as $n$ increases, it is shown that</span>
+<span id="cb11-392"><a href="#cb11-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-393"><a href="#cb11-393" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb11-394"><a href="#cb11-394" aria-hidden="true" tabindex="-1"></a>    \sum_{i=1}^nx_i-n\mu\sim\sqrt{n}</span>
+<span id="cb11-395"><a href="#cb11-395" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb11-396"><a href="#cb11-396" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-397"><a href="#cb11-397" aria-hidden="true" tabindex="-1"></a>Knowing this trend, it is therefore possible to "normalize" the difference at the limit by dividing by $\sqrt{n}$. The study of this normalized difference, moreover, allows us to demonstrate that its distribution converges to a normalized Gaussian with $\mu=0$ and $\sigma=1$ **regardless of the distribution followed by the** $\boldsymbol{x_i}$.</span>
+<span id="cb11-398"><a href="#cb11-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-399"><a href="#cb11-399" aria-hidden="true" tabindex="-1"></a>It is important to underline that the two results just written are valid only if the variance $\sigma^2$ associated with the variables $x_i$ is **finite**.</span>
+<span id="cb11-400"><a href="#cb11-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-401"><a href="#cb11-401" aria-hidden="true" tabindex="-1"></a>What is written is the heart of one of the most important theorems in statistics and probability theory: the **central limit theorem**.</span>
+<span id="cb11-402"><a href="#cb11-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-403"><a href="#cb11-403" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Central Limit Theorem"}</span>
+<span id="cb11-404"><a href="#cb11-404" aria-hidden="true" tabindex="-1"></a>    Given $n$ *independent* and *identically distributed* random variables with a finite mean $\mu$ and a finite and non-zero variance $\sigma^2$, we have that</span>
+<span id="cb11-405"><a href="#cb11-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-406"><a href="#cb11-406" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation}</span></span>
+<span id="cb11-407"><a href="#cb11-407" aria-hidden="true" tabindex="-1"></a><span class="in">       \boxed{Y_n=\frac{\sum\limits_{i=1}^nx_i-n\mu}{\sqrt{n}\sigma}\xrightarrow{\text{$n\to\infty$}} \ \mathcal{N}(0,1)}</span></span>
+<span id="cb11-408"><a href="#cb11-408" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation}</span></span>
+<span id="cb11-409"><a href="#cb11-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-410"><a href="#cb11-410" aria-hidden="true" tabindex="-1"></a><span class="in">    where $\mathcal{N}(0,1)$ is a Gaussian distribution with $\mu=0$ and $\sigma=1$</span></span>
+<span id="cb11-411"><a href="#cb11-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-412"><a href="#cb11-412" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-413"><a href="#cb11-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-414"><a href="#cb11-414" aria-hidden="true" tabindex="-1"></a>Before proceeding with the proof, it is useful to calculate the mean and variance of $Y_n$ at the limit for $n\to\infty$, using the result obtained from the central limit theorem:</span>
+<span id="cb11-415"><a href="#cb11-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-416"><a href="#cb11-416" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb11-417"><a href="#cb11-417" aria-hidden="true" tabindex="-1"></a>    &amp;\left\langle Y_n\right\rangle=\frac{\sum\limits_{i=1}^n\left\langle x_i\right\rangle-n\mu}{\sqrt{n}\sigma}=\frac{n\mu-n\mu}{\sqrt{n}\sigma}\to0<span class="sc">\\</span></span>
+<span id="cb11-418"><a href="#cb11-418" aria-hidden="true" tabindex="-1"></a>    &amp;Var\left(Y_n\right)=\frac{Var\left(\sum\limits_{i=1}^nx_i-n\mu\right)}{n\sigma^2}=\frac{Var\left(\sum\limits_{i=1}^nx_i\right)}{n\sigma^2}=\frac{\sum\limits_{i=1}^nVar\left(x_i\right)}{n\sigma^2}=\frac{n\sigma^2}{n\sigma^2}\to1</span>
+<span id="cb11-419"><a href="#cb11-419" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb11-420"><a href="#cb11-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-421"><a href="#cb11-421" aria-hidden="true" tabindex="-1"></a>In particular for the variance, the following properties have been exploited:</span>
+<span id="cb11-422"><a href="#cb11-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-423"><a href="#cb11-423" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb11-424"><a href="#cb11-424" aria-hidden="true" tabindex="-1"></a>    &amp;Var(ax)=a^2Var(x)<span class="sc">\\</span>   &amp;Var(x+b)=Var(x)</span>
+<span id="cb11-425"><a href="#cb11-425" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb11-426"><a href="#cb11-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-427"><a href="#cb11-427" aria-hidden="true" tabindex="-1"></a>where $a$ and $b$ are constants.</span>
+<span id="cb11-428"><a href="#cb11-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-429"><a href="#cb11-429" aria-hidden="true" tabindex="-1"></a>Let's now proceed with the proof.</span>
+<span id="cb11-430"><a href="#cb11-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-431"><a href="#cb11-431" aria-hidden="true" tabindex="-1"></a>::: {.theorem}</span>
+<span id="cb11-432"><a href="#cb11-432" aria-hidden="true" tabindex="-1"></a>    First, let's calculate the characteristic function $\varphi(k)$ associated with $Y_n$:</span>
+<span id="cb11-433"><a href="#cb11-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-434"><a href="#cb11-434" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-435"><a href="#cb11-435" aria-hidden="true" tabindex="-1"></a><span class="in">        \varphi(k)=\left\langle e^{ikY_n}\right\rangle=\int q\left(x_1\right)\dots q\left(x_n\right)e^{ik\frac{\sum\limits_{i=1}^nx_i-n\mu}{\sqrt{n}\sigma}}dx_1\dots dx_n</span></span>
+<span id="cb11-436"><a href="#cb11-436" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-437"><a href="#cb11-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-438"><a href="#cb11-438" aria-hidden="true" tabindex="-1"></a><span class="in">    We can now factor out $e^{-i\frac{kn}{\sqrt{n}\sigma}\mu}=e^{-i\frac{k\sqrt{n}}{\sigma}\mu}$ and factorize the multiple integral exactly as we did in (eq:legge-dei-grandi-numeri-debole-funzione-caratteristica):</span></span>
+<span id="cb11-439"><a href="#cb11-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-440"><a href="#cb11-440" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{align}</span></span>
+<span id="cb11-441"><a href="#cb11-441" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{split}</span></span>
+<span id="cb11-442"><a href="#cb11-442" aria-hidden="true" tabindex="-1"></a><span class="in">            \varphi(k)&amp;=e^{-i\frac{k\sqrt{n}}{\sigma}\mu}\int q\left(x_1\right)e^{i\frac{k}{\sqrt{n}\sigma}x_1}dx_1\dotsc\int q\left(x_n\right)e^{i\frac{k}{\sqrt{n}\sigma}x_n}dx_n=\\</span></span>
+<span id="cb11-443"><a href="#cb11-443" aria-hidden="true" tabindex="-1"></a><span class="in">            &amp;=e^{-i\frac{k\sqrt{n}}{\sigma}\mu}\left(\int q\left(x_i\right)e^{i\frac{k}{\sqrt{n}\sigma}x_i}dx_i\right)^n=e^{-i\frac{k\sqrt{n}}{\sigma}\mu}\varphi_i^n\left(\frac{k}{\sqrt{n}\sigma}\right)</span></span>
+<span id="cb11-444"><a href="#cb11-444" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{split}</span></span>
+<span id="cb11-445"><a href="#cb11-445" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{align}</span></span>
+<span id="cb11-446"><a href="#cb11-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-447"><a href="#cb11-447" aria-hidden="true" tabindex="-1"></a><span class="in">    Continuing in the direction of the proof of the weak law of large numbers, we expand the $i$-th characteristic function found in series:</span></span>
+<span id="cb11-448"><a href="#cb11-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-449"><a href="#cb11-449" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{align*}</span></span>
+<span id="cb11-450"><a href="#cb11-450" aria-hidden="true" tabindex="-1"></a><span class="in">        \varphi_i\left(\frac{k}{\sqrt{n}\sigma}\right)&amp;=\int q\left(x_i\right)e^{i\frac{k}{\sqrt{n}\sigma}x_i}dx_i=\</span></span>
+<span id="cb11-451"><a href="#cb11-451" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=\int q\left(x_i\right)\left[1+i\frac{k}{\sqrt{n}\sigma}x_i-\frac{k^2}{2n\sigma^2}x_i^2+\mathcal{O}\left(\frac{1}{\sqrt{n^3}}\right)\right]dx_i=\\</span></span>
+<span id="cb11-452"><a href="#cb11-452" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=1+i\frac{k}{\sqrt{n}\sigma}\left\langle x_i\right\rangle-\frac{k^2}{2n\sigma^2}\left\langle x_i^2\right\rangle+\mathcal{O}\left(\frac{1}{\sqrt{n^3}}\right)</span></span>
+<span id="cb11-453"><a href="#cb11-453" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{align*}</span></span>
+<span id="cb11-454"><a href="#cb11-454" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-455"><a href="#cb11-455" aria-hidden="true" tabindex="-1"></a><span class="in">    Substituting $\mu=\left\langle x_i\right\rangle$ and $\sigma^2=\left\langle x_i^2\right\rangle-\left\langle x_i\right\rangle^2 \ \iff \ \left\langle x_i^2\right\rangle=\sigma^2+\mu^2$ we find:</span></span>
+<span id="cb11-456"><a href="#cb11-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-457"><a href="#cb11-457" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{align*}</span></span>
+<span id="cb11-458"><a href="#cb11-458" aria-hidden="true" tabindex="-1"></a><span class="in">        \varphi_i\left(\frac{k}{\sqrt{n}\sigma}\right)&amp;=1+i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n\sigma^2}\left(\sigma^2+\mu^2\right)+\mathcal{O}\left(\frac{1}{\sqrt{n^3}}\right)=\\</span></span>
+<span id="cb11-459"><a href="#cb11-459" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=1+i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n}-\frac{k^2}{2n\sigma^2}\mu^2+\mathcal{O}\left(\frac{1}{\sqrt{n^3}}\right)</span></span>
+<span id="cb11-460"><a href="#cb11-460" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{align*}</span></span>
+<span id="cb11-461"><a href="#cb11-461" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-462"><a href="#cb11-462" aria-hidden="true" tabindex="-1"></a><span class="in">    What is written is nothing more than the series expansion of the following exponential:</span></span>
+<span id="cb11-463"><a href="#cb11-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-464"><a href="#cb11-464" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{align*}</span></span>
+<span id="cb11-465"><a href="#cb11-465" aria-hidden="true" tabindex="-1"></a><span class="in">        e^{i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n}}&amp;\simeq1+i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n}+\frac{1}{2}\left(i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n}\right)^2=\\</span></span>
+<span id="cb11-466"><a href="#cb11-466" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=1+i\frac{k}{\sqrt{n}\sigma}\mu-\frac{k^2}{2n}-\frac{k^2}{2n\sigma^2}\mu^2+\mathcal{O}\left(\frac{1}{\sqrt{n^3}}\right)</span></span>
+<span id="cb11-467"><a href="#cb11-467" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{align*}</span></span>
+<span id="cb11-468"><a href="#cb11-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-469"><a href="#cb11-469" aria-hidden="true" tabindex="-1"></a><span class="in">    Substituting in (eq:leggi-dei-grandi-numeri-funzione-caratteristica-limite-centrale) the characteristic function finally results in:</span></span>
+<span id="cb11-470"><a href="#cb11-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-471"><a href="#cb11-471" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-472"><a href="#cb11-472" aria-hidden="true" tabindex="-1"></a><span class="in">        \varphi(k)=e^{-i\frac{k\sqrt{n}}{\sigma}\mu}\cdot e^{i\frac{kn}{\sqrt{n}\sigma}\mu-\frac{k^2n}{2n}}=e^{-\cancel{i\frac{k\sqrt{n}}{\sigma}\mu}+\cancel{i\frac{k\sqrt{n}}{\sigma}\mu}-\frac{k^2}{2}}=e^{-\frac{k^2}{2}}</span></span>
+<span id="cb11-473"><a href="#cb11-473" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-474"><a href="#cb11-474" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-475"><a href="#cb11-475" aria-hidden="true" tabindex="-1"></a><span class="in">    that is, the characteristic function associated with the normalized Gaussian with $\mu=0$ and $\sigma=1$, just as predicted by the theorem.</span></span>
+<span id="cb11-476"><a href="#cb11-476" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-477"><a href="#cb11-477" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-478"><a href="#cb11-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-479"><a href="#cb11-479" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb11-480"><a href="#cb11-480" aria-hidden="true" tabindex="-1"></a>*Show that*</span>
+<span id="cb11-481"><a href="#cb11-481" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-482"><a href="#cb11-482" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-483"><a href="#cb11-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-484"><a href="#cb11-484" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb11-485"><a href="#cb11-485" aria-hidden="true" tabindex="-1"></a>\begin{itemize}</span>
+<span id="cb11-486"><a href="#cb11-486" aria-hidden="true" tabindex="-1"></a>        \item $\sum\limits_{i=1}^nx_i\sim\mathcal{N}\left(n\mu,n\sigma^2\right)$</span>
+<span id="cb11-487"><a href="#cb11-487" aria-hidden="true" tabindex="-1"></a>        \item $\frac{1}{n}\sum\limits_{i=1}^nx_i\sim\mathcal{N}\left(\mu,\frac{\sigma^2}{n}\right)$</span>
+<span id="cb11-488"><a href="#cb11-488" aria-hidden="true" tabindex="-1"></a>    \end{itemize}</span>
+<span id="cb11-489"><a href="#cb11-489" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-490"><a href="#cb11-490" aria-hidden="true" tabindex="-1"></a><span class="in">    From the central limit theorem we know that</span></span>
+<span id="cb11-491"><a href="#cb11-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-492"><a href="#cb11-492" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-493"><a href="#cb11-493" aria-hidden="true" tabindex="-1"></a><span class="in">        \frac{\sum\limits_{i=1}^nx_i-n\mu}{\sqrt{n}\sigma}\sim\mathcal{N}(0,1)</span></span>
+<span id="cb11-494"><a href="#cb11-494" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-495"><a href="#cb11-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-496"><a href="#cb11-496" aria-hidden="true" tabindex="-1"></a><span class="in">    Multiplying both sides by $\sqrt{n}\sigma$:</span></span>
+<span id="cb11-497"><a href="#cb11-497" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-498"><a href="#cb11-498" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-499"><a href="#cb11-499" aria-hidden="true" tabindex="-1"></a><span class="in">        \sum_{i=1}^nx_i-n\mu\sim\sqrt{n}\sigma\mathcal{N}(0,1)=\mathcal{N}\left(0,n\sigma^2\right)</span></span>
+<span id="cb11-500"><a href="#cb11-500" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-501"><a href="#cb11-501" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-502"><a href="#cb11-502" aria-hidden="true" tabindex="-1"></a><span class="in">    Adding $n\mu$ to both sides:</span></span>
+<span id="cb11-503"><a href="#cb11-503" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-504"><a href="#cb11-504" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-505"><a href="#cb11-505" aria-hidden="true" tabindex="-1"></a><span class="in">        \sum_{i=1}^nx_i\sim\mathcal{N}\left(0,n\sigma^2\right)+n\mu=\mathcal{N}\left(n\mu,n\sigma^2\right)</span></span>
+<span id="cb11-506"><a href="#cb11-506" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-507"><a href="#cb11-507" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-508"><a href="#cb11-508" aria-hidden="true" tabindex="-1"></a><span class="in">    In this way we have proved the first relation; to obtain the second one it is sufficient to divide both sides of the last equation by $n$:</span></span>
+<span id="cb11-509"><a href="#cb11-509" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-510"><a href="#cb11-510" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb11-511"><a href="#cb11-511" aria-hidden="true" tabindex="-1"></a><span class="in">        \frac{1}{n}\sum_{i=1}^nx_i\sim\frac{1}{n}\mathcal{N}\left(n\mu,n\sigma^2\right)=\mathcal{N}\left(\frac{n\mu}{n},\frac{n\sigma^2}{n^2}\right)=\mathcal{N}\left(\mu,\frac{\sigma^2}{n}\right)</span></span>
+<span id="cb11-512"><a href="#cb11-512" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb11-513"><a href="#cb11-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-514"><a href="#cb11-514" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>10&nbsp; Ornstein-Uhlenbeck Process – In Search of the Hidden M-Bombs Treasure</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/10-fokker-planck-equation.html" rel="next">
+<link href="../chapters/08-stochastic-differential-equations.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/06-stochastic-processes.html">Stochastic Processes</a></li><li class="breadcrumb-item"><a href="../chapters/09-ornstein-uhlenbeck-process.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ornstein-Uhlenbeck Process</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">In Search of the Hidden M-Bombs Treasure</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Mathematics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-gaussian-integrals.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Gaussian integrals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-the-laws-of-large-numbers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The Laws of Large Numbers</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-laplace-method.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The Laplace method</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-general-odes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Ordinary differential equation systems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Diffusion</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-diffusion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Diffusion</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Stochastic Processes</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-stochastic-processes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Stochastic Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-wiener-path-integral.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Path integrals</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-stochastic-differential-equations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Stochastic differential equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-ornstein-uhlenbeck-process.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ornstein-Uhlenbeck Process</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-fokker-planck-equation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Fokker-Planck Equation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-classical-mechanics-applications.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Applications in classical mechanics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-birth-and-death-processes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Birth and Death Processes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-odes-chemical-reactions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Ordinary differential equations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">14-Exercises</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Advanced Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-turing-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Pattern di Turing</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#ornstein-uhlenbeck-process" id="toc-ornstein-uhlenbeck-process" class="nav-link active" data-scroll-target="#ornstein-uhlenbeck-process"><span class="header-section-number">11</span> Ornstein-Uhlenbeck Process</a>
+  <ul class="collapse">
+  <li><a href="#sample-trajectory" id="toc-sample-trajectory" class="nav-link" data-scroll-target="#sample-trajectory"><span class="header-section-number">11.1</span> Sample trajectory</a>
+  <ul class="collapse">
+  <li><a href="#variance" id="toc-variance" class="nav-link" data-scroll-target="#variance"><span class="header-section-number">11.1.1</span> Variance</a></li>
+  <li><a href="#connected-auto-correlation" id="toc-connected-auto-correlation" class="nav-link" data-scroll-target="#connected-auto-correlation"><span class="header-section-number">11.1.2</span> Connected auto-correlation</a></li>
+  </ul></li>
+  <li><a href="#propagator" id="toc-propagator" class="nav-link" data-scroll-target="#propagator"><span class="header-section-number">11.2</span> Propagator</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/06-stochastic-processes.html">Stochastic Processes</a></li><li class="breadcrumb-item"><a href="../chapters/09-ornstein-uhlenbeck-process.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ornstein-Uhlenbeck Process</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Ornstein-Uhlenbeck Process</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="ornstein-uhlenbeck-process" class="level1" data-number="11">
+<h1 data-number="11"><span class="header-section-number">11</span> Ornstein-Uhlenbeck Process</h1>
+<p>To conclude the study of stochastic processes, which began with the analysis of diffusion processes, let’s take as an example a model that we will study with the various tools we have learned in the past chapters. The process in question is the <strong>Ornstein-Uhlenbeck process</strong>, which, to be honest, we have already introduced in exercise (ex:processo-di-ornstein-uhlenbeck) following the introduction of the Wiener process.</p>
+<section id="sample-trajectory" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="sample-trajectory"><span class="header-section-number">11.1</span> Sample trajectory</h2>
+<p>Formally, the process is defined by the following differential equation:</p>
+<p><span class="math display">\[\begin{equation}
+    \begin{cases}
+        dx=-\mu xdt+\sigma dB\\        x(0)=x_0
+    \end{cases}
+\end{equation}\]</span></p>
+<p>To find a general solution, it is useful to define the following function:</p>
+<p><span class="math display">\[\begin{equation}
+    y(t)=e^{\mu t}x(t)
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(x(t)\)</span> is the solution of the equation. The reason why this is convenient is soon told by applying the chain rule (equation (eq:sde-chain-rule-ito)), having set <span class="math inline">\(\mu(x,t)=-\mu x\)</span> and <span class="math inline">\(\sigma(x,t)=\sigma\)</span> for consistency with the Langevin equation:</p>
+<p><span class="math display">\[\begin{align*}
+    dy&amp;=\left(\frac{\partial y}{\partial t}+\frac{\partial y}{\partial x}\mu(x,t)+\frac{1}{2}\frac{\partial^2y}{\partial x^2}\sigma^2\right)dt+\frac{\partial y}{\partial x}\sigma(x,t) dB=\\
+    &amp;=\left(\cancel{\mu e^{\mu t}x}\cancel{-\mu xe^{\mu t}}+0\right)dt+\sigma e^{\mu t}dB
+\end{align*}\]</span></p>
+<p>The remaining equation is easy to integrate:</p>
+<p><span class="math display">\[\begin{equation*}
+    dy=\sigma e^{\mu t}dB \ \Longrightarrow \ \ y(t)=y(0)+\sigma\int_0^te^{\mu t'}dB(t')
+\end{equation*}\]</span></p>
+<p>Returning to the expression in <span class="math inline">\(x(t)\)</span>:</p>
+<p><span class="math display">\[\begin{equation*}
+    e^{\mu t}x(t)=e^{\mu\cdot0}x(0)+\sigma\int_0^te^{\mu t'}dB(t')=x_0+\sigma\int_0^te^{\mu t'}dB(t')
+\end{equation*}\]</span></p>
+<p>We thus find the explicit form of the solution:</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{x(t)=x_0e^{-\mu t}+\sigma e^{-\mu t}\int_0^te^{\mu t'}dB(t')}
+\end{equation}\]</span></p>
+<div class="exercise">
+<p><em>Calculate the solution of the following stochastic differential equation:</em></p>
+<pre><code>\begin{equation*}
+    \begin{cases}
+        dx=(\beta-\mu x)dt+\sigma dB\\           x(0)=x_0
+    \end{cases}
+\end{equation*}
+
+We will have to follow the same procedure just carried out, with the only difference that this time $\mu(x,t)=-\mu x+\beta$. In this way the coefficient of $dt$ will not be canceled, since a surviving contribution equal to $\beta e^{\mu t}$ will remain:
+
+\begin{equation*}
+    dy=\beta e^{\mu t}dt+\sigma e^{\mu t}dB
+\end{equation*}
+
+Integrating both members:
+
+\begin{equation*}
+    y(t)=y(0)+\beta\int_0^te^{\mu t'}dt'+\sigma\int_0^te^{\mu t'}dB(t')
+\end{equation*}</code></pre>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Let’s solve the first integral:</p>
+<pre><code>\begin{equation*}
+    \int_0^te^{\mu t'}dt'=\frac{1}{\mu}e^{\mu t'}\bigg|_0^t=\frac{1}{\mu}\left(e^{\mu t}-1\right)
+\end{equation*}
+
+Let's now substitute $y(t)=e^{\mu t}x(t)$ and return to the complete solution:
+
+\begin{equation*}
+    e^{\mu t}x(t)=e^{\mu\cdot 0}x(0)+\frac{\beta}{\mu}\left(e^{\mu t}-1\right)+\sigma\int_0^te^{\mu t'}dB(t')
+\end{equation*}
+
+Let's therefore multiply both members by $e^{-\mu t}$ to obtain the final solution:
+
+\begin{equation*}
+    x(t)=x_0e^{-\mu t}+e^{-\mu t}\cdot\frac{\beta}{\mu}\left(e^{\mu t}-1\right)+\sigma e^{-\mu t}\int_0^te^{\mu t'}dB(t')
+\end{equation*}
+
+that is
+
+\begin{equation*}
+    x(t)=x_0e^{-\mu t}+\frac{\beta}{\mu}\left(1-e^{-\mu t}\right)+\sigma e^{-\mu t}\int_0^te^{\mu t'}dB(t')
+\end{equation*}</code></pre>
+</div>
+<section id="variance" class="level3" data-number="11.1.1">
+<h3 data-number="11.1.1" class="anchored" data-anchor-id="variance"><span class="header-section-number">11.1.1</span> Variance</h3>
+<p>We know that one of the main aspects of a realization of a stochastic process is its variance, in order to describe how fluctuations tend to change over time.</p>
+<p>Let’s start from the calculation of the average value of <span class="math inline">\(x(t)^2\)</span>, which is obtained starting from the series expansion of the differential of <span class="math inline">\(x\)</span> stopped at the second order, since - as already repeated several times - we have <span class="math inline">\(dB^2=dt\)</span>:</p>
+<p><span class="math display">\[\begin{equation*}
+    d\left(x^2\right)=\frac{d\left(x^2\right)}{dx}dx+\frac{1}{2}\frac{d^2\left(x^2\right)}{dx^2}dx^2=2xdx+\frac{1}{\cancel{2}}\cdot\cancel{2}dx^2
+\end{equation*}\]</span></p>
+<p>Let’s substitute the expression for <span class="math inline">\(dx\)</span> given by the SDE:</p>
+<p><span class="math display">\[\begin{equation*}
+    d\left(x^2\right)=2x\left(-\mu xdt+\sigma dB\right)+\left(-\mu xdt+\sigma dB\right)^2
+\end{equation*}\]</span></p>
+<p>Of the square, only <span class="math inline">\(\sigma^2dB^2=\sigma^2dt\)</span> remains:</p>
+<p><span class="math display">\[\begin{equation*}
+    d\left(x^2\right)=-2\mu x^2dt+2\sigma xdB+\sigma^2dt=\left(-2\mu x^2+\sigma^2\right)dt+2\sigma xdB
+\end{equation*}\]</span></p>
+<p>Let’s consider the expected value on both sides:</p>
+<p><span class="math display">\[\begin{equation*}
+    d\left\langle x^2\right\rangle=\left(-2\mu\left\langle x^2\right\rangle+\sigma^2\right)dt+2\sigma\langle xdB\rangle
+\end{equation*}\]</span></p>
+<p>According to the Itô convention <span class="math inline">\(\langle xdB\rangle=\langle x\rangle\cancel{\langle dB\rangle}=0\)</span>, from which the differential equation follows</p>
+<p><span class="math display">\[\begin{equation}
+    \frac{d}{dt}\left\langle x^2\right\rangle=-2\mu\left\langle x^2\right\rangle+\sigma^2
+\end{equation}\]</span></p>
+<p>This is a non-homogeneous ordinary differential equation. To find a solution we must first solve the associated homogeneous equation:</p>
+<p><span class="math display">\[\begin{equation*}
+    \frac{d}{dt}\left\langle x^2\right\rangle=-2\mu\left\langle x^2\right\rangle \ \Longrightarrow \ \ \left\langle x(t)^2\right\rangle=ke^{-2\mu t}
+\end{equation*}\]</span></p>
+<p>To find the solution to the non-homogeneous equation ((eq:processo-u-o-varianza-equazione-non-omogenea)) we will have to add a constant contribution <span class="math inline">\(c\)</span> to the solution found, such that</p>
+<p><span class="math display">\[\begin{equation*}
+    \cancel{\frac{d}{dt}c}=-2\mu c+\sigma^2 \ \iff \ 2\mu c=\sigma^2 \ \iff \ c=\frac{\sigma^2}{2\mu}
+\end{equation*}\]</span></p>
+<p>Summing the two contributions, we will find:</p>
+<p><span class="math display">\[\begin{equation*}
+    \left\langle x(t)^2\right\rangle=ke^{-2\mu t}+\frac{\sigma^2}{2\mu}
+\end{equation*}\]</span></p>
+<p>It remains to find the constant <span class="math inline">\(k\)</span> through the initial condition (<span class="math inline">\(\left\langle x(0)^2\right\rangle=x_0^2\)</span>):</p>
+<p><span class="math display">\[\begin{equation*}
+    \left\langle x(0)^2\right\rangle=k+\frac{\sigma^2}{2\mu}=x_0^2 \ \Longrightarrow \ k=x_0^2-\frac{\sigma^2}{2\mu}
+\end{equation*}\]</span></p>
+<p>Ultimately:</p>
+<p><span class="math display">\[\begin{equation}
+    \left\langle x(t)^2\right\rangle=\left(x_0^2-\frac{\sigma^2}{2\mu}\right)e^{-2\mu t}+\frac{\sigma^2}{2\mu}
+\end{equation}\]</span></p>
+<p>For the variance we must find <span class="math inline">\(\langle x(t)\rangle\)</span>, which is easily found starting from (eq:processo-u-o-soluzione-generale):</p>
+<p><span class="math display">\[\begin{equation*}
+    \langle x(t)\rangle=x_0e^{-\mu t}+\sigma e^{-\mu t}\left\langle\int_0^te^{\mu t'}dB(t')\right\rangle=x_0e^{-\mu t}+\sigma e^{-\mu t}\int_0^t\left\langle e^{\mu t'}\right\rangle\cancel{\langle dB(t')\rangle}
+\end{equation*}\]</span></p>
+<p>We can now calculate the variance associated with the process:</p>
+<p><span class="math display">\[\begin{align*}
+    Var[x(t)]&amp;=\left\langle x(t)^2\right\rangle-\langle x(t)\rangle^2=\left(x_0^2-\frac{\sigma^2}{2\mu}\right)e^{-2\mu t}+\frac{\sigma^2}{2\mu}-x_0^2e^{-\mu t}=\\
+    &amp;=\left(\cancel{x_0^2}-\frac{\sigma^2}{2\mu}\cancel{-x_0^2}\right)e^{-\mu t}+\frac{\sigma^2}{2\mu}
+\end{align*}\]</span></p>
+<p>that is</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{Var[x(t)]=\frac{\sigma^2}{2\mu}\left(1-e^{-\mu t}\right)}
+\end{equation}\]</span></p>
+<p>This is a function that is zero for <span class="math inline">\(t=0\)</span> and progressively increasing, stabilizing at the value <span class="math inline">\(\frac{\sigma^2}{2\mu}\)</span> for large <span class="math inline">\(t\)</span>.</p>
+</section>
+<section id="connected-auto-correlation" class="level3" data-number="11.1.2">
+<h3 data-number="11.1.2" class="anchored" data-anchor-id="connected-auto-correlation"><span class="header-section-number">11.1.2</span> Connected auto-correlation</h3>
+<p>Another important aspect is the correlation of the trajectory with itself at different instants of time, called <strong>auto-correlation</strong>:</p>
+<p><span class="math display">\[\begin{equation}
+    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle
+\end{equation}\]</span></p>
+<p>If we remove the effects given by the global mean, we obtain what is called the <em>connected auto-correlation</em>:</p>
+<p><span class="math display">\[\begin{equation}
+    c\left(t_1,t_2\right)=\left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle-\left\langle x\left(t_1\right)\right\rangle\left\langle x\left(t_2\right)\right\rangle
+\end{equation}\]</span></p>
+<p>Let’s calculate the first term by substituting (eq:processo-u-o-soluzione-generale):</p>
+<p><span class="math display">\[\begin{equation*}
+    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle=\left\langle\left(x_0e^{-\mu t_1}+\sigma e^{-\mu t_1}\int_0^{t_1}e^{\mu t'}dB(t')\right)\left(x_0e^{-\mu t_2}+\sigma e^{-\mu t_2}\int_0^{t_2}e^{\mu t'}dB(t')\right)\right\rangle
+\end{equation*}\]</span></p>
+<p>From the products, the common factor <span class="math inline">\(e^{-\mu\left(t_1+t_2\right)}\)</span> emerges, which we can take out:</p>
+<p><span class="math display">\[\begin{align*}
+    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle=e^{-\mu\left(t_1+t_2\right)}\bigg\langle&amp;x_0^2+\\
+    &amp;+x_0\sigma\int_0^{t_1}e^{\mu t'}dB(t')+\\
+    &amp;+x_0\sigma\int_0^{t_2}e^{\mu t'}dB(t')+\\
+    &amp;+\sigma^2\int_0^{t_1}e^{\mu t'}dB(t')\int_0^{t_2}e^{\mu t'}dB(t')\bigg\rangle
+\end{align*}\]</span></p>
+<p>Distributing the average value over the four terms, the two central ones will be zero, since <span class="math inline">\(\langle dB(t)\rangle\)</span> is so. What remains is:</p>
+<p><span class="math display">\[\begin{equation}
+    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle=e^{-\mu\left(t_1+t_2\right)}\left(x_0^2+\sigma^2\left\langle\int_0^{t_1}e^{\mu t'}dB(t')\int_0^{t_2}e^{\mu t'}dB(t')\right\rangle\right)
+\end{equation}\]</span></p>
+<p>To find the remaining expected value, it is useful to calculate more generally</p>
+<p><span class="math display">\[\begin{equation*}
+    \left\langle\int_0^{t_1}f(t')dB(t')\int_0^{t_2}g(t')dB(t')\right\rangle
+\end{equation*}\]</span></p>
+<p>Let’s assume that <span class="math inline">\(t_2&gt;t_1\)</span> and let’s discretize the interval <span class="math inline">\(\left[0,t_2\right]\)</span> in the following way:</p>
+<p><span class="math display">\[\begin{equation*}
+    \left\{t_0=0,t_1,\dots,t_{m-1},t_m=\boldsymbol{t_1},t_{m+1},\dots,t_{n-1},t_n=\boldsymbol{t_2}\right\}
+\end{equation*}\]</span></p>
+<p>At this point, we can discretize the integrals as follows:</p>
+<p><span class="math display">\[\begin{equation*}
+    \left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\sum_{j=1}^ng_{j-1}\Delta B_j\right\rangle
+\end{equation*}\]</span></p>
+<p>Let’s split the second summation into the intervals <span class="math inline">\([1,m]\)</span> and <span class="math inline">\([m+1,n]\)</span>:</p>
+<p><span class="math display">\[\begin{align*}
+    &amp;\left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\left[\sum_{j=1}^mg_{j-1}\Delta B_j+\sum_{j=m+1}^ng_{j-1}\Delta B_j\right]\right\rangle=\\
+    &amp;=\left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\sum_{j=1}^mg_{j-1}\Delta B_j\right\rangle+\left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\sum_{j=m+1}^ng_{j-1}\Delta B_j\right\rangle
+\end{align*}\]</span></p>
+<p>The summations of the second term refer to different intervals, so they are uncorrelated quantities:</p>
+<p><span class="math display">\[\begin{align*}
+    \left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\sum_{j=m+1}^ng_{j-1}\Delta B_j\right\rangle&amp;=\left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\right\rangle\left\langle\sum_{j=m+1}^ng_{j-1}\Delta B_j\right\rangle=\\
+    &amp;=\sum_{i=1}^m\left\langle f_{i-1}\right\rangle\cancel{\left\langle\Delta B_i\right\rangle}\sum_{j=m+1}^n\left\langle g_{j-1}\right\rangle\cancel{\left\langle\Delta B_j\right\rangle}=0
+\end{align*}\]</span></p>
+<p>What remains is therefore the first term, where the contributions of the summation can be divided into those in which <span class="math inline">\(i=j\)</span> and those in which <span class="math inline">\(i\neq j\)</span>:</p>
+<p><span class="math display">\[\begin{align*}
+    \left\langle\sum_{i=1}^m\sum_{j=1}^mf_{i-1}g_{j-1}\Delta B_i\Delta B_j\right\rangle&amp;=\left\langle\sum_{i=1}^mf_{i-1}g_{i-1}\Delta B_i^2\right\rangle+2\left\langle\sum_{i&gt;j}f_{i-1}g_{j-1}\Delta B_i\Delta B_j\right\rangle=\\
+    &amp;=\sum_{i=1}^m\left\langle f_{i-1}g_{i-1}\right\rangle\left\langle\Delta B_i^2\right\rangle+2\sum_{i&gt;j}\left\langle f_{i-1}g_{j-1}\right\rangle\cancel{\left\langle\Delta B_i\right\rangle}\cancel{\left\langle\Delta B_j\right\rangle}=\\
+    &amp;=\sum_{i=1}^m\left\langle f_{i-1}g_{i-1}\right\rangle\Delta t_i
+\end{align*}\]</span></p>
+<p>We thus find that, in the limit:</p>
+<p><span class="math display">\[\begin{equation*}
+    \sum_{i=1}^m\left\langle f_{i-1}g_{i-1}\right\rangle\Delta t_i \ \longrightarrow \ \int_0^{t_1}\langle f(t')g(t')\rangle dt'
+\end{equation*}\]</span></p>
+<p>If we had initially assumed <span class="math inline">\(t_1&gt;t_2\)</span> we would have obtained the same result, but with the upper limit of integration equal to <span class="math inline">\(t_2\)</span>. It follows that</p>
+<p><span class="math display">\[\begin{equation*}
+    \left\langle\int_0^{t_1}f(t')dB(t')\int_0^{t_2}g(t')dB(t')\right\rangle=\int_0^{\min\left(t_1,t_2\right)}\langle f(t')g(t')\rangle dt'
+\end{equation*}\]</span></p>
+<p>Let’s go back to (eq:processo-u-o-auto-correlazione-calcolo-1) and substitute the result found:</p>
+<p><span class="math display">\[\begin{equation*}
+    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle=e^{-\mu\left(t_1+t_2\right)}\left(x_0^2+\sigma^2\int_0^{\min\left(t_1t_2\right)}e^{2\mu t'}dt'\right)
+\end{equation*}\]</span></p>
+<p>Let’s solve the integral:</p>
+<p><span class="math display">\[\begin{align*}
+    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle&amp;=e^{-\mu\left(t_1+t_2\right)}\left(x_0^2+\frac{\sigma^2}{2\mu}e^{2\mu t'}\bigg|_0^{\min\left(t_1,t_2\right)}\right)=\\
+    &amp;=e^{-\mu\left(t_1+t_2\right)}\left[x_0^2+\frac{\sigma^2}{2\mu}\left(e^{2\mu\min\left(t_1,t_2\right)}-1\right)\right]
+\end{align*}\]</span></p>
+<p>Let’s substitute in (eq:processo-u-o-auto-correlazione-connessa-definizione), remembering that <span class="math inline">\(\langle x(t)\rangle=x_0e^{-\mu t}\)</span>:</p>
+<p><span class="math display">\[\begin{align*}
+    c\left(t_1,t_2\right)&amp;=e^{-\mu\left(t_1+t_2\right)}\left[x_0^2+\frac{\sigma^2}{2\mu}\left(e^{2\mu\min\left(t_1,t_2\right)}-1\right)\right]-x_0e^{-\mu t_1}\cdot x_0e^{-\mu t_2}=\\
+    &amp;=\cancel{x_0^2e^{-\mu\left(t_1+t_2\right)}}+\frac{\sigma^2}{2\mu}\left(e^{2\mu\min\left(t_1,t_2\right)}-1\right)e^{-\mu\left(t_1+t_2\right)}\cancel{-x_0^2e^{-\mu\left(t_1+t_2\right)}}
+\end{align*}\]</span></p>
+<p>We find:</p>
+<p><span class="math display">\[\begin{equation*}
+    c\left(t_1,t_2\right)=\frac{\sigma^2}{2\mu}\left[e^{\mu\left(2\min\left(t_1,t_2\right)-t_1-t_2\right)}-e^{-\mu\left(t_1+t_2\right)}\right]
+\end{equation*}\]</span></p>
+<p>Let’s evaluate the two cases:</p>
+<p><span class="math display">\[\begin{align*}
+    &amp;\min\left(t_1,t_2\right)=t_1 \ \Longrightarrow \ 2t_1-t_1-t_2=t_1-t_2\\
+    &amp;\min\left(t_1,t_2\right)=t_2 \ \Longrightarrow \ 2t_2-t_1-t_2=-t_1+t_2
+\end{align*}\]</span></p>
+<p>This means that the exponent <span class="math inline">\(2\min\left(t_1,t_2\right)-t_1-t_2\)</span> can be rewritten as <span class="math inline">\(-\abs{t_1-t_2}\)</span>:</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{c\left(t_1,t_2\right)=\frac{\sigma^2}{2\mu}\left[e^{-\mu\abs{t_1-t_2}}-e^{-\mu\left(t_1+t_2\right)}\right]}
+\end{equation}\]</span></p>
+<p>We can find an even more general formula if we assume that at the initial instant the system is not entirely concentrated at <span class="math inline">\(x_0\)</span> but is distributed according to a function <span class="math inline">\(p\left(x_0\right)\)</span>. In this case, we have that <span class="math inline">\(\langle x(t)\rangle=\left\langle x_0\right\rangle e^{-\mu t}\)</span>, so by substituting the results in (eq:processo-u-o-auto-correlazione-connessa-definizione) we will have:</p>
+<p><span class="math display">\[\begin{align*}
+    c\left(t_1,t_2\right)&amp;=\left\langle x_0^2\right\rangle e^{-\mu\left(t_1+t_2\right)}+\frac{\sigma^2}{2\mu}\left[e^{-\mu\abs{t_1-t_2}}-e^{-\mu\left(t_1+t_2\right)}\right]-\left\langle x_0\right\rangle^2e^{-\mu\left(t_1+t_2\right)}=\\
+    &amp;=\left(\left\langle x_0^2\right\rangle-\left\langle x_0\right\rangle^2\right)e^{-\mu\left(t_1+t_2\right)}+\frac{\sigma^2}{2\mu}\left[e^{-\mu\abs{t_1-t_2}}-e^{-\mu\left(t_1+t_2\right)}\right]
+\end{align*}\]</span></p>
+<p>From which:</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{c\left(t_1,t_2\right)=Var\left(x_0\right)e^{-\mu\left(t_1+t_2\right)}+\frac{\sigma^2}{2\mu}\left[e^{-\mu\abs{t_1-t_2}}-e^{-\mu\left(t_1+t_2\right)}\right]}
+\end{equation}\]</span></p>
+<p>We note that, in the limit for <span class="math inline">\(t_1,t_2\to\infty\)</span> but keeping the difference <span class="math inline">\(t_1-t_2\)</span> constant, we find the <strong>stationary</strong> connected auto-correlation, since it is independent of the individual values <span class="math inline">\(t_1\)</span> and <span class="math inline">\(t_2\)</span> but only of their difference in modulus:</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{c_{stat}\left(t_1,t_2\right)=\frac{\sigma^2}{2\mu}e^{-\mu\abs{t_1-t_2}}}
+\end{equation}\]</span></p>
+</section>
+</section>
+<section id="propagator" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="propagator"><span class="header-section-number">11.2</span> Propagator</h2>
+<p>Another fundamental characteristic of a stochastic process is its <strong>propagator</strong>, which tells us how the pdf evolves over time.</p>
+<p>It can be found starting from the Fokker-Planck equation ((eq:fokker-planck-equazione)), which in our case is written as</p>
+<p><span class="math display">\[\begin{equation}
+    \frac{\partial p}{\partial t}=-\frac{\partial}{\partial x}(-\mu xp)+\frac{1}{2}\frac{\partial^2}{\partial x^2}\left(\sigma^2p\right)=\mu\frac{\partial}{\partial x}(xp)+\frac{\sigma^2}{2}\frac{\partial^2p}{\partial x^2}
+\end{equation}\]</span></p>
+<p>To find the solution, it is convenient to apply the Fourier transform to both members:</p>
+<p><span class="math display">\[\begin{equation}
+    \red{\mathcal{F}\left[\frac{\partial p}{\partial t}\right]}=\mu\orange{\mathcal{F}\left[\frac{\partial}{\partial x}(xp)\right]}+\frac{\sigma^2}{2}\green{\mathcal{F}\left[\frac{\partial^2p}{\partial x^2}\right]}
+\end{equation}\]</span></p>
+<p>Let’s calculate the various transformations individually.</p>
+<p>Let’s substitute the results obtained in (eq:processo-u-o-propagatore-equazione-differenziale-fourier):</p>
+<p><span class="math display">\[\begin{equation*}
+    \frac{\partial\tilde{p}}{\partial t}=-\mu\omega\frac{\partial\tilde{p}}{\partial\omega}-\frac{\sigma^2}{2}\omega^2\tilde{p}(\omega,t)
+\end{equation*}\]</span></p>
+<p>This is a homogeneous first-order partial differential equation, in which <span class="math inline">\(\tilde{p}(\omega,t)\)</span> is derived once with respect to <span class="math inline">\(t\)</span> and another time with respect to <span class="math inline">\(t\)</span>:</p>
+<p><span class="math display">\[\begin{equation}
+    \frac{\partial\tilde{p}}{\partial t}+\mu\omega\frac{\partial\tilde{p}}{\partial\omega}+\frac{\sigma^2}{2}\omega^2\tilde{p}(\omega,t)=0
+\end{equation}\]</span></p>
+<p>To solve this equation we will use a method known as the <strong>method of characteristics</strong>, which makes use of an auxiliary variable <span class="math inline">\(s\)</span> such as to redefine the function in the following way:</p>
+<p><span class="math display">\[\begin{equation*}
+    \tilde{p}(s)\equiv\tilde{p}(\omega(s),t(s))
+\end{equation*}\]</span></p>
+<p>By deriving with respect to <span class="math inline">\(s\)</span> we obtain:</p>
+<p><span class="math display">\[\begin{equation}
+    \frac{d\tilde{p}}{ds}=\frac{\partial\tilde{p}}{\partial\omega}\frac{d\omega}{ds}+\frac{\partial\tilde{p}}{\partial t}\frac{dt}{ds}
+\end{equation}\]</span></p>
+<p>Referring to equation (eq:processo-u-o-propagatore-equazione-differenziale-post-fourier), we note that it can be rewritten in the following system of differential equations:</p>
+<p><span class="math display">\[\begin{equation}
+    \begin{cases}
+        \frac{d\omega}{ds}=\mu\omega\\       \frac{dt}{ds}=1\\       \frac{d\tilde{p}}{ds}+\frac{\sigma^2}{2}\omega^2\tilde{p}(s)=0
+    \end{cases}
+\end{equation}\]</span></p>
+<p>We have thus passed from a partial differential equation to a system of ordinary differential equations. The method consists in identifying curves, also called <em>characteristics</em>, belonging to the space described by the coordinates <span class="math inline">\(\left(\omega,t,\tilde{p}\right)\)</span> which are constrained on surfaces</p>
+<p><span class="math display">\[\begin{equation}
+    \begin{cases}
+        u\left(\omega,t,\tilde{p}\right)=A\\       v\left(\omega,t,\tilde{p}\right)=B
+    \end{cases}
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are arbitrary constants.</p>
+<p>The functions <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> are obtained directly from the differential equations written above. In particular, from the first we find:</p>
+<p><span class="math display">\[\begin{equation*}
+    \int\frac{d\omega}{\omega}=\mu\int ds \ \Longrightarrow \ \omega=\omega(0)e^{\mu s}
+\end{equation*}\]</span></p>
+<p>From the third, instead:</p>
+<p><span class="math display">\[\begin{equation*}
+    \int\frac{d\tilde{p}}{\tilde{p}}=-\frac{\sigma^2}{2}\int\omega^2ds=-\frac{\sigma^2\omega(0)^2}{2}\int e^{2\mu s}ds \ \Longrightarrow \ \tilde{p}=\tilde{p}(0)e^{-\frac{\sigma^2\omega(0)^2}{4\mu}e^{2\mu s}}
+\end{equation*}\]</span></p>
+<p>Since <span class="math inline">\(\omega(0)^2e^{2\mu s}=\omega^2\)</span> then the two solutions are the following:</p>
+<p><span class="math display">\[\begin{equation*}
+    \begin{cases}
+        \omega=\omega(0)e^{\mu s}\\       \tilde{p}=\tilde{p}(0)e^{-\frac{\sigma^2}{2\mu}\omega^2}
+    \end{cases}
+\end{equation*}\]</span></p>
+<p>From the second equation of the system (eq:processo-u-o-sistema-equazioni-differenziali), finally, it results:</p>
+<p><span class="math display">\[\begin{equation*}
+    \int dt=\int s \ \Longrightarrow \ t=t_0+s \ \iff \ s=t-t_0
+\end{equation*}\]</span></p>
+<p>This also means that <span class="math inline">\(\omega(s=0)=\omega\left(t=t_0\right)=\omega_0\)</span>, so finally by substituting:</p>
+<p><span class="math display">\[\begin{equation}
+    \begin{cases}
+        \omega=\omega_0e^{\mu\left(t-t_0\right)}\\       \tilde{p}=\tilde{p}(0)e^{-\frac{\sigma^2}{4\mu}\omega^2}
+    \end{cases}
+\end{equation}\]</span></p>
+<p>As said, the constraints must be constant. For this reason, by isolating <span class="math inline">\(\omega_0\)</span> from the first and <span class="math inline">\(\tilde{p}(0)\)</span> from the second, we obtain:</p>
+<p><span class="math display">\[\begin{equation*}
+    \begin{cases}
+        \omega_0=\omega e^{-\mu\left(t-t_0\right)}\\       \tilde{p}(0)=\tilde{p}e^{\frac{\sigma^2}{4\mu}\omega^2}
+    \end{cases}
+\end{equation*}\]</span></p>
+<p>By setting <span class="math inline">\(A=\omega_0\)</span> and <span class="math inline">\(B=\tilde{p}(0)\)</span> we have found the functions <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span>:</p>
+<p><span class="math display">\[\begin{equation}
+    \begin{cases}
+        u\left(\omega,t,\tilde{p}\right)=\omega e^{-\mu\left(t-t_0\right)}\\       v\left(\omega,t,\tilde{p}\right)=\tilde{p}e^{\frac{\sigma^2}{4\mu}\omega^2}
+    \end{cases}
+\end{equation}\]</span></p>
+<p>It can be shown that <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> are related by the relation</p>
+<p><span class="math display">\[\begin{equation}
+    v=g(u)
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(g\)</span> is an unknown functional to be found. Substituting:</p>
+<p><span class="math display">\[\begin{equation}
+    \tilde{p}e^{\frac{\sigma^2}{4\mu}\omega^2}=g\left(\omega e^{-\mu\left(t-t_0\right)}\right) \ \Longrightarrow \ \tilde{p}(\omega,t)=e^{-\frac{\sigma^2}{4\mu}\omega^2}g\left(\omega e^{-\mu\left(t-t_0\right)}\right)
+\end{equation}\]</span></p>
+<p>To find the functional <span class="math inline">\(g\)</span> we must impose the initial condition:</p>
+<p><span class="math display">\[\begin{equation}
+    \tilde{p}(\omega,0)=e^{-\frac{\sigma^2}{4\mu}\omega^2}g(\omega) \ \Longrightarrow \ g(\omega)=\tilde{p}(\omega,0)e^{\frac{\sigma^2}{4\mu}\omega^2}
+\end{equation}\]</span></p>
+<p>Assuming that the initial condition is <span class="math inline">\(p(x,0)=\delta\left(x-x_0\right)\)</span>, then <span class="math inline">\(\tilde{p}(\omega,0)\)</span> is given by the Fourier transform:</p>
+<p><span class="math display">\[\begin{equation*}
+    \tilde{p}(\omega,0)=\int_{-\infty}^{+\infty}p(x,0)e^{i\omega x}dx=\int_{-\infty}^{+\infty}\delta\left(x-x_0\right)e^{i\omega x}dx=e^{i\omega x_0}
+\end{equation*}\]</span></p>
+<p>Let’s substitute in (eq:processo-u-o-funzionale-g-condizione-iniziale):</p>
+<p><span class="math display">\[\begin{equation}
+    g(\omega)=e^{i\omega x_0}e^{\frac{\sigma^2}{4\mu}\omega^2}=e^{\frac{\sigma^2}{4\mu}\omega^2+ix_0\omega}
+\end{equation}\]</span></p>
+<p>Having found the expression for <span class="math inline">\(g(\omega)\)</span> we can finally obtain <span class="math inline">\(\tilde{p}(\omega,t)\)</span> in its explicit form starting from (eq:processo-u-o-espression-tilde-p-funzione-di-g):</p>
+<p><span class="math display">\[\begin{equation*}
+    \tilde{p}(\omega,t)=e^{-\frac{\sigma^2}{4\mu}\omega^2}e^{\frac{\sigma^2}{4\mu}\omega^2e^{-2\mu\left(t-t_0\right)}+ix_0\omega e^{-\mu\left(t-t_0\right)}}=e^{\frac{\sigma^2}{4\mu}\left(1-e^{-2\mu\left(t-t_0\right)}\right)\omega^2+ix_0e^{-\mu\left(t-t_0\right)}\omega}
+\end{equation*}\]</span></p>
+<p>The propagator <span class="math inline">\(p(x,t)\)</span> is none other than the inverse transform of <span class="math inline">\(\tilde{p}(\omega,t)\)</span>:</p>
+<p><span class="math display">\[\begin{align*}
+    p(x,t)&amp;=\frac{1}{2\pi}\int_{-\infty}^{+\infty}\tilde{p}(\omega,t)e^{-i\omega x}d\omega=\\
+    &amp;=\frac{1}{2\pi}\int_{-\infty}^{+\infty}e^{\frac{\sigma^2}{4\mu}\left(1-e^{-2\mu\left(t-t_0\right)}\right)\omega^2+ix_0e^{-\mu\left(t-t_0\right)}\omega}e^{-ix\omega}d\omega=\\
+    &amp;=\frac{1}{2\pi}\int_{-\infty}^{+\infty}e^{\frac{\sigma^2}{4\mu}\left(1-e^{-2\mu\left(t-t_0\right)}\right)\omega^2-i\left(x-x_0e^{-\mu\left(t-t_0\right)}\right)\omega}d\omega
+\end{align*}\]</span></p>
+<p>We recognize the form of the Gaussian integral that we know how to solve:</p>
+<p><span class="math display">\[\begin{equation*}
+    p(x,t)=\frac{1}{2\pi}\sqrt{\frac{2\pi}{\frac{\sigma^2}{2\mu}\left(1-e^{-2\mu\left(t-t_0\right)}\right)}}e^{-\frac{\left(x-x_0e^{-\mu\left(t-t_0\right)}\right)^2}{2\cdot\frac{\sigma^2}{2\mu}\left(1-e^{-2\mu\left(t-t_0\right)}\right)}}
+\end{equation*}\]</span></p>
+<p>Simplifying, we obtain the final form of the propagator:</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{p(x,t)=\sqrt{\frac{\mu}{\pi\sigma^2\left(1-e^{-2\mu\left(t-t_0\right)}\right)}}e^{-\frac{\mu\left(x-x_0e^{-\mu\left(t-t_0\right)}\right)^2}{\sigma^2\left(1-e^{-2\mu\left(t-t_0\right)}\right)}}}
+\end{equation}\]</span></p>
+<p>In the stationary limit, for <span class="math inline">\(t\to\infty\)</span>, we find</p>
+<p><span class="math display">\[\begin{equation}
+    \boxed{p^{(st)}(x)=\sqrt{\frac{\mu}{\pi\sigma^2}}e^{-\frac{\mu x^2}{\sigma^2}}}
+\end{equation}\]</span></p>
+<p>that is, a Gaussian centered at zero and with variance <span class="math inline">\(\frac{\sigma^2}{\mu}\)</span>.</p>
+<p>The general formula was given by (eq:fokker-planck-soluzione-all-equilibrio-forma-finale), and we note that by substituting <span class="math inline">\(x_{min}=0\)</span>, <span class="math inline">\(\mu(x)=-\mu x\)</span> and <span class="math inline">\(\sigma(x)=\sigma\)</span> we obtain:</p>
+<p><span class="math display">\[\begin{equation*}
+    p^{(st)}(x)=\frac{1}{Z\sigma^2}e^{2\int_0^x\frac{-\mu x'}{\sigma^2}dx'}=\frac{1}{Z\sigma^2}e^{-\frac{\cancel{2}\mu}{\sigma^2}\cdot\frac{x^2}{\cancel{2}}}=\frac{1}{Z\sigma^2}e^{-\frac{\mu x^2}{\sigma^2}}
+\end{equation*}\]</span></p>
+<p>From which the normalization factor follows:</p>
+<p><span class="math display">\[\begin{equation*}
+    \frac{1}{Z^2\sigma^2}\sqrt{\frac{\cancel{2}\pi}{\frac{\cancel{2}\mu}{\sigma^2}}}=1 \ \iff \ \frac{1}{Z\sigma^2}=\sqrt{\frac{\mu}{\pi\sigma^2}}
+\end{equation*}\]</span></p>
+<p>which is exactly what we obtained in (eq:processo-u-o-propagatore-stazionario) by taking the propagator to the limit for <span class="math inline">\(t\to\infty\)</span>.</p>
+<div class="exercise">
+<p><em>Show that the equation for the variance of the Ornstein-Uhlenbeck process obtained from the stochastic differential equation is the same as that obtained from the Fokker-Planck equation. Also verify that in the stationary limit it assumes the value</em> <span class="math inline">\(\frac{\sigma^2}{2\mu}\)</span><em>.</em></p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>We have already derived the equation for the variance through the differential equation, obtaining equation (eq:processo-u-o-varianza-equazione-non-omogenea).</p>
+<pre><code>As for the derivation with the Fokker-Planck equation, we will have to multiply both members of (eq:processo-u-o-equazione-fokker-planck) by $x^2$ and integrate:
+
+\begin{equation*}
+    \int_{-\infty}^{+\infty}x^2\frac{\partial}{\partial t}p(x,t)dx=\mu\int_{-\infty}^{+\infty}x^2\frac{\partial}{\partial x}(xp)dx+\frac{\sigma^2}{2}\int_{-\infty}^{+\infty}x^2\frac{\partial^2}{\partial x^2}p(x,t)dx
+\end{equation*}
+
+On the first member we can simply take the derivative out of the integral:
+
+\begin{equation*}
+    \int_{-\infty}^{+\infty}x^2\frac{\partial}{\partial t}p(x,t)dx=\frac{\partial}{\partial t}\int_{-\infty}^{+\infty}x^2p(x,t)dx
+\end{equation*}
+
+On the second member, instead, we will have to integrate by parts, the first term once and the second twice. The first will give:
+
+\begin{equation*}
+    \int_{-\infty}^{+\infty}x^2\frac{\partial}{\partial x}(xp)dx=\cancel{x^3p(x,t)\big|_{-\infty}^{+\infty}}-2\int_{-\infty}^{+\infty}x^2p(x,t)dx
+\end{equation*}
+
+The second, instead:
+
+\begin{align*}
+    \int_{-\infty}^{+\infty}x^2\frac{\partial^2}{\partial x^2}p(x,t)dx&amp;=\cancel{x^2\frac{\partial}{\partial x}p(x,t)\bigg|_{-\infty}^{+\infty}}-2\int_{-\infty}^{+\infty}x\frac{\partial}{\partial x}p(x,t)dx=\\
+    &amp;=-2\cancel{xp(x,t)\big|_{-\infty}^{+\infty}}+2\int_{-\infty}^{+\infty}p(x,t)dx=2
+\end{align*}
+
+Substituting in the starting equation:
+
+\begin{equation*}
+    \frac{\partial}{\partial t}\int_{-\infty}^{+\infty}x^2p(x,t)dx=-2\mu\int_{-\infty}^{+\infty}x^2p(x,t)dx+\frac{\sigma^2}{\cancel{2}}\cdot\cancel{2}
+\end{equation*}
+
+Being by definition
+
+\begin{equation*}
+    \left\langle x^2\right\rangle=\int_{-\infty}^{+\infty}x^2p(x,t)dx
+\end{equation*}
+
+we therefore find:
+
+\begin{equation*}
+    \frac{d}{dt}\left\langle x^2\right\rangle=-2\mu\left\langle x^2\right\rangle+\sigma^2
+\end{equation*}
+
+which is what is written in (eq:processo-u-o-varianza-equazione-non-omogenea).
+
+In the stationary limit, the variance will be independent of time, therefore:
+
+\begin{equation*}
+    \frac{d}{dt}\left\langle x^2\right\rangle=0 \ \iff \ -2\mu\left\langle x^2\right\rangle+\sigma^2=0 \ \Longrightarrow \ \left\langle x^2\right\rangle=\frac{\sigma^2}{2\mu}
+\end{equation*}
+
+just as predicted by the assignment.</code></pre>
+</div>
+
+
+<!-- -->
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/08-stochastic-differential-equations.html" class="pagination-link" aria-label="Stochastic differential equations">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Stochastic differential equations</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/10-fokker-planck-equation.html" class="pagination-link" aria-label="Fokker-Planck Equation">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Fokker-Planck Equation</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Ornstein-Uhlenbeck Process"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu"># Ornstein-Uhlenbeck Process</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>To conclude the study of stochastic processes, which began with the analysis of diffusion processes, let's take as an example a model that we will study with the various tools we have learned in the past chapters. The process in question is the **Ornstein-Uhlenbeck process**, which, to be honest, we have already introduced\footnote{Only in a specific case, as we will see better below.} in exercise (ex:processo-di-ornstein-uhlenbeck) following the introduction of the Wiener process.</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sample trajectory</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>Formally, the process is defined by the following differential equation:</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        dx=-\mu xdt+\sigma dB<span class="sc">\\</span>        x(0)=x_0</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>To find a general solution, it is useful to define the following function:</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    y(t)=e^{\mu t}x(t)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>where $x(t)$ is the solution of the equation. The reason why this is convenient is soon told by applying the chain rule (equation (eq:sde-chain-rule-ito)), having set $\mu(x,t)=-\mu x$ and $\sigma(x,t)=\sigma$ for consistency with the Langevin equation:</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    dy&amp;=\left(\frac{\partial y}{\partial t}+\frac{\partial y}{\partial x}\mu(x,t)+\frac{1}{2}\frac{\partial^2y}{\partial x^2}\sigma^2\right)dt+\frac{\partial y}{\partial x}\sigma(x,t) dB=<span class="sc">\\</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    &amp;=\left(\cancel{\mu e^{\mu t}x}\cancel{-\mu xe^{\mu t}}+0\right)dt+\sigma e^{\mu t}dB</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>The remaining equation is easy to integrate:</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    dy=\sigma e^{\mu t}dB \ \Longrightarrow \ \ y(t)=y(0)+\sigma\int_0^te^{\mu t'}dB(t')</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>Returning to the expression in $x(t)$:</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    e^{\mu t}x(t)=e^{\mu\cdot0}x(0)+\sigma\int_0^te^{\mu t'}dB(t')=x_0+\sigma\int_0^te^{\mu t'}dB(t')</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>We thus find the explicit form of the solution:</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    \boxed{x(t)=x_0e^{-\mu t}+\sigma e^{-\mu t}\int_0^te^{\mu t'}dB(t')}</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>*Calculate the solution of the following stochastic differential equation:*</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="in">        \begin{cases}</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="in">            dx=(\beta-\mu x)dt+\sigma dB\\           x(0)=x_0</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="in">        \end{cases}</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="in">    We will have to follow the same procedure just carried out, with the only difference that this time $\mu(x,t)=-\mu x+\beta$. In this way the coefficient of $dt$ will not be canceled, since a surviving contribution equal to $\beta e^{\mu t}$ will remain:</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="in">        dy=\beta e^{\mu t}dt+\sigma e^{\mu t}dB</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a><span class="in">    Integrating both members:</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a><span class="in">        y(t)=y(0)+\beta\int_0^te^{\mu t'}dt'+\sigma\int_0^te^{\mu t'}dB(t')</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>Let's solve the first integral:</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a><span class="in">        \int_0^te^{\mu t'}dt'=\frac{1}{\mu}e^{\mu t'}\bigg|_0^t=\frac{1}{\mu}\left(e^{\mu t}-1\right)</span></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a><span class="in">    Let's now substitute $y(t)=e^{\mu t}x(t)$ and return to the complete solution:</span></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a><span class="in">        e^{\mu t}x(t)=e^{\mu\cdot 0}x(0)+\frac{\beta}{\mu}\left(e^{\mu t}-1\right)+\sigma\int_0^te^{\mu t'}dB(t')</span></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a><span class="in">    Let's therefore multiply both members by $e^{-\mu t}$ to obtain the final solution:</span></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a><span class="in">        x(t)=x_0e^{-\mu t}+e^{-\mu t}\cdot\frac{\beta}{\mu}\left(e^{\mu t}-1\right)+\sigma e^{-\mu t}\int_0^te^{\mu t'}dB(t')</span></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a><span class="in">    that is</span></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a><span class="in">        x(t)=x_0e^{-\mu t}+\frac{\beta}{\mu}\left(1-e^{-\mu t}\right)+\sigma e^{-\mu t}\int_0^te^{\mu t'}dB(t')</span></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a><span class="fu">### Variance</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>We know that one of the main aspects of a realization of a stochastic process is its variance, in order to describe how fluctuations tend to change over time.</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>Let's start from the calculation of the average value of $x(t)^2$, which is obtained starting from the series expansion of the differential of $x$ stopped at the second order, since - as already repeated several times - we have $dB^2=dt$:</span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>    d\left(x^2\right)=\frac{d\left(x^2\right)}{dx}dx+\frac{1}{2}\frac{d^2\left(x^2\right)}{dx^2}dx^2=2xdx+\frac{1}{\cancel{2}}\cdot\cancel{2}dx^2</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>Let's substitute the expression for $dx$ given by the SDE:</span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>    d\left(x^2\right)=2x\left(-\mu xdt+\sigma dB\right)+\left(-\mu xdt+\sigma dB\right)^2</span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>Of the square, only $\sigma^2dB^2=\sigma^2dt$ remains:</span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>    d\left(x^2\right)=-2\mu x^2dt+2\sigma xdB+\sigma^2dt=\left(-2\mu x^2+\sigma^2\right)dt+2\sigma xdB</span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>Let's consider the expected value on both sides:\footnote{We note the difference with what was obtained in equation (eq:sde-differenziale-x-quadro-sbagliato): here we find an additional contribution due to the expansion up to the second order, justified by the relation $dB^2=dt$.}</span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>    d\left\langle x^2\right\rangle=\left(-2\mu\left\langle x^2\right\rangle+\sigma^2\right)dt+2\sigma\langle xdB\rangle</span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>According to the Itô convention $\langle xdB\rangle=\langle x\rangle\cancel{\langle dB\rangle}=0$, from which the differential equation follows</span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>    \frac{d}{dt}\left\langle x^2\right\rangle=-2\mu\left\langle x^2\right\rangle+\sigma^2</span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>This is a non-homogeneous ordinary differential equation. To find a solution we must first solve the associated homogeneous equation:</span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>    \frac{d}{dt}\left\langle x^2\right\rangle=-2\mu\left\langle x^2\right\rangle \ \Longrightarrow \ \ \left\langle x(t)^2\right\rangle=ke^{-2\mu t}</span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a>To find the solution to the non-homogeneous equation ((eq:processo-u-o-varianza-equazione-non-omogenea)) we will have to add a constant contribution $c$ to the solution found, such that</span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>    \cancel{\frac{d}{dt}c}=-2\mu c+\sigma^2 \ \iff \ 2\mu c=\sigma^2 \ \iff \ c=\frac{\sigma^2}{2\mu}</span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a>Summing the two contributions, we will find:</span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>    \left\langle x(t)^2\right\rangle=ke^{-2\mu t}+\frac{\sigma^2}{2\mu}</span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a>It remains to find the constant $k$ through the initial condition ($\left\langle x(0)^2\right\rangle=x_0^2$):</span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>    \left\langle x(0)^2\right\rangle=k+\frac{\sigma^2}{2\mu}=x_0^2 \ \Longrightarrow \ k=x_0^2-\frac{\sigma^2}{2\mu}</span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>Ultimately:</span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a>    \left\langle x(t)^2\right\rangle=\left(x_0^2-\frac{\sigma^2}{2\mu}\right)e^{-2\mu t}+\frac{\sigma^2}{2\mu}</span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>For the variance we must find $\langle x(t)\rangle$, which is easily found starting from (eq:processo-u-o-soluzione-generale):</span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>    \langle x(t)\rangle=x_0e^{-\mu t}+\sigma e^{-\mu t}\left\langle\int_0^te^{\mu t'}dB(t')\right\rangle=x_0e^{-\mu t}+\sigma e^{-\mu t}\int_0^t\left\langle e^{\mu t'}\right\rangle\cancel{\langle dB(t')\rangle}</span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a>We can now calculate the variance associated with the process:</span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a>    Var<span class="co">[</span><span class="ot">x(t)</span><span class="co">]</span>&amp;=\left\langle x(t)^2\right\rangle-\langle x(t)\rangle^2=\left(x_0^2-\frac{\sigma^2}{2\mu}\right)e^{-2\mu t}+\frac{\sigma^2}{2\mu}-x_0^2e^{-\mu t}=<span class="sc">\\</span></span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a>    &amp;=\left(\cancel{x_0^2}-\frac{\sigma^2}{2\mu}\cancel{-x_0^2}\right)e^{-\mu t}+\frac{\sigma^2}{2\mu}</span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a>that is</span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a>    \boxed{Var<span class="co">[</span><span class="ot">x(t)</span><span class="co">]</span>=\frac{\sigma^2}{2\mu}\left(1-e^{-\mu t}\right)}</span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a>This is a function that is zero for $t=0$ and progressively increasing, stabilizing at the value $\frac{\sigma^2}{2\mu}$ for large $t$.\footnote{At this point it is interesting to note one thing: the solution $e^{-t}B\left(e^{2t}\right)$, with which the process in question was first introduced, is not easily reducible to what is written in (eq:processo-u-o-soluzione-generale). The Wikipedia page (\url{https://en.wikipedia.org/wiki/Ornstein-Uhlenbeck_process}) clarifies that the *temporally homogeneous* process can be written as $\frac{\sigma}{\sqrt{2\mu}}e^{-\mu t}B\left(e^{2\mu t}\right)$, so the solution written by the professor would be the one relative to the case $\mu=1$ and $\sigma=\sqrt{2}$, but the variance - easily calculable - turns out to be constant and equal to $1$, and not $1-e^{-\mu t}$ as the formula (eq:processo-u-o-varianza) would like. What I believe is that this solution is valid only in the limit for $t\to\infty$, being precisely relative to the *temporally homogeneous* process, and represents the particular case in which the distribution becomes a standard Gaussian.}</span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a><span class="fu">### Connected auto-correlation</span></span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a>Another important aspect is the correlation of the trajectory with itself at different instants of time, called **auto-correlation**:</span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a>    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle</span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a>If we remove the effects given by the global mean, we obtain what is called the *connected auto-correlation*:\footnote{Speaking of the Wiener process, we called this quantity the *correlation function* (paragraph (sec:funzione-di-correlazione)); from a statistical point of view, these are different quantities, but the professor uses them (I believe improperly) as synonyms: the correlation function would correspond to the auto-correlation, while the covariance to the connected auto-correlation.}</span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a>    c\left(t_1,t_2\right)=\left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle-\left\langle x\left(t_1\right)\right\rangle\left\langle x\left(t_2\right)\right\rangle</span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a>Let's calculate the first term by substituting (eq:processo-u-o-soluzione-generale):</span>
+<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a>\footnotesize</span>
+<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-204"><a href="#cb4-204" aria-hidden="true" tabindex="-1"></a>    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle=\left\langle\left(x_0e^{-\mu t_1}+\sigma e^{-\mu t_1}\int_0^{t_1}e^{\mu t'}dB(t')\right)\left(x_0e^{-\mu t_2}+\sigma e^{-\mu t_2}\int_0^{t_2}e^{\mu t'}dB(t')\right)\right\rangle</span>
+<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a>\normalsize</span>
+<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a>From the products, the common factor $e^{-\mu\left(t_1+t_2\right)}$ emerges, which we can take out:</span>
+<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a>    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle=e^{-\mu\left(t_1+t_2\right)}\bigg\langle&amp;x_0^2+<span class="sc">\\</span></span>
+<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a>    &amp;+x_0\sigma\int_0^{t_1}e^{\mu t'}dB(t')+<span class="sc">\\</span></span>
+<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a>    &amp;+x_0\sigma\int_0^{t_2}e^{\mu t'}dB(t')+<span class="sc">\\</span></span>
+<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a>    &amp;+\sigma^2\int_0^{t_1}e^{\mu t'}dB(t')\int_0^{t_2}e^{\mu t'}dB(t')\bigg\rangle</span>
+<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a>Distributing the average value over the four terms, the two central ones will be zero, since $\langle dB(t)\rangle$ is so. What remains is:</span>
+<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a>    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle=e^{-\mu\left(t_1+t_2\right)}\left(x_0^2+\sigma^2\left\langle\int_0^{t_1}e^{\mu t'}dB(t')\int_0^{t_2}e^{\mu t'}dB(t')\right\rangle\right)</span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a>To find the remaining expected value, it is useful to calculate more generally</span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>    \left\langle\int_0^{t_1}f(t')dB(t')\int_0^{t_2}g(t')dB(t')\right\rangle</span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a>Let's assume that $t_2&gt;t_1$ and let's discretize the interval $\left<span class="co">[</span><span class="ot">0,t_2\right</span><span class="co">]</span>$ in the following way:\footnote{In the discretization there is an evident abuse of notation, since by setting the index as a subscript we can indicate with $t_1$ and $t_2$ two different quantities. However, it is not difficult to understand from the context what is being referred to.}</span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a>    \left<span class="sc">\{</span>t_0=0,t_1,\dots,t_{m-1},t_m=\boldsymbol{t_1},t_{m+1},\dots,t_{n-1},t_n=\boldsymbol{t_2}\right<span class="sc">\}</span></span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a>At this point, we can discretize the integrals as follows:</span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a>    \left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\sum_{j=1}^ng_{j-1}\Delta B_j\right\rangle</span>
+<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>Let's split the second summation into the intervals $<span class="co">[</span><span class="ot">1,m</span><span class="co">]</span>$ and $<span class="co">[</span><span class="ot">m+1,n</span><span class="co">]</span>$:</span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a>    &amp;\left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\left<span class="co">[</span><span class="ot">\sum_{j=1}^mg_{j-1}\Delta B_j+\sum_{j=m+1}^ng_{j-1}\Delta B_j\right</span><span class="co">]</span>\right\rangle=<span class="sc">\\</span></span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a>    &amp;=\left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\sum_{j=1}^mg_{j-1}\Delta B_j\right\rangle+\left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\sum_{j=m+1}^ng_{j-1}\Delta B_j\right\rangle</span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a>The summations of the second term refer to different intervals, so they are uncorrelated quantities:</span>
+<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a>    \left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\sum_{j=m+1}^ng_{j-1}\Delta B_j\right\rangle&amp;=\left\langle\sum_{i=1}^mf_{i-1}\Delta B_i\right\rangle\left\langle\sum_{j=m+1}^ng_{j-1}\Delta B_j\right\rangle=<span class="sc">\\</span></span>
+<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a>    &amp;=\sum_{i=1}^m\left\langle f_{i-1}\right\rangle\cancel{\left\langle\Delta B_i\right\rangle}\sum_{j=m+1}^n\left\langle g_{j-1}\right\rangle\cancel{\left\langle\Delta B_j\right\rangle}=0</span>
+<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-256"><a href="#cb4-256" aria-hidden="true" tabindex="-1"></a>What remains is therefore the first term, where the contributions of the summation can be divided into those in which $i=j$ and those in which $i\neq j$:</span>
+<span id="cb4-257"><a href="#cb4-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a>\footnotesize</span>
+<span id="cb4-259"><a href="#cb4-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-260"><a href="#cb4-260" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-261"><a href="#cb4-261" aria-hidden="true" tabindex="-1"></a>    \left\langle\sum_{i=1}^m\sum_{j=1}^mf_{i-1}g_{j-1}\Delta B_i\Delta B_j\right\rangle&amp;=\left\langle\sum_{i=1}^mf_{i-1}g_{i-1}\Delta B_i^2\right\rangle+2\left\langle\sum_{i&gt;j}f_{i-1}g_{j-1}\Delta B_i\Delta B_j\right\rangle=<span class="sc">\\</span></span>
+<span id="cb4-262"><a href="#cb4-262" aria-hidden="true" tabindex="-1"></a>    &amp;=\sum_{i=1}^m\left\langle f_{i-1}g_{i-1}\right\rangle\left\langle\Delta B_i^2\right\rangle+2\sum_{i&gt;j}\left\langle f_{i-1}g_{j-1}\right\rangle\cancel{\left\langle\Delta B_i\right\rangle}\cancel{\left\langle\Delta B_j\right\rangle}=<span class="sc">\\</span></span>
+<span id="cb4-263"><a href="#cb4-263" aria-hidden="true" tabindex="-1"></a>    &amp;=\sum_{i=1}^m\left\langle f_{i-1}g_{i-1}\right\rangle\Delta t_i</span>
+<span id="cb4-264"><a href="#cb4-264" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-265"><a href="#cb4-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-266"><a href="#cb4-266" aria-hidden="true" tabindex="-1"></a>\normalsize</span>
+<span id="cb4-267"><a href="#cb4-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-268"><a href="#cb4-268" aria-hidden="true" tabindex="-1"></a>We thus find that, in the limit:</span>
+<span id="cb4-269"><a href="#cb4-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-270"><a href="#cb4-270" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-271"><a href="#cb4-271" aria-hidden="true" tabindex="-1"></a>    \sum_{i=1}^m\left\langle f_{i-1}g_{i-1}\right\rangle\Delta t_i \ \longrightarrow \ \int_0^{t_1}\langle f(t')g(t')\rangle dt'</span>
+<span id="cb4-272"><a href="#cb4-272" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-273"><a href="#cb4-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-274"><a href="#cb4-274" aria-hidden="true" tabindex="-1"></a>If we had initially assumed $t_1&gt;t_2$ we would have obtained the same result, but with the upper limit of integration equal to $t_2$. It follows that</span>
+<span id="cb4-275"><a href="#cb4-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-276"><a href="#cb4-276" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-277"><a href="#cb4-277" aria-hidden="true" tabindex="-1"></a>    \left\langle\int_0^{t_1}f(t')dB(t')\int_0^{t_2}g(t')dB(t')\right\rangle=\int_0^{\min\left(t_1,t_2\right)}\langle f(t')g(t')\rangle dt'</span>
+<span id="cb4-278"><a href="#cb4-278" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-279"><a href="#cb4-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-280"><a href="#cb4-280" aria-hidden="true" tabindex="-1"></a>Let's go back to (eq:processo-u-o-auto-correlazione-calcolo-1) and substitute the result found:</span>
+<span id="cb4-281"><a href="#cb4-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-282"><a href="#cb4-282" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-283"><a href="#cb4-283" aria-hidden="true" tabindex="-1"></a>    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle=e^{-\mu\left(t_1+t_2\right)}\left(x_0^2+\sigma^2\int_0^{\min\left(t_1t_2\right)}e^{2\mu t'}dt'\right)</span>
+<span id="cb4-284"><a href="#cb4-284" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-285"><a href="#cb4-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-286"><a href="#cb4-286" aria-hidden="true" tabindex="-1"></a>Let's solve the integral:</span>
+<span id="cb4-287"><a href="#cb4-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-288"><a href="#cb4-288" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-289"><a href="#cb4-289" aria-hidden="true" tabindex="-1"></a>    \left\langle x\left(t_1\right)x\left(t_2\right)\right\rangle&amp;=e^{-\mu\left(t_1+t_2\right)}\left(x_0^2+\frac{\sigma^2}{2\mu}e^{2\mu t'}\bigg|_0^{\min\left(t_1,t_2\right)}\right)=<span class="sc">\\</span></span>
+<span id="cb4-290"><a href="#cb4-290" aria-hidden="true" tabindex="-1"></a>    &amp;=e^{-\mu\left(t_1+t_2\right)}\left<span class="co">[</span><span class="ot">x_0^2+\frac{\sigma^2}{2\mu}\left(e^{2\mu\min\left(t_1,t_2\right)}-1\right)\right</span><span class="co">]</span></span>
+<span id="cb4-291"><a href="#cb4-291" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-292"><a href="#cb4-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-293"><a href="#cb4-293" aria-hidden="true" tabindex="-1"></a>Let's substitute in (eq:processo-u-o-auto-correlazione-connessa-definizione), remembering that $\langle x(t)\rangle=x_0e^{-\mu t}$:</span>
+<span id="cb4-294"><a href="#cb4-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-295"><a href="#cb4-295" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-296"><a href="#cb4-296" aria-hidden="true" tabindex="-1"></a>    c\left(t_1,t_2\right)&amp;=e^{-\mu\left(t_1+t_2\right)}\left<span class="co">[</span><span class="ot">x_0^2+\frac{\sigma^2}{2\mu}\left(e^{2\mu\min\left(t_1,t_2\right)}-1\right)\right</span><span class="co">]</span>-x_0e^{-\mu t_1}\cdot x_0e^{-\mu t_2}=<span class="sc">\\</span></span>
+<span id="cb4-297"><a href="#cb4-297" aria-hidden="true" tabindex="-1"></a>    &amp;=\cancel{x_0^2e^{-\mu\left(t_1+t_2\right)}}+\frac{\sigma^2}{2\mu}\left(e^{2\mu\min\left(t_1,t_2\right)}-1\right)e^{-\mu\left(t_1+t_2\right)}\cancel{-x_0^2e^{-\mu\left(t_1+t_2\right)}}</span>
+<span id="cb4-298"><a href="#cb4-298" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-299"><a href="#cb4-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-300"><a href="#cb4-300" aria-hidden="true" tabindex="-1"></a>We find:</span>
+<span id="cb4-301"><a href="#cb4-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-302"><a href="#cb4-302" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-303"><a href="#cb4-303" aria-hidden="true" tabindex="-1"></a>    c\left(t_1,t_2\right)=\frac{\sigma^2}{2\mu}\left<span class="co">[</span><span class="ot">e^{\mu\left(2\min\left(t_1,t_2\right)-t_1-t_2\right)}-e^{-\mu\left(t_1+t_2\right)}\right</span><span class="co">]</span></span>
+<span id="cb4-304"><a href="#cb4-304" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-305"><a href="#cb4-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-306"><a href="#cb4-306" aria-hidden="true" tabindex="-1"></a>Let's evaluate the two cases:</span>
+<span id="cb4-307"><a href="#cb4-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-308"><a href="#cb4-308" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-309"><a href="#cb4-309" aria-hidden="true" tabindex="-1"></a>    &amp;\min\left(t_1,t_2\right)=t_1 \ \Longrightarrow \ 2t_1-t_1-t_2=t_1-t_2<span class="sc">\\</span></span>
+<span id="cb4-310"><a href="#cb4-310" aria-hidden="true" tabindex="-1"></a>    &amp;\min\left(t_1,t_2\right)=t_2 \ \Longrightarrow \ 2t_2-t_1-t_2=-t_1+t_2</span>
+<span id="cb4-311"><a href="#cb4-311" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-312"><a href="#cb4-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-313"><a href="#cb4-313" aria-hidden="true" tabindex="-1"></a>This means that the exponent $2\min\left(t_1,t_2\right)-t_1-t_2$ can be rewritten as $-\abs{t_1-t_2}$:</span>
+<span id="cb4-314"><a href="#cb4-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-315"><a href="#cb4-315" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-316"><a href="#cb4-316" aria-hidden="true" tabindex="-1"></a>    \boxed{c\left(t_1,t_2\right)=\frac{\sigma^2}{2\mu}\left<span class="co">[</span><span class="ot">e^{-\mu\abs{t_1-t_2}}-e^{-\mu\left(t_1+t_2\right)}\right</span><span class="co">]</span>}</span>
+<span id="cb4-317"><a href="#cb4-317" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-318"><a href="#cb4-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-319"><a href="#cb4-319" aria-hidden="true" tabindex="-1"></a>We can find an even more general formula if we assume that at the initial instant the system is not entirely concentrated at $x_0$ but is distributed according to a function $p\left(x_0\right)$. In this case, we have that $\langle x(t)\rangle=\left\langle x_0\right\rangle e^{-\mu t}$, so by substituting the results in (eq:processo-u-o-auto-correlazione-connessa-definizione) we will have:</span>
+<span id="cb4-320"><a href="#cb4-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-321"><a href="#cb4-321" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-322"><a href="#cb4-322" aria-hidden="true" tabindex="-1"></a>    c\left(t_1,t_2\right)&amp;=\left\langle x_0^2\right\rangle e^{-\mu\left(t_1+t_2\right)}+\frac{\sigma^2}{2\mu}\left<span class="co">[</span><span class="ot">e^{-\mu\abs{t_1-t_2}}-e^{-\mu\left(t_1+t_2\right)}\right</span><span class="co">]</span>-\left\langle x_0\right\rangle^2e^{-\mu\left(t_1+t_2\right)}=<span class="sc">\\</span></span>
+<span id="cb4-323"><a href="#cb4-323" aria-hidden="true" tabindex="-1"></a>    &amp;=\left(\left\langle x_0^2\right\rangle-\left\langle x_0\right\rangle^2\right)e^{-\mu\left(t_1+t_2\right)}+\frac{\sigma^2}{2\mu}\left<span class="co">[</span><span class="ot">e^{-\mu\abs{t_1-t_2}}-e^{-\mu\left(t_1+t_2\right)}\right</span><span class="co">]</span></span>
+<span id="cb4-324"><a href="#cb4-324" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-325"><a href="#cb4-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-326"><a href="#cb4-326" aria-hidden="true" tabindex="-1"></a>From which:</span>
+<span id="cb4-327"><a href="#cb4-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-328"><a href="#cb4-328" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-329"><a href="#cb4-329" aria-hidden="true" tabindex="-1"></a>    \boxed{c\left(t_1,t_2\right)=Var\left(x_0\right)e^{-\mu\left(t_1+t_2\right)}+\frac{\sigma^2}{2\mu}\left<span class="co">[</span><span class="ot">e^{-\mu\abs{t_1-t_2}}-e^{-\mu\left(t_1+t_2\right)}\right</span><span class="co">]</span>}</span>
+<span id="cb4-330"><a href="#cb4-330" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-331"><a href="#cb4-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-332"><a href="#cb4-332" aria-hidden="true" tabindex="-1"></a>We note that, in the limit for $t_1,t_2\to\infty$ but keeping the difference $t_1-t_2$ constant, we find the **stationary** connected auto-correlation, since it is independent of the individual values $t_1$ and $t_2$ but only of their difference in modulus:\footnote{As a proof of what was stated in the previous notes, we note that this result is the same as that obtained in exercise (ex:processo-di-ornstein-uhlenbeck) by setting $\mu=1$ and $\sigma=\sqrt{2}$.}</span>
+<span id="cb4-333"><a href="#cb4-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-334"><a href="#cb4-334" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-335"><a href="#cb4-335" aria-hidden="true" tabindex="-1"></a>    \boxed{c_{stat}\left(t_1,t_2\right)=\frac{\sigma^2}{2\mu}e^{-\mu\abs{t_1-t_2}}}</span>
+<span id="cb4-336"><a href="#cb4-336" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-337"><a href="#cb4-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-338"><a href="#cb4-338" aria-hidden="true" tabindex="-1"></a><span class="fu">## Propagator</span></span>
+<span id="cb4-339"><a href="#cb4-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-340"><a href="#cb4-340" aria-hidden="true" tabindex="-1"></a>Another fundamental characteristic of a stochastic process is its **propagator**, which tells us how the pdf evolves over time.</span>
+<span id="cb4-341"><a href="#cb4-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-342"><a href="#cb4-342" aria-hidden="true" tabindex="-1"></a>It can be found starting from the Fokker-Planck equation ((eq:fokker-planck-equazione)), which in our case is written as</span>
+<span id="cb4-343"><a href="#cb4-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-344"><a href="#cb4-344" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-345"><a href="#cb4-345" aria-hidden="true" tabindex="-1"></a>    \frac{\partial p}{\partial t}=-\frac{\partial}{\partial x}(-\mu xp)+\frac{1}{2}\frac{\partial^2}{\partial x^2}\left(\sigma^2p\right)=\mu\frac{\partial}{\partial x}(xp)+\frac{\sigma^2}{2}\frac{\partial^2p}{\partial x^2}</span>
+<span id="cb4-346"><a href="#cb4-346" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-347"><a href="#cb4-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-348"><a href="#cb4-348" aria-hidden="true" tabindex="-1"></a>To find the solution, it is convenient to apply the Fourier transform to both members:</span>
+<span id="cb4-349"><a href="#cb4-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-350"><a href="#cb4-350" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-351"><a href="#cb4-351" aria-hidden="true" tabindex="-1"></a>    \red{\mathcal{F}\left<span class="co">[</span><span class="ot">\frac{\partial p}{\partial t}\right</span><span class="co">]</span>}=\mu\orange{\mathcal{F}\left<span class="co">[</span><span class="ot">\frac{\partial}{\partial x}(xp)\right</span><span class="co">]</span>}+\frac{\sigma^2}{2}\green{\mathcal{F}\left<span class="co">[</span><span class="ot">\frac{\partial^2p}{\partial x^2}\right</span><span class="co">]</span>}</span>
+<span id="cb4-352"><a href="#cb4-352" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-353"><a href="#cb4-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-354"><a href="#cb4-354" aria-hidden="true" tabindex="-1"></a>Let's calculate the various transformations individually.</span>
+<span id="cb4-355"><a href="#cb4-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-356"><a href="#cb4-356" aria-hidden="true" tabindex="-1"></a>\begin{enumerate}</span>
+<span id="cb4-357"><a href="#cb4-357" aria-hidden="true" tabindex="-1"></a>    \item $\red{\mathcal{F}\left<span class="co">[</span><span class="ot">\frac{\partial p}{\partial t}\right</span><span class="co">]</span>}$</span>
+<span id="cb4-358"><a href="#cb4-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-359"><a href="#cb4-359" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-360"><a href="#cb4-360" aria-hidden="true" tabindex="-1"></a><span class="in">        \mathcal{F}\left[\frac{\partial p}{\partial t}\right]=\int_{-\infty}^{+\infty}\frac{\partial p}{\partial t}e^{i\omega x}dx=\frac{\partial}{\partial t}\int_{-\infty}^{+\infty}p(x,t)e^{i\omega x}dx=\frac{\partial\tilde{p}}{\partial t}</span></span>
+<span id="cb4-361"><a href="#cb4-361" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-362"><a href="#cb4-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-363"><a href="#cb4-363" aria-hidden="true" tabindex="-1"></a><span class="in">    \item $\orange{\mathcal{F}\left[\frac{\partial}{\partial x}(xp)\right]}$</span></span>
+<span id="cb4-364"><a href="#cb4-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-365"><a href="#cb4-365" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{align*}</span></span>
+<span id="cb4-366"><a href="#cb4-366" aria-hidden="true" tabindex="-1"></a><span class="in">        \mathcal{F}\left[\frac{\partial}{\partial x}(xp)\right]&amp;=\int_{-\infty}^{+\infty}\frac{\partial}{\partial x}(xp)e^{i\omega x}dx=\\</span></span>
+<span id="cb4-367"><a href="#cb4-367" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=\cancel{xp(x,t)e^{i\omega x}\bigg|_{-\infty}^{+\infty}}-\int_{-\infty}^{+\infty}xp(x,t)\frac{\partial}{\partial x}e^{i\omega x}dx=\\</span></span>
+<span id="cb4-368"><a href="#cb4-368" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=-i\omega\int_{-\infty}^{+\infty}xp(x,t)e^{i\omega x}dx</span></span>
+<span id="cb4-369"><a href="#cb4-369" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{align*}</span></span>
+<span id="cb4-370"><a href="#cb4-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-371"><a href="#cb4-371" aria-hidden="true" tabindex="-1"></a><span class="in">    We note that $\frac{\partial}{\partial\omega}e^{i\omega x}=ixe^{i\omega x}$:</span></span>
+<span id="cb4-372"><a href="#cb4-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-373"><a href="#cb4-373" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{align*}</span></span>
+<span id="cb4-374"><a href="#cb4-374" aria-hidden="true" tabindex="-1"></a><span class="in">        \mathcal{F}\left[\frac{\partial}{\partial x}(xp)\right]&amp;=-\omega\int_{-\infty}^{+\infty}p(x,t)\cdot ixe^{i\omega x}dx=-\omega\int_{-\infty}^{+\infty}p(x,t)\frac{\partial}{\partial\omega}e^{i\omega x}dx=\\</span></span>
+<span id="cb4-375"><a href="#cb4-375" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=-\omega\frac{\partial}{\partial\omega}\int_{-\infty}^{+\infty}p(x,t)e^{i\omega x}dx=-\omega\frac{\partial\tilde{p}}{\partial\omega}</span></span>
+<span id="cb4-376"><a href="#cb4-376" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{align*}</span></span>
+<span id="cb4-377"><a href="#cb4-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-378"><a href="#cb4-378" aria-hidden="true" tabindex="-1"></a><span class="in">    \item $\green{\mathcal{F}\left[\frac{\partial^2p}{\partial x^2}\right]}$</span></span>
+<span id="cb4-379"><a href="#cb4-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-380"><a href="#cb4-380" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{align*}</span></span>
+<span id="cb4-381"><a href="#cb4-381" aria-hidden="true" tabindex="-1"></a><span class="in">        \mathcal{F}\left[\frac{\partial^2p}{\partial x^2}\right]&amp;=\int_{-\infty}^{+\infty}\frac{\partial^2p}{\partial x^2}e^{i\omega x}dx=\cancel{\frac{\partial p}{\partial x}e^{i\omega x}\bigg|_{-\infty}^{+\infty}}-\int_{-\infty}^{+\infty}\frac{\partial p}{\partial x}i\omega e^{i\omega x}dx=\\</span></span>
+<span id="cb4-382"><a href="#cb4-382" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=-i\omega\cancel{p(x,t)e^{i\omega x}\bigg|_{-\infty}^{+\infty}}+i\omega\int_{-\infty}^{+\infty}p(x,t)i\omega e^{i\omega x}dx=\\</span></span>
+<span id="cb4-383"><a href="#cb4-383" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=-\omega^2\int_{-\infty}^{+\infty}p(x,t)e^{i\omega x}dx=-\omega^2\tilde{p}(\omega,t)</span></span>
+<span id="cb4-384"><a href="#cb4-384" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{align*}</span></span>
+<span id="cb4-385"><a href="#cb4-385" aria-hidden="true" tabindex="-1"></a>\end{enumerate}</span>
+<span id="cb4-386"><a href="#cb4-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-387"><a href="#cb4-387" aria-hidden="true" tabindex="-1"></a>Let's substitute the results obtained in (eq:processo-u-o-propagatore-equazione-differenziale-fourier):</span>
+<span id="cb4-388"><a href="#cb4-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-389"><a href="#cb4-389" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-390"><a href="#cb4-390" aria-hidden="true" tabindex="-1"></a>    \frac{\partial\tilde{p}}{\partial t}=-\mu\omega\frac{\partial\tilde{p}}{\partial\omega}-\frac{\sigma^2}{2}\omega^2\tilde{p}(\omega,t)</span>
+<span id="cb4-391"><a href="#cb4-391" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-392"><a href="#cb4-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-393"><a href="#cb4-393" aria-hidden="true" tabindex="-1"></a>This is a homogeneous first-order partial differential equation, in which $\tilde{p}(\omega,t)$ is derived once with respect to $t$ and another time with respect to $t$:</span>
+<span id="cb4-394"><a href="#cb4-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-395"><a href="#cb4-395" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-396"><a href="#cb4-396" aria-hidden="true" tabindex="-1"></a>    \frac{\partial\tilde{p}}{\partial t}+\mu\omega\frac{\partial\tilde{p}}{\partial\omega}+\frac{\sigma^2}{2}\omega^2\tilde{p}(\omega,t)=0</span>
+<span id="cb4-397"><a href="#cb4-397" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-398"><a href="#cb4-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-399"><a href="#cb4-399" aria-hidden="true" tabindex="-1"></a>To solve this equation we will use a method known as the **method of characteristics**, which makes use of an auxiliary variable $s$ such as to redefine the function in the following way:</span>
+<span id="cb4-400"><a href="#cb4-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-401"><a href="#cb4-401" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-402"><a href="#cb4-402" aria-hidden="true" tabindex="-1"></a>    \tilde{p}(s)\equiv\tilde{p}(\omega(s),t(s))</span>
+<span id="cb4-403"><a href="#cb4-403" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-404"><a href="#cb4-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-405"><a href="#cb4-405" aria-hidden="true" tabindex="-1"></a>By deriving with respect to $s$ we obtain:</span>
+<span id="cb4-406"><a href="#cb4-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-407"><a href="#cb4-407" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-408"><a href="#cb4-408" aria-hidden="true" tabindex="-1"></a>    \frac{d\tilde{p}}{ds}=\frac{\partial\tilde{p}}{\partial\omega}\frac{d\omega}{ds}+\frac{\partial\tilde{p}}{\partial t}\frac{dt}{ds}</span>
+<span id="cb4-409"><a href="#cb4-409" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-410"><a href="#cb4-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-411"><a href="#cb4-411" aria-hidden="true" tabindex="-1"></a>Referring to equation (eq:processo-u-o-propagatore-equazione-differenziale-post-fourier), we note that it can be rewritten in the following system of differential equations:</span>
+<span id="cb4-412"><a href="#cb4-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-413"><a href="#cb4-413" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-414"><a href="#cb4-414" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb4-415"><a href="#cb4-415" aria-hidden="true" tabindex="-1"></a>        \frac{d\omega}{ds}=\mu\omega<span class="sc">\\</span>       \frac{dt}{ds}=1<span class="sc">\\</span>       \frac{d\tilde{p}}{ds}+\frac{\sigma^2}{2}\omega^2\tilde{p}(s)=0</span>
+<span id="cb4-416"><a href="#cb4-416" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb4-417"><a href="#cb4-417" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-418"><a href="#cb4-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-419"><a href="#cb4-419" aria-hidden="true" tabindex="-1"></a>We have thus passed from a partial differential equation to a system of ordinary differential equations. The method consists in identifying curves, also called *characteristics*, belonging to the space described by the coordinates $\left(\omega,t,\tilde{p}\right)$ which are constrained on surfaces</span>
+<span id="cb4-420"><a href="#cb4-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-421"><a href="#cb4-421" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-422"><a href="#cb4-422" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb4-423"><a href="#cb4-423" aria-hidden="true" tabindex="-1"></a>        u\left(\omega,t,\tilde{p}\right)=A<span class="sc">\\</span>       v\left(\omega,t,\tilde{p}\right)=B</span>
+<span id="cb4-424"><a href="#cb4-424" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb4-425"><a href="#cb4-425" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-426"><a href="#cb4-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-427"><a href="#cb4-427" aria-hidden="true" tabindex="-1"></a>where $A$ and $B$ are arbitrary constants.</span>
+<span id="cb4-428"><a href="#cb4-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-429"><a href="#cb4-429" aria-hidden="true" tabindex="-1"></a>The functions $u$ and $v$ are obtained directly from the differential equations written above. In particular, from the first we find:</span>
+<span id="cb4-430"><a href="#cb4-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-431"><a href="#cb4-431" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-432"><a href="#cb4-432" aria-hidden="true" tabindex="-1"></a>    \int\frac{d\omega}{\omega}=\mu\int ds \ \Longrightarrow \ \omega=\omega(0)e^{\mu s}</span>
+<span id="cb4-433"><a href="#cb4-433" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-434"><a href="#cb4-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-435"><a href="#cb4-435" aria-hidden="true" tabindex="-1"></a>From the third, instead:</span>
+<span id="cb4-436"><a href="#cb4-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-437"><a href="#cb4-437" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-438"><a href="#cb4-438" aria-hidden="true" tabindex="-1"></a>    \int\frac{d\tilde{p}}{\tilde{p}}=-\frac{\sigma^2}{2}\int\omega^2ds=-\frac{\sigma^2\omega(0)^2}{2}\int e^{2\mu s}ds \ \Longrightarrow \ \tilde{p}=\tilde{p}(0)e^{-\frac{\sigma^2\omega(0)^2}{4\mu}e^{2\mu s}}</span>
+<span id="cb4-439"><a href="#cb4-439" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-440"><a href="#cb4-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-441"><a href="#cb4-441" aria-hidden="true" tabindex="-1"></a>Since $\omega(0)^2e^{2\mu s}=\omega^2$ then the two solutions are the following:</span>
+<span id="cb4-442"><a href="#cb4-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-443"><a href="#cb4-443" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-444"><a href="#cb4-444" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb4-445"><a href="#cb4-445" aria-hidden="true" tabindex="-1"></a>        \omega=\omega(0)e^{\mu s}<span class="sc">\\</span>       \tilde{p}=\tilde{p}(0)e^{-\frac{\sigma^2}{2\mu}\omega^2}</span>
+<span id="cb4-446"><a href="#cb4-446" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb4-447"><a href="#cb4-447" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-448"><a href="#cb4-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-449"><a href="#cb4-449" aria-hidden="true" tabindex="-1"></a>From the second equation of the system (eq:processo-u-o-sistema-equazioni-differenziali), finally, it results:</span>
+<span id="cb4-450"><a href="#cb4-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-451"><a href="#cb4-451" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-452"><a href="#cb4-452" aria-hidden="true" tabindex="-1"></a>    \int dt=\int s \ \Longrightarrow \ t=t_0+s \ \iff \ s=t-t_0</span>
+<span id="cb4-453"><a href="#cb4-453" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-454"><a href="#cb4-454" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-455"><a href="#cb4-455" aria-hidden="true" tabindex="-1"></a>This also means that $\omega(s=0)=\omega\left(t=t_0\right)=\omega_0$, so finally by substituting:</span>
+<span id="cb4-456"><a href="#cb4-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-457"><a href="#cb4-457" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-458"><a href="#cb4-458" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb4-459"><a href="#cb4-459" aria-hidden="true" tabindex="-1"></a>        \omega=\omega_0e^{\mu\left(t-t_0\right)}<span class="sc">\\</span>       \tilde{p}=\tilde{p}(0)e^{-\frac{\sigma^2}{4\mu}\omega^2}</span>
+<span id="cb4-460"><a href="#cb4-460" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb4-461"><a href="#cb4-461" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-462"><a href="#cb4-462" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-463"><a href="#cb4-463" aria-hidden="true" tabindex="-1"></a>As said, the constraints must be constant. For this reason, by isolating $\omega_0$ from the first and $\tilde{p}(0)$ from the second, we obtain:</span>
+<span id="cb4-464"><a href="#cb4-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-465"><a href="#cb4-465" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-466"><a href="#cb4-466" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb4-467"><a href="#cb4-467" aria-hidden="true" tabindex="-1"></a>        \omega_0=\omega e^{-\mu\left(t-t_0\right)}<span class="sc">\\</span>       \tilde{p}(0)=\tilde{p}e^{\frac{\sigma^2}{4\mu}\omega^2}</span>
+<span id="cb4-468"><a href="#cb4-468" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb4-469"><a href="#cb4-469" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-470"><a href="#cb4-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-471"><a href="#cb4-471" aria-hidden="true" tabindex="-1"></a>By setting $A=\omega_0$ and $B=\tilde{p}(0)$ we have found the functions $u$ and $v$:</span>
+<span id="cb4-472"><a href="#cb4-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-473"><a href="#cb4-473" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-474"><a href="#cb4-474" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb4-475"><a href="#cb4-475" aria-hidden="true" tabindex="-1"></a>        u\left(\omega,t,\tilde{p}\right)=\omega e^{-\mu\left(t-t_0\right)}<span class="sc">\\</span>       v\left(\omega,t,\tilde{p}\right)=\tilde{p}e^{\frac{\sigma^2}{4\mu}\omega^2}</span>
+<span id="cb4-476"><a href="#cb4-476" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb4-477"><a href="#cb4-477" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-478"><a href="#cb4-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-479"><a href="#cb4-479" aria-hidden="true" tabindex="-1"></a>It can be shown that $u$ and $v$ are related by the relation</span>
+<span id="cb4-480"><a href="#cb4-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-481"><a href="#cb4-481" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-482"><a href="#cb4-482" aria-hidden="true" tabindex="-1"></a>    v=g(u)</span>
+<span id="cb4-483"><a href="#cb4-483" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-484"><a href="#cb4-484" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-485"><a href="#cb4-485" aria-hidden="true" tabindex="-1"></a>where $g$ is an unknown functional to be found. Substituting:</span>
+<span id="cb4-486"><a href="#cb4-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-487"><a href="#cb4-487" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-488"><a href="#cb4-488" aria-hidden="true" tabindex="-1"></a>    \tilde{p}e^{\frac{\sigma^2}{4\mu}\omega^2}=g\left(\omega e^{-\mu\left(t-t_0\right)}\right) \ \Longrightarrow \ \tilde{p}(\omega,t)=e^{-\frac{\sigma^2}{4\mu}\omega^2}g\left(\omega e^{-\mu\left(t-t_0\right)}\right)</span>
+<span id="cb4-489"><a href="#cb4-489" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-490"><a href="#cb4-490" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-491"><a href="#cb4-491" aria-hidden="true" tabindex="-1"></a>To find the functional $g$ we must impose the initial condition:</span>
+<span id="cb4-492"><a href="#cb4-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-493"><a href="#cb4-493" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-494"><a href="#cb4-494" aria-hidden="true" tabindex="-1"></a>    \tilde{p}(\omega,0)=e^{-\frac{\sigma^2}{4\mu}\omega^2}g(\omega) \ \Longrightarrow \ g(\omega)=\tilde{p}(\omega,0)e^{\frac{\sigma^2}{4\mu}\omega^2}</span>
+<span id="cb4-495"><a href="#cb4-495" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-496"><a href="#cb4-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-497"><a href="#cb4-497" aria-hidden="true" tabindex="-1"></a>Assuming that the initial condition is $p(x,0)=\delta\left(x-x_0\right)$, then $\tilde{p}(\omega,0)$ is given by the Fourier transform:</span>
+<span id="cb4-498"><a href="#cb4-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-499"><a href="#cb4-499" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-500"><a href="#cb4-500" aria-hidden="true" tabindex="-1"></a>    \tilde{p}(\omega,0)=\int_{-\infty}^{+\infty}p(x,0)e^{i\omega x}dx=\int_{-\infty}^{+\infty}\delta\left(x-x_0\right)e^{i\omega x}dx=e^{i\omega x_0}</span>
+<span id="cb4-501"><a href="#cb4-501" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-502"><a href="#cb4-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-503"><a href="#cb4-503" aria-hidden="true" tabindex="-1"></a>Let's substitute in (eq:processo-u-o-funzionale-g-condizione-iniziale):</span>
+<span id="cb4-504"><a href="#cb4-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-505"><a href="#cb4-505" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-506"><a href="#cb4-506" aria-hidden="true" tabindex="-1"></a>    g(\omega)=e^{i\omega x_0}e^{\frac{\sigma^2}{4\mu}\omega^2}=e^{\frac{\sigma^2}{4\mu}\omega^2+ix_0\omega}</span>
+<span id="cb4-507"><a href="#cb4-507" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-508"><a href="#cb4-508" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-509"><a href="#cb4-509" aria-hidden="true" tabindex="-1"></a>Having found the expression for $g(\omega)$ we can finally obtain $\tilde{p}(\omega,t)$ in its explicit form starting from (eq:processo-u-o-espression-tilde-p-funzione-di-g):</span>
+<span id="cb4-510"><a href="#cb4-510" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-511"><a href="#cb4-511" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-512"><a href="#cb4-512" aria-hidden="true" tabindex="-1"></a>    \tilde{p}(\omega,t)=e^{-\frac{\sigma^2}{4\mu}\omega^2}e^{\frac{\sigma^2}{4\mu}\omega^2e^{-2\mu\left(t-t_0\right)}+ix_0\omega e^{-\mu\left(t-t_0\right)}}=e^{\frac{\sigma^2}{4\mu}\left(1-e^{-2\mu\left(t-t_0\right)}\right)\omega^2+ix_0e^{-\mu\left(t-t_0\right)}\omega}</span>
+<span id="cb4-513"><a href="#cb4-513" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-514"><a href="#cb4-514" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-515"><a href="#cb4-515" aria-hidden="true" tabindex="-1"></a>The propagator $p(x,t)$ is none other than the inverse transform of $\tilde{p}(\omega,t)$:</span>
+<span id="cb4-516"><a href="#cb4-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-517"><a href="#cb4-517" aria-hidden="true" tabindex="-1"></a>\begin{align*}</span>
+<span id="cb4-518"><a href="#cb4-518" aria-hidden="true" tabindex="-1"></a>    p(x,t)&amp;=\frac{1}{2\pi}\int_{-\infty}^{+\infty}\tilde{p}(\omega,t)e^{-i\omega x}d\omega=<span class="sc">\\</span></span>
+<span id="cb4-519"><a href="#cb4-519" aria-hidden="true" tabindex="-1"></a>    &amp;=\frac{1}{2\pi}\int_{-\infty}^{+\infty}e^{\frac{\sigma^2}{4\mu}\left(1-e^{-2\mu\left(t-t_0\right)}\right)\omega^2+ix_0e^{-\mu\left(t-t_0\right)}\omega}e^{-ix\omega}d\omega=<span class="sc">\\</span></span>
+<span id="cb4-520"><a href="#cb4-520" aria-hidden="true" tabindex="-1"></a>    &amp;=\frac{1}{2\pi}\int_{-\infty}^{+\infty}e^{\frac{\sigma^2}{4\mu}\left(1-e^{-2\mu\left(t-t_0\right)}\right)\omega^2-i\left(x-x_0e^{-\mu\left(t-t_0\right)}\right)\omega}d\omega</span>
+<span id="cb4-521"><a href="#cb4-521" aria-hidden="true" tabindex="-1"></a>\end{align*}</span>
+<span id="cb4-522"><a href="#cb4-522" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-523"><a href="#cb4-523" aria-hidden="true" tabindex="-1"></a>We recognize the form of the Gaussian integral that we know how to solve:</span>
+<span id="cb4-524"><a href="#cb4-524" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-525"><a href="#cb4-525" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-526"><a href="#cb4-526" aria-hidden="true" tabindex="-1"></a>    p(x,t)=\frac{1}{2\pi}\sqrt{\frac{2\pi}{\frac{\sigma^2}{2\mu}\left(1-e^{-2\mu\left(t-t_0\right)}\right)}}e^{-\frac{\left(x-x_0e^{-\mu\left(t-t_0\right)}\right)^2}{2\cdot\frac{\sigma^2}{2\mu}\left(1-e^{-2\mu\left(t-t_0\right)}\right)}}</span>
+<span id="cb4-527"><a href="#cb4-527" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-528"><a href="#cb4-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-529"><a href="#cb4-529" aria-hidden="true" tabindex="-1"></a>Simplifying, we obtain the final form of the propagator:</span>
+<span id="cb4-530"><a href="#cb4-530" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-531"><a href="#cb4-531" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-532"><a href="#cb4-532" aria-hidden="true" tabindex="-1"></a>    \boxed{p(x,t)=\sqrt{\frac{\mu}{\pi\sigma^2\left(1-e^{-2\mu\left(t-t_0\right)}\right)}}e^{-\frac{\mu\left(x-x_0e^{-\mu\left(t-t_0\right)}\right)^2}{\sigma^2\left(1-e^{-2\mu\left(t-t_0\right)}\right)}}}</span>
+<span id="cb4-533"><a href="#cb4-533" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-534"><a href="#cb4-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-535"><a href="#cb4-535" aria-hidden="true" tabindex="-1"></a>In the stationary limit, for $t\to\infty$, we find</span>
+<span id="cb4-536"><a href="#cb4-536" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-537"><a href="#cb4-537" aria-hidden="true" tabindex="-1"></a>\begin{equation}</span>
+<span id="cb4-538"><a href="#cb4-538" aria-hidden="true" tabindex="-1"></a>    \boxed{p^{(st)}(x)=\sqrt{\frac{\mu}{\pi\sigma^2}}e^{-\frac{\mu x^2}{\sigma^2}}}</span>
+<span id="cb4-539"><a href="#cb4-539" aria-hidden="true" tabindex="-1"></a>\end{equation}</span>
+<span id="cb4-540"><a href="#cb4-540" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-541"><a href="#cb4-541" aria-hidden="true" tabindex="-1"></a>that is, a Gaussian centered at zero and with variance $\frac{\sigma^2}{\mu}$.</span>
+<span id="cb4-542"><a href="#cb4-542" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-543"><a href="#cb4-543" aria-hidden="true" tabindex="-1"></a>The general formula was given by (eq:fokker-planck-soluzione-all-equilibrio-forma-finale), and we note that by substituting $x_{min}=0$, $\mu(x)=-\mu x$ and $\sigma(x)=\sigma$ we obtain:</span>
+<span id="cb4-544"><a href="#cb4-544" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-545"><a href="#cb4-545" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-546"><a href="#cb4-546" aria-hidden="true" tabindex="-1"></a>    p^{(st)}(x)=\frac{1}{Z\sigma^2}e^{2\int_0^x\frac{-\mu x'}{\sigma^2}dx'}=\frac{1}{Z\sigma^2}e^{-\frac{\cancel{2}\mu}{\sigma^2}\cdot\frac{x^2}{\cancel{2}}}=\frac{1}{Z\sigma^2}e^{-\frac{\mu x^2}{\sigma^2}}</span>
+<span id="cb4-547"><a href="#cb4-547" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-548"><a href="#cb4-548" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-549"><a href="#cb4-549" aria-hidden="true" tabindex="-1"></a>From which the normalization factor follows:</span>
+<span id="cb4-550"><a href="#cb4-550" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-551"><a href="#cb4-551" aria-hidden="true" tabindex="-1"></a>\begin{equation*}</span>
+<span id="cb4-552"><a href="#cb4-552" aria-hidden="true" tabindex="-1"></a>    \frac{1}{Z^2\sigma^2}\sqrt{\frac{\cancel{2}\pi}{\frac{\cancel{2}\mu}{\sigma^2}}}=1 \ \iff \ \frac{1}{Z\sigma^2}=\sqrt{\frac{\mu}{\pi\sigma^2}}</span>
+<span id="cb4-553"><a href="#cb4-553" aria-hidden="true" tabindex="-1"></a>\end{equation*}</span>
+<span id="cb4-554"><a href="#cb4-554" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-555"><a href="#cb4-555" aria-hidden="true" tabindex="-1"></a>which is exactly what we obtained in (eq:processo-u-o-propagatore-stazionario) by taking the propagator to the limit for $t\to\infty$.</span>
+<span id="cb4-556"><a href="#cb4-556" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-557"><a href="#cb4-557" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb4-558"><a href="#cb4-558" aria-hidden="true" tabindex="-1"></a>*Show that the equation for the variance of the Ornstein-Uhlenbeck process obtained from the stochastic differential equation is the same as that obtained from the Fokker-Planck equation. Also verify that in the stationary limit it assumes the value* $\frac{\sigma^2}{2\mu}$*.*</span>
+<span id="cb4-559"><a href="#cb4-559" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-560"><a href="#cb4-560" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-561"><a href="#cb4-561" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-562"><a href="#cb4-562" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb4-563"><a href="#cb4-563" aria-hidden="true" tabindex="-1"></a>We have already derived the equation for the variance through the differential equation, obtaining equation (eq:processo-u-o-varianza-equazione-non-omogenea).</span>
+<span id="cb4-564"><a href="#cb4-564" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-565"><a href="#cb4-565" aria-hidden="true" tabindex="-1"></a><span class="in">    As for the derivation with the Fokker-Planck equation, we will have to multiply both members of (eq:processo-u-o-equazione-fokker-planck) by $x^2$ and integrate:</span></span>
+<span id="cb4-566"><a href="#cb4-566" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-567"><a href="#cb4-567" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-568"><a href="#cb4-568" aria-hidden="true" tabindex="-1"></a><span class="in">        \int_{-\infty}^{+\infty}x^2\frac{\partial}{\partial t}p(x,t)dx=\mu\int_{-\infty}^{+\infty}x^2\frac{\partial}{\partial x}(xp)dx+\frac{\sigma^2}{2}\int_{-\infty}^{+\infty}x^2\frac{\partial^2}{\partial x^2}p(x,t)dx</span></span>
+<span id="cb4-569"><a href="#cb4-569" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-570"><a href="#cb4-570" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-571"><a href="#cb4-571" aria-hidden="true" tabindex="-1"></a><span class="in">    On the first member we can simply take the derivative out of the integral:</span></span>
+<span id="cb4-572"><a href="#cb4-572" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-573"><a href="#cb4-573" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-574"><a href="#cb4-574" aria-hidden="true" tabindex="-1"></a><span class="in">        \int_{-\infty}^{+\infty}x^2\frac{\partial}{\partial t}p(x,t)dx=\frac{\partial}{\partial t}\int_{-\infty}^{+\infty}x^2p(x,t)dx</span></span>
+<span id="cb4-575"><a href="#cb4-575" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-576"><a href="#cb4-576" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-577"><a href="#cb4-577" aria-hidden="true" tabindex="-1"></a><span class="in">    On the second member, instead, we will have to integrate by parts, the first term once and the second twice. The first will give:</span></span>
+<span id="cb4-578"><a href="#cb4-578" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-579"><a href="#cb4-579" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-580"><a href="#cb4-580" aria-hidden="true" tabindex="-1"></a><span class="in">        \int_{-\infty}^{+\infty}x^2\frac{\partial}{\partial x}(xp)dx=\cancel{x^3p(x,t)\big|_{-\infty}^{+\infty}}-2\int_{-\infty}^{+\infty}x^2p(x,t)dx</span></span>
+<span id="cb4-581"><a href="#cb4-581" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-582"><a href="#cb4-582" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-583"><a href="#cb4-583" aria-hidden="true" tabindex="-1"></a><span class="in">    The second, instead:</span></span>
+<span id="cb4-584"><a href="#cb4-584" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-585"><a href="#cb4-585" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{align*}</span></span>
+<span id="cb4-586"><a href="#cb4-586" aria-hidden="true" tabindex="-1"></a><span class="in">        \int_{-\infty}^{+\infty}x^2\frac{\partial^2}{\partial x^2}p(x,t)dx&amp;=\cancel{x^2\frac{\partial}{\partial x}p(x,t)\bigg|_{-\infty}^{+\infty}}-2\int_{-\infty}^{+\infty}x\frac{\partial}{\partial x}p(x,t)dx=\\</span></span>
+<span id="cb4-587"><a href="#cb4-587" aria-hidden="true" tabindex="-1"></a><span class="in">        &amp;=-2\cancel{xp(x,t)\big|_{-\infty}^{+\infty}}+2\int_{-\infty}^{+\infty}p(x,t)dx=2</span></span>
+<span id="cb4-588"><a href="#cb4-588" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{align*}</span></span>
+<span id="cb4-589"><a href="#cb4-589" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-590"><a href="#cb4-590" aria-hidden="true" tabindex="-1"></a><span class="in">    Substituting in the starting equation:</span></span>
+<span id="cb4-591"><a href="#cb4-591" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-592"><a href="#cb4-592" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-593"><a href="#cb4-593" aria-hidden="true" tabindex="-1"></a><span class="in">        \frac{\partial}{\partial t}\int_{-\infty}^{+\infty}x^2p(x,t)dx=-2\mu\int_{-\infty}^{+\infty}x^2p(x,t)dx+\frac{\sigma^2}{\cancel{2}}\cdot\cancel{2}</span></span>
+<span id="cb4-594"><a href="#cb4-594" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-595"><a href="#cb4-595" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-596"><a href="#cb4-596" aria-hidden="true" tabindex="-1"></a><span class="in">    Being by definition</span></span>
+<span id="cb4-597"><a href="#cb4-597" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-598"><a href="#cb4-598" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-599"><a href="#cb4-599" aria-hidden="true" tabindex="-1"></a><span class="in">        \left\langle x^2\right\rangle=\int_{-\infty}^{+\infty}x^2p(x,t)dx</span></span>
+<span id="cb4-600"><a href="#cb4-600" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-601"><a href="#cb4-601" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-602"><a href="#cb4-602" aria-hidden="true" tabindex="-1"></a><span class="in">    we therefore find:</span></span>
+<span id="cb4-603"><a href="#cb4-603" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-604"><a href="#cb4-604" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-605"><a href="#cb4-605" aria-hidden="true" tabindex="-1"></a><span class="in">        \frac{d}{dt}\left\langle x^2\right\rangle=-2\mu\left\langle x^2\right\rangle+\sigma^2</span></span>
+<span id="cb4-606"><a href="#cb4-606" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-607"><a href="#cb4-607" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-608"><a href="#cb4-608" aria-hidden="true" tabindex="-1"></a><span class="in">    which is what is written in (eq:processo-u-o-varianza-equazione-non-omogenea).</span></span>
+<span id="cb4-609"><a href="#cb4-609" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-610"><a href="#cb4-610" aria-hidden="true" tabindex="-1"></a><span class="in">    In the stationary limit, the variance will be independent of time, therefore:</span></span>
+<span id="cb4-611"><a href="#cb4-611" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-612"><a href="#cb4-612" aria-hidden="true" tabindex="-1"></a><span class="in">    \begin{equation*}</span></span>
+<span id="cb4-613"><a href="#cb4-613" aria-hidden="true" tabindex="-1"></a><span class="in">        \frac{d}{dt}\left\langle x^2\right\rangle=0 \ \iff \ -2\mu\left\langle x^2\right\rangle+\sigma^2=0 \ \Longrightarrow \ \left\langle x^2\right\rangle=\frac{\sigma^2}{2\mu}</span></span>
+<span id="cb4-614"><a href="#cb4-614" aria-hidden="true" tabindex="-1"></a><span class="in">    \end{equation*}</span></span>
+<span id="cb4-615"><a href="#cb4-615" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-616"><a href="#cb4-616" aria-hidden="true" tabindex="-1"></a><span class="in">    just as predicted by the assignment.</span></span>
+<span id="cb4-617"><a href="#cb4-617" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-618"><a href="#cb4-618" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>
