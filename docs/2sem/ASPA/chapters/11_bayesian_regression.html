@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>12&nbsp; Bayesian regression – Advanced Statistics for Physics Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/12_probabilistic_programming.html" rel="next">
+<link href="../chapters/10_parallel_tempering.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/11_bayesian_regression.html">PART IV: APPLIED BAYESIAN MODELLING</a></li><li class="breadcrumb-item"><a href="../chapters/11_bayesian_regression.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Advanced Statistics for Physics Analysis</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01_R_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to R for Bayesian inference</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: PROBABILITY RECAP</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02_discrete_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Discrete probability</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03_continuous_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Continuous probability and limit theorems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: BAYESIAN INFERENCE</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04_model_comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05_parameter_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian parameter estimation, intervals and prediction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06_gaussian_inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: MONTE CARLO METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07_monte_carlo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Monte Carlo methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08_independence_and_gibbs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09_hamiltonian_mc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10_parallel_tempering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: APPLIED BAYESIAN MODELLING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11_bayesian_regression.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12_probabilistic_programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13_glms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDIX</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99_appendix_source_code.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Appendix: Source code</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">12.1</span> Introduction</a></li>
+  <li><a href="#regression-model-signal-plus-noise" id="toc-regression-model-signal-plus-noise" class="nav-link" data-scroll-target="#regression-model-signal-plus-noise"><span class="header-section-number">12.2</span> Regression Model: Signal Plus Noise</a>
+  <ul class="collapse">
+  <li><a href="#model-formulation" id="toc-model-formulation" class="nav-link" data-scroll-target="#model-formulation"><span class="header-section-number">12.2.1</span> Model Formulation</a></li>
+  <li><a href="#likelihood-for-gaussian-noise" id="toc-likelihood-for-gaussian-noise" class="nav-link" data-scroll-target="#likelihood-for-gaussian-noise"><span class="header-section-number">12.2.2</span> Likelihood for Gaussian Noise</a></li>
+  </ul></li>
+  <li><a href="#linear-models-and-the-design-matrix" id="toc-linear-models-and-the-design-matrix" class="nav-link" data-scroll-target="#linear-models-and-the-design-matrix"><span class="header-section-number">12.3</span> Linear Models and the Design Matrix</a>
+  <ul class="collapse">
+  <li><a href="#linearity-in-parameters" id="toc-linearity-in-parameters" class="nav-link" data-scroll-target="#linearity-in-parameters"><span class="header-section-number">12.3.1</span> Linearity in Parameters</a></li>
+  <li><a href="#design-matrix-notation" id="toc-design-matrix-notation" class="nav-link" data-scroll-target="#design-matrix-notation"><span class="header-section-number">12.3.2</span> Design Matrix Notation</a></li>
+  </ul></li>
+  <li><a href="#bayesian-linear-regression-closed-form-solution" id="toc-bayesian-linear-regression-closed-form-solution" class="nav-link" data-scroll-target="#bayesian-linear-regression-closed-form-solution"><span class="header-section-number">12.4</span> Bayesian Linear Regression: Closed-Form Solution</a>
+  <ul class="collapse">
+  <li><a href="#conjugate-prior-and-posterior" id="toc-conjugate-prior-and-posterior" class="nav-link" data-scroll-target="#conjugate-prior-and-posterior"><span class="header-section-number">12.4.1</span> Conjugate Prior and Posterior</a></li>
+  <li><a href="#special-case-weak-isotropic-prior" id="toc-special-case-weak-isotropic-prior" class="nav-link" data-scroll-target="#special-case-weak-isotropic-prior"><span class="header-section-number">12.4.2</span> Special Case: Weak Isotropic Prior</a></li>
+  <li><a href="#connection-to-ridge-regression" id="toc-connection-to-ridge-regression" class="nav-link" data-scroll-target="#connection-to-ridge-regression"><span class="header-section-number">12.4.3</span> Connection to Ridge Regression</a></li>
+  </ul></li>
+  <li><a href="#posterior-predictive-distribution" id="toc-posterior-predictive-distribution" class="nav-link" data-scroll-target="#posterior-predictive-distribution"><span class="header-section-number">12.5</span> Posterior Predictive Distribution</a>
+  <ul class="collapse">
+  <li><a href="#parameter-uncertainty-and-prediction-uncertainty" id="toc-parameter-uncertainty-and-prediction-uncertainty" class="nav-link" data-scroll-target="#parameter-uncertainty-and-prediction-uncertainty"><span class="header-section-number">12.5.1</span> Parameter Uncertainty and Prediction Uncertainty</a></li>
+  </ul></li>
+  <li><a href="#unknown-noise-level" id="toc-unknown-noise-level" class="nav-link" data-scroll-target="#unknown-noise-level"><span class="header-section-number">12.6</span> Unknown Noise Level</a></li>
+  <li><a href="#nonlinear-regression-and-mcmc" id="toc-nonlinear-regression-and-mcmc" class="nav-link" data-scroll-target="#nonlinear-regression-and-mcmc"><span class="header-section-number">12.7</span> Nonlinear Regression and MCMC</a>
+  <ul class="collapse">
+  <li><a href="#why-nonlinear-models-require-mcmc" id="toc-why-nonlinear-models-require-mcmc" class="nav-link" data-scroll-target="#why-nonlinear-models-require-mcmc"><span class="header-section-number">12.7.1</span> Why Nonlinear Models Require MCMC</a></li>
+  </ul></li>
+  <li><a href="#practical-mcmc-fitting-workflow" id="toc-practical-mcmc-fitting-workflow" class="nav-link" data-scroll-target="#practical-mcmc-fitting-workflow"><span class="header-section-number">12.8</span> Practical MCMC Fitting Workflow</a>
+  <ul class="collapse">
+  <li><a href="#step-1-specify-the-generative-model-and-noise-model" id="toc-step-1-specify-the-generative-model-and-noise-model" class="nav-link" data-scroll-target="#step-1-specify-the-generative-model-and-noise-model"><span class="header-section-number">12.8.1</span> Step 1: Specify the Generative Model and Noise Model</a></li>
+  <li><a href="#step-2-choose-priors-for-all-parameters" id="toc-step-2-choose-priors-for-all-parameters" class="nav-link" data-scroll-target="#step-2-choose-priors-for-all-parameters"><span class="header-section-number">12.8.2</span> Step 2: Choose Priors for All Parameters</a></li>
+  <li><a href="#step-3-write-log-prior-log-likelihood-and-log-posterior-functions" id="toc-step-3-write-log-prior-log-likelihood-and-log-posterior-functions" class="nav-link" data-scroll-target="#step-3-write-log-prior-log-likelihood-and-log-posterior-functions"><span class="header-section-number">12.8.3</span> Step 3: Write Log-Prior, Log-Likelihood, and Log-Posterior Functions</a></li>
+  <li><a href="#step-4-run-mcmc-and-tune-proposal-covariance" id="toc-step-4-run-mcmc-and-tune-proposal-covariance" class="nav-link" data-scroll-target="#step-4-run-mcmc-and-tune-proposal-covariance"><span class="header-section-number">12.8.4</span> Step 4: Run MCMC and Tune Proposal Covariance</a></li>
+  <li><a href="#step-5-diagnose-and-inspect-the-chain" id="toc-step-5-diagnose-and-inspect-the-chain" class="nav-link" data-scroll-target="#step-5-diagnose-and-inspect-the-chain"><span class="header-section-number">12.8.5</span> Step 5: Diagnose and Inspect the Chain</a></li>
+  <li><a href="#step-6-summarize-parameters" id="toc-step-6-summarize-parameters" class="nav-link" data-scroll-target="#step-6-summarize-parameters"><span class="header-section-number">12.8.6</span> Step 6: Summarize Parameters</a></li>
+  <li><a href="#step-7-plot-predictions-and-posterior-predictive-checks" id="toc-step-7-plot-predictions-and-posterior-predictive-checks" class="nav-link" data-scroll-target="#step-7-plot-predictions-and-posterior-predictive-checks"><span class="header-section-number">12.8.7</span> Step 7: Plot Predictions and Posterior Predictive Checks</a></li>
+  </ul></li>
+  <li><a href="#example-linear-regression-with-mcmc" id="toc-example-linear-regression-with-mcmc" class="nav-link" data-scroll-target="#example-linear-regression-with-mcmc"><span class="header-section-number">12.9</span> Example: Linear Regression with MCMC</a></li>
+  <li><a href="#nonlinear-models-laplace-approximation-and-mcmc" id="toc-nonlinear-models-laplace-approximation-and-mcmc" class="nav-link" data-scroll-target="#nonlinear-models-laplace-approximation-and-mcmc"><span class="header-section-number">12.10</span> Nonlinear Models: Laplace Approximation and MCMC</a></li>
+  <li><a href="#posterior-predictive-checks" id="toc-posterior-predictive-checks" class="nav-link" data-scroll-target="#posterior-predictive-checks"><span class="header-section-number">12.11</span> Posterior Predictive Checks</a></li>
+  <li><a href="#robustness-and-extensions" id="toc-robustness-and-extensions" class="nav-link" data-scroll-target="#robustness-and-extensions"><span class="header-section-number">12.12</span> Robustness and Extensions</a>
+  <ul class="collapse">
+  <li><a href="#student-t-noise-for-robustness" id="toc-student-t-noise-for-robustness" class="nav-link" data-scroll-target="#student-t-noise-for-robustness"><span class="header-section-number">12.12.1</span> Student-<span class="math inline">\(t\)</span> Noise for Robustness</a></li>
+  <li><a href="#errors-in-all-variables" id="toc-errors-in-all-variables" class="nav-link" data-scroll-target="#errors-in-all-variables"><span class="header-section-number">12.12.2</span> Errors in All Variables</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">12.13</span> Summary</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">12.14</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/11_bayesian_regression.html">PART IV: APPLIED BAYESIAN MODELLING</a></li><li class="breadcrumb-item"><a href="../chapters/11_bayesian_regression.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">12.1</span> Introduction</h2>
+<p>Regression analysis seeks to learn a functional relationship between input variables <span class="math inline">\(x\)</span> and observed response variables <span class="math inline">\(y\)</span> from data. In the Bayesian framework, we construct a probabilistic model that combines a generative (noise-free) function <span class="math inline">\(f(x; \theta)\)</span> with a noise model, then use Bayes’ theorem to infer the posterior distribution <span class="math inline">\(p(\theta \mid D)\)</span> of the parameters. For regression models where the parameters enter linearly, exact posterior inference is tractable via conjugate analysis. For nonlinear models or non-Gaussian likelihoods, we rely on Markov chain Monte Carlo (MCMC) sampling. This chapter develops both the theory and practice of Bayesian regression: from the closed-form solution for linear Gaussian regression to the complete MCMC workflow for fitting arbitrary nonlinear regression models and making probabilistic predictions.</p>
+</section>
+<section id="regression-model-signal-plus-noise" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="regression-model-signal-plus-noise"><span class="header-section-number">12.2</span> Regression Model: Signal Plus Noise</h2>
+<section id="model-formulation" class="level3" data-number="12.2.1">
+<h3 data-number="12.2.1" class="anchored" data-anchor-id="model-formulation"><span class="header-section-number">12.2.1</span> Model Formulation</h3>
+<p>The basic regression model specifies that each observed response <span class="math inline">\(y_i\)</span> arises from a noise-free mean function plus random noise:</p>
+<p><span class="math display">\[y_i = f(x_i; \theta) + \varepsilon_i, \quad \varepsilon_i \sim \mathcal{N}(0, \sigma^2).\]</span></p>
+<p>Here: - <span class="math inline">\(x_i\)</span> is the regressor (input, explanatory variable), assumed fixed and measured without error. - <span class="math inline">\(y_i\)</span> is the response (dependent, outcome variable). - <span class="math inline">\(f(x_i; \theta)\)</span> is the signal—the deterministic part. - <span class="math inline">\(\varepsilon_i\)</span> is measurement noise or intrinsic scatter, i.i.d. Gaussian with variance <span class="math inline">\(\sigma^2\)</span>.</p>
+</section>
+<section id="likelihood-for-gaussian-noise" class="level3" data-number="12.2.2">
+<h3 data-number="12.2.2" class="anchored" data-anchor-id="likelihood-for-gaussian-noise"><span class="header-section-number">12.2.2</span> Likelihood for Gaussian Noise</h3>
+<p>Under independent Gaussian noise, each observation has conditional distribution <span class="math display">\[p(y_i \mid x_i, \theta) = \mathcal{N}(f(x_i; \theta), \sigma^2).\]</span></p>
+<p>For <span class="math inline">\(N\)</span> independent observations <span class="math inline">\(D = \{(x_i, y_i)\}_{i=1}^N\)</span>, the joint likelihood factorizes: <span class="math display">\[p(D \mid \theta) = \prod_{i=1}^N p(y_i \mid x_i, \theta) = \prod_{i=1}^N \mathcal{N}(f(x_i; \theta), \sigma^2).\]</span></p>
+<p>Taking logarithms, <span class="math display">\[\log p(D \mid \theta) = -N \log\sigma - \frac{1}{2}\log(2\pi) - \frac{1}{2\sigma^2} \sum_{i=1}^N [y_i - f(x_i; \theta)]^2 + \text{const}.\]</span></p>
+</section>
+</section>
+<section id="linear-models-and-the-design-matrix" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="linear-models-and-the-design-matrix"><span class="header-section-number">12.3</span> Linear Models and the Design Matrix</h2>
+<section id="linearity-in-parameters" class="level3" data-number="12.3.1">
+<h3 data-number="12.3.1" class="anchored" data-anchor-id="linearity-in-parameters"><span class="header-section-number">12.3.1</span> Linearity in Parameters</h3>
+<p>A regression model is <strong>linear</strong> if the parameters enter linearly, even if the features depend nonlinearly on the inputs:</p>
+<p><span class="math display">\[y_i = \boldsymbol{\phi}(x_i)^\top \mathbf{w} + \varepsilon_i,\]</span></p>
+<p>where <span class="math inline">\(\boldsymbol{\phi}(x) = [\phi_1(x), \ldots, \phi_M(x)]^\top\)</span> is a feature map and <span class="math inline">\(\mathbf{w} = [w_0, \ldots, w_{M-1}]^\top\)</span> is the weight vector.</p>
+<div class="definition">
+<p><strong>Examples of linear regression models:</strong> - Straight line: <span class="math inline">\(\boldsymbol{\phi}(x) = (1, x)\)</span>, <span class="math inline">\(f(x) = w_0 + w_1 x\)</span>. - Polynomial: <span class="math inline">\(\boldsymbol{\phi}(x) = (1, x, x^2, \ldots, x^{M-1})\)</span>, <span class="math inline">\(f(x) = \sum_{j=0}^{M-1} w_j x^j\)</span>. - Fourier: <span class="math inline">\(\boldsymbol{\phi}(x) = (1, \sin(x), \cos(x), \ldots)\)</span>. - Linear in unknown parameters: If <span class="math inline">\(f(x) = w_0 e^{-\lambda x}\)</span> with <span class="math inline">\(\lambda\)</span> known, it is linear in <span class="math inline">\(w_0\)</span>. - <strong>Not</strong> linear in unknown parameters: <span class="math inline">\(f(x) = w_0 e^{-\lambda x}\)</span> if <span class="math inline">\(\lambda\)</span> is unknown (exponential, logistic, etc.).</p>
+</div>
+</section>
+<section id="design-matrix-notation" class="level3" data-number="12.3.2">
+<h3 data-number="12.3.2" class="anchored" data-anchor-id="design-matrix-notation"><span class="header-section-number">12.3.2</span> Design Matrix Notation</h3>
+<p>For <span class="math inline">\(N\)</span> data points and <span class="math inline">\(M\)</span> basis functions, define the <span class="math inline">\(N \times M\)</span> <strong>design matrix</strong> (or regressor matrix) <span class="math display">\[\boldsymbol{\Phi} = \begin{bmatrix}
+\phi_1(x_1) &amp; \phi_2(x_1) &amp; \cdots &amp; \phi_M(x_1) \\
+\phi_1(x_2) &amp; \phi_2(x_2) &amp; \cdots &amp; \phi_M(x_2) \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\phi_1(x_N) &amp; \phi_2(x_N) &amp; \cdots &amp; \phi_M(x_N)
+\end{bmatrix}.\]</span></p>
+<p>The linear model becomes <span class="math display">\[\mathbf{y} = \boldsymbol{\Phi} \mathbf{w} + \boldsymbol{\varepsilon}, \quad \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, \sigma^2 \mathbf{I}_N),\]</span></p>
+<p>and the likelihood is <span class="math display">\[p(\mathbf{y} \mid \boldsymbol{\Phi}, \mathbf{w}, \sigma^2) = \mathcal{N}(\mathbf{y} \mid \boldsymbol{\Phi} \mathbf{w}, \sigma^2 \mathbf{I}_N).\]</span></p>
+</section>
+</section>
+<section id="bayesian-linear-regression-closed-form-solution" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="bayesian-linear-regression-closed-form-solution"><span class="header-section-number">12.4</span> Bayesian Linear Regression: Closed-Form Solution</h2>
+<section id="conjugate-prior-and-posterior" class="level3" data-number="12.4.1">
+<h3 data-number="12.4.1" class="anchored" data-anchor-id="conjugate-prior-and-posterior"><span class="header-section-number">12.4.1</span> Conjugate Prior and Posterior</h3>
+<p>Assume <span class="math inline">\(\sigma^2\)</span> is known. Choose a Gaussian prior on <span class="math inline">\(\mathbf{w}\)</span>: <span class="math display">\[p(\mathbf{w}) = \mathcal{N}(\mathbf{w} \mid \mathbf{m}_0, \mathbf{S}_0).\]</span></p>
+<p>The likelihood is Gaussian in <span class="math inline">\(\mathbf{w}\)</span>; by conjugacy, the posterior is also Gaussian:</p>
+<div class="theorem">
+<p><strong>Bayesian Linear Regression with Gaussian Prior:</strong></p>
+<p>Given likelihood <span class="math inline">\(p(\mathbf{y} \mid \boldsymbol{\Phi}, \mathbf{w}, \sigma^2) = \mathcal{N}(\mathbf{y} \mid \boldsymbol{\Phi} \mathbf{w}, \sigma^2 \mathbf{I}_N)\)</span> and prior <span class="math inline">\(\mathcal{N}(\mathbf{w} \mid \mathbf{m}_0, \mathbf{S}_0)\)</span>, the posterior is <span class="math display">\[p(\mathbf{w} \mid D, \sigma^2) = \mathcal{N}(\mathbf{w} \mid \mathbf{m}_N, \mathbf{S}_N),\]</span></p>
+<p>where <span class="math display">\[\begin{align}
+\mathbf{S}_N^{-1} &amp;= \mathbf{S}_0^{-1} + \sigma^{-2} \boldsymbol{\Phi}^\top \boldsymbol{\Phi}, \\
+\mathbf{m}_N &amp;= \mathbf{S}_N \left( \mathbf{S}_0^{-1} \mathbf{m}_0 + \sigma^{-2} \boldsymbol{\Phi}^\top \mathbf{y} \right).
+\end{align}\]</span></p>
+</div>
+<p><strong>Interpretation:</strong> Precisions add. The posterior mean is a precision-weighted average of the prior mean and the data-driven estimate. The posterior covariance <span class="math inline">\(\mathbf{S}_N\)</span> shrinks relative to <span class="math inline">\(\mathbf{S}_0\)</span>.</p>
+</section>
+<section id="special-case-weak-isotropic-prior" class="level3" data-number="12.4.2">
+<h3 data-number="12.4.2" class="anchored" data-anchor-id="special-case-weak-isotropic-prior"><span class="header-section-number">12.4.2</span> Special Case: Weak Isotropic Prior</h3>
+<p>A common choice is the weak prior <span class="math inline">\(\mathbf{m}_0 = \mathbf{0}\)</span> and <span class="math inline">\(\mathbf{S}_0 = \sigma_0^2 \mathbf{I}_M\)</span>: <span class="math display">\[\mathbf{S}_N^{-1} = \frac{1}{\sigma_0^2} \mathbf{I}_M + \sigma^{-2} \boldsymbol{\Phi}^\top \boldsymbol{\Phi},\]</span> <span class="math display">\[\mathbf{m}_N = \sigma^{-2} \mathbf{S}_N \boldsymbol{\Phi}^\top \mathbf{y}.\]</span></p>
+</section>
+<section id="connection-to-ridge-regression" class="level3" data-number="12.4.3">
+<h3 data-number="12.4.3" class="anchored" data-anchor-id="connection-to-ridge-regression"><span class="header-section-number">12.4.3</span> Connection to Ridge Regression</h3>
+<p>Ordinary least squares minimizes <span class="math inline">\(\|\mathbf{y} - \boldsymbol{\Phi} \mathbf{w}\|^2\)</span>. Ridge regression adds an L2 penalty: <span class="math display">\[L_{\text{ridge}} = \|\mathbf{y} - \boldsymbol{\Phi} \mathbf{w}\|^2 + \lambda \|\mathbf{w}\|^2.\]</span></p>
+<p>The ridge estimator is <span class="math inline">\(\hat{\mathbf{w}}_{\text{ridge}} = (\boldsymbol{\Phi}^\top \boldsymbol{\Phi} + \lambda \mathbf{I})^{-1} \boldsymbol{\Phi}^\top \mathbf{y}\)</span>.</p>
+<p>Ridge regression is <strong>maximum a posteriori (MAP) estimation</strong> under a Gaussian prior: the prior variance relates to the penalty by <span class="math inline">\(\lambda = \sigma^2 / \sigma_0^2\)</span>. The Bayesian approach goes further by quantifying posterior uncertainty via the full covariance <span class="math inline">\(\mathbf{S}_N\)</span>.</p>
+</section>
+</section>
+<section id="posterior-predictive-distribution" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="posterior-predictive-distribution"><span class="header-section-number">12.5</span> Posterior Predictive Distribution</h2>
+<section id="parameter-uncertainty-and-prediction-uncertainty" class="level3" data-number="12.5.1">
+<h3 data-number="12.5.1" class="anchored" data-anchor-id="parameter-uncertainty-and-prediction-uncertainty"><span class="header-section-number">12.5.1</span> Parameter Uncertainty and Prediction Uncertainty</h3>
+<p>For a new input $x_* $, we wish to predict <span class="math inline">\(y_*\)</span>. The posterior predictive distribution marginalizes over parameter uncertainty: <span class="math display">\[p(y_* \mid x_*, D, \sigma^2) = \int p(y_* \mid x_*, \mathbf{w}, \sigma^2) \, p(\mathbf{w} \mid D, \sigma^2) \, d\mathbf{w}.\]</span></p>
+<p>Since both terms are Gaussian, the integral is tractable:</p>
+<div class="theorem">
+<p><strong>Posterior Predictive Distribution:</strong></p>
+<p>Let <span class="math inline">\(\boldsymbol{\phi}_* = \boldsymbol{\phi}(x_*)\)</span>. Then <span class="math display">\[p(y_* \mid x_*, D, \sigma^2) = \mathcal{N}\left( y_* \,\big|\, \boldsymbol{\phi}_*^\top \mathbf{m}_N, \, \sigma^2 + \boldsymbol{\phi}_*^\top \mathbf{S}_N \boldsymbol{\phi}_* \right).\]</span></p>
+</div>
+<p><strong>Two sources of uncertainty in prediction:</strong> 1. <strong>Observation noise:</strong> <span class="math inline">\(\sigma^2\)</span> (irreducible error in <span class="math inline">\(y_*\)</span>). 2. <strong>Parameter uncertainty:</strong> <span class="math inline">\(\boldsymbol{\phi}_*^\top \mathbf{S}_N \boldsymbol{\phi}_*\)</span> (uncertainty in the regression function <span class="math inline">\(f(x_*)\)</span>).</p>
+<p>The posterior predictive band widens away from the data due to increasing parameter uncertainty.</p>
+</section>
+</section>
+<section id="unknown-noise-level" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="unknown-noise-level"><span class="header-section-number">12.6</span> Unknown Noise Level</h2>
+<p>In practice, <span class="math inline">\(\sigma^2\)</span> is usually unknown and inferred from data. The parameters become <span class="math inline">\(\boldsymbol{\theta} = (\mathbf{w}, \sigma)\)</span>, and we use a prior on the noise scale. A standard choice is the <strong>Jeffreys prior</strong> for scale parameters: <span class="math display">\[p(\sigma) \propto \frac{1}{\sigma}, \quad \text{or equivalently} \quad p(\log \sigma) \text{ is uniform}.\]</span></p>
+<p>The joint posterior is <span class="math display">\[p(\mathbf{w}, \sigma \mid D) \propto p(\mathbf{y} \mid \boldsymbol{\Phi}, \mathbf{w}, \sigma) \, p(\mathbf{w}) \, p(\sigma).\]</span></p>
+<p>When both <span class="math inline">\(\mathbf{w}\)</span> and <span class="math inline">\(\sigma\)</span> are unknown, the posterior no longer has a closed form in closed-form distributions, but conjugate analysis can still apply to marginal posteriors or conditional distributions. For computational convenience and to make use of existing MCMC software, we often resort to sampling.</p>
+</section>
+<section id="nonlinear-regression-and-mcmc" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="nonlinear-regression-and-mcmc"><span class="header-section-number">12.7</span> Nonlinear Regression and MCMC</h2>
+<section id="why-nonlinear-models-require-mcmc" class="level3" data-number="12.7.1">
+<h3 data-number="12.7.1" class="anchored" data-anchor-id="why-nonlinear-models-require-mcmc"><span class="header-section-number">12.7.1</span> Why Nonlinear Models Require MCMC</h3>
+<p>A model is <strong>nonlinear in parameters</strong> if <span class="math inline">\(f(x; \theta)\)</span> is a nonlinear function of some <span class="math inline">\(\theta\)</span>. Examples: - Exponential: <span class="math inline">\(f(x) = a e^{b x}\)</span> (nonlinear in both <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> unless one is known). - Logistic: <span class="math inline">\(f(x) = \frac{L}{1 + e^{-k(x - x_0)}}\)</span> (nonlinear in location <span class="math inline">\(x_0\)</span>, scale <span class="math inline">\(k\)</span>, amplitude <span class="math inline">\(L\)</span>). - Power law: <span class="math inline">\(f(x) = a x^b\)</span> (nonlinear in exponent <span class="math inline">\(b\)</span>).</p>
+<p>For such models, the likelihood is no longer Gaussian in the parameters, and conjugate priors do not yield closed-form posteriors. Similarly, generalized linear models (logistic regression for binary data, Poisson regression for counts) have non-Gaussian likelihoods, precluding analytical solutions.</p>
+<p>In these cases, we must either: - Use <strong>approximations</strong> (Laplace, variational inference). - Use <strong>MCMC</strong> or other sampling methods to draw from <span class="math inline">\(p(\boldsymbol{\theta} \mid D) \propto p(D \mid \boldsymbol{\theta}) \, p(\boldsymbol{\theta})\)</span>.</p>
+</section>
+</section>
+<section id="practical-mcmc-fitting-workflow" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="practical-mcmc-fitting-workflow"><span class="header-section-number">12.8</span> Practical MCMC Fitting Workflow</h2>
+<p>The following seven-step workflow is the standard approach for fitting regression models via MCMC:</p>
+<section id="step-1-specify-the-generative-model-and-noise-model" class="level3" data-number="12.8.1">
+<h3 data-number="12.8.1" class="anchored" data-anchor-id="step-1-specify-the-generative-model-and-noise-model"><span class="header-section-number">12.8.1</span> Step 1: Specify the Generative Model and Noise Model</h3>
+<p>Write down: - The regression function: <span class="math inline">\(f(x; \boldsymbol{\theta})\)</span>. - The noise distribution: e.g., <span class="math inline">\(\varepsilon \sim \mathcal{N}(0, \sigma^2)\)</span>. - The observation model: <span class="math inline">\(y_i \sim \mathcal{N}(f(x_i; \boldsymbol{\theta}), \sigma^2)\)</span>.</p>
+</section>
+<section id="step-2-choose-priors-for-all-parameters" class="level3" data-number="12.8.2">
+<h3 data-number="12.8.2" class="anchored" data-anchor-id="step-2-choose-priors-for-all-parameters"><span class="header-section-number">12.8.2</span> Step 2: Choose Priors for All Parameters</h3>
+<p>Specify weakly informative priors for each parameter. For regression coefficients, use broad Gaussians (e.g., <span class="math inline">\(\mathcal{N}(0, 10^2)\)</span>). For scale parameters like <span class="math inline">\(\sigma\)</span>, use a Jeffreys prior <span class="math inline">\(p(\sigma) \propto 1/\sigma\)</span> or truncated exponentials. To avoid boundary issues, sample on the log-scale: <span class="math inline">\(\eta = \log \sigma\)</span>.</p>
+<div class="note">
+<p><strong>Reparameterization for Bounded Parameters:</strong></p>
+<p>Parameters constrained to positive values (like <span class="math inline">\(\sigma &gt; 0\)</span>) should be sampled in transformed space: - Replace <span class="math inline">\(\sigma\)</span> with <span class="math inline">\(\eta = \log \sigma\)</span>, so <span class="math inline">\(\sigma = e^\eta\)</span>. - A flat prior on <span class="math inline">\(\eta\)</span> corresponds to a Jeffreys prior on <span class="math inline">\(\sigma\)</span>. - The Jacobian <span class="math inline">\(|d\sigma / d\eta| = e^\eta = \sigma\)</span> automatically cancels the <span class="math inline">\(1/\sigma\)</span> prior, yielding a uniform prior in log-space.</p>
+<p>For slope parameters, reparameterize via angle: <span class="math inline">\(\beta = \tan(\alpha)\)</span>, so all slopes are finite and comparable.</p>
+</div>
+</section>
+<section id="step-3-write-log-prior-log-likelihood-and-log-posterior-functions" class="level3" data-number="12.8.3">
+<h3 data-number="12.8.3" class="anchored" data-anchor-id="step-3-write-log-prior-log-likelihood-and-log-posterior-functions"><span class="header-section-number">12.8.3</span> Step 3: Write Log-Prior, Log-Likelihood, and Log-Posterior Functions</h3>
+<p>Define functions that compute: <span class="math display">\[\begin{align}
+\log p(\boldsymbol{\theta}) &amp;: \text{ sum of log-prior densities for all parameters}, \\
+\log p(D \mid \boldsymbol{\theta}) &amp;: \text{ log-likelihood, typically } \sum_{i=1}^N \log p(y_i \mid x_i, \boldsymbol{\theta}), \\
+\log p(\boldsymbol{\theta} \mid D) &amp;= \log p(D \mid \boldsymbol{\theta}) + \log p(\boldsymbol{\theta}) + \text{const}.
+\end{align}\]</span></p>
+<p>For MCMC, we only need the unnormalized posterior (up to an additive constant).</p>
+</section>
+<section id="step-4-run-mcmc-and-tune-proposal-covariance" class="level3" data-number="12.8.4">
+<h3 data-number="12.8.4" class="anchored" data-anchor-id="step-4-run-mcmc-and-tune-proposal-covariance"><span class="header-section-number">12.8.4</span> Step 4: Run MCMC and Tune Proposal Covariance</h3>
+<p>Initialize parameters at a reasonable starting point (e.g., a classical fit or MAP estimate). Specify a proposal distribution, typically a multivariate Gaussian with tuned covariance. Run MCMC (e.g., random-walk Metropolis-Hastings, or preferably NUTS via Stan) for a burn-in period, then for additional sampling iterations.</p>
+<p>Tune the proposal variance to achieve a target acceptance rate (typically 20–30% for random-walk MH, automatic for NUTS).</p>
+</section>
+<section id="step-5-diagnose-and-inspect-the-chain" class="level3" data-number="12.8.5">
+<h3 data-number="12.8.5" class="anchored" data-anchor-id="step-5-diagnose-and-inspect-the-chain"><span class="header-section-number">12.8.5</span> Step 5: Diagnose and Inspect the Chain</h3>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span><strong>Key Diagnostics:</strong> - <strong>Trace plots:</strong> Plot <span class="math inline">\(\theta_j\)</span> versus iteration. Traces should resemble white noise (good mixing), not slow drifts or stuck chains. - <strong>Autocorrelation function (ACF):</strong> Compute <span class="math inline">\(\text{Corr}(\theta_j^{(k)}, \theta_j^{(k+\ell)})\)</span> as a function of lag <span class="math inline">\(\ell\)</span>. Rapid decay (small effective sample size if slow decay) indicates good mixing. - <strong>Effective sample size (ESS):</strong> <span class="math inline">\(\text{ESS} = N_{\text{samples}} / (1 + 2 \sum_{\ell=1}^\infty \text{Corr}(\ell))\)</span>. Rule of thumb: aim for ESS <span class="math inline">\(&gt; 1000\)</span> per parameter. - <strong><span class="math inline">\(\hat{R}\)</span> (Gelman-Rubin statistic):</strong> Ratio of between-chain to within-chain variance. <span class="math inline">\(\hat{R} &lt; 1.01\)</span> indicates convergence; <span class="math inline">\(\hat{R} &gt; 1.05\)</span> indicates poor mixing or insufficient burn-in. - <strong>Joint posterior pairs plot:</strong> Scatter plot of all pairs of parameters. Reveals correlations and identifies poorly identified parameters.</p>
+</div>
+</section>
+<section id="step-6-summarize-parameters" class="level3" data-number="12.8.6">
+<h3 data-number="12.8.6" class="anchored" data-anchor-id="step-6-summarize-parameters"><span class="header-section-number">12.8.6</span> Step 6: Summarize Parameters</h3>
+<p>Compute posterior summaries from the converged samples (after thinning to reduce autocorrelation if desired): - <strong>Maximum a posteriori (MAP):</strong> The sample with highest posterior density. - <strong>Posterior mean:</strong> Average of all samples. - <strong>Posterior covariance:</strong> Empirical covariance of samples. - <strong>Credible intervals:</strong> 2.5th and 97.5th quantiles (or other quantiles) per parameter.</p>
+<p>Always transform samples back to the original parameterization before computing summaries.</p>
+</section>
+<section id="step-7-plot-predictions-and-posterior-predictive-checks" class="level3" data-number="12.8.7">
+<h3 data-number="12.8.7" class="anchored" data-anchor-id="step-7-plot-predictions-and-posterior-predictive-checks"><span class="header-section-number">12.8.7</span> Step 7: Plot Predictions and Posterior Predictive Checks</h3>
+<ol type="1">
+<li><p><strong>Data plot with error bars:</strong> Show observed <span class="math inline">\((x_i, y_i)\)</span> with vertical error bars at <span class="math inline">\(\pm \sigma_{\text{MAP}}\)</span> or <span class="math inline">\(\pm\)</span> posterior SD of <span class="math inline">\(y_i\)</span>.</p></li>
+<li><p><strong>Fitted regression curve:</strong> Plot the posterior mean fit <span class="math inline">\(\hat{f}(x) = \boldsymbol{\phi}(x)^\top \mathbb{E}[\mathbf{w} \mid D]\)</span>.</p></li>
+<li><p><strong>Credible band for the mean curve:</strong> For a grid of <span class="math inline">\(x\)</span> values, compute the posterior quantiles of <span class="math inline">\(f(x; \boldsymbol{\theta})\)</span> by evaluating the function at each posterior sample. This shows uncertainty in the regression function, not including observation noise.</p></li>
+<li><p><strong>Posterior predictive band:</strong> For future observations, include both parameter uncertainty and noise. For each <span class="math inline">\(x\)</span> on the grid and each posterior sample <span class="math inline">\(\boldsymbol{\theta}^{(k)}\)</span>, generate <span class="math inline">\(y^{(k)} \sim \mathcal{N}(f(x; \boldsymbol{\theta}^{(k)}), \sigma^{(k)2})\)</span>. The 2.5th and 97.5th quantiles across samples form the prediction interval.</p></li>
+</ol>
+</section>
+</section>
+<section id="example-linear-regression-with-mcmc" class="level2" data-number="12.9">
+<h2 data-number="12.9" class="anchored" data-anchor-id="example-linear-regression-with-mcmc"><span class="header-section-number">12.9</span> Example: Linear Regression with MCMC</h2>
+<p>Consider fitting a straight line <span class="math inline">\(f(x) = b_0 + b_1 x\)</span> to observed data <span class="math inline">\(\{(x_i, y_i)\}\)</span>, with unknown noise <span class="math inline">\(\sigma\)</span>.</p>
+<p><strong>Parameters (transformed):</strong> <span class="math inline">\(\boldsymbol{\theta} = (b_0, \alpha, \eta)\)</span> where <span class="math inline">\(b_1 = \tan(\alpha)\)</span> and <span class="math inline">\(\eta = \log \sigma\)</span>.</p>
+<p><strong>Priors:</strong> - <span class="math inline">\(b_0 \sim \mathcal{N}(0, 10^2)\)</span>. - <span class="math inline">\(\alpha \sim \text{Uniform}(-\pi/2, \pi/2)\)</span> (equivalently, <span class="math inline">\(p(\alpha) \propto 1\)</span>). - <span class="math inline">\(\eta \sim \text{Uniform}\)</span> (flat prior on <span class="math inline">\(\log \sigma\)</span>, Jeffreys prior on <span class="math inline">\(\sigma\)</span>).</p>
+<p><strong>Log-likelihood:</strong> <span class="math display">\[\log p(\mathbf{y} \mid b_0, \alpha, \eta) = -N \eta - \frac{1}{2} \sum_{i=1}^N \frac{[y_i - (b_0 + \tan(\alpha) x_i)]^2}{e^{2\eta}} + \text{const}.\]</span></p>
+<p><strong>Log-posterior:</strong> Sum of log-likelihood and log-prior densities.</p>
+<p>Run MCMC (e.g., via random-walk MH or Stan’s NUTS sampler) and diagnose convergence.</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1" data-lst-cap="Simulate and plot linear regression data."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">7</span>, <span class="at">length.out =</span> N)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sigma_true <span class="ot">&lt;-</span> <span class="fl">1.0</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">*</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, sigma_true)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">xlab =</span> <span class="st">"x"</span>, <span class="at">ylab =</span> <span class="st">"y"</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">7.5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">9</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Linear Regression Data"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="11_bayesian_regression_files/figure-html/lst-linear-data-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Linear regression example: 8 data points from y = 0 + x + noise.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Now run the MCMC sampler (pseudocode; in practice, use Stan, JAGS, or a hand-coded sampler):</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2" data-lst-cap="Log-posterior for linear regression."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-likelihood for y_i ~ N(b0 + b1 * x_i, sigma^2)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>log_likelihood <span class="ot">&lt;-</span> <span class="cf">function</span>(b0, b1, sigma, y, x) {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> b0 <span class="sc">+</span> b1 <span class="sc">*</span> x</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="fu">dnorm</span>(y, mu, sigma, <span class="at">log =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-posterior (unnormalized)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>log_posterior <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, data) {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  b0 <span class="ot">&lt;-</span> theta[<span class="dv">1</span>]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  eta <span class="ot">&lt;-</span> theta[<span class="dv">3</span>]</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  b1 <span class="ot">&lt;-</span> <span class="fu">tan</span>(alpha)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> <span class="fu">exp</span>(eta)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Priors</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  log_prior_b0 <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(b0, <span class="dv">0</span>, <span class="dv">10</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  log_prior_alpha <span class="ot">&lt;-</span> <span class="dv">0</span>  <span class="co"># Flat in alpha</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  log_prior_eta <span class="ot">&lt;-</span> <span class="dv">0</span>    <span class="co"># Flat in eta (Jeffreys for sigma)</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Likelihood</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  log_like <span class="ot">&lt;-</span> <span class="fu">log_likelihood</span>(b0, b1, sigma, data<span class="sc">$</span>y, data<span class="sc">$</span>x)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  log_like <span class="sc">+</span> log_prior_b0 <span class="sc">+</span> log_prior_alpha <span class="sc">+</span> log_prior_eta</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>After running MCMC for 50,000 iterations (with 10,000 burn-in), extract the posterior samples and compute diagnostics:</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3" data-lst-cap="Trace plots and autocorrelation diagnostics for linear fit."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is pseudocode; actual implementation depends on your MCMC sampler.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume 'samples' is a matrix with columns: b0, alpha, eta</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Trace plot</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">3.5</span>, <span class="fl">3.5</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(samples[, <span class="dv">1</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">xlab =</span> <span class="st">"iteration"</span>, <span class="at">ylab =</span> <span class="st">"b0"</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(samples[, <span class="dv">2</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">xlab =</span> <span class="st">"iteration"</span>, <span class="at">ylab =</span> <span class="st">"alpha"</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(samples[, <span class="dv">3</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">xlab =</span> <span class="st">"iteration"</span>, <span class="at">ylab =</span> <span class="st">"log(sigma)"</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>After burn-in, summarize the posterior:</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb4" data-lst-cap="Posterior summary for linear regression."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform back to original scale</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>b0_samp <span class="ot">&lt;-</span> samples[, <span class="dv">1</span>]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>b1_samp <span class="ot">&lt;-</span> <span class="fu">tan</span>(samples[, <span class="dv">2</span>])</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>sigma_samp <span class="ot">&lt;-</span> <span class="fu">exp</span>(samples[, <span class="dv">3</span>])</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior means and credible intervals</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Posterior summaries:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"b0:"</span>, <span class="fu">mean</span>(b0_samp), <span class="st">"± ["</span>, <span class="fu">quantile</span>(b0_samp, <span class="fl">0.025</span>), <span class="st">","</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">quantile</span>(b0_samp, <span class="fl">0.975</span>), <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"b1:"</span>, <span class="fu">mean</span>(b1_samp), <span class="st">"± ["</span>, <span class="fu">quantile</span>(b1_samp, <span class="fl">0.025</span>), <span class="st">","</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">quantile</span>(b1_samp, <span class="fl">0.975</span>), <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"sigma:"</span>, <span class="fu">mean</span>(sigma_samp), <span class="st">"± ["</span>, <span class="fu">quantile</span>(sigma_samp, <span class="fl">0.025</span>), <span class="st">","</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">quantile</span>(sigma_samp, <span class="fl">0.975</span>), <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb5" data-lst-cap="Linear regression fit with credible band and posterior predictive band."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Prediction grid</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>x_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">7.5</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute posterior mean and predictive curves</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>f_samples <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(x_grid), <span class="at">ncol =</span> <span class="fu">length</span>(b0_samp))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>y_pred_samples <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(x_grid), <span class="at">ncol =</span> <span class="fu">length</span>(b0_samp))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (k <span class="cf">in</span> <span class="fu">seq_along</span>(b0_samp)) {</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  f_samples[, k] <span class="ot">&lt;-</span> b0_samp[k] <span class="sc">+</span> b1_samp[k] <span class="sc">*</span> x_grid</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  y_pred_samples[, k] <span class="ot">&lt;-</span> f_samples[, k] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(x_grid), <span class="dv">0</span>, sigma_samp[k])</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute quantiles</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>f_lo <span class="ot">&lt;-</span> <span class="fu">apply</span>(f_samples, <span class="dv">1</span>, quantile, <span class="fl">0.025</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>f_hi <span class="ot">&lt;-</span> <span class="fu">apply</span>(f_samples, <span class="dv">1</span>, quantile, <span class="fl">0.975</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>f_med <span class="ot">&lt;-</span> <span class="fu">apply</span>(f_samples, <span class="dv">1</span>, median)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>y_lo <span class="ot">&lt;-</span> <span class="fu">apply</span>(y_pred_samples, <span class="dv">1</span>, quantile, <span class="fl">0.025</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>y_hi <span class="ot">&lt;-</span> <span class="fu">apply</span>(y_pred_samples, <span class="dv">1</span>, quantile, <span class="fl">0.975</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">xlab =</span> <span class="st">"x"</span>, <span class="at">ylab =</span> <span class="st">"y"</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">7.5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">10</span>),</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Linear Regression Fit with Uncertainty Bands"</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior predictive band (wider, includes noise)</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid, <span class="fu">rev</span>(x_grid)), <span class="fu">c</span>(y_lo, <span class="fu">rev</span>(y_hi)),</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.3</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Credible band for mean (narrower, only parameter uncertainty)</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid, <span class="fu">rev</span>(x_grid)), <span class="fu">c</span>(f_lo, <span class="fu">rev</span>(f_hi)),</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior mean fit</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x_grid, f_med, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Legend</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="fu">c</span>(<span class="st">"Data"</span>, <span class="st">"Posterior mean"</span>, <span class="st">"Credible band"</span>, <span class="st">"Predictive band"</span>),</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>       <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">19</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>),</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"black"</span>, <span class="st">"gray30"</span>, <span class="st">"gray50"</span>),</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fu">rgb</span>(<span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>), <span class="fu">rgb</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.3</span>)),</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>       <span class="at">border =</span> <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="nonlinear-models-laplace-approximation-and-mcmc" class="level2" data-number="12.10">
+<h2 data-number="12.10" class="anchored" data-anchor-id="nonlinear-models-laplace-approximation-and-mcmc"><span class="header-section-number">12.10</span> Nonlinear Models: Laplace Approximation and MCMC</h2>
+<p>When <span class="math inline">\(f(x; \theta)\)</span> is nonlinear in <span class="math inline">\(\theta\)</span>, the posterior cannot be written in closed form. Two main approaches:</p>
+<p><strong>Laplace Approximation:</strong> Expand the log-posterior around the MAP estimate <span class="math inline">\(\hat{\boldsymbol{\theta}}\)</span> as a multivariate Gaussian: <span class="math display">\[p(\boldsymbol{\theta} \mid D) \approx \mathcal{N}(\hat{\boldsymbol{\theta}}, [-\nabla^2 \log p(\boldsymbol{\theta} \mid D) |_{\hat{\boldsymbol{\theta}}}]^{-1}).\]</span></p>
+<p>This is fast and often accurate for well-behaved posteriors. For multimodal or heavy-tailed posteriors, it can fail.</p>
+<p><strong>MCMC:</strong> Sample directly from the posterior, handling arbitrary nonlinearity and non-Gaussian shapes. The disadvantage is computational cost; the advantage is generality and accuracy. Modern samplers like NUTS (in Stan) adapt the step size and use Hamiltonian dynamics, making MCMC scalable.</p>
+</section>
+<section id="posterior-predictive-checks" class="level2" data-number="12.11">
+<h2 data-number="12.11" class="anchored" data-anchor-id="posterior-predictive-checks"><span class="header-section-number">12.11</span> Posterior Predictive Checks</h2>
+<p>A fundamental tool in Bayesian regression is <strong>posterior predictive checking</strong>: generate new data under the posterior and compare to observed data.</p>
+<div class="definition">
+<p>For a regression model, the posterior predictive distribution is <span class="math display">\[p(y_{\text{new}} \mid x_{\text{new}}, D) = \int p(y_{\text{new}} \mid x_{\text{new}}, \boldsymbol{\theta}) \, p(\boldsymbol{\theta} \mid D) \, d\boldsymbol{\theta}.\]</span></p>
+<p>The marginal predictive distribution averages over parameter uncertainty, automatically accounting for both the fitted model and the noise in the data.</p>
+<p>Posterior predictive checks: 1. For each posterior sample <span class="math inline">\(\boldsymbol{\theta}^{(k)}\)</span>, generate <span class="math inline">\(y_{\text{rep}}^{(k)}(x_i) \sim p(y \mid x_i, \boldsymbol{\theta}^{(k)})\)</span> at each observed <span class="math inline">\(x_i\)</span>. 2. Compare the distribution of simulated <span class="math inline">\(y_{\text{rep}}\)</span> to observed <span class="math inline">\(y\)</span> using summary statistics (e.g., mean, variance, quantiles, or max absolute residual). 3. If the posterior predictive distribution is consistent with the observed data, the model is plausible.</p>
+</div>
+</section>
+<section id="robustness-and-extensions" class="level2" data-number="12.12">
+<h2 data-number="12.12" class="anchored" data-anchor-id="robustness-and-extensions"><span class="header-section-number">12.12</span> Robustness and Extensions</h2>
+<section id="student-t-noise-for-robustness" class="level3" data-number="12.12.1">
+<h3 data-number="12.12.1" class="anchored" data-anchor-id="student-t-noise-for-robustness"><span class="header-section-number">12.12.1</span> Student-<span class="math inline">\(t\)</span> Noise for Robustness</h3>
+<p>Gaussian noise is sensitive to outliers. A robust alternative is <strong>Student-<span class="math inline">\(t\)</span> noise</strong>: <span class="math display">\[y_i \sim t_\nu(f(x_i; \theta), \sigma^2),\]</span> where <span class="math inline">\(\nu\)</span> controls tail heaviness (small <span class="math inline">\(\nu\)</span> allows larger outliers). As <span class="math inline">\(\nu \to \infty\)</span>, recovers Gaussian. Often set <span class="math inline">\(\nu = 3\)</span> or <span class="math inline">\(\nu = 4\)</span> for robustness.</p>
+<p>The likelihood becomes <span class="math display">\[p(y_i \mid \ldots) \propto \left[ 1 + \frac{[y_i - f(x_i; \theta)]^2}{\nu \sigma^2} \right]^{-(\nu+1)/2},\]</span> which is heavier-tailed than Gaussian. MCMC is needed to fit such models.</p>
+</section>
+<section id="errors-in-all-variables" class="level3" data-number="12.12.2">
+<h3 data-number="12.12.2" class="anchored" data-anchor-id="errors-in-all-variables"><span class="header-section-number">12.12.2</span> Errors in All Variables</h3>
+<p>If both <span class="math inline">\(x_i\)</span> and <span class="math inline">\(y_i\)</span> are measured with error, the problem becomes significantly harder: <span class="math display">\[x_i = x_i^{\text{true}} + \delta_{x,i}, \quad y_i = f(x_i^{\text{true}}; \theta) + \delta_{y,i}.\]</span></p>
+<p>The true <span class="math inline">\(x_i^{\text{true}}\)</span> must be treated as latent variables, increasing dimensionality. Bayesian approaches handle this naturally via hierarchical modeling, but require additional priors and tuning.</p>
+</section>
+</section>
+<section id="summary" class="level2" data-number="12.13">
+<h2 data-number="12.13" class="anchored" data-anchor-id="summary"><span class="header-section-number">12.13</span> Summary</h2>
+<p>Bayesian regression provides a principled framework for learning functional relationships:</p>
+<ul>
+<li><strong>Linear models</strong> (parameters enter linearly) admit conjugate closed-form posteriors via Gaussian theory, enabling exact inference and efficient prediction.</li>
+<li><strong>Posterior prediction</strong> integrates over parameter uncertainty, yielding predictive distributions that account for both fitted function and observation noise.</li>
+<li><strong>Nonlinear and generalized models</strong> (nonlinear parameters, non-Gaussian likelihoods) require MCMC sampling or approximations.</li>
+<li><strong>Practical MCMC workflow</strong> (specify model, choose priors, write log-posterior, run sampler, diagnose, summarize, plot) is systematic and reproducible.</li>
+<li><strong>Posterior predictive checks</strong> verify model adequacy and reveal misfit.</li>
+<li><strong>Robustness</strong> (heavy-tailed noise) and <strong>latent variable models</strong> (measurement error) extend the framework to real data.</li>
+</ul>
+<p>The same logic applies across simple linear regression, polynomial fits, nonlinear curves, and generalized linear models: only the parameterization and likelihood change; the Bayesian template—prior <span class="math inline">\(\times\)</span> likelihood $/ $ evidence—remains constant.</p>
+</section>
+<section id="sources" class="level2" data-number="12.14">
+<h2 data-number="12.14" class="anchored" data-anchor-id="sources"><span class="header-section-number">12.14</span> Sources</h2>
+<ul>
+<li>Sivia, D. S., &amp; Skilling, J. (2006). <em>Data analysis: A Bayesian tutorial</em> (2nd ed.). Oxford University Press. Chapters 3 and 6.</li>
+<li>van der Linden, W. J., &amp; Hambleton, R. K. (Eds.). (2013). <em>Handbook of modern item response theory</em>. Springer. Chapter 21 (regression and related methods).</li>
+<li>Gelman, A., Vehtari, A., Simpson, D., Burkner, P. C., &amp; Gabry, J. (2020). Bayesian workflow. <em>arXiv preprint arXiv:2011.01808</em>.</li>
+<li>Falasco, G. (2026). Advanced Statistics for Physics Analysis. Course notes, lectures on Bayesian regression and MCMC (May 12 and May 15, 2026).</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/10_parallel_tempering.html" class="pagination-link" aria-label="Parallel tempering">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/12_probabilistic_programming.html" class="pagination-link" aria-label="Probabilistic programming: JAGS, Stan, ADVI">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb6" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Bayesian regression"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>Regression analysis seeks to learn a functional relationship between input variables $x$ and observed response variables $y$ from data. In the Bayesian framework, we construct a probabilistic model that combines a generative (noise-free) function $f(x; \theta)$ with a noise model, then use Bayes' theorem to infer the posterior distribution $p(\theta \mid D)$ of the parameters. For regression models where the parameters enter linearly, exact posterior inference is tractable via conjugate analysis. For nonlinear models or non-Gaussian likelihoods, we rely on Markov chain Monte Carlo (MCMC) sampling. This chapter develops both the theory and practice of Bayesian regression: from the closed-form solution for linear Gaussian regression to the complete MCMC workflow for fitting arbitrary nonlinear regression models and making probabilistic predictions.</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Regression Model: Signal Plus Noise</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">### Model Formulation</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>The basic regression model specifies that each observed response $y_i$ arises from a noise-free mean function plus random noise:</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>$$y_i = f(x_i; \theta) + \varepsilon_i, \quad \varepsilon_i \sim \mathcal{N}(0, \sigma^2).$$</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>Here:</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$x_i$ is the regressor (input, explanatory variable), assumed fixed and measured without error.</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$y_i$ is the response (dependent, outcome variable).</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$f(x_i; \theta)$ is the signal—the deterministic part.</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\varepsilon_i$ is measurement noise or intrinsic scatter, i.i.d. Gaussian with variance $\sigma^2$.</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="fu">### Likelihood for Gaussian Noise</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>Under independent Gaussian noise, each observation has conditional distribution</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>$$p(y_i \mid x_i, \theta) = \mathcal{N}(f(x_i; \theta), \sigma^2).$$</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>For $N$ independent observations $D = <span class="sc">\{</span>(x_i, y_i)<span class="sc">\}</span>_{i=1}^N$, the joint likelihood factorizes:</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>$$p(D \mid \theta) = \prod_{i=1}^N p(y_i \mid x_i, \theta) = \prod_{i=1}^N \mathcal{N}(f(x_i; \theta), \sigma^2).$$</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>Taking logarithms,</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>$$\log p(D \mid \theta) = -N \log\sigma - \frac{1}{2}\log(2\pi) - \frac{1}{2\sigma^2} \sum_{i=1}^N <span class="co">[</span><span class="ot">y_i - f(x_i; \theta)</span><span class="co">]</span>^2 + \text{const}.$$</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="fu">## Linear Models and the Design Matrix</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="fu">### Linearity in Parameters</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>A regression model is **linear** if the parameters enter linearly, even if the features depend nonlinearly on the inputs:</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>$$y_i = \boldsymbol{\phi}(x_i)^\top \mathbf{w} + \varepsilon_i,$$</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>where $\boldsymbol{\phi}(x) = <span class="co">[</span><span class="ot">\phi_1(x), \ldots, \phi_M(x)</span><span class="co">]</span>^\top$ is a feature map and $\mathbf{w} = <span class="co">[</span><span class="ot">w_0, \ldots, w_{M-1}</span><span class="co">]</span>^\top$ is the weight vector.</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>**Examples of linear regression models:**</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Straight line: $\boldsymbol{\phi}(x) = (1, x)$, $f(x) = w_0 + w_1 x$.</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Polynomial: $\boldsymbol{\phi}(x) = (1, x, x^2, \ldots, x^{M-1})$, $f(x) = \sum_{j=0}^{M-1} w_j x^j$.</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Fourier: $\boldsymbol{\phi}(x) = (1, \sin(x), \cos(x), \ldots)$.</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Linear in unknown parameters: If $f(x) = w_0 e^{-\lambda x}$ with $\lambda$ known, it is linear in $w_0$.</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Not** linear in unknown parameters: $f(x) = w_0 e^{-\lambda x}$ if $\lambda$ is unknown (exponential, logistic, etc.).</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="fu">### Design Matrix Notation</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>For $N$ data points and $M$ basis functions, define the $N \times M$ **design matrix** (or regressor matrix)</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>$$\boldsymbol{\Phi} = \begin{bmatrix}</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>\phi_1(x_1) &amp; \phi_2(x_1) &amp; \cdots &amp; \phi_M(x_1) <span class="sc">\\</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>\phi_1(x_2) &amp; \phi_2(x_2) &amp; \cdots &amp; \phi_M(x_2) <span class="sc">\\</span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>\vdots &amp; \vdots &amp; \ddots &amp; \vdots <span class="sc">\\</span></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>\phi_1(x_N) &amp; \phi_2(x_N) &amp; \cdots &amp; \phi_M(x_N)</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>\end{bmatrix}.$$</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>The linear model becomes</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>$$\mathbf{y} = \boldsymbol{\Phi} \mathbf{w} + \boldsymbol{\varepsilon}, \quad \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, \sigma^2 \mathbf{I}_N),$$</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>and the likelihood is</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>$$p(\mathbf{y} \mid \boldsymbol{\Phi}, \mathbf{w}, \sigma^2) = \mathcal{N}(\mathbf{y} \mid \boldsymbol{\Phi} \mathbf{w}, \sigma^2 \mathbf{I}_N).$$</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bayesian Linear Regression: Closed-Form Solution</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conjugate Prior and Posterior</span></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>Assume $\sigma^2$ is known. Choose a Gaussian prior on $\mathbf{w}$:</span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>$$p(\mathbf{w}) = \mathcal{N}(\mathbf{w} \mid \mathbf{m}_0, \mathbf{S}_0).$$</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>The likelihood is Gaussian in $\mathbf{w}$; by conjugacy, the posterior is also Gaussian:</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>:::{.theorem}</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>**Bayesian Linear Regression with Gaussian Prior:**</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>Given likelihood $p(\mathbf{y} \mid \boldsymbol{\Phi}, \mathbf{w}, \sigma^2) = \mathcal{N}(\mathbf{y} \mid \boldsymbol{\Phi} \mathbf{w}, \sigma^2 \mathbf{I}_N)$ and prior $\mathcal{N}(\mathbf{w} \mid \mathbf{m}_0, \mathbf{S}_0)$, the posterior is</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>$$p(\mathbf{w} \mid D, \sigma^2) = \mathcal{N}(\mathbf{w} \mid \mathbf{m}_N, \mathbf{S}_N),$$</span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>where</span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>\begin{align}</span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a>\mathbf{S}_N^{-1} &amp;= \mathbf{S}_0^{-1} + \sigma^{-2} \boldsymbol{\Phi}^\top \boldsymbol{\Phi}, <span class="sc">\\</span></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>\mathbf{m}_N &amp;= \mathbf{S}_N \left( \mathbf{S}_0^{-1} \mathbf{m}_0 + \sigma^{-2} \boldsymbol{\Phi}^\top \mathbf{y} \right).</span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>\end{align}</span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>**Interpretation:** Precisions add. The posterior mean is a precision-weighted average of the prior mean and the data-driven estimate. The posterior covariance $\mathbf{S}_N$ shrinks relative to $\mathbf{S}_0$.</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a><span class="fu">### Special Case: Weak Isotropic Prior</span></span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>A common choice is the weak prior $\mathbf{m}_0 = \mathbf{0}$ and $\mathbf{S}_0 = \sigma_0^2 \mathbf{I}_M$:</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>$$\mathbf{S}_N^{-1} = \frac{1}{\sigma_0^2} \mathbf{I}_M + \sigma^{-2} \boldsymbol{\Phi}^\top \boldsymbol{\Phi},$$</span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>$$\mathbf{m}_N = \sigma^{-2} \mathbf{S}_N \boldsymbol{\Phi}^\top \mathbf{y}.$$</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a><span class="fu">### Connection to Ridge Regression</span></span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>Ordinary least squares minimizes $<span class="sc">\|</span>\mathbf{y} - \boldsymbol{\Phi} \mathbf{w}<span class="sc">\|</span>^2$. Ridge regression adds an L2 penalty:</span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a>$$L_{\text{ridge}} = <span class="sc">\|</span>\mathbf{y} - \boldsymbol{\Phi} \mathbf{w}<span class="sc">\|</span>^2 + \lambda <span class="sc">\|</span>\mathbf{w}<span class="sc">\|</span>^2.$$</span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a>The ridge estimator is $\hat{\mathbf{w}}_{\text{ridge}} = (\boldsymbol{\Phi}^\top \boldsymbol{\Phi} + \lambda \mathbf{I})^{-1} \boldsymbol{\Phi}^\top \mathbf{y}$.</span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a>Ridge regression is **maximum a posteriori (MAP) estimation** under a Gaussian prior: the prior variance relates to the penalty by $\lambda = \sigma^2 / \sigma_0^2$. The Bayesian approach goes further by quantifying posterior uncertainty via the full covariance $\mathbf{S}_N$.</span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior Predictive Distribution</span></span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a><span class="fu">### Parameter Uncertainty and Prediction Uncertainty</span></span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>For a new input $x_* $, we wish to predict $y_*$. The posterior predictive distribution marginalizes over parameter uncertainty:</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>$$p(y_* \mid x_*, D, \sigma^2) = \int p(y_* \mid x_*, \mathbf{w}, \sigma^2) \, p(\mathbf{w} \mid D, \sigma^2) \, d\mathbf{w}.$$</span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>Since both terms are Gaussian, the integral is tractable:</span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a>:::{.theorem}</span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a>**Posterior Predictive Distribution:**</span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>Let $\boldsymbol{\phi}_* = \boldsymbol{\phi}(x_*)$. Then</span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a>$$p(y_* \mid x_*, D, \sigma^2) = \mathcal{N}\left( y_* \,\big|\, \boldsymbol{\phi}_*^\top \mathbf{m}_N, \, \sigma^2 + \boldsymbol{\phi}_*^\top \mathbf{S}_N \boldsymbol{\phi}_* \right).$$</span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>**Two sources of uncertainty in prediction:**</span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Observation noise:** $\sigma^2$ (irreducible error in $y_*$).</span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Parameter uncertainty:** $\boldsymbol{\phi}_*^\top \mathbf{S}_N \boldsymbol{\phi}_*$ (uncertainty in the regression function $f(x_*)$).</span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a>The posterior predictive band widens away from the data due to increasing parameter uncertainty.</span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## Unknown Noise Level</span></span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a>In practice, $\sigma^2$ is usually unknown and inferred from data. The parameters become $\boldsymbol{\theta} = (\mathbf{w}, \sigma)$, and we use a prior on the noise scale. A standard choice is the **Jeffreys prior** for scale parameters:</span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a>$$p(\sigma) \propto \frac{1}{\sigma}, \quad \text{or equivalently} \quad p(\log \sigma) \text{ is uniform}.$$</span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a>The joint posterior is</span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>$$p(\mathbf{w}, \sigma \mid D) \propto p(\mathbf{y} \mid \boldsymbol{\Phi}, \mathbf{w}, \sigma) \, p(\mathbf{w}) \, p(\sigma).$$</span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a>When both $\mathbf{w}$ and $\sigma$ are unknown, the posterior no longer has a closed form in closed-form distributions, but conjugate analysis can still apply to marginal posteriors or conditional distributions. For computational convenience and to make use of existing MCMC software, we often resort to sampling.</span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a><span class="fu">## Nonlinear Regression and MCMC</span></span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why Nonlinear Models Require MCMC</span></span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>A model is **nonlinear in parameters** if $f(x; \theta)$ is a nonlinear function of some $\theta$. Examples:</span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Exponential: $f(x) = a e^{b x}$ (nonlinear in both $a$ and $b$ unless one is known).</span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Logistic: $f(x) = \frac{L}{1 + e^{-k(x - x_0)}}$ (nonlinear in location $x_0$, scale $k$, amplitude $L$).</span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Power law: $f(x) = a x^b$ (nonlinear in exponent $b$).</span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>For such models, the likelihood is no longer Gaussian in the parameters, and conjugate priors do not yield closed-form posteriors. Similarly, generalized linear models (logistic regression for binary data, Poisson regression for counts) have non-Gaussian likelihoods, precluding analytical solutions.</span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>In these cases, we must either:</span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use **approximations** (Laplace, variational inference).</span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use **MCMC** or other sampling methods to draw from $p(\boldsymbol{\theta} \mid D) \propto p(D \mid \boldsymbol{\theta}) \, p(\boldsymbol{\theta})$.</span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a><span class="fu">## Practical MCMC Fitting Workflow</span></span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a>The following seven-step workflow is the standard approach for fitting regression models via MCMC:</span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 1: Specify the Generative Model and Noise Model</span></span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a>Write down:</span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The regression function: $f(x; \boldsymbol{\theta})$.</span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The noise distribution: e.g., $\varepsilon \sim \mathcal{N}(0, \sigma^2)$.</span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The observation model: $y_i \sim \mathcal{N}(f(x_i; \boldsymbol{\theta}), \sigma^2)$.</span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 2: Choose Priors for All Parameters</span></span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>Specify weakly informative priors for each parameter. For regression coefficients, use broad Gaussians (e.g., $\mathcal{N}(0, 10^2)$). For scale parameters like $\sigma$, use a Jeffreys prior $p(\sigma) \propto 1/\sigma$ or truncated exponentials. To avoid boundary issues, sample on the log-scale: $\eta = \log \sigma$.</span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>:::{.note}</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>**Reparameterization for Bounded Parameters:**</span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>Parameters constrained to positive values (like $\sigma &gt; 0$) should be sampled in transformed space:</span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Replace $\sigma$ with $\eta = \log \sigma$, so $\sigma = e^\eta$.</span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A flat prior on $\eta$ corresponds to a Jeffreys prior on $\sigma$.</span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The Jacobian $|d\sigma / d\eta| = e^\eta = \sigma$ automatically cancels the $1/\sigma$ prior, yielding a uniform prior in log-space.</span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a>For slope parameters, reparameterize via angle: $\beta = \tan(\alpha)$, so all slopes are finite and comparable.</span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 3: Write Log-Prior, Log-Likelihood, and Log-Posterior Functions</span></span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>Define functions that compute:</span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>\begin{align}</span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>\log p(\boldsymbol{\theta}) &amp;: \text{ sum of log-prior densities for all parameters}, <span class="sc">\\</span></span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a>\log p(D \mid \boldsymbol{\theta}) &amp;: \text{ log-likelihood, typically } \sum_{i=1}^N \log p(y_i \mid x_i, \boldsymbol{\theta}), <span class="sc">\\</span></span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>\log p(\boldsymbol{\theta} \mid D) &amp;= \log p(D \mid \boldsymbol{\theta}) + \log p(\boldsymbol{\theta}) + \text{const}.</span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>\end{align}</span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a>For MCMC, we only need the unnormalized posterior (up to an additive constant).</span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 4: Run MCMC and Tune Proposal Covariance</span></span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>Initialize parameters at a reasonable starting point (e.g., a classical fit or MAP estimate). Specify a proposal distribution, typically a multivariate Gaussian with tuned covariance. Run MCMC (e.g., random-walk Metropolis-Hastings, or preferably NUTS via Stan) for a burn-in period, then for additional sampling iterations.</span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>Tune the proposal variance to achieve a target acceptance rate (typically 20--30% for random-walk MH, automatic for NUTS).</span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 5: Diagnose and Inspect the Chain</span></span>
+<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>:::{.remark}</span>
+<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a>**Key Diagnostics:**</span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Trace plots:** Plot $\theta_j$ versus iteration. Traces should resemble white noise (good mixing), not slow drifts or stuck chains.</span>
+<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Autocorrelation function (ACF):** Compute $\text{Corr}(\theta_j^{(k)}, \theta_j^{(k+\ell)})$ as a function of lag $\ell$. Rapid decay (small effective sample size if slow decay) indicates good mixing.</span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Effective sample size (ESS):** $\text{ESS} = N_{\text{samples}} / (1 + 2 \sum_{\ell=1}^\infty \text{Corr}(\ell))$. Rule of thumb: aim for ESS $&gt; 1000$ per parameter.</span>
+<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\hat{R}$ (Gelman-Rubin statistic):** Ratio of between-chain to within-chain variance. $\hat{R} &lt; 1.01$ indicates convergence; $\hat{R} &gt; 1.05$ indicates poor mixing or insufficient burn-in.</span>
+<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Joint posterior pairs plot:** Scatter plot of all pairs of parameters. Reveals correlations and identifies poorly identified parameters.</span>
+<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 6: Summarize Parameters</span></span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a>Compute posterior summaries from the converged samples (after thinning to reduce autocorrelation if desired):</span>
+<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Maximum a posteriori (MAP):** The sample with highest posterior density.</span>
+<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Posterior mean:** Average of all samples.</span>
+<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Posterior covariance:** Empirical covariance of samples.</span>
+<span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Credible intervals:** 2.5th and 97.5th quantiles (or other quantiles) per parameter.</span>
+<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-217"><a href="#cb6-217" aria-hidden="true" tabindex="-1"></a>Always transform samples back to the original parameterization before computing summaries.</span>
+<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-219"><a href="#cb6-219" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step 7: Plot Predictions and Posterior Predictive Checks</span></span>
+<span id="cb6-220"><a href="#cb6-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-221"><a href="#cb6-221" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Data plot with error bars:** Show observed $(x_i, y_i)$ with vertical error bars at $\pm \sigma_{\text{MAP}}$ or $\pm$ posterior SD of $y_i$.</span>
+<span id="cb6-222"><a href="#cb6-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-223"><a href="#cb6-223" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Fitted regression curve:** Plot the posterior mean fit $\hat{f}(x) = \boldsymbol{\phi}(x)^\top \mathbb{E}<span class="co">[</span><span class="ot">\mathbf{w} \mid D</span><span class="co">]</span>$.</span>
+<span id="cb6-224"><a href="#cb6-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-225"><a href="#cb6-225" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Credible band for the mean curve:** For a grid of $x$ values, compute the posterior quantiles of $f(x; \boldsymbol{\theta})$ by evaluating the function at each posterior sample. This shows uncertainty in the regression function, not including observation noise.</span>
+<span id="cb6-226"><a href="#cb6-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-227"><a href="#cb6-227" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Posterior predictive band:** For future observations, include both parameter uncertainty and noise. For each $x$ on the grid and each posterior sample $\boldsymbol{\theta}^{(k)}$, generate $y^{(k)} \sim \mathcal{N}(f(x; \boldsymbol{\theta}^{(k)}), \sigma^{(k)2})$. The 2.5th and 97.5th quantiles across samples form the prediction interval.</span>
+<span id="cb6-228"><a href="#cb6-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-229"><a href="#cb6-229" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example: Linear Regression with MCMC</span></span>
+<span id="cb6-230"><a href="#cb6-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-231"><a href="#cb6-231" aria-hidden="true" tabindex="-1"></a>Consider fitting a straight line $f(x) = b_0 + b_1 x$ to observed data $<span class="sc">\{</span>(x_i, y_i)<span class="sc">\}</span>$, with unknown noise $\sigma$.</span>
+<span id="cb6-232"><a href="#cb6-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-233"><a href="#cb6-233" aria-hidden="true" tabindex="-1"></a>**Parameters (transformed):** $\boldsymbol{\theta} = (b_0, \alpha, \eta)$ where $b_1 = \tan(\alpha)$ and $\eta = \log \sigma$.</span>
+<span id="cb6-234"><a href="#cb6-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-235"><a href="#cb6-235" aria-hidden="true" tabindex="-1"></a>**Priors:**</span>
+<span id="cb6-236"><a href="#cb6-236" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$b_0 \sim \mathcal{N}(0, 10^2)$.</span>
+<span id="cb6-237"><a href="#cb6-237" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\alpha \sim \text{Uniform}(-\pi/2, \pi/2)$ (equivalently, $p(\alpha) \propto 1$).</span>
+<span id="cb6-238"><a href="#cb6-238" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\eta \sim \text{Uniform}$ (flat prior on $\log \sigma$, Jeffreys prior on $\sigma$).</span>
+<span id="cb6-239"><a href="#cb6-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-240"><a href="#cb6-240" aria-hidden="true" tabindex="-1"></a>**Log-likelihood:**</span>
+<span id="cb6-241"><a href="#cb6-241" aria-hidden="true" tabindex="-1"></a>$$\log p(\mathbf{y} \mid b_0, \alpha, \eta) = -N \eta - \frac{1}{2} \sum_{i=1}^N \frac{<span class="co">[</span><span class="ot">y_i - (b_0 + \tan(\alpha) x_i)</span><span class="co">]</span>^2}{e^{2\eta}} + \text{const}.$$</span>
+<span id="cb6-242"><a href="#cb6-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-243"><a href="#cb6-243" aria-hidden="true" tabindex="-1"></a>**Log-posterior:** Sum of log-likelihood and log-prior densities.</span>
+<span id="cb6-244"><a href="#cb6-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-245"><a href="#cb6-245" aria-hidden="true" tabindex="-1"></a>Run MCMC (e.g., via random-walk MH or Stan's NUTS sampler) and diagnose convergence.</span>
+<span id="cb6-246"><a href="#cb6-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-249"><a href="#cb6-249" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-250"><a href="#cb6-250" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-linear-data</span></span>
+<span id="cb6-251"><a href="#cb6-251" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Simulate and plot linear regression data."</span></span>
+<span id="cb6-252"><a href="#cb6-252" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Linear regression example: 8 data points from y = 0 + x + noise."</span></span>
+<span id="cb6-253"><a href="#cb6-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-254"><a href="#cb6-254" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb6-255"><a href="#cb6-255" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb6-256"><a href="#cb6-256" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">7</span>, <span class="at">length.out =</span> N)</span>
+<span id="cb6-257"><a href="#cb6-257" aria-hidden="true" tabindex="-1"></a>sigma_true <span class="ot">&lt;-</span> <span class="fl">1.0</span></span>
+<span id="cb6-258"><a href="#cb6-258" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">*</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(N, <span class="dv">0</span>, sigma_true)</span>
+<span id="cb6-259"><a href="#cb6-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-260"><a href="#cb6-260" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">xlab =</span> <span class="st">"x"</span>, <span class="at">ylab =</span> <span class="st">"y"</span>,</span>
+<span id="cb6-261"><a href="#cb6-261" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">7.5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">9</span>),</span>
+<span id="cb6-262"><a href="#cb6-262" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Linear Regression Data"</span>)</span>
+<span id="cb6-263"><a href="#cb6-263" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-264"><a href="#cb6-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-265"><a href="#cb6-265" aria-hidden="true" tabindex="-1"></a>Now run the MCMC sampler (pseudocode; in practice, use Stan, JAGS, or a hand-coded sampler):</span>
+<span id="cb6-266"><a href="#cb6-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-269"><a href="#cb6-269" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-270"><a href="#cb6-270" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-linear-mcmc-functions</span></span>
+<span id="cb6-271"><a href="#cb6-271" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Log-posterior for linear regression."</span></span>
+<span id="cb6-272"><a href="#cb6-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-273"><a href="#cb6-273" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-likelihood for y_i ~ N(b0 + b1 * x_i, sigma^2)</span></span>
+<span id="cb6-274"><a href="#cb6-274" aria-hidden="true" tabindex="-1"></a>log_likelihood <span class="ot">&lt;-</span> <span class="cf">function</span>(b0, b1, sigma, y, x) {</span>
+<span id="cb6-275"><a href="#cb6-275" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> b0 <span class="sc">+</span> b1 <span class="sc">*</span> x</span>
+<span id="cb6-276"><a href="#cb6-276" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>(<span class="fu">dnorm</span>(y, mu, sigma, <span class="at">log =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb6-277"><a href="#cb6-277" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-278"><a href="#cb6-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-279"><a href="#cb6-279" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-posterior (unnormalized)</span></span>
+<span id="cb6-280"><a href="#cb6-280" aria-hidden="true" tabindex="-1"></a>log_posterior <span class="ot">&lt;-</span> <span class="cf">function</span>(theta, data) {</span>
+<span id="cb6-281"><a href="#cb6-281" aria-hidden="true" tabindex="-1"></a>  b0 <span class="ot">&lt;-</span> theta[<span class="dv">1</span>]</span>
+<span id="cb6-282"><a href="#cb6-282" aria-hidden="true" tabindex="-1"></a>  alpha <span class="ot">&lt;-</span> theta[<span class="dv">2</span>]</span>
+<span id="cb6-283"><a href="#cb6-283" aria-hidden="true" tabindex="-1"></a>  eta <span class="ot">&lt;-</span> theta[<span class="dv">3</span>]</span>
+<span id="cb6-284"><a href="#cb6-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-285"><a href="#cb6-285" aria-hidden="true" tabindex="-1"></a>  b1 <span class="ot">&lt;-</span> <span class="fu">tan</span>(alpha)</span>
+<span id="cb6-286"><a href="#cb6-286" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> <span class="fu">exp</span>(eta)</span>
+<span id="cb6-287"><a href="#cb6-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-288"><a href="#cb6-288" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Priors</span></span>
+<span id="cb6-289"><a href="#cb6-289" aria-hidden="true" tabindex="-1"></a>  log_prior_b0 <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(b0, <span class="dv">0</span>, <span class="dv">10</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-290"><a href="#cb6-290" aria-hidden="true" tabindex="-1"></a>  log_prior_alpha <span class="ot">&lt;-</span> <span class="dv">0</span>  <span class="co"># Flat in alpha</span></span>
+<span id="cb6-291"><a href="#cb6-291" aria-hidden="true" tabindex="-1"></a>  log_prior_eta <span class="ot">&lt;-</span> <span class="dv">0</span>    <span class="co"># Flat in eta (Jeffreys for sigma)</span></span>
+<span id="cb6-292"><a href="#cb6-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-293"><a href="#cb6-293" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Likelihood</span></span>
+<span id="cb6-294"><a href="#cb6-294" aria-hidden="true" tabindex="-1"></a>  log_like <span class="ot">&lt;-</span> <span class="fu">log_likelihood</span>(b0, b1, sigma, data<span class="sc">$</span>y, data<span class="sc">$</span>x)</span>
+<span id="cb6-295"><a href="#cb6-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-296"><a href="#cb6-296" aria-hidden="true" tabindex="-1"></a>  log_like <span class="sc">+</span> log_prior_b0 <span class="sc">+</span> log_prior_alpha <span class="sc">+</span> log_prior_eta</span>
+<span id="cb6-297"><a href="#cb6-297" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-298"><a href="#cb6-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-299"><a href="#cb6-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-300"><a href="#cb6-300" aria-hidden="true" tabindex="-1"></a>After running MCMC for 50,000 iterations (with 10,000 burn-in), extract the posterior samples and compute diagnostics:</span>
+<span id="cb6-301"><a href="#cb6-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-304"><a href="#cb6-304" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-305"><a href="#cb6-305" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-linear-diagnostics</span></span>
+<span id="cb6-306"><a href="#cb6-306" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-307"><a href="#cb6-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Trace plots and autocorrelation diagnostics for linear fit."</span></span>
+<span id="cb6-308"><a href="#cb6-308" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Trace plots (left) and autocorrelation (right) for parameters b0, alpha, and log(sigma)."</span></span>
+<span id="cb6-309"><a href="#cb6-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-310"><a href="#cb6-310" aria-hidden="true" tabindex="-1"></a><span class="co"># This is pseudocode; actual implementation depends on your MCMC sampler.</span></span>
+<span id="cb6-311"><a href="#cb6-311" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume 'samples' is a matrix with columns: b0, alpha, eta</span></span>
+<span id="cb6-312"><a href="#cb6-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-313"><a href="#cb6-313" aria-hidden="true" tabindex="-1"></a><span class="co"># Trace plot</span></span>
+<span id="cb6-314"><a href="#cb6-314" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">3.5</span>, <span class="fl">3.5</span>, <span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb6-315"><a href="#cb6-315" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(samples[, <span class="dv">1</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">xlab =</span> <span class="st">"iteration"</span>, <span class="at">ylab =</span> <span class="st">"b0"</span>,</span>
+<span id="cb6-316"><a href="#cb6-316" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-317"><a href="#cb6-317" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(samples[, <span class="dv">2</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">xlab =</span> <span class="st">"iteration"</span>, <span class="at">ylab =</span> <span class="st">"alpha"</span>,</span>
+<span id="cb6-318"><a href="#cb6-318" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-319"><a href="#cb6-319" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(samples[, <span class="dv">3</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">xlab =</span> <span class="st">"iteration"</span>, <span class="at">ylab =</span> <span class="st">"log(sigma)"</span>,</span>
+<span id="cb6-320"><a href="#cb6-320" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-321"><a href="#cb6-321" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-322"><a href="#cb6-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-323"><a href="#cb6-323" aria-hidden="true" tabindex="-1"></a>After burn-in, summarize the posterior:</span>
+<span id="cb6-324"><a href="#cb6-324" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-327"><a href="#cb6-327" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-328"><a href="#cb6-328" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-linear-posterior-summary</span></span>
+<span id="cb6-329"><a href="#cb6-329" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-330"><a href="#cb6-330" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Posterior summary for linear regression."</span></span>
+<span id="cb6-331"><a href="#cb6-331" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Posterior distributions and credible intervals."</span></span>
+<span id="cb6-332"><a href="#cb6-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-333"><a href="#cb6-333" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform back to original scale</span></span>
+<span id="cb6-334"><a href="#cb6-334" aria-hidden="true" tabindex="-1"></a>b0_samp <span class="ot">&lt;-</span> samples[, <span class="dv">1</span>]</span>
+<span id="cb6-335"><a href="#cb6-335" aria-hidden="true" tabindex="-1"></a>b1_samp <span class="ot">&lt;-</span> <span class="fu">tan</span>(samples[, <span class="dv">2</span>])</span>
+<span id="cb6-336"><a href="#cb6-336" aria-hidden="true" tabindex="-1"></a>sigma_samp <span class="ot">&lt;-</span> <span class="fu">exp</span>(samples[, <span class="dv">3</span>])</span>
+<span id="cb6-337"><a href="#cb6-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-338"><a href="#cb6-338" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior means and credible intervals</span></span>
+<span id="cb6-339"><a href="#cb6-339" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Posterior summaries:</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb6-340"><a href="#cb6-340" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"b0:"</span>, <span class="fu">mean</span>(b0_samp), <span class="st">"± ["</span>, <span class="fu">quantile</span>(b0_samp, <span class="fl">0.025</span>), <span class="st">","</span>,</span>
+<span id="cb6-341"><a href="#cb6-341" aria-hidden="true" tabindex="-1"></a>    <span class="fu">quantile</span>(b0_samp, <span class="fl">0.975</span>), <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb6-342"><a href="#cb6-342" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"b1:"</span>, <span class="fu">mean</span>(b1_samp), <span class="st">"± ["</span>, <span class="fu">quantile</span>(b1_samp, <span class="fl">0.025</span>), <span class="st">","</span>,</span>
+<span id="cb6-343"><a href="#cb6-343" aria-hidden="true" tabindex="-1"></a>    <span class="fu">quantile</span>(b1_samp, <span class="fl">0.975</span>), <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb6-344"><a href="#cb6-344" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"sigma:"</span>, <span class="fu">mean</span>(sigma_samp), <span class="st">"± ["</span>, <span class="fu">quantile</span>(sigma_samp, <span class="fl">0.025</span>), <span class="st">","</span>,</span>
+<span id="cb6-345"><a href="#cb6-345" aria-hidden="true" tabindex="-1"></a>    <span class="fu">quantile</span>(sigma_samp, <span class="fl">0.975</span>), <span class="st">"]</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb6-346"><a href="#cb6-346" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-347"><a href="#cb6-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-350"><a href="#cb6-350" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-351"><a href="#cb6-351" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-linear-fit-with-band</span></span>
+<span id="cb6-352"><a href="#cb6-352" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb6-353"><a href="#cb6-353" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Linear regression fit with credible band and posterior predictive band."</span></span>
+<span id="cb6-354"><a href="#cb6-354" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Data (black points), posterior mean fit (black line), credible band (light gray), and posterior predictive band (darker gray)."</span></span>
+<span id="cb6-355"><a href="#cb6-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-356"><a href="#cb6-356" aria-hidden="true" tabindex="-1"></a><span class="co"># Prediction grid</span></span>
+<span id="cb6-357"><a href="#cb6-357" aria-hidden="true" tabindex="-1"></a>x_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">7.5</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb6-358"><a href="#cb6-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-359"><a href="#cb6-359" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute posterior mean and predictive curves</span></span>
+<span id="cb6-360"><a href="#cb6-360" aria-hidden="true" tabindex="-1"></a>f_samples <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(x_grid), <span class="at">ncol =</span> <span class="fu">length</span>(b0_samp))</span>
+<span id="cb6-361"><a href="#cb6-361" aria-hidden="true" tabindex="-1"></a>y_pred_samples <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> <span class="fu">length</span>(x_grid), <span class="at">ncol =</span> <span class="fu">length</span>(b0_samp))</span>
+<span id="cb6-362"><a href="#cb6-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-363"><a href="#cb6-363" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (k <span class="cf">in</span> <span class="fu">seq_along</span>(b0_samp)) {</span>
+<span id="cb6-364"><a href="#cb6-364" aria-hidden="true" tabindex="-1"></a>  f_samples[, k] <span class="ot">&lt;-</span> b0_samp[k] <span class="sc">+</span> b1_samp[k] <span class="sc">*</span> x_grid</span>
+<span id="cb6-365"><a href="#cb6-365" aria-hidden="true" tabindex="-1"></a>  y_pred_samples[, k] <span class="ot">&lt;-</span> f_samples[, k] <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(x_grid), <span class="dv">0</span>, sigma_samp[k])</span>
+<span id="cb6-366"><a href="#cb6-366" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-367"><a href="#cb6-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-368"><a href="#cb6-368" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute quantiles</span></span>
+<span id="cb6-369"><a href="#cb6-369" aria-hidden="true" tabindex="-1"></a>f_lo <span class="ot">&lt;-</span> <span class="fu">apply</span>(f_samples, <span class="dv">1</span>, quantile, <span class="fl">0.025</span>)</span>
+<span id="cb6-370"><a href="#cb6-370" aria-hidden="true" tabindex="-1"></a>f_hi <span class="ot">&lt;-</span> <span class="fu">apply</span>(f_samples, <span class="dv">1</span>, quantile, <span class="fl">0.975</span>)</span>
+<span id="cb6-371"><a href="#cb6-371" aria-hidden="true" tabindex="-1"></a>f_med <span class="ot">&lt;-</span> <span class="fu">apply</span>(f_samples, <span class="dv">1</span>, median)</span>
+<span id="cb6-372"><a href="#cb6-372" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-373"><a href="#cb6-373" aria-hidden="true" tabindex="-1"></a>y_lo <span class="ot">&lt;-</span> <span class="fu">apply</span>(y_pred_samples, <span class="dv">1</span>, quantile, <span class="fl">0.025</span>)</span>
+<span id="cb6-374"><a href="#cb6-374" aria-hidden="true" tabindex="-1"></a>y_hi <span class="ot">&lt;-</span> <span class="fu">apply</span>(y_pred_samples, <span class="dv">1</span>, quantile, <span class="fl">0.975</span>)</span>
+<span id="cb6-375"><a href="#cb6-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-376"><a href="#cb6-376" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot</span></span>
+<span id="cb6-377"><a href="#cb6-377" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">xlab =</span> <span class="st">"x"</span>, <span class="at">ylab =</span> <span class="st">"y"</span>,</span>
+<span id="cb6-378"><a href="#cb6-378" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">7.5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">10</span>),</span>
+<span id="cb6-379"><a href="#cb6-379" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Linear Regression Fit with Uncertainty Bands"</span>)</span>
+<span id="cb6-380"><a href="#cb6-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-381"><a href="#cb6-381" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior predictive band (wider, includes noise)</span></span>
+<span id="cb6-382"><a href="#cb6-382" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid, <span class="fu">rev</span>(x_grid)), <span class="fu">c</span>(y_lo, <span class="fu">rev</span>(y_hi)),</span>
+<span id="cb6-383"><a href="#cb6-383" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.3</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb6-384"><a href="#cb6-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-385"><a href="#cb6-385" aria-hidden="true" tabindex="-1"></a><span class="co"># Credible band for mean (narrower, only parameter uncertainty)</span></span>
+<span id="cb6-386"><a href="#cb6-386" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(x_grid, <span class="fu">rev</span>(x_grid)), <span class="fu">c</span>(f_lo, <span class="fu">rev</span>(f_hi)),</span>
+<span id="cb6-387"><a href="#cb6-387" aria-hidden="true" tabindex="-1"></a>        <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb6-388"><a href="#cb6-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-389"><a href="#cb6-389" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior mean fit</span></span>
+<span id="cb6-390"><a href="#cb6-390" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x_grid, f_med, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb6-391"><a href="#cb6-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-392"><a href="#cb6-392" aria-hidden="true" tabindex="-1"></a><span class="co"># Legend</span></span>
+<span id="cb6-393"><a href="#cb6-393" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="fu">c</span>(<span class="st">"Data"</span>, <span class="st">"Posterior mean"</span>, <span class="st">"Credible band"</span>, <span class="st">"Predictive band"</span>),</span>
+<span id="cb6-394"><a href="#cb6-394" aria-hidden="true" tabindex="-1"></a>       <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">19</span>, <span class="cn">NA</span>, <span class="cn">NA</span>, <span class="cn">NA</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>),</span>
+<span id="cb6-395"><a href="#cb6-395" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"black"</span>, <span class="st">"gray30"</span>, <span class="st">"gray50"</span>),</span>
+<span id="cb6-396"><a href="#cb6-396" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fu">rgb</span>(<span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.4</span>), <span class="fu">rgb</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.3</span>)),</span>
+<span id="cb6-397"><a href="#cb6-397" aria-hidden="true" tabindex="-1"></a>       <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb6-398"><a href="#cb6-398" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-399"><a href="#cb6-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-400"><a href="#cb6-400" aria-hidden="true" tabindex="-1"></a><span class="fu">## Nonlinear Models: Laplace Approximation and MCMC</span></span>
+<span id="cb6-401"><a href="#cb6-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-402"><a href="#cb6-402" aria-hidden="true" tabindex="-1"></a>When $f(x; \theta)$ is nonlinear in $\theta$, the posterior cannot be written in closed form. Two main approaches:</span>
+<span id="cb6-403"><a href="#cb6-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-404"><a href="#cb6-404" aria-hidden="true" tabindex="-1"></a>**Laplace Approximation:** Expand the log-posterior around the MAP estimate $\hat{\boldsymbol{\theta}}$ as a multivariate Gaussian:</span>
+<span id="cb6-405"><a href="#cb6-405" aria-hidden="true" tabindex="-1"></a>$$p(\boldsymbol{\theta} \mid D) \approx \mathcal{N}(\hat{\boldsymbol{\theta}}, <span class="co">[</span><span class="ot">-\nabla^2 \log p(\boldsymbol{\theta} \mid D) |_{\hat{\boldsymbol{\theta}}}</span><span class="co">]</span>^{-1}).$$</span>
+<span id="cb6-406"><a href="#cb6-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-407"><a href="#cb6-407" aria-hidden="true" tabindex="-1"></a>This is fast and often accurate for well-behaved posteriors. For multimodal or heavy-tailed posteriors, it can fail.</span>
+<span id="cb6-408"><a href="#cb6-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-409"><a href="#cb6-409" aria-hidden="true" tabindex="-1"></a>**MCMC:** Sample directly from the posterior, handling arbitrary nonlinearity and non-Gaussian shapes. The disadvantage is computational cost; the advantage is generality and accuracy. Modern samplers like NUTS (in Stan) adapt the step size and use Hamiltonian dynamics, making MCMC scalable.</span>
+<span id="cb6-410"><a href="#cb6-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-411"><a href="#cb6-411" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior Predictive Checks</span></span>
+<span id="cb6-412"><a href="#cb6-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-413"><a href="#cb6-413" aria-hidden="true" tabindex="-1"></a>A fundamental tool in Bayesian regression is **posterior predictive checking**: generate new data under the posterior and compare to observed data.</span>
+<span id="cb6-414"><a href="#cb6-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-415"><a href="#cb6-415" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb6-416"><a href="#cb6-416" aria-hidden="true" tabindex="-1"></a>For a regression model, the posterior predictive distribution is</span>
+<span id="cb6-417"><a href="#cb6-417" aria-hidden="true" tabindex="-1"></a>$$p(y_{\text{new}} \mid x_{\text{new}}, D) = \int p(y_{\text{new}} \mid x_{\text{new}}, \boldsymbol{\theta}) \, p(\boldsymbol{\theta} \mid D) \, d\boldsymbol{\theta}.$$</span>
+<span id="cb6-418"><a href="#cb6-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-419"><a href="#cb6-419" aria-hidden="true" tabindex="-1"></a>The marginal predictive distribution averages over parameter uncertainty, automatically accounting for both the fitted model and the noise in the data.</span>
+<span id="cb6-420"><a href="#cb6-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-421"><a href="#cb6-421" aria-hidden="true" tabindex="-1"></a>Posterior predictive checks:</span>
+<span id="cb6-422"><a href="#cb6-422" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>For each posterior sample $\boldsymbol{\theta}^{(k)}$, generate $y_{\text{rep}}^{(k)}(x_i) \sim p(y \mid x_i, \boldsymbol{\theta}^{(k)})$ at each observed $x_i$.</span>
+<span id="cb6-423"><a href="#cb6-423" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Compare the distribution of simulated $y_{\text{rep}}$ to observed $y$ using summary statistics (e.g., mean, variance, quantiles, or max absolute residual).</span>
+<span id="cb6-424"><a href="#cb6-424" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>If the posterior predictive distribution is consistent with the observed data, the model is plausible.</span>
+<span id="cb6-425"><a href="#cb6-425" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-426"><a href="#cb6-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-427"><a href="#cb6-427" aria-hidden="true" tabindex="-1"></a><span class="fu">## Robustness and Extensions</span></span>
+<span id="cb6-428"><a href="#cb6-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-429"><a href="#cb6-429" aria-hidden="true" tabindex="-1"></a><span class="fu">### Student-$t$ Noise for Robustness</span></span>
+<span id="cb6-430"><a href="#cb6-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-431"><a href="#cb6-431" aria-hidden="true" tabindex="-1"></a>Gaussian noise is sensitive to outliers. A robust alternative is **Student-$t$ noise**:</span>
+<span id="cb6-432"><a href="#cb6-432" aria-hidden="true" tabindex="-1"></a>$$y_i \sim t_\nu(f(x_i; \theta), \sigma^2),$$</span>
+<span id="cb6-433"><a href="#cb6-433" aria-hidden="true" tabindex="-1"></a>where $\nu$ controls tail heaviness (small $\nu$ allows larger outliers). As $\nu \to \infty$, recovers Gaussian. Often set $\nu = 3$ or $\nu = 4$ for robustness.</span>
+<span id="cb6-434"><a href="#cb6-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-435"><a href="#cb6-435" aria-hidden="true" tabindex="-1"></a>The likelihood becomes</span>
+<span id="cb6-436"><a href="#cb6-436" aria-hidden="true" tabindex="-1"></a>$$p(y_i \mid \ldots) \propto \left<span class="co">[</span><span class="ot"> 1 + \frac{[y_i - f(x_i; \theta)]^2}{\nu \sigma^2} \right</span><span class="co">]</span>^{-(\nu+1)/2},$$</span>
+<span id="cb6-437"><a href="#cb6-437" aria-hidden="true" tabindex="-1"></a>which is heavier-tailed than Gaussian. MCMC is needed to fit such models.</span>
+<span id="cb6-438"><a href="#cb6-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-439"><a href="#cb6-439" aria-hidden="true" tabindex="-1"></a><span class="fu">### Errors in All Variables</span></span>
+<span id="cb6-440"><a href="#cb6-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-441"><a href="#cb6-441" aria-hidden="true" tabindex="-1"></a>If both $x_i$ and $y_i$ are measured with error, the problem becomes significantly harder:</span>
+<span id="cb6-442"><a href="#cb6-442" aria-hidden="true" tabindex="-1"></a>$$x_i = x_i^{\text{true}} + \delta_{x,i}, \quad y_i = f(x_i^{\text{true}}; \theta) + \delta_{y,i}.$$</span>
+<span id="cb6-443"><a href="#cb6-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-444"><a href="#cb6-444" aria-hidden="true" tabindex="-1"></a>The true $x_i^{\text{true}}$ must be treated as latent variables, increasing dimensionality. Bayesian approaches handle this naturally via hierarchical modeling, but require additional priors and tuning.</span>
+<span id="cb6-445"><a href="#cb6-445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-446"><a href="#cb6-446" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb6-447"><a href="#cb6-447" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-448"><a href="#cb6-448" aria-hidden="true" tabindex="-1"></a>Bayesian regression provides a principled framework for learning functional relationships:</span>
+<span id="cb6-449"><a href="#cb6-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-450"><a href="#cb6-450" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Linear models** (parameters enter linearly) admit conjugate closed-form posteriors via Gaussian theory, enabling exact inference and efficient prediction.</span>
+<span id="cb6-451"><a href="#cb6-451" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Posterior prediction** integrates over parameter uncertainty, yielding predictive distributions that account for both fitted function and observation noise.</span>
+<span id="cb6-452"><a href="#cb6-452" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Nonlinear and generalized models** (nonlinear parameters, non-Gaussian likelihoods) require MCMC sampling or approximations.</span>
+<span id="cb6-453"><a href="#cb6-453" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Practical MCMC workflow** (specify model, choose priors, write log-posterior, run sampler, diagnose, summarize, plot) is systematic and reproducible.</span>
+<span id="cb6-454"><a href="#cb6-454" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Posterior predictive checks** verify model adequacy and reveal misfit.</span>
+<span id="cb6-455"><a href="#cb6-455" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Robustness** (heavy-tailed noise) and **latent variable models** (measurement error) extend the framework to real data.</span>
+<span id="cb6-456"><a href="#cb6-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-457"><a href="#cb6-457" aria-hidden="true" tabindex="-1"></a>The same logic applies across simple linear regression, polynomial fits, nonlinear curves, and generalized linear models: only the parameterization and likelihood change; the Bayesian template—prior $\times$ likelihood $/ $ evidence—remains constant.</span>
+<span id="cb6-458"><a href="#cb6-458" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-459"><a href="#cb6-459" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb6-460"><a href="#cb6-460" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-461"><a href="#cb6-461" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sivia, D. S., &amp; Skilling, J. (2006). *Data analysis: A Bayesian tutorial* (2nd ed.). Oxford University Press. Chapters 3 and 6.</span>
+<span id="cb6-462"><a href="#cb6-462" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>van der Linden, W. J., &amp; Hambleton, R. K. (Eds.). (2013). *Handbook of modern item response theory*. Springer. Chapter 21 (regression and related methods).</span>
+<span id="cb6-463"><a href="#cb6-463" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Gelman, A., Vehtari, A., Simpson, D., Burkner, P. C., &amp; Gabry, J. (2020). Bayesian workflow. *arXiv preprint arXiv:2011.01808*.</span>
+<span id="cb6-464"><a href="#cb6-464" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Falasco, G. (2026). Advanced Statistics for Physics Analysis. Course notes, lectures on Bayesian regression and MCMC (May 12 and May 15, 2026).</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

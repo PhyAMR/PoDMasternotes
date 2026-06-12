@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>10&nbsp; Hamiltonian Monte Carlo – Advanced Statistics for Physics Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/10_parallel_tempering.html" rel="next">
+<link href="../chapters/08_independence_and_gibbs.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/07_monte_carlo.html">PART III: MONTE CARLO METHODS</a></li><li class="breadcrumb-item"><a href="../chapters/09_hamiltonian_mc.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Advanced Statistics for Physics Analysis</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01_R_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to R for Bayesian inference</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: PROBABILITY RECAP</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02_discrete_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Discrete probability</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03_continuous_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Continuous probability and limit theorems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: BAYESIAN INFERENCE</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04_model_comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05_parameter_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian parameter estimation, intervals and prediction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06_gaussian_inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: MONTE CARLO METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07_monte_carlo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Monte Carlo methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08_independence_and_gibbs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09_hamiltonian_mc.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10_parallel_tempering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: APPLIED BAYESIAN MODELLING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11_bayesian_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12_probabilistic_programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13_glms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDIX</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99_appendix_source_code.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Appendix: Source code</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">10.1</span> Introduction</a></li>
+  <li><a href="#why-random-walk-metropolis-fails-in-high-dimensions" id="toc-why-random-walk-metropolis-fails-in-high-dimensions" class="nav-link" data-scroll-target="#why-random-walk-metropolis-fails-in-high-dimensions"><span class="header-section-number">10.2</span> Why random-walk Metropolis fails in high dimensions</a></li>
+  <li><a href="#hamiltonian-mechanics-the-continuous-story" id="toc-hamiltonian-mechanics-the-continuous-story" class="nav-link" data-scroll-target="#hamiltonian-mechanics-the-continuous-story"><span class="header-section-number">10.3</span> Hamiltonian mechanics: the continuous story</a>
+  <ul class="collapse">
+  <li><a href="#augmented-state-space-and-the-joint-distribution" id="toc-augmented-state-space-and-the-joint-distribution" class="nav-link" data-scroll-target="#augmented-state-space-and-the-joint-distribution"><span class="header-section-number">10.3.1</span> Augmented state space and the joint distribution</a></li>
+  <li><a href="#the-hamiltonian-function" id="toc-the-hamiltonian-function" class="nav-link" data-scroll-target="#the-hamiltonian-function"><span class="header-section-number">10.3.2</span> The Hamiltonian function</a></li>
+  <li><a href="#hamiltons-equations" id="toc-hamiltons-equations" class="nav-link" data-scroll-target="#hamiltons-equations"><span class="header-section-number">10.3.3</span> Hamilton’s equations</a></li>
+  <li><a href="#energy-conservation-and-volume-preservation" id="toc-energy-conservation-and-volume-preservation" class="nav-link" data-scroll-target="#energy-conservation-and-volume-preservation"><span class="header-section-number">10.3.4</span> Energy conservation and volume preservation</a></li>
+  </ul></li>
+  <li><a href="#the-leapfrog-integrator" id="toc-the-leapfrog-integrator" class="nav-link" data-scroll-target="#the-leapfrog-integrator"><span class="header-section-number">10.4</span> The leapfrog integrator</a>
+  <ul class="collapse">
+  <li><a href="#leapfrog-discretization" id="toc-leapfrog-discretization" class="nav-link" data-scroll-target="#leapfrog-discretization"><span class="header-section-number">10.4.1</span> Leapfrog discretization</a></li>
+  <li><a href="#why-leapfrog" id="toc-why-leapfrog" class="nav-link" data-scroll-target="#why-leapfrog"><span class="header-section-number">10.4.2</span> Why leapfrog?</a></li>
+  <li><a href="#example-2d-trajectory" id="toc-example-2d-trajectory" class="nav-link" data-scroll-target="#example-2d-trajectory"><span class="header-section-number">10.4.3</span> Example: 2D trajectory</a></li>
+  </ul></li>
+  <li><a href="#the-hmc-algorithm" id="toc-the-hmc-algorithm" class="nav-link" data-scroll-target="#the-hmc-algorithm"><span class="header-section-number">10.5</span> The HMC algorithm</a>
+  <ul class="collapse">
+  <li><a href="#why-the-metropolis-correction" id="toc-why-the-metropolis-correction" class="nav-link" data-scroll-target="#why-the-metropolis-correction"><span class="header-section-number">10.5.1</span> Why the Metropolis correction?</a></li>
+  <li><a href="#momentum-refresh" id="toc-momentum-refresh" class="nav-link" data-scroll-target="#momentum-refresh"><span class="header-section-number">10.5.2</span> Momentum refresh</a></li>
+  </ul></li>
+  <li><a href="#tuning-and-practical-guidance" id="toc-tuning-and-practical-guidance" class="nav-link" data-scroll-target="#tuning-and-practical-guidance"><span class="header-section-number">10.6</span> Tuning and practical guidance</a>
+  <ul class="collapse">
+  <li><a href="#step-size-varepsilon" id="toc-step-size-varepsilon" class="nav-link" data-scroll-target="#step-size-varepsilon"><span class="header-section-number">10.6.1</span> Step size <span class="math inline">\(\varepsilon\)</span></a></li>
+  <li><a href="#trajectory-length-and-number-of-steps-l" id="toc-trajectory-length-and-number-of-steps-l" class="nav-link" data-scroll-target="#trajectory-length-and-number-of-steps-l"><span class="header-section-number">10.6.2</span> Trajectory length and number of steps <span class="math inline">\(L\)</span></a></li>
+  <li><a href="#mass-matrix-m" id="toc-mass-matrix-m" class="nav-link" data-scroll-target="#mass-matrix-m"><span class="header-section-number">10.6.3</span> Mass matrix <span class="math inline">\(M\)</span></a></li>
+  <li><a href="#warm-up-and-adaptation" id="toc-warm-up-and-adaptation" class="nav-link" data-scroll-target="#warm-up-and-adaptation"><span class="header-section-number">10.6.4</span> Warm-up and adaptation</a></li>
+  </ul></li>
+  <li><a href="#divergent-transitions-and-energy-issues" id="toc-divergent-transitions-and-energy-issues" class="nav-link" data-scroll-target="#divergent-transitions-and-energy-issues"><span class="header-section-number">10.7</span> Divergent transitions and energy issues</a></li>
+  <li><a href="#nuts-no-u-turn-sampler" id="toc-nuts-no-u-turn-sampler" class="nav-link" data-scroll-target="#nuts-no-u-turn-sampler"><span class="header-section-number">10.8</span> NUTS: No-U-Turn Sampler</a>
+  <ul class="collapse">
+  <li><a href="#the-termination-criterion" id="toc-the-termination-criterion" class="nav-link" data-scroll-target="#the-termination-criterion"><span class="header-section-number">10.8.1</span> The termination criterion</a></li>
+  <li><a href="#advantages" id="toc-advantages" class="nav-link" data-scroll-target="#advantages"><span class="header-section-number">10.8.2</span> Advantages</a></li>
+  </ul></li>
+  <li><a href="#comparison-hmc-vs-random-walk-mh-vs-gibbs" id="toc-comparison-hmc-vs-random-walk-mh-vs-gibbs" class="nav-link" data-scroll-target="#comparison-hmc-vs-random-walk-mh-vs-gibbs"><span class="header-section-number">10.9</span> Comparison: HMC vs random-walk MH vs Gibbs</a></li>
+  <li><a href="#practical-recommendations" id="toc-practical-recommendations" class="nav-link" data-scroll-target="#practical-recommendations"><span class="header-section-number">10.10</span> Practical recommendations</a></li>
+  <li><a href="#stan-and-modern-practice" id="toc-stan-and-modern-practice" class="nav-link" data-scroll-target="#stan-and-modern-practice"><span class="header-section-number">10.11</span> Stan and modern practice</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">10.12</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/07_monte_carlo.html">PART III: MONTE CARLO METHODS</a></li><li class="breadcrumb-item"><a href="../chapters/09_hamiltonian_mc.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">10.1</span> Introduction</h2>
+<p>Markov chain Monte Carlo (MCMC) methods form the backbone of modern Bayesian inference, but they face a fundamental challenge: as dimension and posterior curvature increase, standard samplers become inefficient. Random-walk Metropolis–Hastings requires ever-smaller step sizes to maintain acceptance, leading to slow exploration and highly autocorrelated samples. Independence samplers, which propose large moves, suffer equally in high dimensions as their proposals become increasingly unlikely.</p>
+<p>Hamiltonian Monte Carlo (HMC) breaks this curse of dimensionality by exploiting the geometry of the target distribution. Instead of proposing moves blindly, it uses gradient information to propose distant, geometrically informed steps that remain probable under the posterior. By augmenting the state space with auxiliary momentum variables, HMC transforms random exploration into ballistic motion guided by the log-posterior surface.</p>
+<p>This chapter synthesizes the mechanics, practical implementation, and automatic tuning of HMC. We cover the theoretical foundation (Hamiltonian dynamics and energy conservation), the discrete leapfrog integrator, the Metropolis correction for discretization error, and modern variants like the No-U-Turn Sampler (NUTS) that remove manual tuning. We also discuss when HMC is preferable to alternatives and highlight its role in packages like Stan.</p>
+</section>
+<section id="why-random-walk-metropolis-fails-in-high-dimensions" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="why-random-walk-metropolis-fails-in-high-dimensions"><span class="header-section-number">10.2</span> Why random-walk Metropolis fails in high dimensions</h2>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span>Standard random-walk Metropolis proposes local moves: <span class="math display">\[
+x' = x + \eta, \quad \eta \sim \mathcal{N}(0, \Sigma_{\text{prop}}).
+\]</span></p>
+<p>Acceptance probability is <span class="math inline">\(\alpha = \min(1, e^{-\Delta \log \pi})\)</span>, where <span class="math inline">\(\Delta \log \pi = \log \pi(x') - \log \pi(x)\)</span>.</p>
+<p><strong>The curse:</strong> In <span class="math inline">\(d\)</span> dimensions, for a fixed acceptance rate (typically <span class="math inline">\(\sim 0.23\)</span> for the Metropolis algorithm in the limit), the optimal step size scales as <span class="math inline">\(O(d^{-1/2})\)</span>. This means: - To maintain constant acceptance as <span class="math inline">\(d\)</span> grows, step sizes must shrink like <span class="math inline">\(d^{-1/2}\)</span>. - Distance explored per iteration scales as step size <span class="math inline">\(\times \sqrt{d} \sim O(1)\)</span>, regardless of dimension. - <strong>Autocorrelation grows linearly with <span class="math inline">\(d\)</span></strong>, making the effective sample size collapse.</p>
+<p>For correlated posteriors with high curvature (e.g., a narrow ridge), the problem is even worse: proposals must shrink to match the local geometry, requiring <span class="math inline">\(O(d)\)</span> or <span class="math inline">\(O(d^2)\)</span> steps to traverse the parameter space.</p>
+</div>
+<div class="example">
+<p><strong>Bivariate Gaussian with strong correlation</strong></p>
+<p>Consider a target <span class="math inline">\(\pi(x) = \mathcal{N}(0, \Sigma)\)</span> with <span class="math display">\[
+\Sigma = \begin{pmatrix} 1 &amp; \rho \\ \rho &amp; 1 \end{pmatrix}, \quad \rho = 0.95.
+\]</span></p>
+<p>The ridge is elongated; random-walk MH must take tiny steps perpendicular to the ridge to avoid rejection, then many small steps along the ridge. For a <span class="math inline">\(d=100\)</span>-dimensional elongated Gaussian, RW-MH becomes prohibitively slow. HMC, by following the natural flow of the posterior, explores this space in far fewer iterations.</p>
+</div>
+</section>
+<section id="hamiltonian-mechanics-the-continuous-story" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="hamiltonian-mechanics-the-continuous-story"><span class="header-section-number">10.3</span> Hamiltonian mechanics: the continuous story</h2>
+<p>Hamiltonian dynamics govern many physical systems. We repurpose them for sampling by augmenting the parameter space with momentum variables.</p>
+<section id="augmented-state-space-and-the-joint-distribution" class="level3" data-number="10.3.1">
+<h3 data-number="10.3.1" class="anchored" data-anchor-id="augmented-state-space-and-the-joint-distribution"><span class="header-section-number">10.3.1</span> Augmented state space and the joint distribution</h3>
+<p>Let <span class="math inline">\(\mathbf{q} \in \mathbb{R}^d\)</span> be the parameters of interest (confusingly called “position” in physics). We introduce <strong>momentum</strong> <span class="math inline">\(\mathbf{p} \in \mathbb{R}^d\)</span>, an auxiliary variable sampled from a Gaussian with covariance matrix <span class="math inline">\(M\)</span> (the “mass matrix”):</p>
+<div class="definition">
+<p>The <strong>augmented target distribution</strong> is <span class="math display">\[
+\pi(\mathbf{q}, \mathbf{p}) = \pi(\mathbf{q}) \, f(\mathbf{p} \mid M),
+\]</span> where <span class="math inline">\(f(\mathbf{p} \mid M) = \mathcal{N}(\mathbf{0}, M)\)</span> is the momentum density.</p>
+<p><strong>Crucial observation:</strong> Marginalizing over <span class="math inline">\(\mathbf{p}\)</span> recovers the original target: <span class="math display">\[
+\int \pi(\mathbf{q}, \mathbf{p}) \, d\mathbf{p} = \pi(\mathbf{q}) \int \mathcal{N}(\mathbf{0}, M) \, d\mathbf{p} = \pi(\mathbf{q}).
+\]</span></p>
+<p>Thus, sampling <span class="math inline">\((\mathbf{q}, \mathbf{p})\)</span> and discarding <span class="math inline">\(\mathbf{p}\)</span> gives samples from <span class="math inline">\(\pi(\mathbf{q})\)</span>.</p>
+</div>
+</section>
+<section id="the-hamiltonian-function" class="level3" data-number="10.3.2">
+<h3 data-number="10.3.2" class="anchored" data-anchor-id="the-hamiltonian-function"><span class="header-section-number">10.3.2</span> The Hamiltonian function</h3>
+<p>The joint density factorizes as <span class="math display">\[
+\pi(\mathbf{q}, \mathbf{p}) = \pi(\mathbf{q}) \, \mathcal{N}(\mathbf{0}, M) \propto \exp\left[-U(\mathbf{q}) - K(\mathbf{p})\right],
+\]</span></p>
+<p>where we define the <strong>Hamiltonian</strong> <span class="math inline">\(H(\mathbf{q}, \mathbf{p}) = U(\mathbf{q}) + K(\mathbf{p})\)</span>:</p>
+<div class="definition">
+<ul>
+<li><strong>Potential energy:</strong> <span class="math inline">\(U(\mathbf{q}) = -\log \pi(\mathbf{q})\)</span>.</li>
+<li><strong>Kinetic energy:</strong> <span class="math inline">\(K(\mathbf{p}) = \frac{1}{2} \mathbf{p}^T M^{-1} \mathbf{p}\)</span>.</li>
+</ul>
+<p>The <strong>Hamiltonian</strong> is <span class="math inline">\(H(\mathbf{q}, \mathbf{p}) = U(\mathbf{q}) + K(\mathbf{p})\)</span>.</p>
+<p>The joint density becomes <span class="math inline">\(\pi(\mathbf{q}, \mathbf{p}) \propto \exp[-H(\mathbf{q}, \mathbf{p})]\)</span>.</p>
+</div>
+<p>The mass matrix <span class="math inline">\(M\)</span> controls the geometry: a diagonal <span class="math inline">\(M\)</span> with larger entries allows larger steps in those directions. The default is <span class="math inline">\(M = I\)</span> (identity), but adaptive mass matrices can be tuned to match posterior covariance.</p>
+</section>
+<section id="hamiltons-equations" class="level3" data-number="10.3.3">
+<h3 data-number="10.3.3" class="anchored" data-anchor-id="hamiltons-equations"><span class="header-section-number">10.3.3</span> Hamilton’s equations</h3>
+<p>The dynamics of a Hamiltonian system are governed by:</p>
+<div class="theorem">
+<p><strong>Hamilton’s equations of motion:</strong> <span class="math display">\[
+\frac{d\mathbf{q}}{dt} = \nabla_{\mathbf{p}} H = M^{-1} \mathbf{p},
+\]</span> <span class="math display">\[
+\frac{d\mathbf{p}}{dt} = -\nabla_{\mathbf{q}} H = -\nabla_{\mathbf{q}} U(\mathbf{q}) = \nabla_{\mathbf{q}} \log \pi(\mathbf{q}).
+\]</span></p>
+<p><strong>Interpretation:</strong> - Position evolves along the momentum direction, scaled by <span class="math inline">\(M^{-1}\)</span>. - Momentum evolves in the direction of the gradient (natural gradient of log-posterior). - <strong>Key property:</strong> These equations naturally navigate toward high-probability regions via <span class="math inline">\(\nabla \log \pi\)</span>.</p>
+</div>
+</section>
+<section id="energy-conservation-and-volume-preservation" class="level3" data-number="10.3.4">
+<h3 data-number="10.3.4" class="anchored" data-anchor-id="energy-conservation-and-volume-preservation"><span class="header-section-number">10.3.4</span> Energy conservation and volume preservation</h3>
+<p>An exact Hamiltonian trajectory conserves total energy <span class="math inline">\(H(\mathbf{q}(t), \mathbf{p}(t)) = \text{const}\)</span>. This has profound consequences:</p>
+<div class="proposition">
+<p><strong>Energy conservation:</strong> Along an exact Hamiltonian trajectory, <span class="math inline">\(\frac{dH}{dt} = 0\)</span>.</p>
+<p><strong>Proof:</strong> <span class="math display">\[
+\frac{dH}{dt} = \dot{\mathbf{q}}^T \nabla_{\mathbf{q}} H + \dot{\mathbf{p}}^T \nabla_{\mathbf{p}} H = (\nabla_{\mathbf{p}} H)^T \nabla_{\mathbf{q}} H + (-\nabla_{\mathbf{q}} H)^T \nabla_{\mathbf{p}} H = 0.
+\]</span></p>
+</div>
+<p>Exact trajectories move along <strong>level sets</strong> of the Hamiltonian, staying on surfaces of constant <span class="math inline">\(H\)</span>. Since <span class="math inline">\(\pi(\mathbf{q}, \mathbf{p}) \propto e^{-H}\)</span>, exact trajectories move along level sets of the joint density — they are ideal proposals!</p>
+<p>Additionally, Hamiltonian flow is <strong>volume-preserving</strong> (symplectic) in phase space:</p>
+<div class="proposition">
+<p><strong>Liouville’s theorem:</strong> The divergence of the Hamiltonian velocity field is zero: <span class="math display">\[
+\nabla \cdot \begin{pmatrix} \dot{\mathbf{q}} \\ \dot{\mathbf{p}} \end{pmatrix} = \nabla_{\mathbf{q}} \cdot (M^{-1} \mathbf{p}) + \nabla_{\mathbf{p}} \cdot (-\nabla_{\mathbf{q}} U) = 0 + 0 = 0.
+\]</span></p>
+<p>Thus Hamiltonian flow preserves volume in phase space and leaves <span class="math inline">\(\pi(\mathbf{q}, \mathbf{p})\)</span> invariant.</p>
+</div>
+</section>
+</section>
+<section id="the-leapfrog-integrator" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="the-leapfrog-integrator"><span class="header-section-number">10.4</span> The leapfrog integrator</h2>
+<p>We cannot simulate Hamiltonian dynamics exactly on a computer. Instead, we discretize time using the <strong>leapfrog integrator</strong>, which maintains approximate energy conservation and reversibility while being computationally efficient.</p>
+<section id="leapfrog-discretization" class="level3" data-number="10.4.1">
+<h3 data-number="10.4.1" class="anchored" data-anchor-id="leapfrog-discretization"><span class="header-section-number">10.4.1</span> Leapfrog discretization</h3>
+<p>Given current state <span class="math inline">\((\mathbf{q}_0, \mathbf{p}_0)\)</span>, step size <span class="math inline">\(\varepsilon &gt; 0\)</span>, and number of steps <span class="math inline">\(L\)</span>, one leapfrog step is:</p>
+<div class="note">
+<p><strong>One leapfrog step</strong> (from <span class="math inline">\((\mathbf{q}_t, \mathbf{p}_t)\)</span> to <span class="math inline">\((\mathbf{q}_{t+1}, \mathbf{p}_{t+1})\)</span>):</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbf{p}_{t+\varepsilon/2} &amp;= \mathbf{p}_t - \frac{\varepsilon}{2} \nabla U(\mathbf{q}_t), \\
+\mathbf{q}_{t+\varepsilon} &amp;= \mathbf{q}_t + \varepsilon M^{-1} \mathbf{p}_{t+\varepsilon/2}, \\
+\mathbf{p}_{t+\varepsilon} &amp;= \mathbf{p}_{t+\varepsilon/2} - \frac{\varepsilon}{2} \nabla U(\mathbf{q}_{t+\varepsilon}).
+\end{aligned}
+\]</span></p>
+<p>Repeating <span class="math inline">\(L\)</span> times produces a trajectory of length <span class="math inline">\(T = L \varepsilon\)</span>.</p>
+</div>
+<p>The name “leapfrog” reflects the staggered half-steps: momentum is updated at half-steps, position at full steps.</p>
+</section>
+<section id="why-leapfrog" class="level3" data-number="10.4.2">
+<h3 data-number="10.4.2" class="anchored" data-anchor-id="why-leapfrog"><span class="header-section-number">10.4.2</span> Why leapfrog?</h3>
+<p>The leapfrog integrator has three essential properties:</p>
+<div class="theorem">
+<p>The leapfrog integrator is:</p>
+<ol type="1">
+<li><p><strong>Reversible:</strong> If we run the integrator backward (reversing <span class="math inline">\(\varepsilon \to -\varepsilon\)</span> and flipping momentum at the end), we recover the initial state exactly (up to numerical precision). This ensures the proposal <span class="math inline">\((\mathbf{q}', \mathbf{p}') = \text{Leapfrog}(\mathbf{q}, \mathbf{p}, \varepsilon, L)\)</span> and its reverse satisfy <span class="math inline">\(q((\mathbf{q}', \mathbf{p}') \to (\mathbf{q}, \mathbf{p})) = q((\mathbf{q}, \mathbf{p}) \to (\mathbf{q}', \mathbf{p}'))\)</span>, so the forward and reverse probabilities cancel in the Metropolis ratio.</p></li>
+<li><p><strong>Volume-preserving:</strong> The leapfrog map is a composition of volume-preserving transformations and preserves the Jacobian determinant. This reduces the Metropolis acceptance formula.</p></li>
+<li><p><strong>Symplectic:</strong> The integrator is a symplectic integrator, meaning it preserves the symplectic structure <span class="math inline">\(\mathbf{q} \wedge \mathbf{p}\)</span>. The error in energy per step is <span class="math inline">\(O(\varepsilon^2)\)</span>, so total error over <span class="math inline">\(L\)</span> steps is <span class="math inline">\(O(\varepsilon^2)\)</span>.</p></li>
+</ol>
+</div>
+<p>For small <span class="math inline">\(\varepsilon\)</span>, the discretization error is tiny, energy error <span class="math inline">\(\Delta H \approx O(\varepsilon^2)\)</span> accumulates slowly, and acceptance rates remain high.</p>
+</section>
+<section id="example-2d-trajectory" class="level3" data-number="10.4.3">
+<h3 data-number="10.4.3" class="anchored" data-anchor-id="example-2d-trajectory"><span class="header-section-number">10.4.3</span> Example: 2D trajectory</h3>
+<p>Let us visualize a leapfrog trajectory in 2D phase space for the bivariate Gaussian example.</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1" data-lst-cap="Leapfrog trajectory"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define target (log-posterior and gradient)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.95</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>Sigma_inv <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, rho, rho, <span class="dv">1</span>), <span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>log_pi <span class="ot">&lt;-</span> <span class="cf">function</span>(q) {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">t</span>(q) <span class="sc">%*%</span> Sigma_inv <span class="sc">%*%</span> q)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>grad_U <span class="ot">&lt;-</span> <span class="cf">function</span>(q) {</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  Sigma_inv <span class="sc">%*%</span> q</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Leapfrog integrator</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>leapfrog <span class="ot">&lt;-</span> <span class="cf">function</span>(q, p, epsilon, L) {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> epsilon <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>L) {</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    q <span class="ot">&lt;-</span> q <span class="sc">+</span> epsilon <span class="sc">*</span> p</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="sc">&lt;</span> L) {</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      p <span class="ot">&lt;-</span> p <span class="sc">-</span> epsilon <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> epsilon <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">q =</span> q, <span class="at">p =</span> <span class="sc">-</span>p)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate trajectory and track states</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>q0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>epsilon <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>q_curr <span class="ot">&lt;-</span> q0</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>p_curr <span class="ot">&lt;-</span> p0</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>trajectory_q <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, L<span class="sc">+</span><span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>trajectory_p <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, L<span class="sc">+</span><span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>trajectory_q[<span class="dv">1</span>,] <span class="ot">&lt;-</span> q0</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>trajectory_p[<span class="dv">1</span>,] <span class="ot">&lt;-</span> p0</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (step <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>L) {</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Half-step momentum</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>  p_curr <span class="ot">&lt;-</span> p_curr <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> epsilon <span class="sc">*</span> <span class="fu">grad_U</span>(q_curr)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Full-step position</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  q_curr <span class="ot">&lt;-</span> q_curr <span class="sc">+</span> epsilon <span class="sc">*</span> p_curr</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Half-step momentum</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>  p_curr <span class="ot">&lt;-</span> p_curr <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> epsilon <span class="sc">*</span> <span class="fu">grad_U</span>(q_curr)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>  trajectory_q[step<span class="sc">+</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> q_curr</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>  trajectory_p[step<span class="sc">+</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> p_curr</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot phase space trajectory</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trajectory_q[,<span class="dv">1</span>], trajectory_p[,<span class="dv">1</span>],</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>, <span class="at">col =</span> <span class="st">"#d62728"</span>,</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Leapfrog Trajectory in Phase Space (q1, p1)"</span>,</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"q1 (position)"</span>, <span class="at">ylab =</span> <span class="st">"p1 (momentum)"</span>)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(q0[<span class="dv">1</span>], p0[<span class="dv">1</span>], <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">1.5</span>, <span class="at">col =</span> <span class="st">"#2ca02c"</span>)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(trajectory_q[L<span class="sc">+</span><span class="dv">1</span>, <span class="dv">1</span>], trajectory_p[L<span class="sc">+</span><span class="dv">1</span>, <span class="dv">1</span>], <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">1.5</span>, <span class="at">col =</span> <span class="st">"#1f77b4"</span>)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Trajectory"</span>, <span class="st">"Start"</span>, <span class="st">"End"</span>),</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#d62728"</span>, <span class="st">"#2ca02c"</span>, <span class="st">"#1f77b4"</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">19</span>, <span class="dv">19</span>),</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="cn">NA</span>, <span class="cn">NA</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"grey90"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="09_hamiltonian_mc_files/figure-html/lst-leapfrog-trajectory-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Leapfrog trajectory (red spiral) in 2D phase space for a correlated bivariate Gaussian, starting from q=(2,2), p=(1,0). The trajectory spirals inward toward the mode due to energy dissipation in the discretization, then the Metropolis correction either accepts or rejects.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="the-hmc-algorithm" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="the-hmc-algorithm"><span class="header-section-number">10.5</span> The HMC algorithm</h2>
+<p>Combining leapfrog integration with Metropolis acceptance yields the complete HMC algorithm.</p>
+<div class="note">
+<p><strong>HMC Algorithm</strong></p>
+<p>Given current position <span class="math inline">\(\mathbf{q}_t\)</span>:</p>
+<ol type="1">
+<li><strong>Refresh momentum:</strong> Draw <span class="math inline">\(\mathbf{p} \sim \mathcal{N}(\mathbf{0}, M)\)</span>.</li>
+<li><strong>Store current energy:</strong> Compute <span class="math inline">\(H_{\text{old}} = U(\mathbf{q}_t) + K(\mathbf{p})\)</span>.</li>
+<li><strong>Integrate:</strong> Run leapfrog for <span class="math inline">\(L\)</span> steps with step size <span class="math inline">\(\varepsilon\)</span>: <span class="math display">\[
+(\mathbf{q}', \mathbf{p}') = \text{Leapfrog}(\mathbf{q}_t, \mathbf{p}, \varepsilon, L).
+\]</span></li>
+<li><strong>Compute proposal energy:</strong> <span class="math inline">\(H_{\text{new}} = U(\mathbf{q}') + K(\mathbf{p}')\)</span>.</li>
+<li><strong>Metropolis correction:</strong> Accept with probability <span class="math display">\[
+\alpha = \min\left(1, \exp(-\Delta H)\right), \quad \Delta H = H_{\text{new}} - H_{\text{old}}.
+\]</span></li>
+<li><strong>Move or reject:</strong>
+<ul>
+<li>If <span class="math inline">\(u \sim \text{Uniform}(0,1) &lt; \alpha\)</span>: set <span class="math inline">\(\mathbf{q}_{t+1} = \mathbf{q}'\)</span>.</li>
+<li>Else: set <span class="math inline">\(\mathbf{q}_{t+1} = \mathbf{q}_t\)</span>.</li>
+</ul></li>
+</ol>
+</div>
+<section id="why-the-metropolis-correction" class="level3" data-number="10.5.1">
+<h3 data-number="10.5.1" class="anchored" data-anchor-id="why-the-metropolis-correction"><span class="header-section-number">10.5.1</span> Why the Metropolis correction?</h3>
+<p>If we could simulate Hamiltonian dynamics exactly, <span class="math inline">\(\Delta H = 0\)</span> and every proposal would be accepted. However, leapfrog introduces discretization error <span class="math inline">\(\Delta H \approx O(L \varepsilon^2)\)</span>. The Metropolis step: - Removes any bias introduced by discretization. - Restores exact invariance to the joint distribution <span class="math inline">\(\pi(\mathbf{q}, \mathbf{p})\)</span>. - Ensures that marginalizing over <span class="math inline">\(\mathbf{p}\)</span> gives exact samples from <span class="math inline">\(\pi(\mathbf{q})\)</span>.</p>
+<p>A smaller <span class="math inline">\(\varepsilon\)</span> reduces discretization error and increases acceptance; a larger <span class="math inline">\(\varepsilon\)</span> reduces computation but risks rejection.</p>
+</section>
+<section id="momentum-refresh" class="level3" data-number="10.5.2">
+<h3 data-number="10.5.2" class="anchored" data-anchor-id="momentum-refresh"><span class="header-section-number">10.5.2</span> Momentum refresh</h3>
+<p>In step 1, we draw a fresh momentum independently of the previous momentum. This is crucial: otherwise, the trajectory would continue indefinitely on level sets of <span class="math inline">\(H\)</span>, exploring only one mode. By resampling <span class="math inline">\(\mathbf{p}\)</span> at each iteration, we: - Jump between level sets of <span class="math inline">\(H\)</span> (exploring different energies). - Allow exploration of the full parameter space. - Introduce randomness necessary for ergodicity.</p>
+<p>Notably, resampling <span class="math inline">\(\mathbf{p} \sim \mathcal{N}(\mathbf{0}, M)\)</span> is <strong>Gibbs sampling</strong> in the <span class="math inline">\((q, p)\)</span> space.</p>
+</section>
+</section>
+<section id="tuning-and-practical-guidance" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="tuning-and-practical-guidance"><span class="header-section-number">10.6</span> Tuning and practical guidance</h2>
+<p>HMC’s efficiency depends critically on three tuning parameters.</p>
+<section id="step-size-varepsilon" class="level3" data-number="10.6.1">
+<h3 data-number="10.6.1" class="anchored" data-anchor-id="step-size-varepsilon"><span class="header-section-number">10.6.1</span> Step size <span class="math inline">\(\varepsilon\)</span></h3>
+<div class="definition">
+<p>The <strong>step size</strong> <span class="math inline">\(\varepsilon\)</span> controls discretization granularity.</p>
+<ul>
+<li><strong>Too small:</strong> <span class="math inline">\(\varepsilon \to 0\)</span> gives accurate proposals, high acceptance, but slow exploration (many gradient evaluations).</li>
+<li><strong>Too large:</strong> <span class="math inline">\(\varepsilon\)</span> large causes energy errors to accumulate; acceptance rate <span class="math inline">\(\alpha\)</span> drops.</li>
+</ul>
+<p><strong>Typical rule:</strong> Target acceptance rate of 0.65–0.80 (varies slightly with <span class="math inline">\(d\)</span>). Adjust <span class="math inline">\(\varepsilon\)</span> to match this during warm-up.</p>
+</div>
+</section>
+<section id="trajectory-length-and-number-of-steps-l" class="level3" data-number="10.6.2">
+<h3 data-number="10.6.2" class="anchored" data-anchor-id="trajectory-length-and-number-of-steps-l"><span class="header-section-number">10.6.2</span> Trajectory length and number of steps <span class="math inline">\(L\)</span></h3>
+<div class="definition">
+<p>The <strong>trajectory length</strong> is <span class="math inline">\(T = L \varepsilon\)</span>. A longer trajectory explores farther but at higher computational cost.</p>
+<ul>
+<li><strong>Too few steps:</strong> Behaves like random-walk MH (local exploration).</li>
+<li><strong>Too many steps:</strong> Trajectories double back on themselves (waste computation and may reject).</li>
+</ul>
+<p><strong>Effective range:</strong> Aim for <span class="math inline">\(L \in [20, 100]\)</span> initially; tune via ESS per gradient evaluation.</p>
+</div>
+</section>
+<section id="mass-matrix-m" class="level3" data-number="10.6.3">
+<h3 data-number="10.6.3" class="anchored" data-anchor-id="mass-matrix-m"><span class="header-section-number">10.6.3</span> Mass matrix <span class="math inline">\(M\)</span></h3>
+<p>The mass matrix controls how momentum couples to position. With <span class="math inline">\(M = I\)</span> (identity), kinetic energy is <span class="math inline">\(K(\mathbf{p}) = \frac{1}{2} \|\mathbf{p}\|^2\)</span> — isotropic.</p>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span><strong>Adaptive mass matrix:</strong> If the posterior has vastly different scales or high correlations, an isotropic <span class="math inline">\(M\)</span> is inefficient. Adaptive HMC (as implemented in Stan) estimates the posterior covariance <span class="math inline">\(\Sigma_{\text{post}}\)</span> during warm-up and sets <span class="math inline">\(M = \Sigma_{\text{post}}^{-1}\)</span>. This makes the “momentum-space” geometry match the “parameter-space” geometry, enabling larger steps and better mixing.</p>
+<p>Equivalently, we can work with a reparametrization or preconditioning. The improvement can be dramatic in correlated or high-dimensional problems.</p>
+</div>
+</section>
+<section id="warm-up-and-adaptation" class="level3" data-number="10.6.4">
+<h3 data-number="10.6.4" class="anchored" data-anchor-id="warm-up-and-adaptation"><span class="header-section-number">10.6.4</span> Warm-up and adaptation</h3>
+<p>Most HMC implementations (especially Stan) use a <strong>warm-up</strong> (or “burn-in”) phase to: 1. Find a reasonable starting point and estimate posterior covariance. 2. Adapt <span class="math inline">\(\varepsilon\)</span> to target a desired acceptance rate. 3. Adapt <span class="math inline">\(M\)</span> to match posterior structure. 4. Discard warm-up samples as they are not from the stationary distribution.</p>
+<p>After warm-up, <span class="math inline">\(\varepsilon\)</span> and <span class="math inline">\(M\)</span> are fixed, and the algorithm becomes a standard Markov chain with invariant distribution <span class="math inline">\(\pi(\mathbf{q})\)</span>.</p>
+</section>
+</section>
+<section id="divergent-transitions-and-energy-issues" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="divergent-transitions-and-energy-issues"><span class="header-section-number">10.7</span> Divergent transitions and energy issues</h2>
+<p>HMC can fail in subtle ways:</p>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span><strong>Divergent transitions</strong> occur when the numerical integration goes unstable, typically because: - Step size <span class="math inline">\(\varepsilon\)</span> is too large and energy error <span class="math inline">\(|\Delta H|\)</span> becomes very large, causing rejection. - Posterior has regions of high curvature that the integrator cannot resolve. - Posterior has heavy tails or mild multimodality.</p>
+<p><strong>Indicator:</strong> Many proposals have <span class="math inline">\(\Delta H \gg 10\)</span> (large energy errors).</p>
+<p><strong>Solution:</strong> Reduce <span class="math inline">\(\varepsilon\)</span>, increase warm-up iterations, or use an adaptive mass matrix. Stan prints warnings about divergences; they suggest the sampler is not exploring properly and posterior inferences may be biased.</p>
+</div>
+</section>
+<section id="nuts-no-u-turn-sampler" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="nuts-no-u-turn-sampler"><span class="header-section-number">10.8</span> NUTS: No-U-Turn Sampler</h2>
+<p>Modern software like Stan uses the <strong>No-U-Turn Sampler (NUTS)</strong>, which removes the need to manually tune <span class="math inline">\(L\)</span>.</p>
+<section id="the-termination-criterion" class="level3" data-number="10.8.1">
+<h3 data-number="10.8.1" class="anchored" data-anchor-id="the-termination-criterion"><span class="header-section-number">10.8.1</span> The termination criterion</h3>
+<p>Instead of running a fixed number of steps <span class="math inline">\(L\)</span>, NUTS adaptively expands the trajectory until it would begin to double back:</p>
+<div class="definition">
+<p><strong>Doubling criterion:</strong> A trajectory “doubles back” (makes a U-turn) when the “generalized velocity” <span class="math inline">\((\mathbf{q}' - \mathbf{q}_{\text{left}})^T \mathbf{p}\)</span> becomes negative, indicating backward motion. More precisely, a U-turn is detected using the dot product: <span class="math display">\[
+(\mathbf{q}_{\text{right}} - \mathbf{q}_{\text{left}})^T \mathbf{p}_{\text{right}} &lt; 0 \quad \text{or} \quad (\mathbf{q}_{\text{right}} - \mathbf{q}_{\text{left}})^T \mathbf{p}_{\text{left}} &lt; 0.
+\]</span></p>
+<p>NUTS extends the trajectory by “doubling” (adding steps in the same direction) until a U-turn is detected, then accepts from the entire trajectory.</p>
+</div>
+</section>
+<section id="advantages" class="level3" data-number="10.8.2">
+<h3 data-number="10.8.2" class="anchored" data-anchor-id="advantages"><span class="header-section-number">10.8.2</span> Advantages</h3>
+<ul>
+<li><strong>Eliminates manual tuning of <span class="math inline">\(L\)</span>:</strong> The algorithm automatically determines trajectory length.</li>
+<li><strong>Prevents wasted computation:</strong> Stops before the trajectory begins circling back.</li>
+<li><strong>Maintains properties:</strong> The randomized doubling ensures detailed balance is preserved (via Metropolis-from-trajectory).</li>
+<li><strong>Stan implementation:</strong> NUTS is the default sampler in Stan with automatic warm-up and adaptation.</li>
+</ul>
+</section>
+</section>
+<section id="comparison-hmc-vs-random-walk-mh-vs-gibbs" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="comparison-hmc-vs-random-walk-mh-vs-gibbs"><span class="header-section-number">10.9</span> Comparison: HMC vs random-walk MH vs Gibbs</h2>
+<div class="proposition">
+<p><strong>Scaling with dimension <span class="math inline">\(d\)</span>:</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Sampler</th>
+<th>Acceptance</th>
+<th>Auto-correlation</th>
+<th>ESS per gradient</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>RW-MH</td>
+<td><span class="math inline">\(O(1)\)</span></td>
+<td><span class="math inline">\(O(d)\)</span></td>
+<td><span class="math inline">\(O(d^{-2})\)</span></td>
+</tr>
+<tr class="even">
+<td>Gibbs</td>
+<td><span class="math inline">\(1\)</span></td>
+<td><span class="math inline">\(O(d)\)</span></td>
+<td><span class="math inline">\(O(d^{-1})\)</span> if uncorrelated</td>
+</tr>
+<tr class="odd">
+<td>HMC</td>
+<td><span class="math inline">\(0.6\)</span>–<span class="math inline">\(0.9\)</span></td>
+<td><span class="math inline">\(O(\sqrt{d})\)</span> or better</td>
+<td><span class="math inline">\(O(1)\)</span> to <span class="math inline">\(O(d^{-1})\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>(Rough asymptotics; constants matter.)</p>
+<p><strong>Practical implications:</strong> - <strong>RW-MH:</strong> Simple to implement, no gradients needed. But prohibitively slow for <span class="math inline">\(d &gt; 20\)</span> unless posterior is nearly isotropic. - <strong>Gibbs:</strong> Requires conditional distributions. Fast if draws from conditionals are cheap. Struggles with correlations. - <strong>HMC:</strong> Requires gradients but dramatically outperforms RW-MH in medium to high dimensions (<span class="math inline">\(d \geq 10\)</span>). Excellent when gradients are available (automatic differentiation).</p>
+</div>
+<div class="example">
+<p><strong>Comparison on correlated bivariate Gaussian</strong></p>
+<p>We sample from <span class="math inline">\(\mathcal{N}(0, \Sigma)\)</span> with <span class="math inline">\(\Sigma = \begin{pmatrix} 1 &amp; 0.95 \\ 0.95 &amp; 1 \end{pmatrix}\)</span> using: 1. Random-walk MH with <span class="math inline">\(\text{step} = 0.3\)</span>. 2. HMC with <span class="math inline">\(\varepsilon = 0.15\)</span>, <span class="math inline">\(L = 20\)</span>.</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2" data-lst-cap="Hmc vs rwmh"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.95</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, rho, rho, <span class="dv">1</span>), <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>Sigma_inv <span class="ot">&lt;-</span> <span class="fu">solve</span>(Sigma)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>log_pi <span class="ot">&lt;-</span> <span class="cf">function</span>(q) {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">t</span>(q) <span class="sc">%*%</span> Sigma_inv <span class="sc">%*%</span> q)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>grad_U <span class="ot">&lt;-</span> <span class="cf">function</span>(q) {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  Sigma_inv <span class="sc">%*%</span> q</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># RW-MH</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>rw_mh <span class="ot">&lt;-</span> <span class="cf">function</span>(n_iter, <span class="at">step =</span> <span class="fl">0.3</span>) {</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  q <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  samples <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, n_iter, <span class="dv">2</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  acc <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_iter) {</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    q_prop <span class="ot">&lt;-</span> q <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">2</span>, <span class="dv">0</span>, step)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    log_alpha <span class="ot">&lt;-</span> <span class="fu">log_pi</span>(q_prop) <span class="sc">-</span> <span class="fu">log_pi</span>(q)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> log_alpha) {</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>      q <span class="ot">&lt;-</span> q_prop</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>      acc <span class="ot">&lt;-</span> acc <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    samples[i, ] <span class="ot">&lt;-</span> q</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">samples =</span> samples, <span class="at">acc_rate =</span> acc <span class="sc">/</span> n_iter)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Leapfrog for HMC</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>leapfrog <span class="ot">&lt;-</span> <span class="cf">function</span>(q, p, eps, L) {</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> eps <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>L) {</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    q <span class="ot">&lt;-</span> q <span class="sc">+</span> eps <span class="sc">*</span> p</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="sc">&lt;</span> L) p <span class="ot">&lt;-</span> p <span class="sc">-</span> eps <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> eps <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">q =</span> q, <span class="at">p =</span> <span class="sc">-</span>p)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co"># HMC</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>hmc <span class="ot">&lt;-</span> <span class="cf">function</span>(n_iter, <span class="at">eps =</span> <span class="fl">0.15</span>, <span class="at">L =</span> <span class="dv">20</span>) {</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>  q <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  samples <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, n_iter, <span class="dv">2</span>)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  acc <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_iter) {</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">2</span>)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    H_old <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">t</span>(q) <span class="sc">%*%</span> Sigma_inv <span class="sc">%*%</span> q) <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">sum</span>(p<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    prop <span class="ot">&lt;-</span> <span class="fu">leapfrog</span>(q, p, eps, L)</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    q_prop <span class="ot">&lt;-</span> prop<span class="sc">$</span>q</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    p_prop <span class="ot">&lt;-</span> prop<span class="sc">$</span>p</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    H_new <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">t</span>(q_prop) <span class="sc">%*%</span> Sigma_inv <span class="sc">%*%</span> q_prop) <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">sum</span>(p_prop<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    log_alpha <span class="ot">&lt;-</span> <span class="sc">-</span>(H_new <span class="sc">-</span> H_old)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> log_alpha) {</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>      q <span class="ot">&lt;-</span> q_prop</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>      acc <span class="ot">&lt;-</span> acc <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    samples[i, ] <span class="ot">&lt;-</span> q</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">samples =</span> samples, <span class="at">acc_rate =</span> acc <span class="sc">/</span> n_iter)</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Run samplers</span></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>n_iter <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>fit_mh <span class="ot">&lt;-</span> <span class="fu">rw_mh</span>(n_iter, <span class="at">step =</span> <span class="fl">0.3</span>)</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>fit_hmc <span class="ot">&lt;-</span> <span class="fu">hmc</span>(n_iter, <span class="at">eps =</span> <span class="fl">0.15</span>, <span class="at">L =</span> <span class="dv">20</span>)</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot traces</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_mh<span class="sc">$</span>samples[,<span class="dv">1</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"#1f77b4"</span>,</span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"RW-MH Trace (acc="</span>, <span class="fu">round</span>(fit_mh<span class="sc">$</span>acc_rate, <span class="dv">3</span>), <span class="st">")"</span>),</span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"q1"</span>)</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"grey90"</span>)</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_hmc<span class="sc">$</span>samples[,<span class="dv">1</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"#d62728"</span>,</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"HMC Trace (acc="</span>, <span class="fu">round</span>(fit_hmc<span class="sc">$</span>acc_rate, <span class="dv">3</span>), <span class="st">")"</span>),</span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"q1"</span>)</span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"grey90"</span>)</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot ACF</span></span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(fit_mh<span class="sc">$</span>samples[,<span class="dv">1</span>], <span class="at">main =</span> <span class="st">"RW-MH Autocorr"</span>, <span class="at">lag.max =</span> <span class="dv">50</span>, <span class="at">col =</span> <span class="st">"#1f77b4"</span>)</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(fit_hmc<span class="sc">$</span>samples[,<span class="dv">1</span>], <span class="at">main =</span> <span class="st">"HMC Autocorr"</span>, <span class="at">lag.max =</span> <span class="dv">50</span>, <span class="at">col =</span> <span class="st">"#d62728"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="09_hamiltonian_mc_files/figure-html/lst-hmc-vs-rwmh-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Trace plots (top) and autocorrelation (bottom) for RW-MH (left) vs HMC (right) on correlated 2D Gaussian. HMC explores the ridge efficiently; RW-MH gets stuck.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>RW-MH has acceptance <span class="math inline">\(\approx 0.61\)</span> and poor mixing; autocorrelation decays slowly. HMC has acceptance <span class="math inline">\(\approx 0.96\)</span> and autocorrelation decays in <span class="math inline">\(\sim 10\)</span> lags, yielding much larger effective sample size per gradient evaluation.</p>
+</div>
+</section>
+<section id="practical-recommendations" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="practical-recommendations"><span class="header-section-number">10.10</span> Practical recommendations</h2>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span><strong>When to use HMC:</strong> - Posterior dimension <span class="math inline">\(d \geq 10\)</span>. - Gradient <span class="math inline">\(\nabla \log \pi\)</span> is available (exact or via automatic differentiation). - Posterior is not highly multimodal with separated modes. - Computational budget permits gradient evaluations (modern autodiff is fast).</p>
+<p><strong>When HMC struggles:</strong> - Highly multimodal posterior with isolated modes (HMC gets trapped in one mode; consider parallel tempering or other global methods). - Discrete parameters (HMC requires continuous state; marginalize out discrete variables or use other samplers). - Gradient unavailable and too expensive to compute numerically.</p>
+<p><strong>When to prefer alternatives:</strong> - <strong>Gibbs sampling:</strong> If conditional distributions are easy to sample. Better mixing if conditionals are well-separated; worse if highly correlated. - <strong>Random-walk MH:</strong> Low-dimensional (<span class="math inline">\(d &lt; 10\)</span>), no gradients, simple implementation preferred. - <strong>Slice sampling or other adaptive methods:</strong> If gradient unavailable but adaptive exploration is desired.</p>
+</div>
+</section>
+<section id="stan-and-modern-practice" class="level2" data-number="10.11">
+<h2 data-number="10.11" class="anchored" data-anchor-id="stan-and-modern-practice"><span class="header-section-number">10.11</span> Stan and modern practice</h2>
+<p>The probabilistic programming language <strong>Stan</strong> uses NUTS with automatic warm-up by default. This means:</p>
+<ol type="1">
+<li>Users specify the log-posterior (via a model statement).</li>
+<li>Stan automatically differentiates to obtain <span class="math inline">\(\nabla \log \pi\)</span> via the reverse-mode autodiff.</li>
+<li>During warm-up, step size <span class="math inline">\(\varepsilon\)</span> is tuned to target 0.80 acceptance; mass matrix <span class="math inline">\(M\)</span> is adapted.</li>
+<li>NUTS extends trajectories adaptively without manual specification of <span class="math inline">\(L\)</span>.</li>
+<li>Convergence diagnostics (<span class="math inline">\(\hat{R}\)</span>, effective sample size) are computed automatically.</li>
+</ol>
+<p>This makes HMC accessible to practitioners without deep knowledge of tuning. <strong>Stan is now the most widely used tool for general-purpose Bayesian inference</strong>, precisely because it combines HMC’s superior performance with ease of use.</p>
+</section>
+<section id="sources" class="level2" data-number="10.12">
+<h2 data-number="10.12" class="anchored" data-anchor-id="sources"><span class="header-section-number">10.12</span> Sources</h2>
+<ul>
+<li><p><strong>Neal, R. M. (2011).</strong> MCMC Using Hamiltonian Dynamics. In <em>Handbook of Markov Chain Monte Carlo</em> (pp.&nbsp;113–162). Chapman and Hall/CRC. [Canonical reference for HMC theory and variants.]</p></li>
+<li><p><strong>Robert, C. P., &amp; Casella, G. (2004).</strong> <em>Monte Carlo Statistical Methods</em> (2nd ed.). Springer. [Chapter 7.8 covers Hamiltonian mechanics and energy conservation in MCMC.]</p></li>
+<li><p><strong>Hoffman, M. D., &amp; Gelman, A. (2014).</strong> The No-U-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo. <em>Journal of Machine Learning Research</em>, 15, 1351–1381. [Foundational paper on NUTS.]</p></li>
+<li><p><strong>Carpenter, B., et al.&nbsp;(2017).</strong> Stan: A probabilistic programming language. <em>Journal of Statistical Software</em>, 76(1). [Stan implementation and practical guidance.]</p></li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/08_independence_and_gibbs.html" class="pagination-link" aria-label="Independence sampler and Gibbs sampling">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/10_parallel_tempering.html" class="pagination-link" aria-label="Parallel tempering">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Hamiltonian Monte Carlo"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>Markov chain Monte Carlo (MCMC) methods form the backbone of modern Bayesian inference, but they face a fundamental challenge: as dimension and posterior curvature increase, standard samplers become inefficient. Random-walk Metropolis–Hastings requires ever-smaller step sizes to maintain acceptance, leading to slow exploration and highly autocorrelated samples. Independence samplers, which propose large moves, suffer equally in high dimensions as their proposals become increasingly unlikely.</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>Hamiltonian Monte Carlo (HMC) breaks this curse of dimensionality by exploiting the geometry of the target distribution. Instead of proposing moves blindly, it uses gradient information to propose distant, geometrically informed steps that remain probable under the posterior. By augmenting the state space with auxiliary momentum variables, HMC transforms random exploration into ballistic motion guided by the log-posterior surface.</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>This chapter synthesizes the mechanics, practical implementation, and automatic tuning of HMC. We cover the theoretical foundation (Hamiltonian dynamics and energy conservation), the discrete leapfrog integrator, the Metropolis correction for discretization error, and modern variants like the No-U-Turn Sampler (NUTS) that remove manual tuning. We also discuss when HMC is preferable to alternatives and highlight its role in packages like Stan.</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why random-walk Metropolis fails in high dimensions</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>::: {.remark}</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>Standard random-walk Metropolis proposes local moves:</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>x' = x + \eta, \quad \eta \sim \mathcal{N}(0, \Sigma_{\text{prop}}).</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>Acceptance probability is $\alpha = \min(1, e^{-\Delta \log \pi})$, where $\Delta \log \pi = \log \pi(x') - \log \pi(x)$.</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>**The curse:** In $d$ dimensions, for a fixed acceptance rate (typically $\sim 0.23$ for the Metropolis algorithm in the limit), the optimal step size scales as $O(d^{-1/2})$. This means:</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>To maintain constant acceptance as $d$ grows, step sizes must shrink like $d^{-1/2}$.</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Distance explored per iteration scales as step size $\times \sqrt{d} \sim O(1)$, regardless of dimension.</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Autocorrelation grows linearly with $d$**, making the effective sample size collapse.</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>For correlated posteriors with high curvature (e.g., a narrow ridge), the problem is even worse: proposals must shrink to match the local geometry, requiring $O(d)$ or $O(d^2)$ steps to traverse the parameter space.</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>::: {.example}</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>**Bivariate Gaussian with strong correlation**</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>Consider a target $\pi(x) = \mathcal{N}(0, \Sigma)$ with</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>\Sigma = \begin{pmatrix} 1 &amp; \rho <span class="sc">\\</span> \rho &amp; 1 \end{pmatrix}, \quad \rho = 0.95.</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>The ridge is elongated; random-walk MH must take tiny steps perpendicular to the ridge to avoid rejection, then many small steps along the ridge. For a $d=100$-dimensional elongated Gaussian, RW-MH becomes prohibitively slow. HMC, by following the natural flow of the posterior, explores this space in far fewer iterations.</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hamiltonian mechanics: the continuous story</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>Hamiltonian dynamics govern many physical systems. We repurpose them for sampling by augmenting the parameter space with momentum variables.</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="fu">### Augmented state space and the joint distribution</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>Let $\mathbf{q} \in \mathbb{R}^d$ be the parameters of interest (confusingly called "position" in physics). We introduce **momentum** $\mathbf{p} \in \mathbb{R}^d$, an auxiliary variable sampled from a Gaussian with covariance matrix $M$ (the "mass matrix"):</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>::: {.definition}</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>The **augmented target distribution** is</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>\pi(\mathbf{q}, \mathbf{p}) = \pi(\mathbf{q}) \, f(\mathbf{p} \mid M),</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>where $f(\mathbf{p} \mid M) = \mathcal{N}(\mathbf{0}, M)$ is the momentum density.</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>**Crucial observation:** Marginalizing over $\mathbf{p}$ recovers the original target:</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>\int \pi(\mathbf{q}, \mathbf{p}) \, d\mathbf{p} = \pi(\mathbf{q}) \int \mathcal{N}(\mathbf{0}, M) \, d\mathbf{p} = \pi(\mathbf{q}).</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>Thus, sampling $(\mathbf{q}, \mathbf{p})$ and discarding $\mathbf{p}$ gives samples from $\pi(\mathbf{q})$.</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="fu">### The Hamiltonian function</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>The joint density factorizes as</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>\pi(\mathbf{q}, \mathbf{p}) = \pi(\mathbf{q}) \, \mathcal{N}(\mathbf{0}, M) \propto \exp\left<span class="co">[</span><span class="ot">-U(\mathbf{q}) - K(\mathbf{p})\right</span><span class="co">]</span>,</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>where we define the **Hamiltonian** $H(\mathbf{q}, \mathbf{p}) = U(\mathbf{q}) + K(\mathbf{p})$:</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>::: {.definition}</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Potential energy:** $U(\mathbf{q}) = -\log \pi(\mathbf{q})$.</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Kinetic energy:** $K(\mathbf{p}) = \frac{1}{2} \mathbf{p}^T M^{-1} \mathbf{p}$.</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>The **Hamiltonian** is $H(\mathbf{q}, \mathbf{p}) = U(\mathbf{q}) + K(\mathbf{p})$.</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>The joint density becomes $\pi(\mathbf{q}, \mathbf{p}) \propto \exp<span class="co">[</span><span class="ot">-H(\mathbf{q}, \mathbf{p})</span><span class="co">]</span>$.</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>The mass matrix $M$ controls the geometry: a diagonal $M$ with larger entries allows larger steps in those directions. The default is $M = I$ (identity), but adaptive mass matrices can be tuned to match posterior covariance.</span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a><span class="fu">### Hamilton's equations</span></span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>The dynamics of a Hamiltonian system are governed by:</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>::: {.theorem}</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>**Hamilton's equations of motion:**</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>\frac{d\mathbf{q}}{dt} = \nabla_{\mathbf{p}} H = M^{-1} \mathbf{p},</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>\frac{d\mathbf{p}}{dt} = -\nabla_{\mathbf{q}} H = -\nabla_{\mathbf{q}} U(\mathbf{q}) = \nabla_{\mathbf{q}} \log \pi(\mathbf{q}).</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>**Interpretation:**</span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Position evolves along the momentum direction, scaled by $M^{-1}$.</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Momentum evolves in the direction of the gradient (natural gradient of log-posterior).</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Key property:** These equations naturally navigate toward high-probability regions via $\nabla \log \pi$.</span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a><span class="fu">### Energy conservation and volume preservation</span></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>An exact Hamiltonian trajectory conserves total energy $H(\mathbf{q}(t), \mathbf{p}(t)) = \text{const}$. This has profound consequences:</span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>::: {.proposition}</span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>**Energy conservation:** Along an exact Hamiltonian trajectory, $\frac{dH}{dt} = 0$.</span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>**Proof:**</span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>\frac{dH}{dt} = \dot{\mathbf{q}}^T \nabla_{\mathbf{q}} H + \dot{\mathbf{p}}^T \nabla_{\mathbf{p}} H = (\nabla_{\mathbf{p}} H)^T \nabla_{\mathbf{q}} H + (-\nabla_{\mathbf{q}} H)^T \nabla_{\mathbf{p}} H = 0.</span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>Exact trajectories move along **level sets** of the Hamiltonian, staying on surfaces of constant $H$. Since $\pi(\mathbf{q}, \mathbf{p}) \propto e^{-H}$, exact trajectories move along level sets of the joint density — they are ideal proposals!</span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>Additionally, Hamiltonian flow is **volume-preserving** (symplectic) in phase space:</span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>::: {.proposition}</span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>**Liouville's theorem:** The divergence of the Hamiltonian velocity field is zero:</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>\nabla \cdot \begin{pmatrix} \dot{\mathbf{q}} <span class="sc">\\</span> \dot{\mathbf{p}} \end{pmatrix} = \nabla_{\mathbf{q}} \cdot (M^{-1} \mathbf{p}) + \nabla_{\mathbf{p}} \cdot (-\nabla_{\mathbf{q}} U) = 0 + 0 = 0.</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>Thus Hamiltonian flow preserves volume in phase space and leaves $\pi(\mathbf{q}, \mathbf{p})$ invariant.</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## The leapfrog integrator</span></span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>We cannot simulate Hamiltonian dynamics exactly on a computer. Instead, we discretize time using the **leapfrog integrator**, which maintains approximate energy conservation and reversibility while being computationally efficient.</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a><span class="fu">### Leapfrog discretization</span></span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>Given current state $(\mathbf{q}_0, \mathbf{p}_0)$, step size $\varepsilon &gt; 0$, and number of steps $L$, one leapfrog step is:</span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>::: {.note}</span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>**One leapfrog step** (from $(\mathbf{q}_t, \mathbf{p}_t)$ to $(\mathbf{q}_{t+1}, \mathbf{p}_{t+1})$):</span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>\mathbf{p}_{t+\varepsilon/2} &amp;= \mathbf{p}_t - \frac{\varepsilon}{2} \nabla U(\mathbf{q}_t), <span class="sc">\\</span></span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>\mathbf{q}_{t+\varepsilon} &amp;= \mathbf{q}_t + \varepsilon M^{-1} \mathbf{p}_{t+\varepsilon/2}, <span class="sc">\\</span></span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>\mathbf{p}_{t+\varepsilon} &amp;= \mathbf{p}_{t+\varepsilon/2} - \frac{\varepsilon}{2} \nabla U(\mathbf{q}_{t+\varepsilon}).</span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>Repeating $L$ times produces a trajectory of length $T = L \varepsilon$.</span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>The name "leapfrog" reflects the staggered half-steps: momentum is updated at half-steps, position at full steps.</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why leapfrog?</span></span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>The leapfrog integrator has three essential properties:</span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>::: {.theorem}</span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>The leapfrog integrator is:</span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Reversible:** If we run the integrator backward (reversing $\varepsilon \to -\varepsilon$ and flipping momentum at the end), we recover the initial state exactly (up to numerical precision). This ensures the proposal $(\mathbf{q}', \mathbf{p}') = \text{Leapfrog}(\mathbf{q}, \mathbf{p}, \varepsilon, L)$ and its reverse satisfy $q((\mathbf{q}', \mathbf{p}') \to (\mathbf{q}, \mathbf{p})) = q((\mathbf{q}, \mathbf{p}) \to (\mathbf{q}', \mathbf{p}'))$, so the forward and reverse probabilities cancel in the Metropolis ratio.</span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Volume-preserving:** The leapfrog map is a composition of volume-preserving transformations and preserves the Jacobian determinant. This reduces the Metropolis acceptance formula.</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Symplectic:** The integrator is a symplectic integrator, meaning it preserves the symplectic structure $\mathbf{q} \wedge \mathbf{p}$. The error in energy per step is $O(\varepsilon^2)$, so total error over $L$ steps is $O(\varepsilon^2)$.</span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>For small $\varepsilon$, the discretization error is tiny, energy error $\Delta H \approx O(\varepsilon^2)$ accumulates slowly, and acceptance rates remain high.</span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example: 2D trajectory</span></span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>Let us visualize a leapfrog trajectory in 2D phase space for the bivariate Gaussian example.</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-leapfrog-trajectory</span></span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Leapfrog trajectory"</span></span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Leapfrog trajectory (red spiral) in 2D phase space for a correlated bivariate Gaussian, starting from q=(2,2), p=(1,0). The trajectory spirals inward toward the mode due to energy dissipation in the discretization, then the Metropolis correction either accepts or rejects."</span></span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a><span class="co"># Define target (log-posterior and gradient)</span></span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.95</span></span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>Sigma_inv <span class="ot">&lt;-</span> <span class="fu">solve</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, rho, rho, <span class="dv">1</span>), <span class="dv">2</span>, <span class="dv">2</span>))</span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>log_pi <span class="ot">&lt;-</span> <span class="cf">function</span>(q) {</span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">t</span>(q) <span class="sc">%*%</span> Sigma_inv <span class="sc">%*%</span> q)</span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>grad_U <span class="ot">&lt;-</span> <span class="cf">function</span>(q) {</span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>  Sigma_inv <span class="sc">%*%</span> q</span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a><span class="co"># Leapfrog integrator</span></span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>leapfrog <span class="ot">&lt;-</span> <span class="cf">function</span>(q, p, epsilon, L) {</span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> epsilon <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>L) {</span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>    q <span class="ot">&lt;-</span> q <span class="sc">+</span> epsilon <span class="sc">*</span> p</span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="sc">&lt;</span> L) {</span>
+<span id="cb3-197"><a href="#cb3-197" aria-hidden="true" tabindex="-1"></a>      p <span class="ot">&lt;-</span> p <span class="sc">-</span> epsilon <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb3-198"><a href="#cb3-198" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-199"><a href="#cb3-199" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-200"><a href="#cb3-200" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> epsilon <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb3-201"><a href="#cb3-201" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">q =</span> q, <span class="at">p =</span> <span class="sc">-</span>p)</span>
+<span id="cb3-202"><a href="#cb3-202" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-203"><a href="#cb3-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-204"><a href="#cb3-204" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate trajectory and track states</span></span>
+<span id="cb3-205"><a href="#cb3-205" aria-hidden="true" tabindex="-1"></a>q0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb3-206"><a href="#cb3-206" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb3-207"><a href="#cb3-207" aria-hidden="true" tabindex="-1"></a>epsilon <span class="ot">&lt;-</span> <span class="fl">0.1</span></span>
+<span id="cb3-208"><a href="#cb3-208" aria-hidden="true" tabindex="-1"></a>L <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb3-209"><a href="#cb3-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-210"><a href="#cb3-210" aria-hidden="true" tabindex="-1"></a>q_curr <span class="ot">&lt;-</span> q0</span>
+<span id="cb3-211"><a href="#cb3-211" aria-hidden="true" tabindex="-1"></a>p_curr <span class="ot">&lt;-</span> p0</span>
+<span id="cb3-212"><a href="#cb3-212" aria-hidden="true" tabindex="-1"></a>trajectory_q <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, L<span class="sc">+</span><span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb3-213"><a href="#cb3-213" aria-hidden="true" tabindex="-1"></a>trajectory_p <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, L<span class="sc">+</span><span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb3-214"><a href="#cb3-214" aria-hidden="true" tabindex="-1"></a>trajectory_q[<span class="dv">1</span>,] <span class="ot">&lt;-</span> q0</span>
+<span id="cb3-215"><a href="#cb3-215" aria-hidden="true" tabindex="-1"></a>trajectory_p[<span class="dv">1</span>,] <span class="ot">&lt;-</span> p0</span>
+<span id="cb3-216"><a href="#cb3-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-217"><a href="#cb3-217" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (step <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>L) {</span>
+<span id="cb3-218"><a href="#cb3-218" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Half-step momentum</span></span>
+<span id="cb3-219"><a href="#cb3-219" aria-hidden="true" tabindex="-1"></a>  p_curr <span class="ot">&lt;-</span> p_curr <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> epsilon <span class="sc">*</span> <span class="fu">grad_U</span>(q_curr)</span>
+<span id="cb3-220"><a href="#cb3-220" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Full-step position</span></span>
+<span id="cb3-221"><a href="#cb3-221" aria-hidden="true" tabindex="-1"></a>  q_curr <span class="ot">&lt;-</span> q_curr <span class="sc">+</span> epsilon <span class="sc">*</span> p_curr</span>
+<span id="cb3-222"><a href="#cb3-222" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Half-step momentum</span></span>
+<span id="cb3-223"><a href="#cb3-223" aria-hidden="true" tabindex="-1"></a>  p_curr <span class="ot">&lt;-</span> p_curr <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> epsilon <span class="sc">*</span> <span class="fu">grad_U</span>(q_curr)</span>
+<span id="cb3-224"><a href="#cb3-224" aria-hidden="true" tabindex="-1"></a>  trajectory_q[step<span class="sc">+</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> q_curr</span>
+<span id="cb3-225"><a href="#cb3-225" aria-hidden="true" tabindex="-1"></a>  trajectory_p[step<span class="sc">+</span><span class="dv">1</span>,] <span class="ot">&lt;-</span> p_curr</span>
+<span id="cb3-226"><a href="#cb3-226" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-227"><a href="#cb3-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-228"><a href="#cb3-228" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot phase space trajectory</span></span>
+<span id="cb3-229"><a href="#cb3-229" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trajectory_q[,<span class="dv">1</span>], trajectory_p[,<span class="dv">1</span>],</span>
+<span id="cb3-230"><a href="#cb3-230" aria-hidden="true" tabindex="-1"></a>     <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>, <span class="at">col =</span> <span class="st">"#d62728"</span>,</span>
+<span id="cb3-231"><a href="#cb3-231" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Leapfrog Trajectory in Phase Space (q1, p1)"</span>,</span>
+<span id="cb3-232"><a href="#cb3-232" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"q1 (position)"</span>, <span class="at">ylab =</span> <span class="st">"p1 (momentum)"</span>)</span>
+<span id="cb3-233"><a href="#cb3-233" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(q0[<span class="dv">1</span>], p0[<span class="dv">1</span>], <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">1.5</span>, <span class="at">col =</span> <span class="st">"#2ca02c"</span>)</span>
+<span id="cb3-234"><a href="#cb3-234" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(trajectory_q[L<span class="sc">+</span><span class="dv">1</span>, <span class="dv">1</span>], trajectory_p[L<span class="sc">+</span><span class="dv">1</span>, <span class="dv">1</span>], <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">cex =</span> <span class="fl">1.5</span>, <span class="at">col =</span> <span class="st">"#1f77b4"</span>)</span>
+<span id="cb3-235"><a href="#cb3-235" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Trajectory"</span>, <span class="st">"Start"</span>, <span class="st">"End"</span>),</span>
+<span id="cb3-236"><a href="#cb3-236" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#d62728"</span>, <span class="st">"#2ca02c"</span>, <span class="st">"#1f77b4"</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">19</span>, <span class="dv">19</span>),</span>
+<span id="cb3-237"><a href="#cb3-237" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="cn">NA</span>, <span class="cn">NA</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb3-238"><a href="#cb3-238" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"grey90"</span>)</span>
+<span id="cb3-239"><a href="#cb3-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-240"><a href="#cb3-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-241"><a href="#cb3-241" aria-hidden="true" tabindex="-1"></a><span class="fu">## The HMC algorithm</span></span>
+<span id="cb3-242"><a href="#cb3-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-243"><a href="#cb3-243" aria-hidden="true" tabindex="-1"></a>Combining leapfrog integration with Metropolis acceptance yields the complete HMC algorithm.</span>
+<span id="cb3-244"><a href="#cb3-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-245"><a href="#cb3-245" aria-hidden="true" tabindex="-1"></a>::: {.note}</span>
+<span id="cb3-246"><a href="#cb3-246" aria-hidden="true" tabindex="-1"></a>**HMC Algorithm**</span>
+<span id="cb3-247"><a href="#cb3-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-248"><a href="#cb3-248" aria-hidden="true" tabindex="-1"></a>Given current position $\mathbf{q}_t$:</span>
+<span id="cb3-249"><a href="#cb3-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-250"><a href="#cb3-250" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Refresh momentum:** Draw $\mathbf{p} \sim \mathcal{N}(\mathbf{0}, M)$.</span>
+<span id="cb3-251"><a href="#cb3-251" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Store current energy:** Compute $H_{\text{old}} = U(\mathbf{q}_t) + K(\mathbf{p})$.</span>
+<span id="cb3-252"><a href="#cb3-252" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Integrate:** Run leapfrog for $L$ steps with step size $\varepsilon$:</span>
+<span id="cb3-253"><a href="#cb3-253" aria-hidden="true" tabindex="-1"></a>   $$</span>
+<span id="cb3-254"><a href="#cb3-254" aria-hidden="true" tabindex="-1"></a>   (\mathbf{q}', \mathbf{p}') = \text{Leapfrog}(\mathbf{q}_t, \mathbf{p}, \varepsilon, L).</span>
+<span id="cb3-255"><a href="#cb3-255" aria-hidden="true" tabindex="-1"></a>   $$</span>
+<span id="cb3-256"><a href="#cb3-256" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Compute proposal energy:** $H_{\text{new}} = U(\mathbf{q}') + K(\mathbf{p}')$.</span>
+<span id="cb3-257"><a href="#cb3-257" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Metropolis correction:** Accept with probability</span>
+<span id="cb3-258"><a href="#cb3-258" aria-hidden="true" tabindex="-1"></a>   $$</span>
+<span id="cb3-259"><a href="#cb3-259" aria-hidden="true" tabindex="-1"></a>   \alpha = \min\left(1, \exp(-\Delta H)\right), \quad \Delta H = H_{\text{new}} - H_{\text{old}}.</span>
+<span id="cb3-260"><a href="#cb3-260" aria-hidden="true" tabindex="-1"></a>   $$</span>
+<span id="cb3-261"><a href="#cb3-261" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Move or reject:**</span>
+<span id="cb3-262"><a href="#cb3-262" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>If $u \sim \text{Uniform}(0,1) &lt; \alpha$: set $\mathbf{q}_{t+1} = \mathbf{q}'$.</span>
+<span id="cb3-263"><a href="#cb3-263" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Else: set $\mathbf{q}_{t+1} = \mathbf{q}_t$.</span>
+<span id="cb3-264"><a href="#cb3-264" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-265"><a href="#cb3-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-266"><a href="#cb3-266" aria-hidden="true" tabindex="-1"></a><span class="fu">### Why the Metropolis correction?</span></span>
+<span id="cb3-267"><a href="#cb3-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-268"><a href="#cb3-268" aria-hidden="true" tabindex="-1"></a>If we could simulate Hamiltonian dynamics exactly, $\Delta H = 0$ and every proposal would be accepted. However, leapfrog introduces discretization error $\Delta H \approx O(L \varepsilon^2)$. The Metropolis step:</span>
+<span id="cb3-269"><a href="#cb3-269" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Removes any bias introduced by discretization.</span>
+<span id="cb3-270"><a href="#cb3-270" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Restores exact invariance to the joint distribution $\pi(\mathbf{q}, \mathbf{p})$.</span>
+<span id="cb3-271"><a href="#cb3-271" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ensures that marginalizing over $\mathbf{p}$ gives exact samples from $\pi(\mathbf{q})$.</span>
+<span id="cb3-272"><a href="#cb3-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-273"><a href="#cb3-273" aria-hidden="true" tabindex="-1"></a>A smaller $\varepsilon$ reduces discretization error and increases acceptance; a larger $\varepsilon$ reduces computation but risks rejection.</span>
+<span id="cb3-274"><a href="#cb3-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-275"><a href="#cb3-275" aria-hidden="true" tabindex="-1"></a><span class="fu">### Momentum refresh</span></span>
+<span id="cb3-276"><a href="#cb3-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-277"><a href="#cb3-277" aria-hidden="true" tabindex="-1"></a>In step 1, we draw a fresh momentum independently of the previous momentum. This is crucial: otherwise, the trajectory would continue indefinitely on level sets of $H$, exploring only one mode. By resampling $\mathbf{p}$ at each iteration, we:</span>
+<span id="cb3-278"><a href="#cb3-278" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Jump between level sets of $H$ (exploring different energies).</span>
+<span id="cb3-279"><a href="#cb3-279" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Allow exploration of the full parameter space.</span>
+<span id="cb3-280"><a href="#cb3-280" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Introduce randomness necessary for ergodicity.</span>
+<span id="cb3-281"><a href="#cb3-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-282"><a href="#cb3-282" aria-hidden="true" tabindex="-1"></a>Notably, resampling $\mathbf{p} \sim \mathcal{N}(\mathbf{0}, M)$ is **Gibbs sampling** in the $(q, p)$ space.</span>
+<span id="cb3-283"><a href="#cb3-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-284"><a href="#cb3-284" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tuning and practical guidance</span></span>
+<span id="cb3-285"><a href="#cb3-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-286"><a href="#cb3-286" aria-hidden="true" tabindex="-1"></a>HMC's efficiency depends critically on three tuning parameters.</span>
+<span id="cb3-287"><a href="#cb3-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-288"><a href="#cb3-288" aria-hidden="true" tabindex="-1"></a><span class="fu">### Step size $\varepsilon$</span></span>
+<span id="cb3-289"><a href="#cb3-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-290"><a href="#cb3-290" aria-hidden="true" tabindex="-1"></a>::: {.definition}</span>
+<span id="cb3-291"><a href="#cb3-291" aria-hidden="true" tabindex="-1"></a>The **step size** $\varepsilon$ controls discretization granularity.</span>
+<span id="cb3-292"><a href="#cb3-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-293"><a href="#cb3-293" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Too small:** $\varepsilon \to 0$ gives accurate proposals, high acceptance, but slow exploration (many gradient evaluations).</span>
+<span id="cb3-294"><a href="#cb3-294" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Too large:** $\varepsilon$ large causes energy errors to accumulate; acceptance rate $\alpha$ drops.</span>
+<span id="cb3-295"><a href="#cb3-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-296"><a href="#cb3-296" aria-hidden="true" tabindex="-1"></a>**Typical rule:** Target acceptance rate of 0.65–0.80 (varies slightly with $d$). Adjust $\varepsilon$ to match this during warm-up.</span>
+<span id="cb3-297"><a href="#cb3-297" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-298"><a href="#cb3-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-299"><a href="#cb3-299" aria-hidden="true" tabindex="-1"></a><span class="fu">### Trajectory length and number of steps $L$</span></span>
+<span id="cb3-300"><a href="#cb3-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-301"><a href="#cb3-301" aria-hidden="true" tabindex="-1"></a>::: {.definition}</span>
+<span id="cb3-302"><a href="#cb3-302" aria-hidden="true" tabindex="-1"></a>The **trajectory length** is $T = L \varepsilon$. A longer trajectory explores farther but at higher computational cost.</span>
+<span id="cb3-303"><a href="#cb3-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-304"><a href="#cb3-304" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Too few steps:** Behaves like random-walk MH (local exploration).</span>
+<span id="cb3-305"><a href="#cb3-305" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Too many steps:** Trajectories double back on themselves (waste computation and may reject).</span>
+<span id="cb3-306"><a href="#cb3-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-307"><a href="#cb3-307" aria-hidden="true" tabindex="-1"></a>**Effective range:** Aim for $L \in <span class="co">[</span><span class="ot">20, 100</span><span class="co">]</span>$ initially; tune via ESS per gradient evaluation.</span>
+<span id="cb3-308"><a href="#cb3-308" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-309"><a href="#cb3-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-310"><a href="#cb3-310" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mass matrix $M$</span></span>
+<span id="cb3-311"><a href="#cb3-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-312"><a href="#cb3-312" aria-hidden="true" tabindex="-1"></a>The mass matrix controls how momentum couples to position. With $M = I$ (identity), kinetic energy is $K(\mathbf{p}) = \frac{1}{2} <span class="sc">\|</span>\mathbf{p}<span class="sc">\|</span>^2$ — isotropic.</span>
+<span id="cb3-313"><a href="#cb3-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-314"><a href="#cb3-314" aria-hidden="true" tabindex="-1"></a>::: {.remark}</span>
+<span id="cb3-315"><a href="#cb3-315" aria-hidden="true" tabindex="-1"></a>**Adaptive mass matrix:** If the posterior has vastly different scales or high correlations, an isotropic $M$ is inefficient. Adaptive HMC (as implemented in Stan) estimates the posterior covariance $\Sigma_{\text{post}}$ during warm-up and sets $M = \Sigma_{\text{post}}^{-1}$. This makes the "momentum-space" geometry match the "parameter-space" geometry, enabling larger steps and better mixing.</span>
+<span id="cb3-316"><a href="#cb3-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-317"><a href="#cb3-317" aria-hidden="true" tabindex="-1"></a>Equivalently, we can work with a reparametrization or preconditioning. The improvement can be dramatic in correlated or high-dimensional problems.</span>
+<span id="cb3-318"><a href="#cb3-318" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-319"><a href="#cb3-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-320"><a href="#cb3-320" aria-hidden="true" tabindex="-1"></a><span class="fu">### Warm-up and adaptation</span></span>
+<span id="cb3-321"><a href="#cb3-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-322"><a href="#cb3-322" aria-hidden="true" tabindex="-1"></a>Most HMC implementations (especially Stan) use a **warm-up** (or "burn-in") phase to:</span>
+<span id="cb3-323"><a href="#cb3-323" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Find a reasonable starting point and estimate posterior covariance.</span>
+<span id="cb3-324"><a href="#cb3-324" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Adapt $\varepsilon$ to target a desired acceptance rate.</span>
+<span id="cb3-325"><a href="#cb3-325" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Adapt $M$ to match posterior structure.</span>
+<span id="cb3-326"><a href="#cb3-326" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Discard warm-up samples as they are not from the stationary distribution.</span>
+<span id="cb3-327"><a href="#cb3-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-328"><a href="#cb3-328" aria-hidden="true" tabindex="-1"></a>After warm-up, $\varepsilon$ and $M$ are fixed, and the algorithm becomes a standard Markov chain with invariant distribution $\pi(\mathbf{q})$.</span>
+<span id="cb3-329"><a href="#cb3-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-330"><a href="#cb3-330" aria-hidden="true" tabindex="-1"></a><span class="fu">## Divergent transitions and energy issues</span></span>
+<span id="cb3-331"><a href="#cb3-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-332"><a href="#cb3-332" aria-hidden="true" tabindex="-1"></a>HMC can fail in subtle ways:</span>
+<span id="cb3-333"><a href="#cb3-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-334"><a href="#cb3-334" aria-hidden="true" tabindex="-1"></a>::: {.remark}</span>
+<span id="cb3-335"><a href="#cb3-335" aria-hidden="true" tabindex="-1"></a>**Divergent transitions** occur when the numerical integration goes unstable, typically because:</span>
+<span id="cb3-336"><a href="#cb3-336" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Step size $\varepsilon$ is too large and energy error $|\Delta H|$ becomes very large, causing rejection.</span>
+<span id="cb3-337"><a href="#cb3-337" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Posterior has regions of high curvature that the integrator cannot resolve.</span>
+<span id="cb3-338"><a href="#cb3-338" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Posterior has heavy tails or mild multimodality.</span>
+<span id="cb3-339"><a href="#cb3-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-340"><a href="#cb3-340" aria-hidden="true" tabindex="-1"></a>**Indicator:** Many proposals have $\Delta H \gg 10$ (large energy errors).</span>
+<span id="cb3-341"><a href="#cb3-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-342"><a href="#cb3-342" aria-hidden="true" tabindex="-1"></a>**Solution:** Reduce $\varepsilon$, increase warm-up iterations, or use an adaptive mass matrix. Stan prints warnings about divergences; they suggest the sampler is not exploring properly and posterior inferences may be biased.</span>
+<span id="cb3-343"><a href="#cb3-343" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-344"><a href="#cb3-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-345"><a href="#cb3-345" aria-hidden="true" tabindex="-1"></a><span class="fu">## NUTS: No-U-Turn Sampler</span></span>
+<span id="cb3-346"><a href="#cb3-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-347"><a href="#cb3-347" aria-hidden="true" tabindex="-1"></a>Modern software like Stan uses the **No-U-Turn Sampler (NUTS)**, which removes the need to manually tune $L$.</span>
+<span id="cb3-348"><a href="#cb3-348" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-349"><a href="#cb3-349" aria-hidden="true" tabindex="-1"></a><span class="fu">### The termination criterion</span></span>
+<span id="cb3-350"><a href="#cb3-350" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-351"><a href="#cb3-351" aria-hidden="true" tabindex="-1"></a>Instead of running a fixed number of steps $L$, NUTS adaptively expands the trajectory until it would begin to double back:</span>
+<span id="cb3-352"><a href="#cb3-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-353"><a href="#cb3-353" aria-hidden="true" tabindex="-1"></a>::: {.definition}</span>
+<span id="cb3-354"><a href="#cb3-354" aria-hidden="true" tabindex="-1"></a>**Doubling criterion:** A trajectory "doubles back" (makes a U-turn) when the "generalized velocity" $(\mathbf{q}' - \mathbf{q}_{\text{left}})^T \mathbf{p}$ becomes negative, indicating backward motion. More precisely, a U-turn is detected using the dot product:</span>
+<span id="cb3-355"><a href="#cb3-355" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-356"><a href="#cb3-356" aria-hidden="true" tabindex="-1"></a>(\mathbf{q}_{\text{right}} - \mathbf{q}_{\text{left}})^T \mathbf{p}_{\text{right}} &lt; 0 \quad \text{or} \quad (\mathbf{q}_{\text{right}} - \mathbf{q}_{\text{left}})^T \mathbf{p}_{\text{left}} &lt; 0.</span>
+<span id="cb3-357"><a href="#cb3-357" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb3-358"><a href="#cb3-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-359"><a href="#cb3-359" aria-hidden="true" tabindex="-1"></a>NUTS extends the trajectory by "doubling" (adding steps in the same direction) until a U-turn is detected, then accepts from the entire trajectory.</span>
+<span id="cb3-360"><a href="#cb3-360" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-361"><a href="#cb3-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-362"><a href="#cb3-362" aria-hidden="true" tabindex="-1"></a><span class="fu">### Advantages</span></span>
+<span id="cb3-363"><a href="#cb3-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-364"><a href="#cb3-364" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Eliminates manual tuning of $L$:** The algorithm automatically determines trajectory length.</span>
+<span id="cb3-365"><a href="#cb3-365" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Prevents wasted computation:** Stops before the trajectory begins circling back.</span>
+<span id="cb3-366"><a href="#cb3-366" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Maintains properties:** The randomized doubling ensures detailed balance is preserved (via Metropolis-from-trajectory).</span>
+<span id="cb3-367"><a href="#cb3-367" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Stan implementation:** NUTS is the default sampler in Stan with automatic warm-up and adaptation.</span>
+<span id="cb3-368"><a href="#cb3-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-369"><a href="#cb3-369" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparison: HMC vs random-walk MH vs Gibbs</span></span>
+<span id="cb3-370"><a href="#cb3-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-371"><a href="#cb3-371" aria-hidden="true" tabindex="-1"></a>::: {.proposition}</span>
+<span id="cb3-372"><a href="#cb3-372" aria-hidden="true" tabindex="-1"></a>**Scaling with dimension $d$:**</span>
+<span id="cb3-373"><a href="#cb3-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-374"><a href="#cb3-374" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sampler <span class="pp">|</span> Acceptance <span class="pp">|</span> Auto-correlation <span class="pp">|</span> ESS per gradient <span class="pp">|</span></span>
+<span id="cb3-375"><a href="#cb3-375" aria-hidden="true" tabindex="-1"></a><span class="pp">|---------|-----------|-----------------|-----------------|</span></span>
+<span id="cb3-376"><a href="#cb3-376" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> RW-MH <span class="pp">|</span> $O(1)$ <span class="pp">|</span> $O(d)$ <span class="pp">|</span> $O(d^{-2})$ <span class="pp">|</span></span>
+<span id="cb3-377"><a href="#cb3-377" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Gibbs <span class="pp">|</span> $1$ <span class="pp">|</span> $O(d)$ <span class="pp">|</span> $O(d^{-1})$ if uncorrelated <span class="pp">|</span></span>
+<span id="cb3-378"><a href="#cb3-378" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> HMC <span class="pp">|</span> $0.6$–$0.9$ <span class="pp">|</span> $O(\sqrt{d})$ or better <span class="pp">|</span> $O(1)$ to $O(d^{-1})$ <span class="pp">|</span></span>
+<span id="cb3-379"><a href="#cb3-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-380"><a href="#cb3-380" aria-hidden="true" tabindex="-1"></a>(Rough asymptotics; constants matter.)</span>
+<span id="cb3-381"><a href="#cb3-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-382"><a href="#cb3-382" aria-hidden="true" tabindex="-1"></a>**Practical implications:**</span>
+<span id="cb3-383"><a href="#cb3-383" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**RW-MH:** Simple to implement, no gradients needed. But prohibitively slow for $d &gt; 20$ unless posterior is nearly isotropic.</span>
+<span id="cb3-384"><a href="#cb3-384" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Gibbs:** Requires conditional distributions. Fast if draws from conditionals are cheap. Struggles with correlations.</span>
+<span id="cb3-385"><a href="#cb3-385" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**HMC:** Requires gradients but dramatically outperforms RW-MH in medium to high dimensions ($d \geq 10$). Excellent when gradients are available (automatic differentiation).</span>
+<span id="cb3-386"><a href="#cb3-386" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-387"><a href="#cb3-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-388"><a href="#cb3-388" aria-hidden="true" tabindex="-1"></a>::: {.example}</span>
+<span id="cb3-389"><a href="#cb3-389" aria-hidden="true" tabindex="-1"></a>**Comparison on correlated bivariate Gaussian**</span>
+<span id="cb3-390"><a href="#cb3-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-391"><a href="#cb3-391" aria-hidden="true" tabindex="-1"></a>We sample from $\mathcal{N}(0, \Sigma)$ with $\Sigma = \begin{pmatrix} 1 &amp; 0.95 <span class="sc">\\</span> 0.95 &amp; 1 \end{pmatrix}$ using:</span>
+<span id="cb3-392"><a href="#cb3-392" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Random-walk MH with $\text{step} = 0.3$.</span>
+<span id="cb3-393"><a href="#cb3-393" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>HMC with $\varepsilon = 0.15$, $L = 20$.</span>
+<span id="cb3-394"><a href="#cb3-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-397"><a href="#cb3-397" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-398"><a href="#cb3-398" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-hmc-vs-rwmh</span></span>
+<span id="cb3-399"><a href="#cb3-399" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Hmc vs rwmh"</span></span>
+<span id="cb3-400"><a href="#cb3-400" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Trace plots (top) and autocorrelation (bottom) for RW-MH (left) vs HMC (right) on correlated 2D Gaussian. HMC explores the ridge efficiently; RW-MH gets stuck."</span></span>
+<span id="cb3-401"><a href="#cb3-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-402"><a href="#cb3-402" aria-hidden="true" tabindex="-1"></a><span class="co"># Setup</span></span>
+<span id="cb3-403"><a href="#cb3-403" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> <span class="fl">0.95</span></span>
+<span id="cb3-404"><a href="#cb3-404" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, rho, rho, <span class="dv">1</span>), <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb3-405"><a href="#cb3-405" aria-hidden="true" tabindex="-1"></a>Sigma_inv <span class="ot">&lt;-</span> <span class="fu">solve</span>(Sigma)</span>
+<span id="cb3-406"><a href="#cb3-406" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-407"><a href="#cb3-407" aria-hidden="true" tabindex="-1"></a>log_pi <span class="ot">&lt;-</span> <span class="cf">function</span>(q) {</span>
+<span id="cb3-408"><a href="#cb3-408" aria-hidden="true" tabindex="-1"></a>  <span class="sc">-</span><span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">t</span>(q) <span class="sc">%*%</span> Sigma_inv <span class="sc">%*%</span> q)</span>
+<span id="cb3-409"><a href="#cb3-409" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-410"><a href="#cb3-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-411"><a href="#cb3-411" aria-hidden="true" tabindex="-1"></a>grad_U <span class="ot">&lt;-</span> <span class="cf">function</span>(q) {</span>
+<span id="cb3-412"><a href="#cb3-412" aria-hidden="true" tabindex="-1"></a>  Sigma_inv <span class="sc">%*%</span> q</span>
+<span id="cb3-413"><a href="#cb3-413" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-414"><a href="#cb3-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-415"><a href="#cb3-415" aria-hidden="true" tabindex="-1"></a><span class="co"># RW-MH</span></span>
+<span id="cb3-416"><a href="#cb3-416" aria-hidden="true" tabindex="-1"></a>rw_mh <span class="ot">&lt;-</span> <span class="cf">function</span>(n_iter, <span class="at">step =</span> <span class="fl">0.3</span>) {</span>
+<span id="cb3-417"><a href="#cb3-417" aria-hidden="true" tabindex="-1"></a>  q <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb3-418"><a href="#cb3-418" aria-hidden="true" tabindex="-1"></a>  samples <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, n_iter, <span class="dv">2</span>)</span>
+<span id="cb3-419"><a href="#cb3-419" aria-hidden="true" tabindex="-1"></a>  acc <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-420"><a href="#cb3-420" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_iter) {</span>
+<span id="cb3-421"><a href="#cb3-421" aria-hidden="true" tabindex="-1"></a>    q_prop <span class="ot">&lt;-</span> q <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">2</span>, <span class="dv">0</span>, step)</span>
+<span id="cb3-422"><a href="#cb3-422" aria-hidden="true" tabindex="-1"></a>    log_alpha <span class="ot">&lt;-</span> <span class="fu">log_pi</span>(q_prop) <span class="sc">-</span> <span class="fu">log_pi</span>(q)</span>
+<span id="cb3-423"><a href="#cb3-423" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> log_alpha) {</span>
+<span id="cb3-424"><a href="#cb3-424" aria-hidden="true" tabindex="-1"></a>      q <span class="ot">&lt;-</span> q_prop</span>
+<span id="cb3-425"><a href="#cb3-425" aria-hidden="true" tabindex="-1"></a>      acc <span class="ot">&lt;-</span> acc <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb3-426"><a href="#cb3-426" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-427"><a href="#cb3-427" aria-hidden="true" tabindex="-1"></a>    samples[i, ] <span class="ot">&lt;-</span> q</span>
+<span id="cb3-428"><a href="#cb3-428" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-429"><a href="#cb3-429" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">samples =</span> samples, <span class="at">acc_rate =</span> acc <span class="sc">/</span> n_iter)</span>
+<span id="cb3-430"><a href="#cb3-430" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-431"><a href="#cb3-431" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-432"><a href="#cb3-432" aria-hidden="true" tabindex="-1"></a><span class="co"># Leapfrog for HMC</span></span>
+<span id="cb3-433"><a href="#cb3-433" aria-hidden="true" tabindex="-1"></a>leapfrog <span class="ot">&lt;-</span> <span class="cf">function</span>(q, p, eps, L) {</span>
+<span id="cb3-434"><a href="#cb3-434" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> eps <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb3-435"><a href="#cb3-435" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>L) {</span>
+<span id="cb3-436"><a href="#cb3-436" aria-hidden="true" tabindex="-1"></a>    q <span class="ot">&lt;-</span> q <span class="sc">+</span> eps <span class="sc">*</span> p</span>
+<span id="cb3-437"><a href="#cb3-437" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (i <span class="sc">&lt;</span> L) p <span class="ot">&lt;-</span> p <span class="sc">-</span> eps <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb3-438"><a href="#cb3-438" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-439"><a href="#cb3-439" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> p <span class="sc">-</span> <span class="fl">0.5</span> <span class="sc">*</span> eps <span class="sc">*</span> <span class="fu">grad_U</span>(q)</span>
+<span id="cb3-440"><a href="#cb3-440" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">q =</span> q, <span class="at">p =</span> <span class="sc">-</span>p)</span>
+<span id="cb3-441"><a href="#cb3-441" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-442"><a href="#cb3-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-443"><a href="#cb3-443" aria-hidden="true" tabindex="-1"></a><span class="co"># HMC</span></span>
+<span id="cb3-444"><a href="#cb3-444" aria-hidden="true" tabindex="-1"></a>hmc <span class="ot">&lt;-</span> <span class="cf">function</span>(n_iter, <span class="at">eps =</span> <span class="fl">0.15</span>, <span class="at">L =</span> <span class="dv">20</span>) {</span>
+<span id="cb3-445"><a href="#cb3-445" aria-hidden="true" tabindex="-1"></a>  q <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb3-446"><a href="#cb3-446" aria-hidden="true" tabindex="-1"></a>  samples <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, n_iter, <span class="dv">2</span>)</span>
+<span id="cb3-447"><a href="#cb3-447" aria-hidden="true" tabindex="-1"></a>  acc <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-448"><a href="#cb3-448" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_iter) {</span>
+<span id="cb3-449"><a href="#cb3-449" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">2</span>)</span>
+<span id="cb3-450"><a href="#cb3-450" aria-hidden="true" tabindex="-1"></a>    H_old <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">t</span>(q) <span class="sc">%*%</span> Sigma_inv <span class="sc">%*%</span> q) <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">sum</span>(p<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb3-451"><a href="#cb3-451" aria-hidden="true" tabindex="-1"></a>    prop <span class="ot">&lt;-</span> <span class="fu">leapfrog</span>(q, p, eps, L)</span>
+<span id="cb3-452"><a href="#cb3-452" aria-hidden="true" tabindex="-1"></a>    q_prop <span class="ot">&lt;-</span> prop<span class="sc">$</span>q</span>
+<span id="cb3-453"><a href="#cb3-453" aria-hidden="true" tabindex="-1"></a>    p_prop <span class="ot">&lt;-</span> prop<span class="sc">$</span>p</span>
+<span id="cb3-454"><a href="#cb3-454" aria-hidden="true" tabindex="-1"></a>    H_new <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">as.numeric</span>(<span class="fu">t</span>(q_prop) <span class="sc">%*%</span> Sigma_inv <span class="sc">%*%</span> q_prop) <span class="sc">+</span> <span class="fl">0.5</span> <span class="sc">*</span> <span class="fu">sum</span>(p_prop<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb3-455"><a href="#cb3-455" aria-hidden="true" tabindex="-1"></a>    log_alpha <span class="ot">&lt;-</span> <span class="sc">-</span>(H_new <span class="sc">-</span> H_old)</span>
+<span id="cb3-456"><a href="#cb3-456" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> log_alpha) {</span>
+<span id="cb3-457"><a href="#cb3-457" aria-hidden="true" tabindex="-1"></a>      q <span class="ot">&lt;-</span> q_prop</span>
+<span id="cb3-458"><a href="#cb3-458" aria-hidden="true" tabindex="-1"></a>      acc <span class="ot">&lt;-</span> acc <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb3-459"><a href="#cb3-459" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-460"><a href="#cb3-460" aria-hidden="true" tabindex="-1"></a>    samples[i, ] <span class="ot">&lt;-</span> q</span>
+<span id="cb3-461"><a href="#cb3-461" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-462"><a href="#cb3-462" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">samples =</span> samples, <span class="at">acc_rate =</span> acc <span class="sc">/</span> n_iter)</span>
+<span id="cb3-463"><a href="#cb3-463" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-464"><a href="#cb3-464" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-465"><a href="#cb3-465" aria-hidden="true" tabindex="-1"></a><span class="co"># Run samplers</span></span>
+<span id="cb3-466"><a href="#cb3-466" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb3-467"><a href="#cb3-467" aria-hidden="true" tabindex="-1"></a>n_iter <span class="ot">&lt;-</span> <span class="dv">2000</span></span>
+<span id="cb3-468"><a href="#cb3-468" aria-hidden="true" tabindex="-1"></a>fit_mh <span class="ot">&lt;-</span> <span class="fu">rw_mh</span>(n_iter, <span class="at">step =</span> <span class="fl">0.3</span>)</span>
+<span id="cb3-469"><a href="#cb3-469" aria-hidden="true" tabindex="-1"></a>fit_hmc <span class="ot">&lt;-</span> <span class="fu">hmc</span>(n_iter, <span class="at">eps =</span> <span class="fl">0.15</span>, <span class="at">L =</span> <span class="dv">20</span>)</span>
+<span id="cb3-470"><a href="#cb3-470" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-471"><a href="#cb3-471" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot traces</span></span>
+<span id="cb3-472"><a href="#cb3-472" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb3-473"><a href="#cb3-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-474"><a href="#cb3-474" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_mh<span class="sc">$</span>samples[,<span class="dv">1</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"#1f77b4"</span>,</span>
+<span id="cb3-475"><a href="#cb3-475" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"RW-MH Trace (acc="</span>, <span class="fu">round</span>(fit_mh<span class="sc">$</span>acc_rate, <span class="dv">3</span>), <span class="st">")"</span>),</span>
+<span id="cb3-476"><a href="#cb3-476" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"q1"</span>)</span>
+<span id="cb3-477"><a href="#cb3-477" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"grey90"</span>)</span>
+<span id="cb3-478"><a href="#cb3-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-479"><a href="#cb3-479" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_hmc<span class="sc">$</span>samples[,<span class="dv">1</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"#d62728"</span>,</span>
+<span id="cb3-480"><a href="#cb3-480" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"HMC Trace (acc="</span>, <span class="fu">round</span>(fit_hmc<span class="sc">$</span>acc_rate, <span class="dv">3</span>), <span class="st">")"</span>),</span>
+<span id="cb3-481"><a href="#cb3-481" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"q1"</span>)</span>
+<span id="cb3-482"><a href="#cb3-482" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"grey90"</span>)</span>
+<span id="cb3-483"><a href="#cb3-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-484"><a href="#cb3-484" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot ACF</span></span>
+<span id="cb3-485"><a href="#cb3-485" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(fit_mh<span class="sc">$</span>samples[,<span class="dv">1</span>], <span class="at">main =</span> <span class="st">"RW-MH Autocorr"</span>, <span class="at">lag.max =</span> <span class="dv">50</span>, <span class="at">col =</span> <span class="st">"#1f77b4"</span>)</span>
+<span id="cb3-486"><a href="#cb3-486" aria-hidden="true" tabindex="-1"></a><span class="fu">acf</span>(fit_hmc<span class="sc">$</span>samples[,<span class="dv">1</span>], <span class="at">main =</span> <span class="st">"HMC Autocorr"</span>, <span class="at">lag.max =</span> <span class="dv">50</span>, <span class="at">col =</span> <span class="st">"#d62728"</span>)</span>
+<span id="cb3-487"><a href="#cb3-487" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-488"><a href="#cb3-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-489"><a href="#cb3-489" aria-hidden="true" tabindex="-1"></a>RW-MH has acceptance $\approx 0.61$ and poor mixing; autocorrelation decays slowly. HMC has acceptance $\approx 0.96$ and autocorrelation decays in $\sim 10$ lags, yielding much larger effective sample size per gradient evaluation.</span>
+<span id="cb3-490"><a href="#cb3-490" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-491"><a href="#cb3-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-492"><a href="#cb3-492" aria-hidden="true" tabindex="-1"></a><span class="fu">## Practical recommendations</span></span>
+<span id="cb3-493"><a href="#cb3-493" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-494"><a href="#cb3-494" aria-hidden="true" tabindex="-1"></a>::: {.remark}</span>
+<span id="cb3-495"><a href="#cb3-495" aria-hidden="true" tabindex="-1"></a>**When to use HMC:**</span>
+<span id="cb3-496"><a href="#cb3-496" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Posterior dimension $d \geq 10$.</span>
+<span id="cb3-497"><a href="#cb3-497" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Gradient $\nabla \log \pi$ is available (exact or via automatic differentiation).</span>
+<span id="cb3-498"><a href="#cb3-498" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Posterior is not highly multimodal with separated modes.</span>
+<span id="cb3-499"><a href="#cb3-499" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Computational budget permits gradient evaluations (modern autodiff is fast).</span>
+<span id="cb3-500"><a href="#cb3-500" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-501"><a href="#cb3-501" aria-hidden="true" tabindex="-1"></a>**When HMC struggles:**</span>
+<span id="cb3-502"><a href="#cb3-502" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Highly multimodal posterior with isolated modes (HMC gets trapped in one mode; consider parallel tempering or other global methods).</span>
+<span id="cb3-503"><a href="#cb3-503" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Discrete parameters (HMC requires continuous state; marginalize out discrete variables or use other samplers).</span>
+<span id="cb3-504"><a href="#cb3-504" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Gradient unavailable and too expensive to compute numerically.</span>
+<span id="cb3-505"><a href="#cb3-505" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-506"><a href="#cb3-506" aria-hidden="true" tabindex="-1"></a>**When to prefer alternatives:**</span>
+<span id="cb3-507"><a href="#cb3-507" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Gibbs sampling:** If conditional distributions are easy to sample. Better mixing if conditionals are well-separated; worse if highly correlated.</span>
+<span id="cb3-508"><a href="#cb3-508" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Random-walk MH:** Low-dimensional ($d &lt; 10$), no gradients, simple implementation preferred.</span>
+<span id="cb3-509"><a href="#cb3-509" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Slice sampling or other adaptive methods:** If gradient unavailable but adaptive exploration is desired.</span>
+<span id="cb3-510"><a href="#cb3-510" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb3-511"><a href="#cb3-511" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-512"><a href="#cb3-512" aria-hidden="true" tabindex="-1"></a><span class="fu">## Stan and modern practice</span></span>
+<span id="cb3-513"><a href="#cb3-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-514"><a href="#cb3-514" aria-hidden="true" tabindex="-1"></a>The probabilistic programming language **Stan** uses NUTS with automatic warm-up by default. This means:</span>
+<span id="cb3-515"><a href="#cb3-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-516"><a href="#cb3-516" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Users specify the log-posterior (via a model statement).</span>
+<span id="cb3-517"><a href="#cb3-517" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Stan automatically differentiates to obtain $\nabla \log \pi$ via the reverse-mode autodiff.</span>
+<span id="cb3-518"><a href="#cb3-518" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>During warm-up, step size $\varepsilon$ is tuned to target 0.80 acceptance; mass matrix $M$ is adapted.</span>
+<span id="cb3-519"><a href="#cb3-519" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>NUTS extends trajectories adaptively without manual specification of $L$.</span>
+<span id="cb3-520"><a href="#cb3-520" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Convergence diagnostics ($\hat{R}$, effective sample size) are computed automatically.</span>
+<span id="cb3-521"><a href="#cb3-521" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-522"><a href="#cb3-522" aria-hidden="true" tabindex="-1"></a>This makes HMC accessible to practitioners without deep knowledge of tuning. **Stan is now the most widely used tool for general-purpose Bayesian inference**, precisely because it combines HMC's superior performance with ease of use.</span>
+<span id="cb3-523"><a href="#cb3-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-524"><a href="#cb3-524" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb3-525"><a href="#cb3-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-526"><a href="#cb3-526" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Neal, R. M. (2011).** MCMC Using Hamiltonian Dynamics. In *Handbook of Markov Chain Monte Carlo* (pp. 113–162). Chapman and Hall/CRC. <span class="co">[</span><span class="ot">Canonical reference for HMC theory and variants.</span><span class="co">]</span></span>
+<span id="cb3-527"><a href="#cb3-527" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-528"><a href="#cb3-528" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Robert, C. P., &amp; Casella, G. (2004).** *Monte Carlo Statistical Methods* (2nd ed.). Springer. <span class="co">[</span><span class="ot">Chapter 7.8 covers Hamiltonian mechanics and energy conservation in MCMC.</span><span class="co">]</span></span>
+<span id="cb3-529"><a href="#cb3-529" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-530"><a href="#cb3-530" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Hoffman, M. D., &amp; Gelman, A. (2014).** The No-U-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo. *Journal of Machine Learning Research*, 15, 1351–1381. <span class="co">[</span><span class="ot">Foundational paper on NUTS.</span><span class="co">]</span></span>
+<span id="cb3-531"><a href="#cb3-531" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-532"><a href="#cb3-532" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Carpenter, B., et al. (2017).** Stan: A probabilistic programming language. *Journal of Statistical Software*, 76(1). <span class="co">[</span><span class="ot">Stan implementation and practical guidance.</span><span class="co">]</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

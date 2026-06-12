@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>9&nbsp; Independence sampler and Gibbs sampling – Advanced Statistics for Physics Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/09_hamiltonian_mc.html" rel="next">
+<link href="../chapters/07_monte_carlo.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/07_monte_carlo.html">PART III: MONTE CARLO METHODS</a></li><li class="breadcrumb-item"><a href="../chapters/08_independence_and_gibbs.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Advanced Statistics for Physics Analysis</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01_R_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to R for Bayesian inference</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: PROBABILITY RECAP</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02_discrete_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Discrete probability</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03_continuous_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Continuous probability and limit theorems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: BAYESIAN INFERENCE</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04_model_comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05_parameter_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian parameter estimation, intervals and prediction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06_gaussian_inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: MONTE CARLO METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07_monte_carlo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Monte Carlo methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08_independence_and_gibbs.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09_hamiltonian_mc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10_parallel_tempering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: APPLIED BAYESIAN MODELLING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11_bayesian_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12_probabilistic_programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13_glms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDIX</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99_appendix_source_code.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Appendix: Source code</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">9.1</span> Introduction</a></li>
+  <li><a href="#the-independence-sampler-global-proposals" id="toc-the-independence-sampler-global-proposals" class="nav-link" data-scroll-target="#the-independence-sampler-global-proposals"><span class="header-section-number">9.2</span> The independence sampler: global proposals</a>
+  <ul class="collapse">
+  <li><a href="#idea-and-motivation" id="toc-idea-and-motivation" class="nav-link" data-scroll-target="#idea-and-motivation"><span class="header-section-number">9.2.1</span> Idea and motivation</a></li>
+  <li><a href="#acceptance-probability" id="toc-acceptance-probability" class="nav-link" data-scroll-target="#acceptance-probability"><span class="header-section-number">9.2.2</span> Acceptance probability</a></li>
+  <li><a href="#connection-to-importance-sampling-and-effective-sample-size" id="toc-connection-to-importance-sampling-and-effective-sample-size" class="nav-link" data-scroll-target="#connection-to-importance-sampling-and-effective-sample-size"><span class="header-section-number">9.2.3</span> Connection to importance sampling and effective sample size</a></li>
+  <li><a href="#when-does-the-independence-sampler-work-well" id="toc-when-does-the-independence-sampler-work-well" class="nav-link" data-scroll-target="#when-does-the-independence-sampler-work-well"><span class="header-section-number">9.2.4</span> When does the independence sampler work well?</a></li>
+  <li><a href="#curse-of-dimensionality-for-independence-sampling" id="toc-curse-of-dimensionality-for-independence-sampling" class="nav-link" data-scroll-target="#curse-of-dimensionality-for-independence-sampling"><span class="header-section-number">9.2.5</span> Curse of dimensionality for independence sampling</a></li>
+  </ul></li>
+  <li><a href="#the-gibbs-sampler-coordinate-wise-updates" id="toc-the-gibbs-sampler-coordinate-wise-updates" class="nav-link" data-scroll-target="#the-gibbs-sampler-coordinate-wise-updates"><span class="header-section-number">9.3</span> The Gibbs sampler: coordinate-wise updates</a>
+  <ul class="collapse">
+  <li><a href="#full-conditional-distributions" id="toc-full-conditional-distributions" class="nav-link" data-scroll-target="#full-conditional-distributions"><span class="header-section-number">9.3.1</span> Full conditional distributions</a></li>
+  <li><a href="#algorithm-deterministic-and-random-scan" id="toc-algorithm-deterministic-and-random-scan" class="nav-link" data-scroll-target="#algorithm-deterministic-and-random-scan"><span class="header-section-number">9.3.2</span> Algorithm: deterministic and random scan</a></li>
+  <li><a href="#gibbs-as-a-special-case-of-metropolishastings" id="toc-gibbs-as-a-special-case-of-metropolishastings" class="nav-link" data-scroll-target="#gibbs-as-a-special-case-of-metropolishastings"><span class="header-section-number">9.3.3</span> Gibbs as a special case of Metropolis–Hastings</a></li>
+  <li><a href="#detailed-balance-verification-for-gibbs" id="toc-detailed-balance-verification-for-gibbs" class="nav-link" data-scroll-target="#detailed-balance-verification-for-gibbs"><span class="header-section-number">9.3.4</span> Detailed balance verification for Gibbs</a></li>
+  <li><a href="#mixing-and-slow-mixing-from-correlation" id="toc-mixing-and-slow-mixing-from-correlation" class="nav-link" data-scroll-target="#mixing-and-slow-mixing-from-correlation"><span class="header-section-number">9.3.5</span> Mixing and slow mixing from correlation</a></li>
+  <li><a href="#metropolis-within-gibbs-and-block-gibbs" id="toc-metropolis-within-gibbs-and-block-gibbs" class="nav-link" data-scroll-target="#metropolis-within-gibbs-and-block-gibbs"><span class="header-section-number">9.3.6</span> Metropolis-within-Gibbs and block Gibbs</a></li>
+  </ul></li>
+  <li><a href="#worked-example-gibbs-sampling-for-a-bivariate-gaussian" id="toc-worked-example-gibbs-sampling-for-a-bivariate-gaussian" class="nav-link" data-scroll-target="#worked-example-gibbs-sampling-for-a-bivariate-gaussian"><span class="header-section-number">9.4</span> Worked example: Gibbs sampling for a bivariate Gaussian</a>
+  <ul class="collapse">
+  <li><a href="#slow-mixing-at-high-correlation" id="toc-slow-mixing-at-high-correlation" class="nav-link" data-scroll-target="#slow-mixing-at-high-correlation"><span class="header-section-number">9.4.1</span> Slow mixing at high correlation</a></li>
+  <li><a href="#rotated-coordinates-for-faster-mixing" id="toc-rotated-coordinates-for-faster-mixing" class="nav-link" data-scroll-target="#rotated-coordinates-for-faster-mixing"><span class="header-section-number">9.4.2</span> Rotated coordinates for faster mixing</a></li>
+  <li><a href="#autocorrelation-comparison" id="toc-autocorrelation-comparison" class="nav-link" data-scroll-target="#autocorrelation-comparison"><span class="header-section-number">9.4.3</span> Autocorrelation comparison</a></li>
+  </ul></li>
+  <li><a href="#comparison-independence-sampler-vs.-gibbs-sampler-vs.-random-walk-metropolis" id="toc-comparison-independence-sampler-vs.-gibbs-sampler-vs.-random-walk-metropolis" class="nav-link" data-scroll-target="#comparison-independence-sampler-vs.-gibbs-sampler-vs.-random-walk-metropolis"><span class="header-section-number">9.5</span> Comparison: independence sampler vs.&nbsp;Gibbs sampler vs.&nbsp;random-walk Metropolis</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">9.6</span> Summary</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">9.7</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/07_monte_carlo.html">PART III: MONTE CARLO METHODS</a></li><li class="breadcrumb-item"><a href="../chapters/08_independence_and_gibbs.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">9.1</span> Introduction</h2>
+<p>The Metropolis–Hastings algorithm, introduced in the previous chapter, is a general framework for constructing Markov chains with a target stationary distribution. However, the choice of proposal distribution critically affects both computational efficiency and the quality of samples. In this chapter, we explore two important special cases that reveal a fundamental trade-off in MCMC design: global vs.&nbsp;local exploration, and the role of acceptance rates in controlling mixing.</p>
+<p>The <strong>independence sampler</strong> uses a fixed global proposal, independent of the current state. This allows long-distance jumps but requires the proposal to approximate the target well. The <strong>Gibbs sampler</strong>, by contrast, updates coordinates sequentially using exact full conditional distributions, guaranteeing acceptance but potentially moving slowly through high-dimensional spaces when parameters are correlated. Both methods illustrate how MCMC designers must balance the competing demands of efficient exploration and computational tractability.</p>
+</section>
+<section id="the-independence-sampler-global-proposals" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="the-independence-sampler-global-proposals"><span class="header-section-number">9.2</span> The independence sampler: global proposals</h2>
+<section id="idea-and-motivation" class="level3" data-number="9.2.1">
+<h3 data-number="9.2.1" class="anchored" data-anchor-id="idea-and-motivation"><span class="header-section-number">9.2.1</span> Idea and motivation</h3>
+<p>In a random-walk Metropolis algorithm, the proposal distribution depends on the current state: <span class="math display">\[
+q(x' \mid x) \propto \exp\left( -\frac{\|x' - x\|^2}{2\sigma^2} \right).
+\]</span></p>
+<p>This locality allows the chain to take small, tentative steps and gradually explore the target space. However, if the proposal variance is too small, the chain mixes slowly; if too large, it wastes computation on distant, low-probability regions.</p>
+<p>The <strong>independence sampler</strong> takes a different approach: the proposal is <strong>independent of the current state</strong>, <span class="math display">\[
+q(x') = q(x' \mid x),
+\]</span> depending only on <span class="math inline">\(x'\)</span>. This allows the chain to jump from anywhere to anywhere in a single step, potentially escaping local modes and exploring the target space more globally.</p>
+</section>
+<section id="acceptance-probability" class="level3" data-number="9.2.2">
+<h3 data-number="9.2.2" class="anchored" data-anchor-id="acceptance-probability"><span class="header-section-number">9.2.2</span> Acceptance probability</h3>
+<p>For the Metropolis–Hastings algorithm, the acceptance probability is <span class="math display">\[
+\alpha(x \to x') = \min\left(1, \frac{\pi(x') \, q(x \mid x')}{\pi(x) \, q(x' \mid x)}\right).
+\]</span></p>
+<p>For the independence sampler, <span class="math inline">\(q(x \mid x') = q(x)\)</span> and <span class="math inline">\(q(x' \mid x) = q(x')\)</span>, so <span class="math display">\[
+\alpha(x \to x') = \min\left(1, \frac{\pi(x') \, q(x)}{\pi(x) \, q(x')}\right).
+\]</span></p>
+<p>Rearranging in terms of <strong>importance weights</strong> <span class="math inline">\(w(x) = \frac{\pi(x)}{q(x)}\)</span>: <span class="math display">\[
+\alpha(x \to x') = \min\left(1, \frac{w(x')}{w(x)}\right).
+\]</span></p>
+<div class="note">
+<p>The acceptance probability compares the importance weights at the proposed and current states. If <span class="math inline">\(w(x')\)</span> is larger, the proposal is always accepted. If <span class="math inline">\(w(x')\)</span> is smaller, it is accepted with probability <span class="math inline">\(w(x') / w(x)\)</span>. When the proposal closely matches the target, weights are nearly constant and acceptance is high.</p>
+</div>
+</section>
+<section id="connection-to-importance-sampling-and-effective-sample-size" class="level3" data-number="9.2.3">
+<h3 data-number="9.2.3" class="anchored" data-anchor-id="connection-to-importance-sampling-and-effective-sample-size"><span class="header-section-number">9.2.3</span> Connection to importance sampling and effective sample size</h3>
+<p>The independence sampler inherits its theoretical motivation from <strong>importance sampling</strong>. In importance sampling, we approximate an expectation <span class="math display">\[
+E_\pi[f(x)] = \int f(x) \, \pi(x) \, dx
+\]</span> by sampling from a simpler proposal <span class="math inline">\(q\)</span> and weighting: <span class="math display">\[
+\widehat{E_\pi}[f(x)] = \frac{\sum_{i=1}^N w(x_i) f(x_i)}{\sum_{i=1}^N w(x_i)}, \quad w(x_i) = \frac{\pi(x_i)}{q(x_i)}.
+\]</span></p>
+<p>The <strong>effective sample size (ESS)</strong> reflects how much information the weighted samples contain. If weights are unequal—as they are when <span class="math inline">\(q\)</span> deviates from <span class="math inline">\(\pi\)</span>—the ESS is smaller than <span class="math inline">\(N\)</span>: <span class="math display">\[
+\text{ESS} = \frac{1}{\sum_i (w_i / \bar{w})^2}.
+\]</span></p>
+<p>When <span class="math inline">\(w(x)\)</span> varies widely, many samples receive vanishingly small weight, and the variance of the estimator becomes very large.</p>
+<p>The independence sampler’s acceptance rate is directly related to the relative variation in weights. A narrow proposal (or a poorly-matched proposal) produces highly variable weights, leading to low acceptance and slow exploration. This illustrates the <strong>narrow-proposal failure mode</strong>: if the proposal is too concentrated, most proposed states fall in high-weight regions, but the chain accepts rarely and gets stuck.</p>
+</section>
+<section id="when-does-the-independence-sampler-work-well" class="level3" data-number="9.2.4">
+<h3 data-number="9.2.4" class="anchored" data-anchor-id="when-does-the-independence-sampler-work-well"><span class="header-section-number">9.2.4</span> When does the independence sampler work well?</h3>
+<p>The key requirement is that <strong><span class="math inline">\(q\)</span> must approximate <span class="math inline">\(\pi\)</span> globally</strong>. A sufficient ergodicity condition is <span class="math display">\[
+\pi(x) \leq C \, q(x) \quad \forall x
+\]</span> for some finite constant <span class="math inline">\(C &gt; 0\)</span>. This ensures the chain does not get trapped in regions of arbitrarily high relative weight.</p>
+<p>The independence sampler works best when: - We have a good global approximation to the posterior, e.g., from a <strong>Laplace approximation</strong>, <strong>variational inference</strong>, or other fast approximate methods. - The target distribution is unimodal or has well-separated modes that the proposal can accommodate.</p>
+<p>It fails when: - The proposal underestimates the tails or misses modes of the target. - States with large <span class="math inline">\(\pi(x) / q(x)\)</span> are rare, so the chain cannot easily reach them.</p>
+</section>
+<section id="curse-of-dimensionality-for-independence-sampling" class="level3" data-number="9.2.5">
+<h3 data-number="9.2.5" class="anchored" data-anchor-id="curse-of-dimensionality-for-independence-sampling"><span class="header-section-number">9.2.5</span> Curse of dimensionality for independence sampling</h3>
+<p>A profound limitation emerges in high dimensions. Suppose <span class="math inline">\(\log w(x) = \log \pi(x) - \log q(x)\)</span> decomposes as a sum of roughly independent contributions: <span class="math display">\[
+\log w(x) \approx \sum_{i=1}^d \Delta_i(x_i),
+\]</span> where each <span class="math inline">\(\Delta_i\)</span> represents the local mismatch between <span class="math inline">\(\pi\)</span> and <span class="math inline">\(q\)</span> in coordinate <span class="math inline">\(i\)</span>.</p>
+<p>Even if each <span class="math inline">\(\Delta_i\)</span> is small (order <span class="math inline">\(O(1)\)</span>), the total deviation is <span class="math inline">\(\log w(x) = O(d)\)</span>, so <span class="math inline">\(w(x) = \exp(O(d))\)</span>. The weights vary <strong>exponentially</strong> in dimension.</p>
+<div class="definition">
+<p><strong>Concentration of measure</strong>: In high dimensions, probability mass concentrates on thin regions. For a standard Gaussian <span class="math inline">\(\pi = N(0, I_d)\)</span>, the norm <span class="math inline">\(\|x\|\)</span> concentrates around <span class="math inline">\(\sqrt{d}\)</span>. Even a slightly mis-scaled proposal <span class="math inline">\(q\)</span> will place its probability mass in regions irrelevant to <span class="math inline">\(\pi\)</span>, causing acceptance to decay exponentially with <span class="math inline">\(d\)</span>.</p>
+</div>
+<p>This is the motivation for <strong>local proposals</strong> (random-walk Metropolis), <strong>gradient-based methods</strong> (Hamiltonian MC), and <strong>coordinate-wise samplers</strong> (Gibbs sampling).</p>
+</section>
+</section>
+<section id="the-gibbs-sampler-coordinate-wise-updates" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="the-gibbs-sampler-coordinate-wise-updates"><span class="header-section-number">9.3</span> The Gibbs sampler: coordinate-wise updates</h2>
+<section id="full-conditional-distributions" class="level3" data-number="9.3.1">
+<h3 data-number="9.3.1" class="anchored" data-anchor-id="full-conditional-distributions"><span class="header-section-number">9.3.1</span> Full conditional distributions</h3>
+<p>In many Bayesian models, jointly sampling from <span class="math inline">\(p(\theta \mid D)\)</span> where <span class="math inline">\(\theta = (\theta_1, \ldots, \theta_d)\)</span> is intractable, but sampling from each <strong>full conditional distribution</strong> is simple.</p>
+<div class="definition">
+<p>The <strong>full conditional distribution</strong> of <span class="math inline">\(\theta_i\)</span> is <span class="math display">\[
+p(\theta_i \mid \theta_{-i}, D),
+\]</span> where <span class="math inline">\(\theta_{-i} = (\theta_1, \ldots, \theta_{i-1}, \theta_{i+1}, \ldots, \theta_d)\)</span> denotes all other parameters. It is obtained by treating <span class="math inline">\(\theta_{-i}\)</span> as fixed and proportional to the joint posterior: <span class="math display">\[
+p(\theta_i \mid \theta_{-i}, D) \propto p(\theta_i, \theta_{-i} \mid D).
+\]</span></p>
+</div>
+</section>
+<section id="algorithm-deterministic-and-random-scan" class="level3" data-number="9.3.2">
+<h3 data-number="9.3.2" class="anchored" data-anchor-id="algorithm-deterministic-and-random-scan"><span class="header-section-number">9.3.2</span> Algorithm: deterministic and random scan</h3>
+<p><strong>Gibbs sampling</strong> iteratively samples each parameter from its full conditional:</p>
+<div class="theorem">
+<p><strong>Gibbs Sampler Algorithm</strong></p>
+<p>Initialize <span class="math inline">\(\theta^{(0)} = (\theta_1^{(0)}, \ldots, \theta_d^{(0)})\)</span>.</p>
+<p>For <span class="math inline">\(t = 1, 2, \ldots\)</span>:</p>
+<ol type="1">
+<li><span class="math inline">\(\theta_1^{(t)} \sim p(\theta_1 \mid \theta_2^{(t-1)}, \ldots, \theta_d^{(t-1)}, D)\)</span></li>
+<li><span class="math inline">\(\theta_2^{(t)} \sim p(\theta_2 \mid \theta_1^{(t)}, \theta_3^{(t-1)}, \ldots, \theta_d^{(t-1)}, D)\)</span></li>
+<li><span class="math inline">\(\vdots\)</span></li>
+<li><span class="math inline">\(\theta_d^{(t)} \sim p(\theta_d \mid \theta_1^{(t)}, \ldots, \theta_{d-1}^{(t)}, D)\)</span></li>
+</ol>
+<p>One complete cycle of all <span class="math inline">\(d\)</span> updates constitutes one iteration of the Gibbs sampler.</p>
+<p><strong>Variants</strong>: The <strong>random-scan Gibbs sampler</strong> updates coordinates in random order instead of a fixed sequence. For convergence, both deterministic and random scans are ergodic under mild conditions.</p>
+</div>
+</section>
+<section id="gibbs-as-a-special-case-of-metropolishastings" class="level3" data-number="9.3.3">
+<h3 data-number="9.3.3" class="anchored" data-anchor-id="gibbs-as-a-special-case-of-metropolishastings"><span class="header-section-number">9.3.3</span> Gibbs as a special case of Metropolis–Hastings</h3>
+<p>Gibbs sampling can be viewed as Metropolis–Hastings with the proposal being the full conditional itself. At step <span class="math inline">\(t\)</span>, we propose a new value for <span class="math inline">\(\theta_i\)</span> by sampling from <span class="math display">\[
+q(\theta_i' \mid \theta_i^{(t-1)}, \theta_{-i}^{(t)}) = p(\theta_i' \mid \theta_{-i}^{(t)}, D).
+\]</span></p>
+<p>The acceptance probability is <span class="math display">\[
+\alpha(\theta^{(t-1)} \to \theta^{(t)}) = \min\left(1, \frac{p(\theta_i^{(t)}, \theta_{-i}^{(t)} \mid D) \, p(\theta_i^{(t-1)} \mid \theta_{-i}^{(t)}, D)}{p(\theta_i^{(t-1)}, \theta_{-i}^{(t-1)} \mid D) \, p(\theta_i^{(t)} \mid \theta_{-i}^{(t)}, D)}\right).
+\]</span></p>
+<p>Using the factorization <span class="math inline">\(p(\theta_i, \theta_{-i} \mid D) = p(\theta_i \mid \theta_{-i}, D) \, p(\theta_{-i} \mid D)\)</span>, the ratio simplifies: <span class="math display">\[
+\frac{p(\theta_i^{(t)} \mid \theta_{-i}^{(t)}, D) \, p(\theta_{-i}^{(t)} \mid D) \, p(\theta_i^{(t-1)} \mid \theta_{-i}^{(t)}, D)}{p(\theta_i^{(t-1)} \mid \theta_{-i}^{(t-1)}, D) \, p(\theta_{-i}^{(t-1)} \mid D) \, p(\theta_i^{(t)} \mid \theta_{-i}^{(t)}, D)} = 1.
+\]</span></p>
+<p>Therefore, <span class="math inline">\(\alpha = 1\)</span>: <strong>every Gibbs step is accepted</strong>.</p>
+<div class="note">
+<p>Acceptance is guaranteed, but samples are still <strong>correlated</strong>. The chain does not jump to a new state at each step; instead, it updates coordinates sequentially, and autocorrelation arises because coordinates are strongly dependent.</p>
+</div>
+</section>
+<section id="detailed-balance-verification-for-gibbs" class="level3" data-number="9.3.4">
+<h3 data-number="9.3.4" class="anchored" data-anchor-id="detailed-balance-verification-for-gibbs"><span class="header-section-number">9.3.4</span> Detailed balance verification for Gibbs</h3>
+<p>For the full Gibbs update (one complete sweep of all <span class="math inline">\(d\)</span> coordinates), detailed balance holds with respect to the joint posterior. We verify that <span class="math display">\[
+p(\theta \mid D) \, T(\theta \to \theta') = p(\theta' \mid D) \, T(\theta' \to \theta),
+\]</span> where <span class="math inline">\(T\)</span> is the transition kernel of one complete sweep.</p>
+<p>For a single coordinate update <span class="math inline">\(T_i\)</span> applied to coordinate <span class="math inline">\(i\)</span>, left-multiply by <span class="math inline">\(p(\theta \mid D)\)</span> and expand using the factorization: <span class="math display">\[\begin{align}
+p(\theta \mid D) \, T_i(\theta \to \theta') &amp;= p(\theta_i, \theta_{-i} \mid D) \, p(\theta_i' \mid \theta_{-i}, D) \, \delta(\theta_{-i}' - \theta_{-i})\\
+&amp;= p(\theta_i \mid \theta_{-i}, D) \, p(\theta_{-i} \mid D) \, p(\theta_i' \mid \theta_{-i}, D) \, \delta(\theta_{-i}' - \theta_{-i}).
+\end{align}\]</span></p>
+<p>Permuting terms and using <span class="math inline">\(p(\theta_i \mid \theta_{-i}, D) = p(\theta_i \mid \theta_{-i}', D)\)</span> (since <span class="math inline">\(\theta_{-i} = \theta_{-i}'\)</span>): <span class="math display">\[
+= p(\theta_i' \mid \theta_{-i}, D) \, p(\theta_{-i} \mid D) \, p(\theta_i \mid \theta_{-i}, D) \, \delta(\theta_{-i}' - \theta_{-i}) = p(\theta' \mid D) \, T_i(\theta' \to \theta).
+\]</span></p>
+<p>Thus each coordinate-wise update preserves the posterior. Since the full sweep is a composition of such updates, it also satisfies detailed balance.</p>
+</section>
+<section id="mixing-and-slow-mixing-from-correlation" class="level3" data-number="9.3.5">
+<h3 data-number="9.3.5" class="anchored" data-anchor-id="mixing-and-slow-mixing-from-correlation"><span class="header-section-number">9.3.5</span> Mixing and slow mixing from correlation</h3>
+<p>Unlike the independence sampler, Gibbs always accepts. However, this does not imply fast mixing. When parameters are strongly correlated—as in high-dimensional hierarchical models or when the posterior is elongated along a narrow ridge—coordinate-wise updates must take many small steps to explore the space.</p>
+<div class="example">
+<p><strong>Bivariate Gaussian with high correlation</strong></p>
+<p>Consider a bivariate normal distribution: <span class="math display">\[
+\begin{pmatrix} X \\ Y \end{pmatrix} \sim N\left( \begin{pmatrix} 0 \\ 0 \end{pmatrix}, \begin{pmatrix} 1 &amp; \rho \\ \rho &amp; 1 \end{pmatrix} \right).
+\]</span></p>
+<p>The full conditionals are: <span class="math display">\[
+X \mid Y = y \sim N(\rho y, 1 - \rho^2), \quad Y \mid X = x \sim N(\rho x, 1 - \rho^2).
+\]</span></p>
+<p>When <span class="math inline">\(\rho = 0.9\)</span>, the posterior concentrates on a narrow diagonal ridge. A Gibbs step first moves horizontally (X-update), then vertically (Y-update), taking many iterations to traverse the ridge. In contrast, updating both coordinates jointly (e.g., via a rotated-coordinate Gibbs or HMC) moves along the ridge in fewer steps.</p>
+</div>
+</section>
+<section id="metropolis-within-gibbs-and-block-gibbs" class="level3" data-number="9.3.6">
+<h3 data-number="9.3.6" class="anchored" data-anchor-id="metropolis-within-gibbs-and-block-gibbs"><span class="header-section-number">9.3.6</span> Metropolis-within-Gibbs and block Gibbs</h3>
+<p>When the full conditional for a component is intractable, we can replace the Gibbs step with a Metropolis–Hastings step:</p>
+<div class="definition">
+<p><strong>Metropolis-within-Gibbs</strong>: Replace the Gibbs step for <span class="math inline">\(\theta_i\)</span> with a Metropolis–Hastings move using a local proposal <span class="math inline">\(q_i(\theta_i' \mid \theta_i)\)</span>. The acceptance probability is <span class="math display">\[
+\alpha_i(\theta_i \mid \theta_{-i}) = \min\left(1, \frac{p(\theta_i' \mid \theta_{-i}, D) \, q_i(\theta_i \mid \theta_i')}{p(\theta_i \mid \theta_{-i}, D) \, q_i(\theta_i' \mid \theta_i)}\right).
+\]</span></p>
+<p>The chain remains valid (it still has <span class="math inline">\(p(\theta \mid D)\)</span> as stationary distribution), but some steps are rejected.</p>
+</div>
+<p>Similarly, <strong>block Gibbs sampling</strong> updates multiple coordinates jointly: <span class="math display">\[
+(\theta_1, \ldots, \theta_k) \sim p(\theta_1, \ldots, \theta_k \mid \theta_{k+1}, \ldots, \theta_d, D).
+\]</span></p>
+<p>This is effective when joint conditionals are tractable, as it can dramatically reduce autocorrelation in highly correlated subsets.</p>
+</section>
+</section>
+<section id="worked-example-gibbs-sampling-for-a-bivariate-gaussian" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="worked-example-gibbs-sampling-for-a-bivariate-gaussian"><span class="header-section-number">9.4</span> Worked example: Gibbs sampling for a bivariate Gaussian</h2>
+<p>We now demonstrate Gibbs sampling on the bivariate Gaussian with <span class="math inline">\(\rho = 0.9\)</span> to illustrate slow mixing due to correlation, and show how a simple coordinate rotation accelerates mixing.</p>
+<section id="slow-mixing-at-high-correlation" class="level3" data-number="9.4.1">
+<h3 data-number="9.4.1" class="anchored" data-anchor-id="slow-mixing-at-high-correlation"><span class="header-section-number">9.4.1</span> Slow mixing at high correlation</h3>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1" data-lst-cap="Gibbs bivariate high corr"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>gibbs_bivariate <span class="ot">&lt;-</span> <span class="cf">function</span>(n_steps, rho, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_steps)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_steps)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  x[<span class="dv">1</span>] <span class="ot">&lt;-</span> start[<span class="dv">1</span>]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  y[<span class="dv">1</span>] <span class="ot">&lt;-</span> start[<span class="dv">2</span>]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  cond_sd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> rho<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_steps) {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update X | Y</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    x[t] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> rho <span class="sc">*</span> y[t <span class="sc">-</span> <span class="dv">1</span>], <span class="at">sd =</span> cond_sd)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update Y | X</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    y[t] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> rho <span class="sc">*</span> x[t], <span class="at">sd =</span> cond_sd)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>rho_high <span class="ot">&lt;-</span> <span class="fl">0.9</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>chain_high <span class="ot">&lt;-</span> <span class="fu">gibbs_bivariate</span>(<span class="at">n_steps =</span> <span class="dv">10000</span>, <span class="at">rho =</span> rho_high, <span class="at">start =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>))</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnostics</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>burn_in <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>samples_high <span class="ot">&lt;-</span> chain_high[(burn_in <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(chain_high), ]</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Trace plots</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chain_high[, <span class="st">"x"</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"#d62728"</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"Gibbs trace (X), rho = "</span>, rho_high),</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"X"</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> burn_in, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chain_high[, <span class="st">"y"</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"#1f77b4"</span>,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Gibbs trace (Y)"</span>, <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"Y"</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> burn_in, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter of posterior samples</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(samples_high[, <span class="st">"x"</span>], samples_high[, <span class="st">"y"</span>], <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> <span class="fl">0.3</span>,</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">xlab =</span> <span class="st">"X"</span>, <span class="at">ylab =</span> <span class="st">"Y"</span>,</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Posterior samples after burn-in"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="08_independence_and_gibbs_files/figure-html/lst-gibbs-bivariate-high-corr-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Gibbs sampling trace plots for a bivariate Gaussian with ρ = 0.9. The X-trace (top) shows high autocorrelation; the Y-trace (middle) is even slower due to dependence on X. The scatter plot (bottom) reveals the narrow diagonal structure.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="rotated-coordinates-for-faster-mixing" class="level3" data-number="9.4.2">
+<h3 data-number="9.4.2" class="anchored" data-anchor-id="rotated-coordinates-for-faster-mixing"><span class="header-section-number">9.4.2</span> Rotated coordinates for faster mixing</h3>
+<p>The slow mixing arises because the Gibbs updates align with the coordinate axes, while the posterior concentrates along the diagonal. We can decouple the correlation by rotating coordinates. Let <span class="math inline">\(u = \frac{x + y}{\sqrt{2}}\)</span> and <span class="math inline">\(v = \frac{x - y}{\sqrt{2}}\)</span>. For a standard bivariate Gaussian, the joint distribution of <span class="math inline">\((u, v)\)</span> is: <span class="math display">\[
+u \sim N(0, (1 + \rho)), \quad v \sim N(0, (1 - \rho)),
+\]</span> and <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> are <strong>independent</strong>.</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2" data-lst-cap="Gibbs rotated"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>gibbs_rotated <span class="ot">&lt;-</span> <span class="cf">function</span>(n_steps, rho, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Transform starting point to rotated coordinates</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  u_start <span class="ot">&lt;-</span> (start[<span class="dv">1</span>] <span class="sc">+</span> start[<span class="dv">2</span>]) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  v_start <span class="ot">&lt;-</span> (start[<span class="dv">1</span>] <span class="sc">-</span> start[<span class="dv">2</span>]) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  u <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_steps)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_steps)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  u[<span class="dv">1</span>] <span class="ot">&lt;-</span> u_start</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  v[<span class="dv">1</span>] <span class="ot">&lt;-</span> v_start</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  sd_u <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">+</span> rho)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  sd_v <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> rho)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_steps) {</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># u and v are now independent, so Gibbs reduces to independent sampling</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    u[t] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sd_u)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    v[t] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sd_v)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Transform back to original coordinates</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> (u <span class="sc">+</span> v) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> (u <span class="sc">-</span> v) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>chain_rotated <span class="ot">&lt;-</span> <span class="fu">gibbs_rotated</span>(<span class="at">n_steps =</span> <span class="dv">10000</span>, <span class="at">rho =</span> rho_high, <span class="at">start =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>))</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>samples_rotated <span class="ot">&lt;-</span> chain_rotated[(burn_in <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(chain_rotated), ]</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Trace plots for rotated coordinates</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chain_rotated[, <span class="st">"x"</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"#2ca02c"</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Rotated Gibbs trace (X after rotation)"</span>,</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"X"</span>)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> burn_in, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chain_rotated[, <span class="st">"y"</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"#ff7f0e"</span>,</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Rotated Gibbs trace (Y after rotation)"</span>,</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"Y"</span>)</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> burn_in, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(samples_rotated[, <span class="st">"x"</span>], samples_rotated[, <span class="st">"y"</span>], <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> <span class="fl">0.3</span>,</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">xlab =</span> <span class="st">"X"</span>, <span class="at">ylab =</span> <span class="st">"Y"</span>,</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Posterior samples (rotated Gibbs)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="08_independence_and_gibbs_files/figure-html/lst-gibbs-rotated-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Gibbs sampling in rotated coordinates. With ρ = 0.9, rotated coordinates decouple the posterior into independent components, yielding much lower autocorrelation and faster mixing.</figcaption>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3" data-lst-cap="Gibbs rotated"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="autocorrelation-comparison" class="level3" data-number="9.4.3">
+<h3 data-number="9.4.3" class="anchored" data-anchor-id="autocorrelation-comparison"><span class="header-section-number">9.4.3</span> Autocorrelation comparison</h3>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb4" data-lst-cap="Gibbs acf comparison"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>acf_high <span class="ot">&lt;-</span> <span class="fu">acf</span>(samples_high[, <span class="st">"x"</span>], <span class="at">lag.max =</span> <span class="dv">50</span>, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>acf_rotated <span class="ot">&lt;-</span> <span class="fu">acf</span>(samples_rotated[, <span class="st">"x"</span>], <span class="at">lag.max =</span> <span class="dv">50</span>, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(acf_high<span class="sc">$</span>lag, acf_high<span class="sc">$</span>acf, <span class="at">type =</span> <span class="st">"h"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#d62728"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Standard Gibbs (rho = 0.9)"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Lag"</span>, <span class="at">ylab =</span> <span class="st">"ACF"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.1</span>, <span class="dv">1</span>))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(acf_rotated<span class="sc">$</span>lag, acf_rotated<span class="sc">$</span>acf, <span class="at">type =</span> <span class="st">"h"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#2ca02c"</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Rotated Gibbs (rho = 0.9)"</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Lag"</span>, <span class="at">ylab =</span> <span class="st">"ACF"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.1</span>, <span class="dv">1</span>))</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="08_independence_and_gibbs_files/figure-html/lst-gibbs-acf-comparison-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Autocorrelation functions for X in both samplers. Standard Gibbs (dashed red) shows high persistence; rotated Gibbs (solid green) decorrelates in one or two lags.</figcaption>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb5" data-lst-cap="Gibbs acf comparison"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</section>
+<section id="comparison-independence-sampler-vs.-gibbs-sampler-vs.-random-walk-metropolis" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="comparison-independence-sampler-vs.-gibbs-sampler-vs.-random-walk-metropolis"><span class="header-section-number">9.5</span> Comparison: independence sampler vs.&nbsp;Gibbs sampler vs.&nbsp;random-walk Metropolis</h2>
+<p>The three samplers embody different philosophies and trade-offs:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"><strong>Aspect</strong></th>
+<th style="text-align: left;"><strong>Independence Sampler</strong></th>
+<th style="text-align: left;"><strong>Gibbs Sampler</strong></th>
+<th style="text-align: left;"><strong>Random-Walk MH</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Proposal</strong></td>
+<td style="text-align: left;"><span class="math inline">\(q(x')\)</span> (global, fixed)</td>
+<td style="text-align: left;"><span class="math inline">\(p(\theta_i \mid \theta_{-i}, D)\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(x' \sim N(x, \Sigma)\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Move type</strong></td>
+<td style="text-align: left;">Global jumps anywhere</td>
+<td style="text-align: left;">Coordinate-wise updates</td>
+<td style="text-align: left;">Local steps</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Acceptance</strong></td>
+<td style="text-align: left;">MH ratio (often low)</td>
+<td style="text-align: left;">Always 1 (deterministic)</td>
+<td style="text-align: left;">Variable (tunable)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Main requirement</strong></td>
+<td style="text-align: left;">Good global approximation</td>
+<td style="text-align: left;">Tractable conditionals</td>
+<td style="text-align: left;">Reasonable scale estimate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Fails when</strong></td>
+<td style="text-align: left;"><span class="math inline">\(q\)</span> poorly matches <span class="math inline">\(\pi\)</span></td>
+<td style="text-align: left;">Strong parameter correlations</td>
+<td style="text-align: left;">Proposal scale wrong</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Autocorrelation</strong></td>
+<td style="text-align: left;">Low if <span class="math inline">\(q \approx \pi\)</span></td>
+<td style="text-align: left;">High if correlated structure</td>
+<td style="text-align: left;">Moderate (tunable)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Dimension scaling</strong></td>
+<td style="text-align: left;">Exponential decay <span class="math inline">\(\sim \exp(-cd)\)</span></td>
+<td style="text-align: left;">Polynomial (depends on correlation)</td>
+<td style="text-align: left;">Exponential decay</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Typical use</strong></td>
+<td style="text-align: left;">Approximate posteriors</td>
+<td style="text-align: left;">Conjugate/hierarchical models</td>
+<td style="text-align: left;">Flexible fallback</td>
+</tr>
+</tbody>
+</table>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span>In practice, these are rarely used in isolation. Modern samplers often combine ideas:</p>
+<ul>
+<li><strong>Metropolis-within-Gibbs</strong>: Use Gibbs for tractable coordinates, MH for intractable ones.</li>
+<li><strong>Block Gibbs</strong>: Group correlated coordinates and sample jointly to reduce autocorrelation.</li>
+<li><strong>Adaptive proposals</strong>: Learn a proposal from preliminary runs (adaptive MCMC).</li>
+<li><strong>HMC within Gibbs</strong>: Combine gradient-based efficient exploration with block structure.</li>
+</ul>
+<p>The choice depends on the model structure, the availability of efficient samplers for conditionals, and computational constraints.</p>
+</div>
+</section>
+<section id="summary" class="level2" data-number="9.6">
+<h2 data-number="9.6" class="anchored" data-anchor-id="summary"><span class="header-section-number">9.6</span> Summary</h2>
+<p>The <strong>independence sampler</strong> represents a global exploration strategy: it can jump anywhere but only works well if the proposal closely approximates the target. Its acceptance probability directly reflects the importance weights, making it a bridge between importance sampling and MCMC. However, the exponential degradation of weights in high dimensions—a manifestation of concentration of measure—limits its applicability to high-dimensional problems.</p>
+<p>The <strong>Gibbs sampler</strong> exploits model structure by updating parameters from their full conditionals. Every step is accepted, eliminating the rejection waste of Metropolis algorithms. However, when parameters are strongly correlated, the chain mixes slowly because coordinate-wise moves struggle to explore elongated posterior geometries efficiently. Rotation to decorrelated coordinates, block updates, or auxiliary variable methods can dramatically improve performance.</p>
+<p>Both methods highlight the central tension in MCMC: acceptance rates, exploration speed, and computational tractability are not independent. A low acceptance rate signals a poorly matched proposal; a high rate (even 100%) does not guarantee fast mixing if the effective step size is small. Successful MCMC practice requires diagnosing mixing, adapting proposals, and sometimes redesigning the parameterization to align with the posterior structure.</p>
+</section>
+<section id="sources" class="level2" data-number="9.7">
+<h2 data-number="9.7" class="anchored" data-anchor-id="sources"><span class="header-section-number">9.7</span> Sources</h2>
+<ul>
+<li>Robert, C. P., &amp; Casella, G. (2004). <em>Monte Carlo Statistical Methods</em> (2nd ed., Springer Texts in Statistics, Chapters 7 &amp; 10).</li>
+<li>Falasco, G. (2026). <em>Advanced statistics for physics analysis</em> (Sections 6.4–6.5, lecture notes).</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/07_monte_carlo.html" class="pagination-link" aria-label="Monte Carlo methods">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Monte Carlo methods</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/09_hamiltonian_mc.html" class="pagination-link" aria-label="Hamiltonian Monte Carlo">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb6" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Independence sampler and Gibbs sampling"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>The Metropolis–Hastings algorithm, introduced in the previous chapter, is a general framework for constructing Markov chains with a target stationary distribution. However, the choice of proposal distribution critically affects both computational efficiency and the quality of samples. In this chapter, we explore two important special cases that reveal a fundamental trade-off in MCMC design: global vs. local exploration, and the role of acceptance rates in controlling mixing.</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>The **independence sampler** uses a fixed global proposal, independent of the current state. This allows long-distance jumps but requires the proposal to approximate the target well. The **Gibbs sampler**, by contrast, updates coordinates sequentially using exact full conditional distributions, guaranteeing acceptance but potentially moving slowly through high-dimensional spaces when parameters are correlated. Both methods illustrate how MCMC designers must balance the competing demands of efficient exploration and computational tractability.</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## The independence sampler: global proposals</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">### Idea and motivation</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>In a random-walk Metropolis algorithm, the proposal distribution depends on the current state:</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>q(x' \mid x) \propto \exp\left( -\frac{<span class="sc">\|</span>x' - x<span class="sc">\|</span>^2}{2\sigma^2} \right).</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>This locality allows the chain to take small, tentative steps and gradually explore the target space. However, if the proposal variance is too small, the chain mixes slowly; if too large, it wastes computation on distant, low-probability regions.</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>The **independence sampler** takes a different approach: the proposal is **independent of the current state**,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>q(x') = q(x' \mid x),</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>depending only on $x'$. This allows the chain to jump from anywhere to anywhere in a single step, potentially escaping local modes and exploring the target space more globally.</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="fu">### Acceptance probability</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>For the Metropolis–Hastings algorithm, the acceptance probability is</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>\alpha(x \to x') = \min\left(1, \frac{\pi(x') \, q(x \mid x')}{\pi(x) \, q(x' \mid x)}\right).</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>For the independence sampler, $q(x \mid x') = q(x)$ and $q(x' \mid x) = q(x')$, so</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>\alpha(x \to x') = \min\left(1, \frac{\pi(x') \, q(x)}{\pi(x) \, q(x')}\right).</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>Rearranging in terms of **importance weights** $w(x) = \frac{\pi(x)}{q(x)}$:</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>\alpha(x \to x') = \min\left(1, \frac{w(x')}{w(x)}\right).</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>::::: {.note}</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>The acceptance probability compares the importance weights at the proposed and current states. If $w(x')$ is larger, the proposal is always accepted. If $w(x')$ is smaller, it is accepted with probability $w(x') / w(x)$. When the proposal closely matches the target, weights are nearly constant and acceptance is high.</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>:::::</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="fu">### Connection to importance sampling and effective sample size</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>The independence sampler inherits its theoretical motivation from **importance sampling**. In importance sampling, we approximate an expectation</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>E_\pi<span class="co">[</span><span class="ot">f(x)</span><span class="co">]</span> = \int f(x) \, \pi(x) \, dx</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>by sampling from a simpler proposal $q$ and weighting:</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>\widehat{E_\pi}<span class="co">[</span><span class="ot">f(x)</span><span class="co">]</span> = \frac{\sum_{i=1}^N w(x_i) f(x_i)}{\sum_{i=1}^N w(x_i)}, \quad w(x_i) = \frac{\pi(x_i)}{q(x_i)}.</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>The **effective sample size (ESS)** reflects how much information the weighted samples contain. If weights are unequal—as they are when $q$ deviates from $\pi$—the ESS is smaller than $N$:</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>\text{ESS} = \frac{1}{\sum_i (w_i / \bar{w})^2}.</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>When $w(x)$ varies widely, many samples receive vanishingly small weight, and the variance of the estimator becomes very large.</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>The independence sampler's acceptance rate is directly related to the relative variation in weights. A narrow proposal (or a poorly-matched proposal) produces highly variable weights, leading to low acceptance and slow exploration. This illustrates the **narrow-proposal failure mode**: if the proposal is too concentrated, most proposed states fall in high-weight regions, but the chain accepts rarely and gets stuck.</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="fu">### When does the independence sampler work well?</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>The key requirement is that **$q$ must approximate $\pi$ globally**. A sufficient ergodicity condition is</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>\pi(x) \leq C \, q(x) \quad \forall x</span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>for some finite constant $C &gt; 0$. This ensures the chain does not get trapped in regions of arbitrarily high relative weight.</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>The independence sampler works best when:</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>We have a good global approximation to the posterior, e.g., from a **Laplace approximation**, **variational inference**, or other fast approximate methods.</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The target distribution is unimodal or has well-separated modes that the proposal can accommodate.</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>It fails when:</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The proposal underestimates the tails or misses modes of the target.</span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>States with large $\pi(x) / q(x)$ are rare, so the chain cannot easily reach them.</span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a><span class="fu">### Curse of dimensionality for independence sampling</span></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>A profound limitation emerges in high dimensions. Suppose $\log w(x) = \log \pi(x) - \log q(x)$ decomposes as a sum of roughly independent contributions:</span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a>\log w(x) \approx \sum_{i=1}^d \Delta_i(x_i),</span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>where each $\Delta_i$ represents the local mismatch between $\pi$ and $q$ in coordinate $i$.</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>Even if each $\Delta_i$ is small (order $O(1)$), the total deviation is $\log w(x) = O(d)$, so $w(x) = \exp(O(d))$. The weights vary **exponentially** in dimension.</span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a>::::: {.definition}</span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a>**Concentration of measure**: In high dimensions, probability mass concentrates on thin regions. For a standard Gaussian $\pi = N(0, I_d)$, the norm $<span class="sc">\|</span>x<span class="sc">\|</span>$ concentrates around $\sqrt{d}$. Even a slightly mis-scaled proposal $q$ will place its probability mass in regions irrelevant to $\pi$, causing acceptance to decay exponentially with $d$.</span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a>:::::</span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>This is the motivation for **local proposals** (random-walk Metropolis), **gradient-based methods** (Hamiltonian MC), and **coordinate-wise samplers** (Gibbs sampling).</span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Gibbs sampler: coordinate-wise updates</span></span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a><span class="fu">### Full conditional distributions</span></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a>In many Bayesian models, jointly sampling from $p(\theta \mid D)$ where $\theta = (\theta_1, \ldots, \theta_d)$ is intractable, but sampling from each **full conditional distribution** is simple.</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a>::::: {.definition}</span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>The **full conditional distribution** of $\theta_i$ is</span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a>p(\theta_i \mid \theta_{-i}, D),</span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a>where $\theta_{-i} = (\theta_1, \ldots, \theta_{i-1}, \theta_{i+1}, \ldots, \theta_d)$ denotes all other parameters. It is obtained by treating $\theta_{-i}$ as fixed and proportional to the joint posterior:</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>p(\theta_i \mid \theta_{-i}, D) \propto p(\theta_i, \theta_{-i} \mid D).</span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a>:::::</span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a><span class="fu">### Algorithm: deterministic and random scan</span></span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a>**Gibbs sampling** iteratively samples each parameter from its full conditional:</span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a>::::: {.theorem}</span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a>**Gibbs Sampler Algorithm**</span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a>Initialize $\theta^{(0)} = (\theta_1^{(0)}, \ldots, \theta_d^{(0)})$.</span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a>For $t = 1, 2, \ldots$:</span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>$\theta_1^{(t)} \sim p(\theta_1 \mid \theta_2^{(t-1)}, \ldots, \theta_d^{(t-1)}, D)$</span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>$\theta_2^{(t)} \sim p(\theta_2 \mid \theta_1^{(t)}, \theta_3^{(t-1)}, \ldots, \theta_d^{(t-1)}, D)$</span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>$\vdots$</span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>$\theta_d^{(t)} \sim p(\theta_d \mid \theta_1^{(t)}, \ldots, \theta_{d-1}^{(t)}, D)$</span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a>One complete cycle of all $d$ updates constitutes one iteration of the Gibbs sampler.</span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a>**Variants**: The **random-scan Gibbs sampler** updates coordinates in random order instead of a fixed sequence. For convergence, both deterministic and random scans are ergodic under mild conditions.</span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a>:::::</span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a><span class="fu">### Gibbs as a special case of Metropolis–Hastings</span></span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a>Gibbs sampling can be viewed as Metropolis–Hastings with the proposal being the full conditional itself. At step $t$, we propose a new value for $\theta_i$ by sampling from</span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a>q(\theta_i' \mid \theta_i^{(t-1)}, \theta_{-i}^{(t)}) = p(\theta_i' \mid \theta_{-i}^{(t)}, D).</span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a>The acceptance probability is</span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a>\alpha(\theta^{(t-1)} \to \theta^{(t)}) = \min\left(1, \frac{p(\theta_i^{(t)}, \theta_{-i}^{(t)} \mid D) \, p(\theta_i^{(t-1)} \mid \theta_{-i}^{(t)}, D)}{p(\theta_i^{(t-1)}, \theta_{-i}^{(t-1)} \mid D) \, p(\theta_i^{(t)} \mid \theta_{-i}^{(t)}, D)}\right).</span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a>Using the factorization $p(\theta_i, \theta_{-i} \mid D) = p(\theta_i \mid \theta_{-i}, D) \, p(\theta_{-i} \mid D)$, the ratio simplifies:</span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a>\frac{p(\theta_i^{(t)} \mid \theta_{-i}^{(t)}, D) \, p(\theta_{-i}^{(t)} \mid D) \, p(\theta_i^{(t-1)} \mid \theta_{-i}^{(t)}, D)}{p(\theta_i^{(t-1)} \mid \theta_{-i}^{(t-1)}, D) \, p(\theta_{-i}^{(t-1)} \mid D) \, p(\theta_i^{(t)} \mid \theta_{-i}^{(t)}, D)} = 1.</span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a>Therefore, $\alpha = 1$: **every Gibbs step is accepted**.</span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a>::::: {.note}</span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a>Acceptance is guaranteed, but samples are still **correlated**. The chain does not jump to a new state at each step; instead, it updates coordinates sequentially, and autocorrelation arises because coordinates are strongly dependent.</span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a>:::::</span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a><span class="fu">### Detailed balance verification for Gibbs</span></span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a>For the full Gibbs update (one complete sweep of all $d$ coordinates), detailed balance holds with respect to the joint posterior. We verify that</span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a>p(\theta \mid D) \, T(\theta \to \theta') = p(\theta' \mid D) \, T(\theta' \to \theta),</span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a>where $T$ is the transition kernel of one complete sweep.</span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a>For a single coordinate update $T_i$ applied to coordinate $i$, left-multiply by $p(\theta \mid D)$ and expand using the factorization:</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a>\begin{align}</span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a>p(\theta \mid D) \, T_i(\theta \to \theta') &amp;= p(\theta_i, \theta_{-i} \mid D) \, p(\theta_i' \mid \theta_{-i}, D) \, \delta(\theta_{-i}' - \theta_{-i})<span class="sc">\\</span></span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a>&amp;= p(\theta_i \mid \theta_{-i}, D) \, p(\theta_{-i} \mid D) \, p(\theta_i' \mid \theta_{-i}, D) \, \delta(\theta_{-i}' - \theta_{-i}).</span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a>\end{align}</span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a>Permuting terms and using $p(\theta_i \mid \theta_{-i}, D) = p(\theta_i \mid \theta_{-i}', D)$ (since $\theta_{-i} = \theta_{-i}'$):</span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a>= p(\theta_i' \mid \theta_{-i}, D) \, p(\theta_{-i} \mid D) \, p(\theta_i \mid \theta_{-i}, D) \, \delta(\theta_{-i}' - \theta_{-i}) = p(\theta' \mid D) \, T_i(\theta' \to \theta).</span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>Thus each coordinate-wise update preserves the posterior. Since the full sweep is a composition of such updates, it also satisfies detailed balance.</span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mixing and slow mixing from correlation</span></span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>Unlike the independence sampler, Gibbs always accepts. However, this does not imply fast mixing. When parameters are strongly correlated—as in high-dimensional hierarchical models or when the posterior is elongated along a narrow ridge—coordinate-wise updates must take many small steps to explore the space.</span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a>::::: {.example}</span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>**Bivariate Gaussian with high correlation**</span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a>Consider a bivariate normal distribution:</span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>\begin{pmatrix} X <span class="sc">\\</span> Y \end{pmatrix} \sim N\left( \begin{pmatrix} 0 <span class="sc">\\</span> 0 \end{pmatrix}, \begin{pmatrix} 1 &amp; \rho <span class="sc">\\</span> \rho &amp; 1 \end{pmatrix} \right).</span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>The full conditionals are:</span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>X \mid Y = y \sim N(\rho y, 1 - \rho^2), \quad Y \mid X = x \sim N(\rho x, 1 - \rho^2).</span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a>When $\rho = 0.9$, the posterior concentrates on a narrow diagonal ridge. A Gibbs step first moves horizontally (X-update), then vertically (Y-update), taking many iterations to traverse the ridge. In contrast, updating both coordinates jointly (e.g., via a rotated-coordinate Gibbs or HMC) moves along the ridge in fewer steps.</span>
+<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a>:::::</span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a><span class="fu">### Metropolis-within-Gibbs and block Gibbs</span></span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a>When the full conditional for a component is intractable, we can replace the Gibbs step with a Metropolis–Hastings step:</span>
+<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a>::::: {.definition}</span>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a>**Metropolis-within-Gibbs**: Replace the Gibbs step for $\theta_i$ with a Metropolis–Hastings move using a local proposal $q_i(\theta_i' \mid \theta_i)$. The acceptance probability is</span>
+<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a>\alpha_i(\theta_i \mid \theta_{-i}) = \min\left(1, \frac{p(\theta_i' \mid \theta_{-i}, D) \, q_i(\theta_i \mid \theta_i')}{p(\theta_i \mid \theta_{-i}, D) \, q_i(\theta_i' \mid \theta_i)}\right).</span>
+<span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a>The chain remains valid (it still has $p(\theta \mid D)$ as stationary distribution), but some steps are rejected.</span>
+<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a>:::::</span>
+<span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a>Similarly, **block Gibbs sampling** updates multiple coordinates jointly:</span>
+<span id="cb6-217"><a href="#cb6-217" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a>(\theta_1, \ldots, \theta_k) \sim p(\theta_1, \ldots, \theta_k \mid \theta_{k+1}, \ldots, \theta_d, D).</span>
+<span id="cb6-219"><a href="#cb6-219" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-220"><a href="#cb6-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-221"><a href="#cb6-221" aria-hidden="true" tabindex="-1"></a>This is effective when joint conditionals are tractable, as it can dramatically reduce autocorrelation in highly correlated subsets.</span>
+<span id="cb6-222"><a href="#cb6-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-223"><a href="#cb6-223" aria-hidden="true" tabindex="-1"></a><span class="fu">## Worked example: Gibbs sampling for a bivariate Gaussian</span></span>
+<span id="cb6-224"><a href="#cb6-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-225"><a href="#cb6-225" aria-hidden="true" tabindex="-1"></a>We now demonstrate Gibbs sampling on the bivariate Gaussian with $\rho = 0.9$ to illustrate slow mixing due to correlation, and show how a simple coordinate rotation accelerates mixing.</span>
+<span id="cb6-226"><a href="#cb6-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-227"><a href="#cb6-227" aria-hidden="true" tabindex="-1"></a><span class="fu">### Slow mixing at high correlation</span></span>
+<span id="cb6-228"><a href="#cb6-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-231"><a href="#cb6-231" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-232"><a href="#cb6-232" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-gibbs-bivariate-high-corr</span></span>
+<span id="cb6-233"><a href="#cb6-233" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Gibbs bivariate high corr"</span></span>
+<span id="cb6-234"><a href="#cb6-234" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Gibbs sampling trace plots for a bivariate Gaussian with ρ = 0.9. The X-trace (top) shows high autocorrelation; the Y-trace (middle) is even slower due to dependence on X. The scatter plot (bottom) reveals the narrow diagonal structure."</span></span>
+<span id="cb6-235"><a href="#cb6-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-236"><a href="#cb6-236" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb6-237"><a href="#cb6-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-238"><a href="#cb6-238" aria-hidden="true" tabindex="-1"></a>gibbs_bivariate <span class="ot">&lt;-</span> <span class="cf">function</span>(n_steps, rho, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) {</span>
+<span id="cb6-239"><a href="#cb6-239" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_steps)</span>
+<span id="cb6-240"><a href="#cb6-240" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_steps)</span>
+<span id="cb6-241"><a href="#cb6-241" aria-hidden="true" tabindex="-1"></a>  x[<span class="dv">1</span>] <span class="ot">&lt;-</span> start[<span class="dv">1</span>]</span>
+<span id="cb6-242"><a href="#cb6-242" aria-hidden="true" tabindex="-1"></a>  y[<span class="dv">1</span>] <span class="ot">&lt;-</span> start[<span class="dv">2</span>]</span>
+<span id="cb6-243"><a href="#cb6-243" aria-hidden="true" tabindex="-1"></a>  cond_sd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> rho<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb6-244"><a href="#cb6-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-245"><a href="#cb6-245" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_steps) {</span>
+<span id="cb6-246"><a href="#cb6-246" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update X | Y</span></span>
+<span id="cb6-247"><a href="#cb6-247" aria-hidden="true" tabindex="-1"></a>    x[t] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> rho <span class="sc">*</span> y[t <span class="sc">-</span> <span class="dv">1</span>], <span class="at">sd =</span> cond_sd)</span>
+<span id="cb6-248"><a href="#cb6-248" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update Y | X</span></span>
+<span id="cb6-249"><a href="#cb6-249" aria-hidden="true" tabindex="-1"></a>    y[t] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> rho <span class="sc">*</span> x[t], <span class="at">sd =</span> cond_sd)</span>
+<span id="cb6-250"><a href="#cb6-250" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-251"><a href="#cb6-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-252"><a href="#cb6-252" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb6-253"><a href="#cb6-253" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-254"><a href="#cb6-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-255"><a href="#cb6-255" aria-hidden="true" tabindex="-1"></a>rho_high <span class="ot">&lt;-</span> <span class="fl">0.9</span></span>
+<span id="cb6-256"><a href="#cb6-256" aria-hidden="true" tabindex="-1"></a>chain_high <span class="ot">&lt;-</span> <span class="fu">gibbs_bivariate</span>(<span class="at">n_steps =</span> <span class="dv">10000</span>, <span class="at">rho =</span> rho_high, <span class="at">start =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>))</span>
+<span id="cb6-257"><a href="#cb6-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-258"><a href="#cb6-258" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnostics</span></span>
+<span id="cb6-259"><a href="#cb6-259" aria-hidden="true" tabindex="-1"></a>burn_in <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb6-260"><a href="#cb6-260" aria-hidden="true" tabindex="-1"></a>samples_high <span class="ot">&lt;-</span> chain_high[(burn_in <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(chain_high), ]</span>
+<span id="cb6-261"><a href="#cb6-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-262"><a href="#cb6-262" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb6-263"><a href="#cb6-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-264"><a href="#cb6-264" aria-hidden="true" tabindex="-1"></a><span class="co"># Trace plots</span></span>
+<span id="cb6-265"><a href="#cb6-265" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chain_high[, <span class="st">"x"</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"#d62728"</span>,</span>
+<span id="cb6-266"><a href="#cb6-266" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"Gibbs trace (X), rho = "</span>, rho_high),</span>
+<span id="cb6-267"><a href="#cb6-267" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"X"</span>)</span>
+<span id="cb6-268"><a href="#cb6-268" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> burn_in, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb6-269"><a href="#cb6-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-270"><a href="#cb6-270" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chain_high[, <span class="st">"y"</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"#1f77b4"</span>,</span>
+<span id="cb6-271"><a href="#cb6-271" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Gibbs trace (Y)"</span>, <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"Y"</span>)</span>
+<span id="cb6-272"><a href="#cb6-272" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> burn_in, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb6-273"><a href="#cb6-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-274"><a href="#cb6-274" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter of posterior samples</span></span>
+<span id="cb6-275"><a href="#cb6-275" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(samples_high[, <span class="st">"x"</span>], samples_high[, <span class="st">"y"</span>], <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> <span class="fl">0.3</span>,</span>
+<span id="cb6-276"><a href="#cb6-276" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">xlab =</span> <span class="st">"X"</span>, <span class="at">ylab =</span> <span class="st">"Y"</span>,</span>
+<span id="cb6-277"><a href="#cb6-277" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Posterior samples after burn-in"</span>)</span>
+<span id="cb6-278"><a href="#cb6-278" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-279"><a href="#cb6-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-280"><a href="#cb6-280" aria-hidden="true" tabindex="-1"></a><span class="fu">### Rotated coordinates for faster mixing</span></span>
+<span id="cb6-281"><a href="#cb6-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-282"><a href="#cb6-282" aria-hidden="true" tabindex="-1"></a>The slow mixing arises because the Gibbs updates align with the coordinate axes, while the posterior concentrates along the diagonal. We can decouple the correlation by rotating coordinates. Let $u = \frac{x + y}{\sqrt{2}}$ and $v = \frac{x - y}{\sqrt{2}}$. For a standard bivariate Gaussian, the joint distribution of $(u, v)$ is:</span>
+<span id="cb6-283"><a href="#cb6-283" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-284"><a href="#cb6-284" aria-hidden="true" tabindex="-1"></a>u \sim N(0, (1 + \rho)), \quad v \sim N(0, (1 - \rho)),</span>
+<span id="cb6-285"><a href="#cb6-285" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb6-286"><a href="#cb6-286" aria-hidden="true" tabindex="-1"></a>and $u$ and $v$ are **independent**.</span>
+<span id="cb6-287"><a href="#cb6-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-290"><a href="#cb6-290" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-291"><a href="#cb6-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-gibbs-rotated</span></span>
+<span id="cb6-292"><a href="#cb6-292" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Gibbs rotated"</span></span>
+<span id="cb6-293"><a href="#cb6-293" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Gibbs sampling in rotated coordinates. With ρ = 0.9, rotated coordinates decouple the posterior into independent components, yielding much lower autocorrelation and faster mixing."</span></span>
+<span id="cb6-294"><a href="#cb6-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-295"><a href="#cb6-295" aria-hidden="true" tabindex="-1"></a>gibbs_rotated <span class="ot">&lt;-</span> <span class="cf">function</span>(n_steps, rho, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)) {</span>
+<span id="cb6-296"><a href="#cb6-296" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Transform starting point to rotated coordinates</span></span>
+<span id="cb6-297"><a href="#cb6-297" aria-hidden="true" tabindex="-1"></a>  u_start <span class="ot">&lt;-</span> (start[<span class="dv">1</span>] <span class="sc">+</span> start[<span class="dv">2</span>]) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)</span>
+<span id="cb6-298"><a href="#cb6-298" aria-hidden="true" tabindex="-1"></a>  v_start <span class="ot">&lt;-</span> (start[<span class="dv">1</span>] <span class="sc">-</span> start[<span class="dv">2</span>]) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)</span>
+<span id="cb6-299"><a href="#cb6-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-300"><a href="#cb6-300" aria-hidden="true" tabindex="-1"></a>  u <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_steps)</span>
+<span id="cb6-301"><a href="#cb6-301" aria-hidden="true" tabindex="-1"></a>  v <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_steps)</span>
+<span id="cb6-302"><a href="#cb6-302" aria-hidden="true" tabindex="-1"></a>  u[<span class="dv">1</span>] <span class="ot">&lt;-</span> u_start</span>
+<span id="cb6-303"><a href="#cb6-303" aria-hidden="true" tabindex="-1"></a>  v[<span class="dv">1</span>] <span class="ot">&lt;-</span> v_start</span>
+<span id="cb6-304"><a href="#cb6-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-305"><a href="#cb6-305" aria-hidden="true" tabindex="-1"></a>  sd_u <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">+</span> rho)</span>
+<span id="cb6-306"><a href="#cb6-306" aria-hidden="true" tabindex="-1"></a>  sd_v <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> rho)</span>
+<span id="cb6-307"><a href="#cb6-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-308"><a href="#cb6-308" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (t <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>n_steps) {</span>
+<span id="cb6-309"><a href="#cb6-309" aria-hidden="true" tabindex="-1"></a>    <span class="co"># u and v are now independent, so Gibbs reduces to independent sampling</span></span>
+<span id="cb6-310"><a href="#cb6-310" aria-hidden="true" tabindex="-1"></a>    u[t] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sd_u)</span>
+<span id="cb6-311"><a href="#cb6-311" aria-hidden="true" tabindex="-1"></a>    v[t] <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> sd_v)</span>
+<span id="cb6-312"><a href="#cb6-312" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-313"><a href="#cb6-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-314"><a href="#cb6-314" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Transform back to original coordinates</span></span>
+<span id="cb6-315"><a href="#cb6-315" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> (u <span class="sc">+</span> v) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)</span>
+<span id="cb6-316"><a href="#cb6-316" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> (u <span class="sc">-</span> v) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)</span>
+<span id="cb6-317"><a href="#cb6-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-318"><a href="#cb6-318" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(<span class="at">x =</span> x, <span class="at">y =</span> y)</span>
+<span id="cb6-319"><a href="#cb6-319" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-320"><a href="#cb6-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-321"><a href="#cb6-321" aria-hidden="true" tabindex="-1"></a>chain_rotated <span class="ot">&lt;-</span> <span class="fu">gibbs_rotated</span>(<span class="at">n_steps =</span> <span class="dv">10000</span>, <span class="at">rho =</span> rho_high, <span class="at">start =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>))</span>
+<span id="cb6-322"><a href="#cb6-322" aria-hidden="true" tabindex="-1"></a>samples_rotated <span class="ot">&lt;-</span> chain_rotated[(burn_in <span class="sc">+</span> <span class="dv">1</span>)<span class="sc">:</span><span class="fu">nrow</span>(chain_rotated), ]</span>
+<span id="cb6-323"><a href="#cb6-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-324"><a href="#cb6-324" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">1</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb6-325"><a href="#cb6-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-326"><a href="#cb6-326" aria-hidden="true" tabindex="-1"></a><span class="co"># Trace plots for rotated coordinates</span></span>
+<span id="cb6-327"><a href="#cb6-327" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chain_rotated[, <span class="st">"x"</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"#2ca02c"</span>,</span>
+<span id="cb6-328"><a href="#cb6-328" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Rotated Gibbs trace (X after rotation)"</span>,</span>
+<span id="cb6-329"><a href="#cb6-329" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"X"</span>)</span>
+<span id="cb6-330"><a href="#cb6-330" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> burn_in, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb6-331"><a href="#cb6-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-332"><a href="#cb6-332" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(chain_rotated[, <span class="st">"y"</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">0.8</span>, <span class="at">col =</span> <span class="st">"#ff7f0e"</span>,</span>
+<span id="cb6-333"><a href="#cb6-333" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Rotated Gibbs trace (Y after rotation)"</span>,</span>
+<span id="cb6-334"><a href="#cb6-334" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="st">"Y"</span>)</span>
+<span id="cb6-335"><a href="#cb6-335" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> burn_in, <span class="at">col =</span> <span class="st">"grey"</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span>
+<span id="cb6-336"><a href="#cb6-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-337"><a href="#cb6-337" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot</span></span>
+<span id="cb6-338"><a href="#cb6-338" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(samples_rotated[, <span class="st">"x"</span>], samples_rotated[, <span class="st">"y"</span>], <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">cex =</span> <span class="fl">0.3</span>,</span>
+<span id="cb6-339"><a href="#cb6-339" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="fu">rgb</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="fl">0.5</span>), <span class="at">xlab =</span> <span class="st">"X"</span>, <span class="at">ylab =</span> <span class="st">"Y"</span>,</span>
+<span id="cb6-340"><a href="#cb6-340" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Posterior samples (rotated Gibbs)"</span>)</span>
+<span id="cb6-341"><a href="#cb6-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-342"><a href="#cb6-342" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb6-343"><a href="#cb6-343" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-344"><a href="#cb6-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-345"><a href="#cb6-345" aria-hidden="true" tabindex="-1"></a><span class="fu">### Autocorrelation comparison</span></span>
+<span id="cb6-346"><a href="#cb6-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-349"><a href="#cb6-349" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb6-350"><a href="#cb6-350" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-gibbs-acf-comparison</span></span>
+<span id="cb6-351"><a href="#cb6-351" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Gibbs acf comparison"</span></span>
+<span id="cb6-352"><a href="#cb6-352" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Autocorrelation functions for X in both samplers. Standard Gibbs (dashed red) shows high persistence; rotated Gibbs (solid green) decorrelates in one or two lags."</span></span>
+<span id="cb6-353"><a href="#cb6-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-354"><a href="#cb6-354" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">1</span>))</span>
+<span id="cb6-355"><a href="#cb6-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-356"><a href="#cb6-356" aria-hidden="true" tabindex="-1"></a>acf_high <span class="ot">&lt;-</span> <span class="fu">acf</span>(samples_high[, <span class="st">"x"</span>], <span class="at">lag.max =</span> <span class="dv">50</span>, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-357"><a href="#cb6-357" aria-hidden="true" tabindex="-1"></a>acf_rotated <span class="ot">&lt;-</span> <span class="fu">acf</span>(samples_rotated[, <span class="st">"x"</span>], <span class="at">lag.max =</span> <span class="dv">50</span>, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-358"><a href="#cb6-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-359"><a href="#cb6-359" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(acf_high<span class="sc">$</span>lag, acf_high<span class="sc">$</span>acf, <span class="at">type =</span> <span class="st">"h"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#d62728"</span>,</span>
+<span id="cb6-360"><a href="#cb6-360" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Standard Gibbs (rho = 0.9)"</span>,</span>
+<span id="cb6-361"><a href="#cb6-361" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Lag"</span>, <span class="at">ylab =</span> <span class="st">"ACF"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.1</span>, <span class="dv">1</span>))</span>
+<span id="cb6-362"><a href="#cb6-362" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-363"><a href="#cb6-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-364"><a href="#cb6-364" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(acf_rotated<span class="sc">$</span>lag, acf_rotated<span class="sc">$</span>acf, <span class="at">type =</span> <span class="st">"h"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#2ca02c"</span>,</span>
+<span id="cb6-365"><a href="#cb6-365" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Rotated Gibbs (rho = 0.9)"</span>,</span>
+<span id="cb6-366"><a href="#cb6-366" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Lag"</span>, <span class="at">ylab =</span> <span class="st">"ACF"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.1</span>, <span class="dv">1</span>))</span>
+<span id="cb6-367"><a href="#cb6-367" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">lwd =</span> <span class="fl">0.5</span>)</span>
+<span id="cb6-368"><a href="#cb6-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-369"><a href="#cb6-369" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb6-370"><a href="#cb6-370" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-371"><a href="#cb6-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-372"><a href="#cb6-372" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparison: independence sampler vs. Gibbs sampler vs. random-walk Metropolis</span></span>
+<span id="cb6-373"><a href="#cb6-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-374"><a href="#cb6-374" aria-hidden="true" tabindex="-1"></a>The three samplers embody different philosophies and trade-offs:</span>
+<span id="cb6-375"><a href="#cb6-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-376"><a href="#cb6-376" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Aspect** | **Independence Sampler** | **Gibbs Sampler** | **Random-Walk MH** <span class="pp">|</span></span>
+<span id="cb6-377"><a href="#cb6-377" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|</span></span>
+<span id="cb6-378"><a href="#cb6-378" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Proposal** <span class="pp">|</span> $q(x')$ (global, fixed) <span class="pp">|</span> $p(\theta_i \mid \theta_{-i}, D)$ <span class="pp">|</span> $x' \sim N(x, \Sigma)$ <span class="pp">|</span></span>
+<span id="cb6-379"><a href="#cb6-379" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Move type** <span class="pp">|</span> Global jumps anywhere <span class="pp">|</span> Coordinate-wise updates <span class="pp">|</span> Local steps <span class="pp">|</span></span>
+<span id="cb6-380"><a href="#cb6-380" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Acceptance** <span class="pp">|</span> MH ratio (often low) <span class="pp">|</span> Always 1 (deterministic) <span class="pp">|</span> Variable (tunable) <span class="pp">|</span></span>
+<span id="cb6-381"><a href="#cb6-381" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Main requirement** <span class="pp">|</span> Good global approximation <span class="pp">|</span> Tractable conditionals <span class="pp">|</span> Reasonable scale estimate <span class="pp">|</span></span>
+<span id="cb6-382"><a href="#cb6-382" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Fails when** <span class="pp">|</span> $q$ poorly matches $\pi$ <span class="pp">|</span> Strong parameter correlations <span class="pp">|</span> Proposal scale wrong <span class="pp">|</span></span>
+<span id="cb6-383"><a href="#cb6-383" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Autocorrelation** <span class="pp">|</span> Low if $q \approx \pi$ <span class="pp">|</span> High if correlated structure <span class="pp">|</span> Moderate (tunable) <span class="pp">|</span></span>
+<span id="cb6-384"><a href="#cb6-384" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Dimension scaling** <span class="pp">|</span> Exponential decay $\sim \exp(-cd)$ <span class="pp">|</span> Polynomial (depends on correlation) <span class="pp">|</span> Exponential decay <span class="pp">|</span></span>
+<span id="cb6-385"><a href="#cb6-385" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Typical use** <span class="pp">|</span> Approximate posteriors <span class="pp">|</span> Conjugate/hierarchical models <span class="pp">|</span> Flexible fallback <span class="pp">|</span></span>
+<span id="cb6-386"><a href="#cb6-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-387"><a href="#cb6-387" aria-hidden="true" tabindex="-1"></a>::::: {.remark}</span>
+<span id="cb6-388"><a href="#cb6-388" aria-hidden="true" tabindex="-1"></a>In practice, these are rarely used in isolation. Modern samplers often combine ideas:</span>
+<span id="cb6-389"><a href="#cb6-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-390"><a href="#cb6-390" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Metropolis-within-Gibbs**: Use Gibbs for tractable coordinates, MH for intractable ones.</span>
+<span id="cb6-391"><a href="#cb6-391" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Block Gibbs**: Group correlated coordinates and sample jointly to reduce autocorrelation.</span>
+<span id="cb6-392"><a href="#cb6-392" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Adaptive proposals**: Learn a proposal from preliminary runs (adaptive MCMC).</span>
+<span id="cb6-393"><a href="#cb6-393" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**HMC within Gibbs**: Combine gradient-based efficient exploration with block structure.</span>
+<span id="cb6-394"><a href="#cb6-394" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-395"><a href="#cb6-395" aria-hidden="true" tabindex="-1"></a>The choice depends on the model structure, the availability of efficient samplers for conditionals, and computational constraints.</span>
+<span id="cb6-396"><a href="#cb6-396" aria-hidden="true" tabindex="-1"></a>:::::</span>
+<span id="cb6-397"><a href="#cb6-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-398"><a href="#cb6-398" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb6-399"><a href="#cb6-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-400"><a href="#cb6-400" aria-hidden="true" tabindex="-1"></a>The **independence sampler** represents a global exploration strategy: it can jump anywhere but only works well if the proposal closely approximates the target. Its acceptance probability directly reflects the importance weights, making it a bridge between importance sampling and MCMC. However, the exponential degradation of weights in high dimensions—a manifestation of concentration of measure—limits its applicability to high-dimensional problems.</span>
+<span id="cb6-401"><a href="#cb6-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-402"><a href="#cb6-402" aria-hidden="true" tabindex="-1"></a>The **Gibbs sampler** exploits model structure by updating parameters from their full conditionals. Every step is accepted, eliminating the rejection waste of Metropolis algorithms. However, when parameters are strongly correlated, the chain mixes slowly because coordinate-wise moves struggle to explore elongated posterior geometries efficiently. Rotation to decorrelated coordinates, block updates, or auxiliary variable methods can dramatically improve performance.</span>
+<span id="cb6-403"><a href="#cb6-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-404"><a href="#cb6-404" aria-hidden="true" tabindex="-1"></a>Both methods highlight the central tension in MCMC: acceptance rates, exploration speed, and computational tractability are not independent. A low acceptance rate signals a poorly matched proposal; a high rate (even 100%) does not guarantee fast mixing if the effective step size is small. Successful MCMC practice requires diagnosing mixing, adapting proposals, and sometimes redesigning the parameterization to align with the posterior structure.</span>
+<span id="cb6-405"><a href="#cb6-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-406"><a href="#cb6-406" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb6-407"><a href="#cb6-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-408"><a href="#cb6-408" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Robert, C. P., &amp; Casella, G. (2004). *Monte Carlo Statistical Methods* (2nd ed., Springer Texts in Statistics, Chapters 7 &amp; 10).</span>
+<span id="cb6-409"><a href="#cb6-409" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Falasco, G. (2026). *Advanced statistics for physics analysis* (Sections 6.4–6.5, lecture notes).</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

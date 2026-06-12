@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>7&nbsp; Bayesian inference for the Gaussian – Advanced Statistics for Physics Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/07_monte_carlo.html" rel="next">
+<link href="../chapters/05_parameter_estimation.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04_model_comparison.html">PART II: BAYESIAN INFERENCE</a></li><li class="breadcrumb-item"><a href="../chapters/06_gaussian_inference.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Advanced Statistics for Physics Analysis</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01_R_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to R for Bayesian inference</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: PROBABILITY RECAP</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02_discrete_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Discrete probability</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03_continuous_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Continuous probability and limit theorems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: BAYESIAN INFERENCE</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04_model_comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05_parameter_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian parameter estimation, intervals and prediction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06_gaussian_inference.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: MONTE CARLO METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07_monte_carlo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Monte Carlo methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08_independence_and_gibbs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09_hamiltonian_mc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10_parallel_tempering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: APPLIED BAYESIAN MODELLING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11_bayesian_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12_probabilistic_programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13_glms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDIX</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99_appendix_source_code.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Appendix: Source code</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">7.1</span> Introduction</a></li>
+  <li><a href="#gaussian-sampling-model-and-sufficient-statistics" id="toc-gaussian-sampling-model-and-sufficient-statistics" class="nav-link" data-scroll-target="#gaussian-sampling-model-and-sufficient-statistics"><span class="header-section-number">7.2</span> Gaussian Sampling Model and Sufficient Statistics</a></li>
+  <li><a href="#inference-of-the-mean-with-known-variance" id="toc-inference-of-the-mean-with-known-variance" class="nav-link" data-scroll-target="#inference-of-the-mean-with-known-variance"><span class="header-section-number">7.3</span> Inference of the Mean with Known Variance</a>
+  <ul class="collapse">
+  <li><a href="#uniform-prior-and-posterior" id="toc-uniform-prior-and-posterior" class="nav-link" data-scroll-target="#uniform-prior-and-posterior"><span class="header-section-number">7.3.1</span> Uniform Prior and Posterior</a></li>
+  <li><a href="#conjugate-normal-normal-model" id="toc-conjugate-normal-normal-model" class="nav-link" data-scroll-target="#conjugate-normal-normal-model"><span class="header-section-number">7.3.2</span> Conjugate Normal-Normal Model</a></li>
+  </ul></li>
+  <li><a href="#inference-of-the-variance-with-known-mean" id="toc-inference-of-the-variance-with-known-mean" class="nav-link" data-scroll-target="#inference-of-the-variance-with-known-mean"><span class="header-section-number">7.4</span> Inference of the Variance with Known Mean</a>
+  <ul class="collapse">
+  <li><a href="#jeffreys-prior-for-scale-parameters" id="toc-jeffreys-prior-for-scale-parameters" class="nav-link" data-scroll-target="#jeffreys-prior-for-scale-parameters"><span class="header-section-number">7.4.1</span> Jeffreys Prior for Scale Parameters</a></li>
+  <li><a href="#inverse-gamma-conjugate-family" id="toc-inverse-gamma-conjugate-family" class="nav-link" data-scroll-target="#inverse-gamma-conjugate-family"><span class="header-section-number">7.4.2</span> Inverse-Gamma Conjugate Family</a></li>
+  </ul></li>
+  <li><a href="#joint-inference-normal-inverse-gamma-model" id="toc-joint-inference-normal-inverse-gamma-model" class="nav-link" data-scroll-target="#joint-inference-normal-inverse-gamma-model"><span class="header-section-number">7.5</span> Joint Inference: Normal-Inverse-Gamma Model</a>
+  <ul class="collapse">
+  <li><a href="#posterior-update" id="toc-posterior-update" class="nav-link" data-scroll-target="#posterior-update"><span class="header-section-number">7.5.1</span> Posterior Update</a></li>
+  <li><a href="#marginal-posterior-of-the-mean" id="toc-marginal-posterior-of-the-mean" class="nav-link" data-scroll-target="#marginal-posterior-of-the-mean"><span class="header-section-number">7.5.2</span> Marginal Posterior of the Mean</a></li>
+  </ul></li>
+  <li><a href="#credible-intervals-and-regions" id="toc-credible-intervals-and-regions" class="nav-link" data-scroll-target="#credible-intervals-and-regions"><span class="header-section-number">7.6</span> Credible Intervals and Regions</a>
+  <ul class="collapse">
+  <li><a href="#central-credible-interval-for-the-mean" id="toc-central-credible-interval-for-the-mean" class="nav-link" data-scroll-target="#central-credible-interval-for-the-mean"><span class="header-section-number">7.6.1</span> Central Credible Interval for the Mean</a></li>
+  <li><a href="#joint-credible-region" id="toc-joint-credible-region" class="nav-link" data-scroll-target="#joint-credible-region"><span class="header-section-number">7.6.2</span> Joint Credible Region</a></li>
+  </ul></li>
+  <li><a href="#bayesian-hypothesis-testing" id="toc-bayesian-hypothesis-testing" class="nav-link" data-scroll-target="#bayesian-hypothesis-testing"><span class="header-section-number">7.7</span> Bayesian Hypothesis Testing</a>
+  <ul class="collapse">
+  <li><a href="#one-sided-test-for-the-mean" id="toc-one-sided-test-for-the-mean" class="nav-link" data-scroll-target="#one-sided-test-for-the-mean"><span class="header-section-number">7.7.1</span> One-Sided Test for the Mean</a></li>
+  <li><a href="#two-sided-test-and-bayes-factors" id="toc-two-sided-test-and-bayes-factors" class="nav-link" data-scroll-target="#two-sided-test-and-bayes-factors"><span class="header-section-number">7.7.2</span> Two-Sided Test and Bayes Factors</a></li>
+  <li><a href="#bayesian-t-test" id="toc-bayesian-t-test" class="nav-link" data-scroll-target="#bayesian-t-test"><span class="header-section-number">7.7.3</span> Bayesian <span class="math inline">\(t\)</span>-Test</a></li>
+  </ul></li>
+  <li><a href="#posterior-predictive-distribution" id="toc-posterior-predictive-distribution" class="nav-link" data-scroll-target="#posterior-predictive-distribution"><span class="header-section-number">7.8</span> Posterior Predictive Distribution</a></li>
+  <li><a href="#frequentist-contrast" id="toc-frequentist-contrast" class="nav-link" data-scroll-target="#frequentist-contrast"><span class="header-section-number">7.9</span> Frequentist Contrast</a></li>
+  <li><a href="#illustrative-examples" id="toc-illustrative-examples" class="nav-link" data-scroll-target="#illustrative-examples"><span class="header-section-number">7.10</span> Illustrative Examples</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">7.11</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04_model_comparison.html">PART II: BAYESIAN INFERENCE</a></li><li class="breadcrumb-item"><a href="../chapters/06_gaussian_inference.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">7.1</span> Introduction</h2>
+<p>The Gaussian (or normal) distribution is the most frequently encountered model in statistical inference. Its ubiquity stems from the Central Limit Theorem, which guarantees that sample averages tend toward normality under weak conditions, and from its mathematical tractability—the Gaussian family is closed under many operations and admits conjugate priors. This chapter develops both Bayesian and frequentist approaches to inference of the mean <span class="math inline">\(\mu\)</span> and variance <span class="math inline">\(\sigma^2\)</span> of a Gaussian model, emphasizing the conjugate prior structure that yields closed-form posterior distributions.</p>
+<p>We begin with the simplest case: inference of the mean with known variance. We then extend to variance estimation with known mean, and finally treat joint inference of both parameters using the Normal-Inverse-Gamma conjugate family. Throughout, we highlight credible intervals, hypothesis testing via the Bayes factor, and the Bayesian <span class="math inline">\(t\)</span>-test, which naturally marginalizes over the unknown variance.</p>
+</section>
+<section id="gaussian-sampling-model-and-sufficient-statistics" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="gaussian-sampling-model-and-sufficient-statistics"><span class="header-section-number">7.2</span> Gaussian Sampling Model and Sufficient Statistics</h2>
+<div class="definition">
+<p>Let <span class="math inline">\(D = \{x_1, \ldots, x_n\}\)</span> be <span class="math inline">\(n\)</span> independent observations from a Gaussian distribution with pdf <span class="math display">\[p(x_i \mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left( -\frac{(x_i - \mu)^2}{2\sigma^2} \right).\]</span></p>
+</div>
+<p>The likelihood function for the data is the product <span class="math display">\[p(D \mid \mu, \sigma^2) = \prod_{i=1}^n p(x_i \mid \mu, \sigma^2) \propto (\sigma^2)^{-n/2} \exp\left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (x_i - \mu)^2 \right).\]</span></p>
+<p>Using the key identity <span class="math display">\[\sum_{i=1}^n (x_i - \mu)^2 = \sum_{i=1}^n (x_i - \bar{x})^2 + n(\bar{x} - \mu)^2 = S + n(\bar{x} - \mu)^2,\]</span> where <span class="math inline">\(\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i\)</span> and <span class="math inline">\(S = \sum_{i=1}^n (x_i - \bar{x})^2\)</span>, the likelihood becomes <span class="math display">\[p(D \mid \mu, \sigma^2) \propto (\sigma^2)^{-n/2} \exp\left( -\frac{S + n(\bar{x} - \mu)^2}{2\sigma^2} \right).\]</span></p>
+<div class="definition">
+<p>The statistics <span class="math inline">\(\bar{x}\)</span> and <span class="math inline">\(S\)</span> are <strong>sufficient</strong> for <span class="math inline">\((\mu, \sigma^2)\)</span>: they capture all information in the data relevant to parameter inference. Any inference on <span class="math inline">\((\mu, \sigma^2)\)</span> depends on the data only through these two summaries.</p>
+</div>
+</section>
+<section id="inference-of-the-mean-with-known-variance" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="inference-of-the-mean-with-known-variance"><span class="header-section-number">7.3</span> Inference of the Mean with Known Variance</h2>
+<p>Assume <span class="math inline">\(\sigma^2\)</span> is a known constant. The likelihood as a function of <span class="math inline">\(\mu\)</span> is <span class="math display">\[p(D \mid \mu, \sigma^2) \propto \exp\left( -\frac{n(\bar{x} - \mu)^2}{2\sigma^2} \right).\]</span></p>
+<p>This is Gaussian in <span class="math inline">\(\mu\)</span> centered at the sample mean <span class="math inline">\(\bar{x}\)</span>.</p>
+<section id="uniform-prior-and-posterior" class="level3" data-number="7.3.1">
+<h3 data-number="7.3.1" class="anchored" data-anchor-id="uniform-prior-and-posterior"><span class="header-section-number">7.3.1</span> Uniform Prior and Posterior</h3>
+<p>Assign a uniform (improper) prior <span class="math inline">\(p(\mu) \propto 1\)</span>. This is also the Jeffreys prior for <span class="math inline">\(\mu\)</span>, since the Fisher information <span class="math inline">\(\mathcal{I}(\mu) = \frac{n}{\sigma^2}\)</span> does not depend on <span class="math inline">\(\mu\)</span>.</p>
+<p>By Bayes’ theorem, <span class="math display">\[p(\mu \mid D, \sigma^2) \propto p(D \mid \mu, \sigma^2) \cdot p(\mu) \propto \exp\left( -\frac{n(\bar{x} - \mu)^2}{2\sigma^2} \right).\]</span></p>
+<div class="theorem">
+<p>The posterior distribution of <span class="math inline">\(\mu\)</span> is <span class="math display">\[\mu \mid D, \sigma^2 \sim \mathcal{N}\left( \bar{x}, \frac{\sigma^2}{n} \right).\]</span></p>
+</div>
+<p>The posterior mean equals the maximum likelihood estimate (MLE) <span class="math inline">\(\hat{\mu}_{\text{MLE}} = \bar{x}\)</span>, and the posterior variance shrinks as <span class="math inline">\(1/n\)</span>, reflecting increased confidence with larger sample size.</p>
+</section>
+<section id="conjugate-normal-normal-model" class="level3" data-number="7.3.2">
+<h3 data-number="7.3.2" class="anchored" data-anchor-id="conjugate-normal-normal-model"><span class="header-section-number">7.3.2</span> Conjugate Normal-Normal Model</h3>
+<p>To incorporate prior knowledge, use a Gaussian prior <span class="math inline">\(\mu \sim \mathcal{N}(\mu_0, \sigma_0^2)\)</span>.</p>
+<p>The posterior is obtained by multiplying the likelihood and prior: <span class="math display">\[p(\mu \mid D, \sigma^2) \propto \exp\left( -\frac{n(\bar{x} - \mu)^2}{2\sigma^2} \right) \cdot \exp\left( -\frac{(\mu - \mu_0)^2}{2\sigma_0^2} \right).\]</span></p>
+<p>Completing the square in the exponent: <span class="math display">\[p(\mu \mid D, \sigma^2) \propto \exp\left( -\frac{\kappa_n (\mu - \mu_n)^2}{2} \right),\]</span> where the posterior precision and mean are</p>
+<div class="definition">
+<p><strong>Normal-Normal Conjugate Update:</strong> <span class="math display">\[\begin{align}
+\kappa_n &amp;= \frac{1}{\sigma_0^2} + \frac{n}{\sigma^2}, \\
+\mu_n &amp;= \frac{\mu_0/\sigma_0^2 + n\bar{x}/\sigma^2}{\kappa_n} = \frac{\mu_0/\sigma_0^2 + n\bar{x}/\sigma^2}{1/\sigma_0^2 + n/\sigma^2}.
+\end{align}\]</span></p>
+</div>
+<p>The posterior is <span class="math inline">\(\mu \mid D, \sigma^2 \sim \mathcal{N}(\mu_n, \kappa_n^{-1})\)</span>.</p>
+<p><strong>Interpretation:</strong> Precisions add; the posterior mean is a precision-weighted average of the prior mean and sample mean. As <span class="math inline">\(n \to \infty\)</span>, the posterior is dominated by the data (<span class="math inline">\(\mu_n \to \bar{x}\)</span>). For a weak prior (<span class="math inline">\(\sigma_0^2 \to \infty\)</span>), <span class="math inline">\(\kappa_n \to n/\sigma^2\)</span> and <span class="math inline">\(\mu_n \to \bar{x}\)</span>, recovering the uniform prior result.</p>
+</section>
+</section>
+<section id="inference-of-the-variance-with-known-mean" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="inference-of-the-variance-with-known-mean"><span class="header-section-number">7.4</span> Inference of the Variance with Known Mean</h2>
+<p>Now assume <span class="math inline">\(\mu\)</span> is known and infer <span class="math inline">\(\sigma^2\)</span>. The likelihood is <span class="math display">\[p(D \mid \mu, \sigma^2) \propto (\sigma^2)^{-n/2} \exp\left( -\frac{\sum_i (x_i - \mu)^2}{2\sigma^2} \right).\]</span></p>
+<p>Setting <span class="math inline">\(\nu = \sum_i (x_i - \mu)^2\)</span>, the likelihood depends on <span class="math inline">\(\sigma^2\)</span> via <span class="math display">\[p(D \mid \mu, \sigma^2) \propto (\sigma^2)^{-n/2} \exp\left( -\frac{\nu}{2\sigma^2} \right).\]</span></p>
+<section id="jeffreys-prior-for-scale-parameters" class="level3" data-number="7.4.1">
+<h3 data-number="7.4.1" class="anchored" data-anchor-id="jeffreys-prior-for-scale-parameters"><span class="header-section-number">7.4.1</span> Jeffreys Prior for Scale Parameters</h3>
+<p>Variance is a <strong>scale parameter</strong>: if we rescale <span class="math inline">\(x \to ax\)</span>, then <span class="math inline">\(\sigma^2 \to a^2\sigma^2\)</span>. As shown in Chapter 5 (§ Fisher information, Cramér–Rao, and the Jeffreys prior), the Jeffreys prior <span class="math inline">\(p_J(\theta) \propto \sqrt{\det \mathcal{I}(\theta)}\)</span> is reparametrization-invariant. For the Gaussian scale parameter <span class="math inline">\(\sigma^2\)</span> with known mean, the Fisher information is <span class="math inline">\(\mathcal{I}(\sigma^2) = \frac{n}{2(\sigma^2)^2}\)</span>, yielding <span class="math inline">\(p_J(\sigma^2) \propto \frac{1}{\sigma^2}\)</span> (or equivalently, <span class="math inline">\(p_J(\log\sigma^2) \propto 1\)</span>, uniform on log-scale). This prior ensures invariance under rescaling—critical for Bayes factors. Chapter 5 provides an extended example and reparametrization invariance proof; here we apply it directly to the Gaussian posterior.</p>
+</section>
+<section id="inverse-gamma-conjugate-family" class="level3" data-number="7.4.2">
+<h3 data-number="7.4.2" class="anchored" data-anchor-id="inverse-gamma-conjugate-family"><span class="header-section-number">7.4.2</span> Inverse-Gamma Conjugate Family</h3>
+<p>The Inverse-Gamma distribution is conjugate for variance estimation:</p>
+<div class="definition">
+<p>If <span class="math inline">\(X \sim \text{Gamma}(\alpha, \beta)\)</span> with pdf <span class="math inline">\(f(x) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1} e^{-\beta x}\)</span>, then <span class="math inline">\(1/X \sim \text{Inv-Gamma}(\alpha, \beta)\)</span> with pdf <span class="math display">\[f(z) = \frac{\beta^\alpha}{\Gamma(\alpha)} (1/z)^{\alpha+1} \exp(-\beta/z).\]</span></p>
+</div>
+<p>A prior <span class="math inline">\(\sigma^2 \sim \text{Inv-Gamma}(\alpha_0, \beta_0)\)</span> combined with the likelihood yields a posterior:</p>
+<div class="theorem">
+<p><strong>Inverse-Gamma Conjugate Update:</strong> <span class="math display">\[\sigma^2 \mid D, \mu \sim \text{Inv-Gamma}\left( \alpha_0 + \frac{n}{2}, \beta_0 + \frac{\nu}{2} \right),\]</span> where <span class="math inline">\(\nu = \sum_i (x_i - \mu)^2\)</span>.</p>
+</div>
+<p>The Jeffreys prior corresponds to <span class="math inline">\(\alpha_0 = 0\)</span> and <span class="math inline">\(\beta_0 = 0\)</span> (or <span class="math inline">\(\alpha_0 = -1/2\)</span> to ensure integrability). The posterior mean is <span class="math inline">\(\mathbb{E}[\sigma^2 \mid D] = \frac{\beta_n}{\alpha_n - 1}\)</span> for <span class="math inline">\(\alpha_n &gt; 1\)</span>.</p>
+</section>
+</section>
+<section id="joint-inference-normal-inverse-gamma-model" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="joint-inference-normal-inverse-gamma-model"><span class="header-section-number">7.5</span> Joint Inference: Normal-Inverse-Gamma Model</h2>
+<p>Most realistic: both <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma^2\)</span> are unknown. Use a factorized prior <span class="math display">\[p(\mu, \sigma^2) = p(\mu \mid \sigma^2) p(\sigma^2),\]</span> with <span class="math inline">\(\mu \mid \sigma^2 \sim \mathcal{N}(\mu_0, \sigma^2/\kappa_0)\)</span> and <span class="math inline">\(\sigma^2 \sim \text{Inv-Gamma}(\alpha_0, \beta_0)\)</span>.</p>
+<p>This is the <strong>Normal-Inverse-Gamma (NIG)</strong> conjugate family with hyperparameters <span class="math inline">\((\mu_0, \kappa_0, \alpha_0, \beta_0)\)</span>.</p>
+<section id="posterior-update" class="level3" data-number="7.5.1">
+<h3 data-number="7.5.1" class="anchored" data-anchor-id="posterior-update"><span class="header-section-number">7.5.1</span> Posterior Update</h3>
+<p>Combining likelihood with the NIG prior yields a posterior with hyperparameters:</p>
+<div class="definition">
+<p><strong>Normal-Inverse-Gamma Conjugate Update:</strong> <span class="math display">\[\begin{align}
+\kappa_n &amp;= \kappa_0 + n, \\
+\mu_n &amp;= \frac{\kappa_0 \mu_0 + n\bar{x}}{\kappa_n}, \\
+\alpha_n &amp;= \alpha_0 + \frac{n}{2}, \\
+\beta_n &amp;= \beta_0 + \frac{S}{2} + \frac{\kappa_0 n}{2(\kappa_0 + n)} (\bar{x} - \mu_0)^2,
+\end{align}\]</span> where <span class="math inline">\(S = \sum_i (x_i - \bar{x})^2\)</span>.</p>
+</div>
+<p>The joint posterior factorizes as <span class="math display">\[p(\mu, \sigma^2 \mid D) \propto (\sigma^2)^{-(\alpha_n + 1)} \exp\left( -\frac{\beta_n}{\sigma^2} - \frac{\kappa_n(\mu - \mu_n)^2}{2\sigma^2} \right).\]</span></p>
+</section>
+<section id="marginal-posterior-of-the-mean" class="level3" data-number="7.5.2">
+<h3 data-number="7.5.2" class="anchored" data-anchor-id="marginal-posterior-of-the-mean"><span class="header-section-number">7.5.2</span> Marginal Posterior of the Mean</h3>
+<p>Marginalizing <span class="math inline">\(\sigma^2\)</span> yields the marginal posterior of <span class="math inline">\(\mu\)</span>:</p>
+<div class="theorem">
+<p>The posterior marginal distribution of <span class="math inline">\(\mu\)</span> given <span class="math inline">\(D\)</span> is <span class="math display">\[\mu \mid D \sim t_{2\alpha_n}\left( \mu_n, \frac{\beta_n}{\alpha_n \kappa_n} \right),\]</span> a Student-<span class="math inline">\(t\)</span> distribution with <span class="math inline">\(\nu = 2\alpha_n\)</span> degrees of freedom, location <span class="math inline">\(\mu_n\)</span>, and scale parameter <span class="math inline">\(\sqrt{\beta_n/(\alpha_n \kappa_n)}\)</span>.</p>
+</div>
+<p><strong>Interpretation:</strong> The heavy tails of the <span class="math inline">\(t\)</span>-distribution reflect additional uncertainty from not knowing <span class="math inline">\(\sigma^2\)</span>. For large <span class="math inline">\(n\)</span>, <span class="math inline">\(\nu = 2\alpha_n \approx n \to \infty\)</span>, so <span class="math inline">\(t\)</span>-distribution converges to Gaussian, recovering asymptotic normality.</p>
+</section>
+</section>
+<section id="credible-intervals-and-regions" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="credible-intervals-and-regions"><span class="header-section-number">7.6</span> Credible Intervals and Regions</h2>
+<section id="central-credible-interval-for-the-mean" class="level3" data-number="7.6.1">
+<h3 data-number="7.6.1" class="anchored" data-anchor-id="central-credible-interval-for-the-mean"><span class="header-section-number">7.6.1</span> Central Credible Interval for the Mean</h3>
+<p>A central <span class="math inline">\((1-\alpha)\)</span>% credible interval is <span class="math display">\[\mu \pm t_{2\alpha_n, 1-\alpha/2} \sqrt{\frac{\beta_n}{\alpha_n \kappa_n}},\]</span> where <span class="math inline">\(t_{\nu, p}\)</span> denotes the <span class="math inline">\(p\)</span>-quantile of a Student-<span class="math inline">\(t\)</span> distribution with <span class="math inline">\(\nu\)</span> degrees of freedom.</p>
+<p><strong>Frequentist analogue:</strong> In the large-sample limit, this recovers the familiar confidence interval <span class="math inline">\(\hat{\mu} \pm z_{1-\alpha/2} \sqrt{\hat{\sigma}^2/n}\)</span>.</p>
+</section>
+<section id="joint-credible-region" class="level3" data-number="7.6.2">
+<h3 data-number="7.6.2" class="anchored" data-anchor-id="joint-credible-region"><span class="header-section-number">7.6.2</span> Joint Credible Region</h3>
+<p>A joint <span class="math inline">\((1-\alpha)\)</span>% credible region for <span class="math inline">\(\theta = (\mu, \sigma^2)\)</span> is the ellipse <span class="math display">\[(\theta - \hat{\theta})^T \mathcal{I}_n(\hat{\theta}) (\theta - \hat{\theta}) \le \chi^2_{2, 1-\alpha},\]</span> where <span class="math inline">\(\mathcal{I}_n(\hat{\theta})\)</span> is the Fisher information matrix evaluated at the MLE and <span class="math inline">\(\chi^2_{2, 1-\alpha}\)</span> is the <span class="math inline">\((1-\alpha)\)</span> quantile of the chi-squared distribution with 2 degrees of freedom.</p>
+<p>The posterior asymptotically factorizes: the estimated correlation between <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma^2\)</span> vanishes as <span class="math inline">\(n \to \infty\)</span>. This convergence to Gaussian form and factorization is guaranteed by the <strong>Bernstein–von Mises theorem</strong> (Chapter 5, § Fisher information, Cramér–Rao, and the Jeffreys prior), which states that the posterior becomes approximately <span class="math inline">\(\mathcal{N}(\hat{\theta}_{\mathrm{ML}}, \mathcal{I}_n(\theta_*)^{-1})\)</span> for large <span class="math inline">\(n\)</span>, independently of the prior. This is why Bayesian credible intervals and frequentist confidence intervals asymptotically agree.</p>
+</section>
+</section>
+<section id="bayesian-hypothesis-testing" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="bayesian-hypothesis-testing"><span class="header-section-number">7.7</span> Bayesian Hypothesis Testing</h2>
+<section id="one-sided-test-for-the-mean" class="level3" data-number="7.7.1">
+<h3 data-number="7.7.1" class="anchored" data-anchor-id="one-sided-test-for-the-mean"><span class="header-section-number">7.7.1</span> One-Sided Test for the Mean</h3>
+<p>Consider <span class="math inline">\(H_0: \mu \le \mu^* \text{ vs. } H_1: \mu &gt; \mu^*\)</span>.</p>
+<p>The posterior probability of <span class="math inline">\(H_1\)</span> is <span class="math display">\[P(H_1 \mid D) = 1 - F_t\left( \frac{\mu^* - \mu_n}{\sqrt{\beta_n/(\alpha_n \kappa_n)}} \right),\]</span> where <span class="math inline">\(F_t\)</span> is the CDF of a Student-<span class="math inline">\(t\)</span> distribution with <span class="math inline">\(2\alpha_n\)</span> degrees of freedom.</p>
+<p>A decision rule: reject <span class="math inline">\(H_0\)</span> if <span class="math inline">\(P(H_1 \mid D) &gt; 1 - \alpha\)</span>. Equivalently, reject if <span class="math inline">\(\mu^*\)</span> lies below the lower bound of the <span class="math inline">\((1-\alpha)\)</span>% credible interval.</p>
+</section>
+<section id="two-sided-test-and-bayes-factors" class="level3" data-number="7.7.2">
+<h3 data-number="7.7.2" class="anchored" data-anchor-id="two-sided-test-and-bayes-factors"><span class="header-section-number">7.7.2</span> Two-Sided Test and Bayes Factors</h3>
+<p>For <span class="math inline">\(H_0: \mu = \mu^* \text{ vs. } H_1: \mu \ne \mu^*\)</span>, compare the marginal likelihoods:</p>
+<div class="definition">
+<p>The <strong>Bayes factor</strong> of <span class="math inline">\(H_1\)</span> over <span class="math inline">\(H_0\)</span> is <span class="math display">\[\text{BF}_{10} = \frac{p(D \mid H_1)}{p(D \mid H_0)} = \frac{\int p(D \mid \mu, \sigma^2) p(\mu, \sigma^2 \mid H_1) d\mu d\sigma^2}{\int_{\mu=\mu^*} p(D \mid \mu^*, \sigma^2) p(\sigma^2 \mid H_0) d\sigma^2}.\]</span></p>
+</div>
+<p><strong>Interpretation:</strong> - <span class="math inline">\(\text{BF}_{10} &gt; 1\)</span>: evidence favors <span class="math inline">\(H_1\)</span> (mean differs from <span class="math inline">\(\mu^*\)</span>). - <span class="math inline">\(\text{BF}_{10} &lt; 1\)</span>: evidence favors <span class="math inline">\(H_0\)</span>. - Magnitude quantifies strength of evidence. The Bayes factor, unlike frequentist <span class="math inline">\(p\)</span>-values, is invariant under the choice of scale (Jeffreys prior ensures this).</p>
+</section>
+<section id="bayesian-t-test" class="level3" data-number="7.7.3">
+<h3 data-number="7.7.3" class="anchored" data-anchor-id="bayesian-t-test"><span class="header-section-number">7.7.3</span> Bayesian <span class="math inline">\(t\)</span>-Test</h3>
+<p>The Bayesian <span class="math inline">\(t\)</span>-test compares observed <span class="math inline">\(t = (\bar{x} - \mu^*) / \sqrt{S/(n(n-1))}\)</span> to its posterior predictive distribution under <span class="math inline">\(H_0\)</span>. With the NIG conjugate prior, the marginal likelihood under <span class="math inline">\(H_0\)</span> is a <span class="math inline">\(t\)</span>-distribution, naturally accounting for variance uncertainty without ad-hoc degrees-of-freedom corrections.</p>
+</section>
+</section>
+<section id="posterior-predictive-distribution" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="posterior-predictive-distribution"><span class="header-section-number">7.8</span> Posterior Predictive Distribution</h2>
+<p>Given posterior <span class="math inline">\(p(\mu, \sigma^2 \mid D)\)</span>, the posterior predictive distribution for a new observation <span class="math inline">\(\tilde{x}\)</span> is <span class="math display">\[p(\tilde{x} \mid D) = \int p(\tilde{x} \mid \mu, \sigma^2) p(\mu, \sigma^2 \mid D) d\mu d\sigma^2.\]</span></p>
+<p>For the NIG model, this marginalizes to a Student-<span class="math inline">\(t\)</span> distribution with the same degrees of freedom and location as the posterior for <span class="math inline">\(\mu\)</span>, but with inflated scale (reflecting both parameter and observational uncertainty): <span class="math display">\[\tilde{x} \mid D \sim t_{2\alpha_n}\left( \mu_n, \frac{\beta_n}{\alpha_n} \left(1 + \frac{1}{\kappa_n}\right) \right).\]</span></p>
+<p>The posterior predictive intervals are wider than credible intervals for the mean, appropriately quantifying full predictive uncertainty.</p>
+</section>
+<section id="frequentist-contrast" class="level2" data-number="7.9">
+<h2 data-number="7.9" class="anchored" data-anchor-id="frequentist-contrast"><span class="header-section-number">7.9</span> Frequentist Contrast</h2>
+<p>The frequentist approach uses the <strong>sample <span class="math inline">\(t\)</span>-statistic</strong> <span class="math display">\[t = \frac{\bar{x} - \mu}{\sqrt{S / (n(n-1))}},\]</span> which under <span class="math inline">\(H_0: \mu = \mu^*\)</span> follows <span class="math inline">\(t_{n-1}\)</span>. Rejection is based on <span class="math inline">\(p\)</span>-value: <span class="math inline">\(p = P(|T| \ge |t_{\text{obs}}| \mid H_0)\)</span>.</p>
+<p><strong>Key differences from Bayes:</strong></p>
+<ol type="1">
+<li><p><strong>Frequentist <span class="math inline">\(t\)</span>-test:</strong> assumes <span class="math inline">\(\mu^*\)</span> exactly true under <span class="math inline">\(H_0\)</span>; <span class="math inline">\(p\)</span>-value is the probability of observing data as extreme or more extreme under repeated sampling.</p></li>
+<li><p><strong>Bayesian <span class="math inline">\(t\)</span>-test:</strong> posterior probability that <span class="math inline">\(\mu &gt; \mu^*\)</span> (or any specified region); updates beliefs given observed data; allows flexible loss functions for decision-making.</p></li>
+<li><p><strong>Sample size:</strong> Frequentist <span class="math inline">\(p\)</span>-values can remain small for minor effects with large <span class="math inline">\(n\)</span>. Bayes factors adapt: as data accumulate under <span class="math inline">\(H_1\)</span>, they grow; but if data weakly support <span class="math inline">\(H_1\)</span> relative to prediction, BF remains modest.</p></li>
+<li><p><strong>Asymptotic equivalence:</strong> For fixed effect size and large <span class="math inline">\(n\)</span>, frequentist confidence intervals and Bayesian credible intervals converge; the posterior becomes approximately Gaussian by Bernstein–von Mises.</p></li>
+</ol>
+</section>
+<section id="illustrative-examples" class="level2" data-number="7.10">
+<h2 data-number="7.10" class="anchored" data-anchor-id="illustrative-examples"><span class="header-section-number">7.10</span> Illustrative Examples</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1" data-lst-cap="Prior-to-posterior updating with increasing sample size"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>mu_true <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>sigma_true <span class="ot">&lt;-</span> <span class="fl">1.0</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>sigma0 <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>n_list <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">20</span>, <span class="dv">100</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>mu_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="at">length.out =</span> <span class="dv">2000</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cn">NA</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">2.5</span>), <span class="at">xlab =</span> <span class="fu">expression</span>(mu), <span class="at">ylab =</span> <span class="st">"Density"</span>, <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(n_list)) {</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> n_list[i]</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, mu_true, sigma_true)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  xbar <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  kappa_n <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>sigma0<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> n<span class="sc">/</span>sigma_true<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  mu_n <span class="ot">&lt;-</span> (mu0<span class="sc">/</span>sigma0<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> n<span class="sc">*</span>xbar<span class="sc">/</span>sigma_true<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> kappa_n</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  sigma_n <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">/</span>kappa_n)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  posterior_density <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(mu_grid, mu_n, sigma_n)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  col_vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"gray40"</span>, <span class="st">"#b8123e"</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(mu_grid, posterior_density, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">lty =</span> i, <span class="at">col =</span> col_vec[i])</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>prior_density <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(mu_grid, mu0, sigma0)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(mu_grid, prior_density, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">4</span>, <span class="at">col =</span> <span class="st">"gray70"</span>)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Prior"</span>, <span class="st">"n=2"</span>, <span class="st">"n=20"</span>, <span class="st">"n=100"</span>),</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"gray70"</span>, <span class="st">"black"</span>, <span class="st">"gray40"</span>, <span class="st">"#b8123e"</span>),</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="06_gaussian_inference_files/figure-html/lst-posterior-shrinkage-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Posterior distribution for the mean under Normal-Normal conjugate model with known variance. As sample size increases (n=2, n=20, n=100), the posterior concentrates around the MLE and becomes narrower.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2" data-lst-cap="Asymptotic Gaussian posterior for joint mean and variance"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>mu_true <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>sigma_true <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, mu_true, sigma_true)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>xbar <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">sum</span>((x <span class="sc">-</span> xbar)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>mu_hat <span class="ot">&lt;-</span> xbar</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>sigma2_hat <span class="ot">&lt;-</span> S <span class="sc">/</span> n</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>theta_hat <span class="ot">&lt;-</span> <span class="fu">c</span>(mu_hat, sigma2_hat)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(sigma2_hat <span class="sc">/</span> n, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">2</span> <span class="sc">*</span> sigma2_hat<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> n), <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>alpha_level <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>chi2_val <span class="ot">&lt;-</span> <span class="fu">qchisq</span>(<span class="dv">1</span> <span class="sc">-</span> alpha_level, <span class="at">df =</span> <span class="dv">2</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>eig <span class="ot">&lt;-</span> <span class="fu">eigen</span>(Sigma)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> eig<span class="sc">$</span>vectors <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="fu">sqrt</span>(eig<span class="sc">$</span>values <span class="sc">*</span> chi2_val))</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>angles <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span><span class="sc">*</span>pi, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>circle <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">cos</span>(angles), <span class="fu">sin</span>(angles))</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>ellipse_mat <span class="ot">&lt;-</span> A <span class="sc">%*%</span> circle</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>ellipse_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu =</span> ellipse_mat[<span class="dv">1</span>,] <span class="sc">+</span> theta_hat[<span class="dv">1</span>],</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma2 =</span> ellipse_mat[<span class="dv">2</span>,] <span class="sc">+</span> theta_hat[<span class="dv">2</span>]</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ellipse_df<span class="sc">$</span>mu, ellipse_df<span class="sc">$</span>sigma2, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(mu), <span class="at">ylab =</span> <span class="fu">expression</span>(sigma<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"n ="</span>, n),</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlim =</span> <span class="fu">c</span>(theta_hat[<span class="dv">1</span>] <span class="sc">-</span> <span class="fl">0.4</span>, theta_hat[<span class="dv">1</span>] <span class="sc">+</span> <span class="fl">0.4</span>),</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="fu">max</span>(<span class="dv">0</span>, theta_hat[<span class="dv">2</span>] <span class="sc">-</span> <span class="fl">0.5</span>), theta_hat[<span class="dv">2</span>] <span class="sc">+</span> <span class="fl">0.5</span>))</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(theta_hat[<span class="dv">1</span>], theta_hat[<span class="dv">2</span>], <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>, <span class="at">cex =</span> <span class="dv">1</span>)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"95% credible ellipse"</span>, <span class="st">"MLE"</span>),</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="cn">NA</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">19</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"#b8123e"</span>),</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="06_gaussian_inference_files/figure-html/lst-joint-posterior-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>95% credible region (ellipse) for the mean and variance. Shows asymptotic factorization: mean and variance are nearly uncorrelated in the large-sample limit.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3" data-lst-cap="Bayes factor for one-sided Gaussian test"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mu_star <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>alpha0 <span class="ot">&lt;-</span> <span class="fl">1.1</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>beta0 <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>kappa0 <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>sigma_true <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>xbar_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>log10_bf <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(xbar_grid))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">seq_along</span>(xbar_grid)) {</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  xbar <span class="ot">&lt;-</span> xbar_grid[j]</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  kappa_n <span class="ot">&lt;-</span> kappa0 <span class="sc">+</span> n</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  mu_n <span class="ot">&lt;-</span> (kappa0<span class="sc">*</span>mu0 <span class="sc">+</span> n<span class="sc">*</span>xbar) <span class="sc">/</span> kappa_n</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  alpha_n <span class="ot">&lt;-</span> alpha0 <span class="sc">+</span> n<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  S_approx <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  beta_n <span class="ot">&lt;-</span> beta0 <span class="sc">+</span> S_approx<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> (kappa0<span class="sc">*</span>n)<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>(kappa0<span class="sc">+</span>n)) <span class="sc">*</span> (xbar <span class="sc">-</span> mu0)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  log_bf <span class="ot">&lt;-</span> <span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(kappa0) <span class="sc">-</span> <span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(kappa_n) <span class="sc">+</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>            alpha0<span class="sc">*</span><span class="fu">log</span>(beta0) <span class="sc">-</span> alpha_n<span class="sc">*</span><span class="fu">log</span>(beta_n) <span class="sc">+</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>            <span class="fu">lgamma</span>(alpha_n) <span class="sc">-</span> <span class="fu">lgamma</span>(alpha0) <span class="sc">-</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>            <span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(pi) <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>alpha_n) <span class="sc">+</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>            <span class="fu">lgamma</span>(alpha_n <span class="sc">-</span> <span class="fl">0.5</span>) <span class="sc">-</span> <span class="fu">lgamma</span>(alpha0 <span class="sc">-</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  log10_bf[j] <span class="ot">&lt;-</span> log_bf <span class="sc">/</span> <span class="fu">log</span>(<span class="dv">10</span>)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(xbar_grid, log10_bf, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(<span class="fu">bar</span>(x)), <span class="at">ylab =</span> <span class="fu">expression</span>(log[<span class="dv">10</span>]<span class="sc">*</span><span class="st">" BF"</span>[<span class="dv">1</span><span class="sc">*</span><span class="st">","</span><span class="sc">*</span><span class="dv">0</span>]),</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Test: mu &gt; 0, n ="</span>, n), <span class="at">col =</span> <span class="st">"black"</span>)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray70"</span>, <span class="at">lwd =</span> <span class="dv">1</span>)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> mu_star, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray40"</span>, <span class="at">lwd =</span> <span class="dv">1</span>)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"bottomright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"BF &gt; 1: favor H_1"</span>, <span class="st">"BF = 1: indifferent"</span>, <span class="st">"BF &lt; 1: favor H_0"</span>),</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>       <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="06_gaussian_inference_files/figure-html/lst-bayes-factor-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Bayes factor BF_{1,0} (base 10 log scale) versus observed mean, for test H_0: mu &lt;= 0 vs H_1: mu &gt; 0. Shows transition from evidence favoring H_0 to H_1 as sample mean increases.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="sources" class="level2" data-number="7.11">
+<h2 data-number="7.11" class="anchored" data-anchor-id="sources"><span class="header-section-number">7.11</span> Sources</h2>
+<p>Sivia, D.S. &amp; Skilling, J. (2006). <em>Data Analysis: A Bayesian Tutorial</em> (2nd ed.). Oxford University Press. Ch. 3 (Gaussian estimation).</p>
+<p>van der Linden, W.J. (2016). <em>Bayesian Assessment and Reduction of Uncertainty in Measurement</em>. Springer. Ch. 17 (Bayesian z-test, <span class="math inline">\(t\)</span>-test).</p>
+<p>Falasco, G. (2026). <em>Advanced Statistics for Physics Analysis: Bayesian Inference</em>. Lecture Notes. §5.4 (Gaussian mean and variance).</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/05_parameter_estimation.html" class="pagination-link" aria-label="Bayesian parameter estimation, intervals and prediction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian parameter estimation, intervals and prediction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/07_monte_carlo.html" class="pagination-link" aria-label="Monte Carlo methods">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Monte Carlo methods</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Bayesian inference for the Gaussian"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>The Gaussian (or normal) distribution is the most frequently encountered model in statistical inference. Its ubiquity stems from the Central Limit Theorem, which guarantees that sample averages tend toward normality under weak conditions, and from its mathematical tractability—the Gaussian family is closed under many operations and admits conjugate priors. This chapter develops both Bayesian and frequentist approaches to inference of the mean $\mu$ and variance $\sigma^2$ of a Gaussian model, emphasizing the conjugate prior structure that yields closed-form posterior distributions.</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>We begin with the simplest case: inference of the mean with known variance. We then extend to variance estimation with known mean, and finally treat joint inference of both parameters using the Normal-Inverse-Gamma conjugate family. Throughout, we highlight credible intervals, hypothesis testing via the Bayes factor, and the Bayesian $t$-test, which naturally marginalizes over the unknown variance.</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## Gaussian Sampling Model and Sufficient Statistics</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>Let $D = <span class="sc">\{</span>x_1, \ldots, x_n<span class="sc">\}</span>$ be $n$ independent observations from a Gaussian distribution with pdf</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>$$p(x_i \mid \mu, \sigma^2) = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left( -\frac{(x_i - \mu)^2}{2\sigma^2} \right).$$</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>The likelihood function for the data is the product</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>$$p(D \mid \mu, \sigma^2) = \prod_{i=1}^n p(x_i \mid \mu, \sigma^2) \propto (\sigma^2)^{-n/2} \exp\left( -\frac{1}{2\sigma^2} \sum_{i=1}^n (x_i - \mu)^2 \right).$$</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>Using the key identity</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>$$\sum_{i=1}^n (x_i - \mu)^2 = \sum_{i=1}^n (x_i - \bar{x})^2 + n(\bar{x} - \mu)^2 = S + n(\bar{x} - \mu)^2,$$</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>where $\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i$ and $S = \sum_{i=1}^n (x_i - \bar{x})^2$, the likelihood becomes</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>$$p(D \mid \mu, \sigma^2) \propto (\sigma^2)^{-n/2} \exp\left( -\frac{S + n(\bar{x} - \mu)^2}{2\sigma^2} \right).$$</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>The statistics $\bar{x}$ and $S$ are **sufficient** for $(\mu, \sigma^2)$: they capture all information in the data relevant to parameter inference. Any inference on $(\mu, \sigma^2)$ depends on the data only through these two summaries.</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inference of the Mean with Known Variance</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>Assume $\sigma^2$ is a known constant. The likelihood as a function of $\mu$ is</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>$$p(D \mid \mu, \sigma^2) \propto \exp\left( -\frac{n(\bar{x} - \mu)^2}{2\sigma^2} \right).$$</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>This is Gaussian in $\mu$ centered at the sample mean $\bar{x}$.</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="fu">### Uniform Prior and Posterior</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>Assign a uniform (improper) prior $p(\mu) \propto 1$. This is also the Jeffreys prior for $\mu$, since the Fisher information $\mathcal{I}(\mu) = \frac{n}{\sigma^2}$ does not depend on $\mu$.</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>By Bayes' theorem,</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>$$p(\mu \mid D, \sigma^2) \propto p(D \mid \mu, \sigma^2) \cdot p(\mu) \propto \exp\left( -\frac{n(\bar{x} - \mu)^2}{2\sigma^2} \right).$$</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>:::{.theorem}</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>The posterior distribution of $\mu$ is</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>$$\mu \mid D, \sigma^2 \sim \mathcal{N}\left( \bar{x}, \frac{\sigma^2}{n} \right).$$</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>The posterior mean equals the maximum likelihood estimate (MLE) $\hat{\mu}_{\text{MLE}} = \bar{x}$, and the posterior variance shrinks as $1/n$, reflecting increased confidence with larger sample size.</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conjugate Normal-Normal Model</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>To incorporate prior knowledge, use a Gaussian prior $\mu \sim \mathcal{N}(\mu_0, \sigma_0^2)$.</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>The posterior is obtained by multiplying the likelihood and prior:</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>$$p(\mu \mid D, \sigma^2) \propto \exp\left( -\frac{n(\bar{x} - \mu)^2}{2\sigma^2} \right) \cdot \exp\left( -\frac{(\mu - \mu_0)^2}{2\sigma_0^2} \right).$$</span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>Completing the square in the exponent:</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>$$p(\mu \mid D, \sigma^2) \propto \exp\left( -\frac{\kappa_n (\mu - \mu_n)^2}{2} \right),$$</span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>where the posterior precision and mean are</span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>**Normal-Normal Conjugate Update:**</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>\begin{align}</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>\kappa_n &amp;= \frac{1}{\sigma_0^2} + \frac{n}{\sigma^2}, <span class="sc">\\</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>\mu_n &amp;= \frac{\mu_0/\sigma_0^2 + n\bar{x}/\sigma^2}{\kappa_n} = \frac{\mu_0/\sigma_0^2 + n\bar{x}/\sigma^2}{1/\sigma_0^2 + n/\sigma^2}.</span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>\end{align}</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>The posterior is $\mu \mid D, \sigma^2 \sim \mathcal{N}(\mu_n, \kappa_n^{-1})$.</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>**Interpretation:** Precisions add; the posterior mean is a precision-weighted average of the prior mean and sample mean. As $n \to \infty$, the posterior is dominated by the data ($\mu_n \to \bar{x}$). For a weak prior ($\sigma_0^2 \to \infty$), $\kappa_n \to n/\sigma^2$ and $\mu_n \to \bar{x}$, recovering the uniform prior result.</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a><span class="fu">## Inference of the Variance with Known Mean</span></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>Now assume $\mu$ is known and infer $\sigma^2$. The likelihood is</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>$$p(D \mid \mu, \sigma^2) \propto (\sigma^2)^{-n/2} \exp\left( -\frac{\sum_i (x_i - \mu)^2}{2\sigma^2} \right).$$</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>Setting $\nu = \sum_i (x_i - \mu)^2$, the likelihood depends on $\sigma^2$ via</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>$$p(D \mid \mu, \sigma^2) \propto (\sigma^2)^{-n/2} \exp\left( -\frac{\nu}{2\sigma^2} \right).$$</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a><span class="fu">### Jeffreys Prior for Scale Parameters</span></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>Variance is a **scale parameter**: if we rescale $x \to ax$, then $\sigma^2 \to a^2\sigma^2$. As shown in Chapter 5 (§ Fisher information, Cramér–Rao, and the Jeffreys prior), the Jeffreys prior $p_J(\theta) \propto \sqrt{\det \mathcal{I}(\theta)}$ is reparametrization-invariant. For the Gaussian scale parameter $\sigma^2$ with known mean, the Fisher information is $\mathcal{I}(\sigma^2) = \frac{n}{2(\sigma^2)^2}$, yielding $p_J(\sigma^2) \propto \frac{1}{\sigma^2}$ (or equivalently, $p_J(\log\sigma^2) \propto 1$, uniform on log-scale). This prior ensures invariance under rescaling—critical for Bayes factors. Chapter 5 provides an extended example and reparametrization invariance proof; here we apply it directly to the Gaussian posterior.</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a><span class="fu">### Inverse-Gamma Conjugate Family</span></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>The Inverse-Gamma distribution is conjugate for variance estimation:</span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>If $X \sim \text{Gamma}(\alpha, \beta)$ with pdf $f(x) = \frac{\beta^\alpha}{\Gamma(\alpha)} x^{\alpha-1} e^{-\beta x}$, then $1/X \sim \text{Inv-Gamma}(\alpha, \beta)$ with pdf</span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>$$f(z) = \frac{\beta^\alpha}{\Gamma(\alpha)} (1/z)^{\alpha+1} \exp(-\beta/z).$$</span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>A prior $\sigma^2 \sim \text{Inv-Gamma}(\alpha_0, \beta_0)$ combined with the likelihood yields a posterior:</span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>:::{.theorem}</span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>**Inverse-Gamma Conjugate Update:**</span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>$$\sigma^2 \mid D, \mu \sim \text{Inv-Gamma}\left( \alpha_0 + \frac{n}{2}, \beta_0 + \frac{\nu}{2} \right),$$</span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>where $\nu = \sum_i (x_i - \mu)^2$.</span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>The Jeffreys prior corresponds to $\alpha_0 = 0$ and $\beta_0 = 0$ (or $\alpha_0 = -1/2$ to ensure integrability). The posterior mean is $\mathbb{E}<span class="co">[</span><span class="ot">\sigma^2 \mid D</span><span class="co">]</span> = \frac{\beta_n}{\alpha_n - 1}$ for $\alpha_n &gt; 1$.</span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a><span class="fu">## Joint Inference: Normal-Inverse-Gamma Model</span></span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>Most realistic: both $\mu$ and $\sigma^2$ are unknown. Use a factorized prior</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>$$p(\mu, \sigma^2) = p(\mu \mid \sigma^2) p(\sigma^2),$$</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>with $\mu \mid \sigma^2 \sim \mathcal{N}(\mu_0, \sigma^2/\kappa_0)$ and $\sigma^2 \sim \text{Inv-Gamma}(\alpha_0, \beta_0)$.</span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>This is the **Normal-Inverse-Gamma (NIG)** conjugate family with hyperparameters $(\mu_0, \kappa_0, \alpha_0, \beta_0)$.</span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a><span class="fu">### Posterior Update</span></span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>Combining likelihood with the NIG prior yields a posterior with hyperparameters:</span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>**Normal-Inverse-Gamma Conjugate Update:**</span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>\begin{align}</span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>\kappa_n &amp;= \kappa_0 + n, <span class="sc">\\</span></span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>\mu_n &amp;= \frac{\kappa_0 \mu_0 + n\bar{x}}{\kappa_n}, <span class="sc">\\</span></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>\alpha_n &amp;= \alpha_0 + \frac{n}{2}, <span class="sc">\\</span></span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>\beta_n &amp;= \beta_0 + \frac{S}{2} + \frac{\kappa_0 n}{2(\kappa_0 + n)} (\bar{x} - \mu_0)^2,</span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>\end{align}</span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>where $S = \sum_i (x_i - \bar{x})^2$.</span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>The joint posterior factorizes as</span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>$$p(\mu, \sigma^2 \mid D) \propto (\sigma^2)^{-(\alpha_n + 1)} \exp\left( -\frac{\beta_n}{\sigma^2} - \frac{\kappa_n(\mu - \mu_n)^2}{2\sigma^2} \right).$$</span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a><span class="fu">### Marginal Posterior of the Mean</span></span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>Marginalizing $\sigma^2$ yields the marginal posterior of $\mu$:</span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>:::{.theorem}</span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a>The posterior marginal distribution of $\mu$ given $D$ is</span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>$$\mu \mid D \sim t_{2\alpha_n}\left( \mu_n, \frac{\beta_n}{\alpha_n \kappa_n} \right),$$</span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a>a Student-$t$ distribution with $\nu = 2\alpha_n$ degrees of freedom, location $\mu_n$, and scale parameter $\sqrt{\beta_n/(\alpha_n \kappa_n)}$.</span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a>**Interpretation:** The heavy tails of the $t$-distribution reflect additional uncertainty from not knowing $\sigma^2$. For large $n$, $\nu = 2\alpha_n \approx n \to \infty$, so $t$-distribution converges to Gaussian, recovering asymptotic normality.</span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a><span class="fu">## Credible Intervals and Regions</span></span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a><span class="fu">### Central Credible Interval for the Mean</span></span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a>A central $(1-\alpha)$% credible interval is</span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a>$$\mu \pm t_{2\alpha_n, 1-\alpha/2} \sqrt{\frac{\beta_n}{\alpha_n \kappa_n}},$$</span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>where $t_{\nu, p}$ denotes the $p$-quantile of a Student-$t$ distribution with $\nu$ degrees of freedom.</span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>**Frequentist analogue:** In the large-sample limit, this recovers the familiar confidence interval $\hat{\mu} \pm z_{1-\alpha/2} \sqrt{\hat{\sigma}^2/n}$.</span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a><span class="fu">### Joint Credible Region</span></span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>A joint $(1-\alpha)$% credible region for $\theta = (\mu, \sigma^2)$ is the ellipse</span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a>$$(\theta - \hat{\theta})^T \mathcal{I}_n(\hat{\theta}) (\theta - \hat{\theta}) \le \chi^2_{2, 1-\alpha},$$</span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a>where $\mathcal{I}_n(\hat{\theta})$ is the Fisher information matrix evaluated at the MLE and $\chi^2_{2, 1-\alpha}$ is the $(1-\alpha)$ quantile of the chi-squared distribution with 2 degrees of freedom.</span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a>The posterior asymptotically factorizes: the estimated correlation between $\mu$ and $\sigma^2$ vanishes as $n \to \infty$. This convergence to Gaussian form and factorization is guaranteed by the **Bernstein–von Mises theorem** (Chapter 5, § Fisher information, Cramér–Rao, and the Jeffreys prior), which states that the posterior becomes approximately $\mathcal{N}(\hat{\theta}_{\mathrm{ML}}, \mathcal{I}_n(\theta_*)^{-1})$ for large $n$, independently of the prior. This is why Bayesian credible intervals and frequentist confidence intervals asymptotically agree.</span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bayesian Hypothesis Testing</span></span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a><span class="fu">### One-Sided Test for the Mean</span></span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a>Consider $H_0: \mu \le \mu^* \text{ vs. } H_1: \mu &gt; \mu^*$.</span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>The posterior probability of $H_1$ is</span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a>$$P(H_1 \mid D) = 1 - F_t\left( \frac{\mu^* - \mu_n}{\sqrt{\beta_n/(\alpha_n \kappa_n)}} \right),$$</span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a>where $F_t$ is the CDF of a Student-$t$ distribution with $2\alpha_n$ degrees of freedom.</span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a>A decision rule: reject $H_0$ if $P(H_1 \mid D) &gt; 1 - \alpha$. Equivalently, reject if $\mu^*$ lies below the lower bound of the $(1-\alpha)$% credible interval.</span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a><span class="fu">### Two-Sided Test and Bayes Factors</span></span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a>For $H_0: \mu = \mu^* \text{ vs. } H_1: \mu \ne \mu^*$, compare the marginal likelihoods:</span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a>The **Bayes factor** of $H_1$ over $H_0$ is</span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a>$$\text{BF}_{10} = \frac{p(D \mid H_1)}{p(D \mid H_0)} = \frac{\int p(D \mid \mu, \sigma^2) p(\mu, \sigma^2 \mid H_1) d\mu d\sigma^2}{\int_{\mu=\mu^*} p(D \mid \mu^*, \sigma^2) p(\sigma^2 \mid H_0) d\sigma^2}.$$</span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a>**Interpretation:**</span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\text{BF}_{10} &gt; 1$: evidence favors $H_1$ (mean differs from $\mu^*$).</span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\text{BF}_{10} &lt; 1$: evidence favors $H_0$.</span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Magnitude quantifies strength of evidence. The Bayes factor, unlike frequentist $p$-values, is invariant under the choice of scale (Jeffreys prior ensures this).</span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bayesian $t$-Test</span></span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>The Bayesian $t$-test compares observed $t = (\bar{x} - \mu^*) / \sqrt{S/(n(n-1))}$ to its posterior predictive distribution under $H_0$. With the NIG conjugate prior, the marginal likelihood under $H_0$ is a $t$-distribution, naturally accounting for variance uncertainty without ad-hoc degrees-of-freedom corrections.</span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior Predictive Distribution</span></span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a>Given posterior $p(\mu, \sigma^2 \mid D)$, the posterior predictive distribution for a new observation $\tilde{x}$ is</span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a>$$p(\tilde{x} \mid D) = \int p(\tilde{x} \mid \mu, \sigma^2) p(\mu, \sigma^2 \mid D) d\mu d\sigma^2.$$</span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a>For the NIG model, this marginalizes to a Student-$t$ distribution with the same degrees of freedom and location as the posterior for $\mu$, but with inflated scale (reflecting both parameter and observational uncertainty):</span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a>$$\tilde{x} \mid D \sim t_{2\alpha_n}\left( \mu_n, \frac{\beta_n}{\alpha_n} \left(1 + \frac{1}{\kappa_n}\right) \right).$$</span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a>The posterior predictive intervals are wider than credible intervals for the mean, appropriately quantifying full predictive uncertainty.</span>
+<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a><span class="fu">## Frequentist Contrast</span></span>
+<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a>The frequentist approach uses the **sample $t$-statistic**</span>
+<span id="cb4-204"><a href="#cb4-204" aria-hidden="true" tabindex="-1"></a>$$t = \frac{\bar{x} - \mu}{\sqrt{S / (n(n-1))}},$$</span>
+<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a>which under $H_0: \mu = \mu^*$ follows $t_{n-1}$. Rejection is based on $p$-value: $p = P(|T| \ge |t_{\text{obs}}| \mid H_0)$.</span>
+<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a>**Key differences from Bayes:**</span>
+<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Frequentist $t$-test:** assumes $\mu^*$ exactly true under $H_0$; $p$-value is the probability of observing data as extreme or more extreme under repeated sampling.</span>
+<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Bayesian $t$-test:** posterior probability that $\mu &gt; \mu^*$ (or any specified region); updates beliefs given observed data; allows flexible loss functions for decision-making.</span>
+<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Sample size:** Frequentist $p$-values can remain small for minor effects with large $n$. Bayes factors adapt: as data accumulate under $H_1$, they grow; but if data weakly support $H_1$ relative to prediction, BF remains modest.</span>
+<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Asymptotic equivalence:** For fixed effect size and large $n$, frequentist confidence intervals and Bayesian credible intervals converge; the posterior becomes approximately Gaussian by Bernstein–von Mises.</span>
+<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a><span class="fu">## Illustrative Examples</span></span>
+<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-posterior-shrinkage</span></span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Prior-to-posterior updating with increasing sample size"</span></span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Posterior distribution for the mean under Normal-Normal conjugate model with known variance. As sample size increases (n=2, n=20, n=100), the posterior concentrates around the MLE and becomes narrower."</span></span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">42</span>)</span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a>mu_true <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a>sigma_true <span class="ot">&lt;-</span> <span class="fl">1.0</span></span>
+<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>sigma0 <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a>n_list <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">20</span>, <span class="dv">100</span>)</span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>mu_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="at">length.out =</span> <span class="dv">2000</span>)</span>
+<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cn">NA</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">3</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">2.5</span>), <span class="at">xlab =</span> <span class="fu">expression</span>(mu), <span class="at">ylab =</span> <span class="st">"Density"</span>, <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(n_list)) {</span>
+<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> n_list[i]</span>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, mu_true, sigma_true)</span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a>  xbar <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a>  kappa_n <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>sigma0<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> n<span class="sc">/</span>sigma_true<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a>  mu_n <span class="ot">&lt;-</span> (mu0<span class="sc">/</span>sigma0<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> n<span class="sc">*</span>xbar<span class="sc">/</span>sigma_true<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> kappa_n</span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a>  sigma_n <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="dv">1</span><span class="sc">/</span>kappa_n)</span>
+<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a>  posterior_density <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(mu_grid, mu_n, sigma_n)</span>
+<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a>  col_vec <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"gray40"</span>, <span class="st">"#b8123e"</span>)</span>
+<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(mu_grid, posterior_density, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">lty =</span> i, <span class="at">col =</span> col_vec[i])</span>
+<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a>prior_density <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(mu_grid, mu0, sigma0)</span>
+<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(mu_grid, prior_density, <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">4</span>, <span class="at">col =</span> <span class="st">"gray70"</span>)</span>
+<span id="cb4-256"><a href="#cb4-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-257"><a href="#cb4-257" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Prior"</span>, <span class="st">"n=2"</span>, <span class="st">"n=20"</span>, <span class="st">"n=100"</span>),</span>
+<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"gray70"</span>, <span class="st">"black"</span>, <span class="st">"gray40"</span>, <span class="st">"#b8123e"</span>),</span>
+<span id="cb4-259"><a href="#cb4-259" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>)</span>
+<span id="cb4-260"><a href="#cb4-260" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-261"><a href="#cb4-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-264"><a href="#cb4-264" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-265"><a href="#cb4-265" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-joint-posterior</span></span>
+<span id="cb4-266"><a href="#cb4-266" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Asymptotic Gaussian posterior for joint mean and variance"</span></span>
+<span id="cb4-267"><a href="#cb4-267" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "95% credible region (ellipse) for the mean and variance. Shows asymptotic factorization: mean and variance are nearly uncorrelated in the large-sample limit."</span></span>
+<span id="cb4-268"><a href="#cb4-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-269"><a href="#cb4-269" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb4-270"><a href="#cb4-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-271"><a href="#cb4-271" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb4-272"><a href="#cb4-272" aria-hidden="true" tabindex="-1"></a>mu_true <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb4-273"><a href="#cb4-273" aria-hidden="true" tabindex="-1"></a>sigma_true <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb4-274"><a href="#cb4-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-275"><a href="#cb4-275" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, mu_true, sigma_true)</span>
+<span id="cb4-276"><a href="#cb4-276" aria-hidden="true" tabindex="-1"></a>xbar <span class="ot">&lt;-</span> <span class="fu">mean</span>(x)</span>
+<span id="cb4-277"><a href="#cb4-277" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> <span class="fu">sum</span>((x <span class="sc">-</span> xbar)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb4-278"><a href="#cb4-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-279"><a href="#cb4-279" aria-hidden="true" tabindex="-1"></a>mu_hat <span class="ot">&lt;-</span> xbar</span>
+<span id="cb4-280"><a href="#cb4-280" aria-hidden="true" tabindex="-1"></a>sigma2_hat <span class="ot">&lt;-</span> S <span class="sc">/</span> n</span>
+<span id="cb4-281"><a href="#cb4-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-282"><a href="#cb4-282" aria-hidden="true" tabindex="-1"></a>theta_hat <span class="ot">&lt;-</span> <span class="fu">c</span>(mu_hat, sigma2_hat)</span>
+<span id="cb4-283"><a href="#cb4-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-284"><a href="#cb4-284" aria-hidden="true" tabindex="-1"></a>Sigma <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(sigma2_hat <span class="sc">/</span> n, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">2</span> <span class="sc">*</span> sigma2_hat<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> n), <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb4-285"><a href="#cb4-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-286"><a href="#cb4-286" aria-hidden="true" tabindex="-1"></a>alpha_level <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
+<span id="cb4-287"><a href="#cb4-287" aria-hidden="true" tabindex="-1"></a>chi2_val <span class="ot">&lt;-</span> <span class="fu">qchisq</span>(<span class="dv">1</span> <span class="sc">-</span> alpha_level, <span class="at">df =</span> <span class="dv">2</span>)</span>
+<span id="cb4-288"><a href="#cb4-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-289"><a href="#cb4-289" aria-hidden="true" tabindex="-1"></a>eig <span class="ot">&lt;-</span> <span class="fu">eigen</span>(Sigma)</span>
+<span id="cb4-290"><a href="#cb4-290" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> eig<span class="sc">$</span>vectors <span class="sc">%*%</span> <span class="fu">diag</span>(<span class="fu">sqrt</span>(eig<span class="sc">$</span>values <span class="sc">*</span> chi2_val))</span>
+<span id="cb4-291"><a href="#cb4-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-292"><a href="#cb4-292" aria-hidden="true" tabindex="-1"></a>angles <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2</span><span class="sc">*</span>pi, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb4-293"><a href="#cb4-293" aria-hidden="true" tabindex="-1"></a>circle <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">cos</span>(angles), <span class="fu">sin</span>(angles))</span>
+<span id="cb4-294"><a href="#cb4-294" aria-hidden="true" tabindex="-1"></a>ellipse_mat <span class="ot">&lt;-</span> A <span class="sc">%*%</span> circle</span>
+<span id="cb4-295"><a href="#cb4-295" aria-hidden="true" tabindex="-1"></a>ellipse_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb4-296"><a href="#cb4-296" aria-hidden="true" tabindex="-1"></a>  <span class="at">mu =</span> ellipse_mat[<span class="dv">1</span>,] <span class="sc">+</span> theta_hat[<span class="dv">1</span>],</span>
+<span id="cb4-297"><a href="#cb4-297" aria-hidden="true" tabindex="-1"></a>  <span class="at">sigma2 =</span> ellipse_mat[<span class="dv">2</span>,] <span class="sc">+</span> theta_hat[<span class="dv">2</span>]</span>
+<span id="cb4-298"><a href="#cb4-298" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-299"><a href="#cb4-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-300"><a href="#cb4-300" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb4-301"><a href="#cb4-301" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ellipse_df<span class="sc">$</span>mu, ellipse_df<span class="sc">$</span>sigma2, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb4-302"><a href="#cb4-302" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(mu), <span class="at">ylab =</span> <span class="fu">expression</span>(sigma<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb4-303"><a href="#cb4-303" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"n ="</span>, n),</span>
+<span id="cb4-304"><a href="#cb4-304" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlim =</span> <span class="fu">c</span>(theta_hat[<span class="dv">1</span>] <span class="sc">-</span> <span class="fl">0.4</span>, theta_hat[<span class="dv">1</span>] <span class="sc">+</span> <span class="fl">0.4</span>),</span>
+<span id="cb4-305"><a href="#cb4-305" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="fu">max</span>(<span class="dv">0</span>, theta_hat[<span class="dv">2</span>] <span class="sc">-</span> <span class="fl">0.5</span>), theta_hat[<span class="dv">2</span>] <span class="sc">+</span> <span class="fl">0.5</span>))</span>
+<span id="cb4-306"><a href="#cb4-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-307"><a href="#cb4-307" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(theta_hat[<span class="dv">1</span>], theta_hat[<span class="dv">2</span>], <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>, <span class="at">cex =</span> <span class="dv">1</span>)</span>
+<span id="cb4-308"><a href="#cb4-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-309"><a href="#cb4-309" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"95% credible ellipse"</span>, <span class="st">"MLE"</span>),</span>
+<span id="cb4-310"><a href="#cb4-310" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="cn">NA</span>), <span class="at">pch =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">19</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"#b8123e"</span>),</span>
+<span id="cb4-311"><a href="#cb4-311" aria-hidden="true" tabindex="-1"></a>       <span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>)</span>
+<span id="cb4-312"><a href="#cb4-312" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-313"><a href="#cb4-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-316"><a href="#cb4-316" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-317"><a href="#cb4-317" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-bayes-factor</span></span>
+<span id="cb4-318"><a href="#cb4-318" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Bayes factor for one-sided Gaussian test"</span></span>
+<span id="cb4-319"><a href="#cb4-319" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Bayes factor BF_{1,0} (base 10 log scale) versus observed mean, for test H_0: mu &lt;= 0 vs H_1: mu &gt; 0. Shows transition from evidence favoring H_0 to H_1 as sample mean increases."</span></span>
+<span id="cb4-320"><a href="#cb4-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-321"><a href="#cb4-321" aria-hidden="true" tabindex="-1"></a>mu_star <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb4-322"><a href="#cb4-322" aria-hidden="true" tabindex="-1"></a>alpha0 <span class="ot">&lt;-</span> <span class="fl">1.1</span></span>
+<span id="cb4-323"><a href="#cb4-323" aria-hidden="true" tabindex="-1"></a>beta0 <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb4-324"><a href="#cb4-324" aria-hidden="true" tabindex="-1"></a>kappa0 <span class="ot">&lt;-</span> <span class="fl">0.01</span></span>
+<span id="cb4-325"><a href="#cb4-325" aria-hidden="true" tabindex="-1"></a>mu0 <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb4-326"><a href="#cb4-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-327"><a href="#cb4-327" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb4-328"><a href="#cb4-328" aria-hidden="true" tabindex="-1"></a>sigma_true <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb4-329"><a href="#cb4-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-330"><a href="#cb4-330" aria-hidden="true" tabindex="-1"></a>xbar_grid <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">2</span>, <span class="at">length.out =</span> <span class="dv">100</span>)</span>
+<span id="cb4-331"><a href="#cb4-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-332"><a href="#cb4-332" aria-hidden="true" tabindex="-1"></a>log10_bf <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="fu">length</span>(xbar_grid))</span>
+<span id="cb4-333"><a href="#cb4-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-334"><a href="#cb4-334" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (j <span class="cf">in</span> <span class="fu">seq_along</span>(xbar_grid)) {</span>
+<span id="cb4-335"><a href="#cb4-335" aria-hidden="true" tabindex="-1"></a>  xbar <span class="ot">&lt;-</span> xbar_grid[j]</span>
+<span id="cb4-336"><a href="#cb4-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-337"><a href="#cb4-337" aria-hidden="true" tabindex="-1"></a>  kappa_n <span class="ot">&lt;-</span> kappa0 <span class="sc">+</span> n</span>
+<span id="cb4-338"><a href="#cb4-338" aria-hidden="true" tabindex="-1"></a>  mu_n <span class="ot">&lt;-</span> (kappa0<span class="sc">*</span>mu0 <span class="sc">+</span> n<span class="sc">*</span>xbar) <span class="sc">/</span> kappa_n</span>
+<span id="cb4-339"><a href="#cb4-339" aria-hidden="true" tabindex="-1"></a>  alpha_n <span class="ot">&lt;-</span> alpha0 <span class="sc">+</span> n<span class="sc">/</span><span class="dv">2</span></span>
+<span id="cb4-340"><a href="#cb4-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-341"><a href="#cb4-341" aria-hidden="true" tabindex="-1"></a>  S_approx <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb4-342"><a href="#cb4-342" aria-hidden="true" tabindex="-1"></a>  beta_n <span class="ot">&lt;-</span> beta0 <span class="sc">+</span> S_approx<span class="sc">/</span><span class="dv">2</span> <span class="sc">+</span> (kappa0<span class="sc">*</span>n)<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>(kappa0<span class="sc">+</span>n)) <span class="sc">*</span> (xbar <span class="sc">-</span> mu0)<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb4-343"><a href="#cb4-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-344"><a href="#cb4-344" aria-hidden="true" tabindex="-1"></a>  log_bf <span class="ot">&lt;-</span> <span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(kappa0) <span class="sc">-</span> <span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(kappa_n) <span class="sc">+</span></span>
+<span id="cb4-345"><a href="#cb4-345" aria-hidden="true" tabindex="-1"></a>            alpha0<span class="sc">*</span><span class="fu">log</span>(beta0) <span class="sc">-</span> alpha_n<span class="sc">*</span><span class="fu">log</span>(beta_n) <span class="sc">+</span></span>
+<span id="cb4-346"><a href="#cb4-346" aria-hidden="true" tabindex="-1"></a>            <span class="fu">lgamma</span>(alpha_n) <span class="sc">-</span> <span class="fu">lgamma</span>(alpha0) <span class="sc">-</span></span>
+<span id="cb4-347"><a href="#cb4-347" aria-hidden="true" tabindex="-1"></a>            <span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(pi) <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span><span class="fu">log</span>(<span class="dv">2</span><span class="sc">*</span>alpha_n) <span class="sc">+</span></span>
+<span id="cb4-348"><a href="#cb4-348" aria-hidden="true" tabindex="-1"></a>            <span class="fu">lgamma</span>(alpha_n <span class="sc">-</span> <span class="fl">0.5</span>) <span class="sc">-</span> <span class="fu">lgamma</span>(alpha0 <span class="sc">-</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-349"><a href="#cb4-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-350"><a href="#cb4-350" aria-hidden="true" tabindex="-1"></a>  log10_bf[j] <span class="ot">&lt;-</span> log_bf <span class="sc">/</span> <span class="fu">log</span>(<span class="dv">10</span>)</span>
+<span id="cb4-351"><a href="#cb4-351" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-352"><a href="#cb4-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-353"><a href="#cb4-353" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb4-354"><a href="#cb4-354" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(xbar_grid, log10_bf, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb4-355"><a href="#cb4-355" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(<span class="fu">bar</span>(x)), <span class="at">ylab =</span> <span class="fu">expression</span>(log[<span class="dv">10</span>]<span class="sc">*</span><span class="st">" BF"</span>[<span class="dv">1</span><span class="sc">*</span><span class="st">","</span><span class="sc">*</span><span class="dv">0</span>]),</span>
+<span id="cb4-356"><a href="#cb4-356" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Test: mu &gt; 0, n ="</span>, n), <span class="at">col =</span> <span class="st">"black"</span>)</span>
+<span id="cb4-357"><a href="#cb4-357" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">0</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray70"</span>, <span class="at">lwd =</span> <span class="dv">1</span>)</span>
+<span id="cb4-358"><a href="#cb4-358" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> mu_star, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray40"</span>, <span class="at">lwd =</span> <span class="dv">1</span>)</span>
+<span id="cb4-359"><a href="#cb4-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-360"><a href="#cb4-360" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"bottomright"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"BF &gt; 1: favor H_1"</span>, <span class="st">"BF = 1: indifferent"</span>, <span class="st">"BF &lt; 1: favor H_0"</span>),</span>
+<span id="cb4-361"><a href="#cb4-361" aria-hidden="true" tabindex="-1"></a>       <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>)</span>
+<span id="cb4-362"><a href="#cb4-362" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-363"><a href="#cb4-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-364"><a href="#cb4-364" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb4-365"><a href="#cb4-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-366"><a href="#cb4-366" aria-hidden="true" tabindex="-1"></a>Sivia, D.S. &amp; Skilling, J. (2006). *Data Analysis: A Bayesian Tutorial* (2nd ed.). Oxford University Press. Ch. 3 (Gaussian estimation).</span>
+<span id="cb4-367"><a href="#cb4-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-368"><a href="#cb4-368" aria-hidden="true" tabindex="-1"></a>van der Linden, W.J. (2016). *Bayesian Assessment and Reduction of Uncertainty in Measurement*. Springer. Ch. 17 (Bayesian z-test, $t$-test).</span>
+<span id="cb4-369"><a href="#cb4-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-370"><a href="#cb4-370" aria-hidden="true" tabindex="-1"></a>Falasco, G. (2026). *Advanced Statistics for Physics Analysis: Bayesian Inference*. Lecture Notes. §5.4 (Gaussian mean and variance).</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

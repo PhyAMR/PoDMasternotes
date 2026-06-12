@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>11&nbsp; Parallel tempering – Advanced Statistics for Physics Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/11_bayesian_regression.html" rel="next">
+<link href="../chapters/09_hamiltonian_mc.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/07_monte_carlo.html">PART III: MONTE CARLO METHODS</a></li><li class="breadcrumb-item"><a href="../chapters/10_parallel_tempering.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Advanced Statistics for Physics Analysis</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01_R_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to R for Bayesian inference</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: PROBABILITY RECAP</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02_discrete_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Discrete probability</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03_continuous_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Continuous probability and limit theorems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: BAYESIAN INFERENCE</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04_model_comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05_parameter_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian parameter estimation, intervals and prediction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06_gaussian_inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: MONTE CARLO METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07_monte_carlo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Monte Carlo methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08_independence_and_gibbs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09_hamiltonian_mc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10_parallel_tempering.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: APPLIED BAYESIAN MODELLING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11_bayesian_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12_probabilistic_programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13_glms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDIX</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99_appendix_source_code.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Appendix: Source code</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-the-multimodality-trap" id="toc-introduction-the-multimodality-trap" class="nav-link active" data-scroll-target="#introduction-the-multimodality-trap"><span class="header-section-number">11.1</span> Introduction: The multimodality trap</a></li>
+  <li><a href="#tempered-distributions-and-temperatures" id="toc-tempered-distributions-and-temperatures" class="nav-link" data-scroll-target="#tempered-distributions-and-temperatures"><span class="header-section-number">11.2</span> Tempered distributions and temperatures</a>
+  <ul class="collapse">
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition"><span class="header-section-number">11.2.1</span> Definition</a></li>
+  <li><a href="#limiting-behaviour" id="toc-limiting-behaviour" class="nav-link" data-scroll-target="#limiting-behaviour"><span class="header-section-number">11.2.2</span> Limiting behaviour</a></li>
+  </ul></li>
+  <li><a href="#simulated-annealing" id="toc-simulated-annealing" class="nav-link" data-scroll-target="#simulated-annealing"><span class="header-section-number">11.3</span> Simulated annealing</a>
+  <ul class="collapse">
+  <li><a href="#purpose-and-algorithm" id="toc-purpose-and-algorithm" class="nav-link" data-scroll-target="#purpose-and-algorithm"><span class="header-section-number">11.3.1</span> Purpose and algorithm</a></li>
+  <li><a href="#cooling-schedule-and-barrier-crossing" id="toc-cooling-schedule-and-barrier-crossing" class="nav-link" data-scroll-target="#cooling-schedule-and-barrier-crossing"><span class="header-section-number">11.3.2</span> Cooling schedule and barrier crossing</a></li>
+  </ul></li>
+  <li><a href="#parallel-tempering-replica-exchange" id="toc-parallel-tempering-replica-exchange" class="nav-link" data-scroll-target="#parallel-tempering-replica-exchange"><span class="header-section-number">11.4</span> Parallel tempering (replica exchange)</a>
+  <ul class="collapse">
+  <li><a href="#the-parallel-tempering-framework" id="toc-the-parallel-tempering-framework" class="nav-link" data-scroll-target="#the-parallel-tempering-framework"><span class="header-section-number">11.4.1</span> The parallel tempering framework</a></li>
+  <li><a href="#joint-target" id="toc-joint-target" class="nav-link" data-scroll-target="#joint-target"><span class="header-section-number">11.4.2</span> Joint target</a></li>
+  <li><a href="#within-temperature-moves" id="toc-within-temperature-moves" class="nav-link" data-scroll-target="#within-temperature-moves"><span class="header-section-number">11.4.3</span> Within-temperature moves</a></li>
+  <li><a href="#swap-moves-and-detailed-balance" id="toc-swap-moves-and-detailed-balance" class="nav-link" data-scroll-target="#swap-moves-and-detailed-balance"><span class="header-section-number">11.4.4</span> Swap moves and detailed balance</a></li>
+  <li><a href="#how-parallel-tempering-works" id="toc-how-parallel-tempering-works" class="nav-link" data-scroll-target="#how-parallel-tempering-works"><span class="header-section-number">11.4.5</span> How parallel tempering works</a></li>
+  </ul></li>
+  <li><a href="#temperature-ladder-design" id="toc-temperature-ladder-design" class="nav-link" data-scroll-target="#temperature-ladder-design"><span class="header-section-number">11.5</span> Temperature ladder design</a>
+  <ul class="collapse">
+  <li><a href="#geometric-spacing" id="toc-geometric-spacing" class="nav-link" data-scroll-target="#geometric-spacing"><span class="header-section-number">11.5.1</span> Geometric spacing</a></li>
+  <li><a href="#target-swap-acceptance" id="toc-target-swap-acceptance" class="nav-link" data-scroll-target="#target-swap-acceptance"><span class="header-section-number">11.5.2</span> Target swap acceptance</a></li>
+  <li><a href="#all-pairs-vs.-neighbour-only-swaps" id="toc-all-pairs-vs.-neighbour-only-swaps" class="nav-link" data-scroll-target="#all-pairs-vs.-neighbour-only-swaps"><span class="header-section-number">11.5.3</span> All-pairs vs.&nbsp;neighbour-only swaps</a></li>
+  </ul></li>
+  <li><a href="#worked-example-bimodal-1d-mixture" id="toc-worked-example-bimodal-1d-mixture" class="nav-link" data-scroll-target="#worked-example-bimodal-1d-mixture"><span class="header-section-number">11.6</span> Worked example: bimodal 1D mixture</a></li>
+  <li><a href="#practical-considerations" id="toc-practical-considerations" class="nav-link" data-scroll-target="#practical-considerations"><span class="header-section-number">11.7</span> Practical considerations</a>
+  <ul class="collapse">
+  <li><a href="#when-to-use-parallel-tempering" id="toc-when-to-use-parallel-tempering" class="nav-link" data-scroll-target="#when-to-use-parallel-tempering"><span class="header-section-number">11.7.1</span> When to use parallel tempering</a></li>
+  <li><a href="#computational-cost" id="toc-computational-cost" class="nav-link" data-scroll-target="#computational-cost"><span class="header-section-number">11.7.2</span> Computational cost</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">11.8</span> Summary</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">11.9</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/07_monte_carlo.html">PART III: MONTE CARLO METHODS</a></li><li class="breadcrumb-item"><a href="../chapters/10_parallel_tempering.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction-the-multimodality-trap" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="introduction-the-multimodality-trap"><span class="header-section-number">11.1</span> Introduction: The multimodality trap</h2>
+<p>Standard Metropolis–Hastings and Hamiltonian Monte Carlo samplers work well when the target posterior is unimodal or has modes close together. However, when the posterior has several well-separated modes, a single MCMC chain becomes trapped near the mode it encounters first. It cannot escape because crossing the energy barrier between modes occurs with probability decaying exponentially in the barrier height.</p>
+<p>Consider two modes separated by a barrier of height <span class="math inline">\(\Delta E\)</span>. The probability of escaping is approximately <span class="math display">\[p \approx \exp\left(-\frac{\Delta E}{T}\right)\]</span> by the Arrhenius formula, where we write the posterior as <span class="math inline">\(\pi(\theta) = \exp[-E(\theta)]\)</span>. When <span class="math inline">\(\Delta E \gg 1\)</span>, this probability is negligibly small, and the chain explores only a tiny fraction of the parameter space.</p>
+<p>Simulated annealing and parallel tempering both tackle this problem by introducing a temperature parameter. They exploit a key observation: at high temperature <span class="math inline">\(T\)</span>, the posterior is flattened, and energy barriers become easier to cross. The two methods differ in how they use this idea.</p>
+</section>
+<section id="tempered-distributions-and-temperatures" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="tempered-distributions-and-temperatures"><span class="header-section-number">11.2</span> Tempered distributions and temperatures</h2>
+<section id="definition" class="level3" data-number="11.2.1">
+<h3 data-number="11.2.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">11.2.1</span> Definition</h3>
+<p>For any target posterior <span class="math inline">\(\pi(\theta)\)</span> with energy representation <span class="math inline">\(\pi(\theta) = \exp[-E(\theta)]\)</span>, we define the <strong>tempered posterior</strong> at inverse temperature <span class="math inline">\(\beta \in (0, 1]\)</span> by <span class="math display">\[\pi_\beta(\theta) \propto \pi(\theta)^\beta = \exp[-\beta E(\theta)].\]</span></p>
+<p>Equivalently, using temperature <span class="math inline">\(T = 1/\beta\)</span>, <span class="math display">\[\pi_T(\theta) \propto \pi(\theta)^{1/T} = \exp\left[-\frac{E(\theta)}{T}\right].\]</span></p>
+</section>
+<section id="limiting-behaviour" class="level3" data-number="11.2.2">
+<h3 data-number="11.2.2" class="anchored" data-anchor-id="limiting-behaviour"><span class="header-section-number">11.2.2</span> Limiting behaviour</h3>
+<ul>
+<li><strong>Cold limit</strong> (<span class="math inline">\(\beta \to 1\)</span> or <span class="math inline">\(T \to 1\)</span>): <span class="math inline">\(\pi_\beta(\theta) \to \pi(\theta)\)</span>, the original posterior.</li>
+<li><strong>Hot limit</strong> (<span class="math inline">\(\beta \to 0\)</span> or <span class="math inline">\(T \to \infty\)</span>): <span class="math inline">\(\pi_\beta(\theta)\)</span> becomes nearly flat, and the chain explores the entire space freely.</li>
+<li><strong>Concentrated limits</strong> (<span class="math inline">\(\beta \to 0\)</span> in the context of optimization): As the temperature decreases to zero, <span class="math inline">\(\pi_T(\theta)\)</span> concentrates its mass on the global minima of <span class="math inline">\(E(\theta)\)</span>.</li>
+</ul>
+<p>At high temperature, the contrast between modes vanishes, making it easy for the chain to move between them. As the temperature decreases, the modes become increasingly separated again.</p>
+</section>
+</section>
+<section id="simulated-annealing" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="simulated-annealing"><span class="header-section-number">11.3</span> Simulated annealing</h2>
+<section id="purpose-and-algorithm" class="level3" data-number="11.3.1">
+<h3 data-number="11.3.1" class="anchored" data-anchor-id="purpose-and-algorithm"><span class="header-section-number">11.3.1</span> Purpose and algorithm</h3>
+<p>Simulated annealing is an optimization method that cools a single chain to find the maximum a posteriori (MAP) estimator <span class="math inline">\(\hat{\theta}_{\text{MAP}} = \arg\max_\theta \pi(\theta)\)</span>. It generates a sequence of increasingly concentrated distributions by running a cooling schedule.</p>
+<p><strong>Simulated annealing algorithm:</strong> 1. Initialize <span class="math inline">\(\theta_0\)</span> and temperature <span class="math inline">\(T_0 &gt; 0\)</span>. 2. For <span class="math inline">\(k = 0, 1, \ldots, K\)</span>: - Propose <span class="math inline">\(\theta' \sim q(\theta' \mid \theta_k)\)</span>. - Accept with probability <span class="math inline">\(\alpha_T(\theta_k \to \theta') = \min\{1, \exp[-\beta_k(E(\theta') - E(\theta_k))]\}\)</span> where <span class="math inline">\(\beta_k = 1/T_k\)</span>. - Update <span class="math inline">\(T_{k+1} = \gamma T_k\)</span> for some <span class="math inline">\(0 &lt; \gamma &lt; 1\)</span> (e.g., geometric cooling) or use <span class="math inline">\(T_k = c / \log k\)</span> (logarithmic cooling). 3. Return the state <span class="math inline">\(\theta\)</span> with highest <span class="math inline">\(\pi(\theta)\)</span> encountered.</p>
+</section>
+<section id="cooling-schedule-and-barrier-crossing" class="level3" data-number="11.3.2">
+<h3 data-number="11.3.2" class="anchored" data-anchor-id="cooling-schedule-and-barrier-crossing"><span class="header-section-number">11.3.2</span> Cooling schedule and barrier crossing</h3>
+<p>A crucial result: if we use a logarithmic cooling schedule <span class="math inline">\(T_k = c / \log k\)</span>, then the chain crosses any fixed energy barrier infinitely often (with probability 1) as <span class="math inline">\(k \to \infty\)</span>. This is because the cumulative escape probability <span class="math display">\[\sum_{k=1}^\infty p_k = \sum_{k=1}^\infty \exp\left(-\frac{\Delta E \cdot \log k}{c}\right) = \sum_{k=1}^\infty k^{-\Delta E/c}\]</span> diverges if and only if <span class="math inline">\(\Delta E/c \leq 1\)</span>, i.e., <span class="math inline">\(c \geq \Delta E\)</span>. Thus simulated annealing is theoretically guaranteed to find the global optimum (almost surely) with sufficiently slow cooling. In practice, slower cooling requires more iterations, and geometric schedules are often preferred for computational speed.</p>
+</section>
+</section>
+<section id="parallel-tempering-replica-exchange" class="level2" data-number="11.4">
+<h2 data-number="11.4" class="anchored" data-anchor-id="parallel-tempering-replica-exchange"><span class="header-section-number">11.4</span> Parallel tempering (replica exchange)</h2>
+<section id="the-parallel-tempering-framework" class="level3" data-number="11.4.1">
+<h3 data-number="11.4.1" class="anchored" data-anchor-id="the-parallel-tempering-framework"><span class="header-section-number">11.4.1</span> The parallel tempering framework</h3>
+<p>Parallel tempering runs <strong><span class="math inline">\(K\)</span> chains in parallel</strong>, each at a different inverse temperature <span class="math inline">\(\beta_1 = 1 &gt; \beta_2 &gt; \cdots &gt; \beta_K &gt; 0\)</span>. The chain at <span class="math inline">\(\beta_1 = 1\)</span> is the “cold chain” that targets the posterior of interest. Chains at smaller <span class="math inline">\(\beta\)</span> are “hot chains” that explore more freely.</p>
+<p>The key innovation is <strong>swaps</strong>: occasionally, we exchange the states of neighbouring chains. This allows the cold chain to benefit from discoveries made by hot chains, enabling it to escape local modes without the cold chain ever needing to climb the barrier alone.</p>
+</section>
+<section id="joint-target" class="level3" data-number="11.4.2">
+<h3 data-number="11.4.2" class="anchored" data-anchor-id="joint-target"><span class="header-section-number">11.4.2</span> Joint target</h3>
+<p>Let <span class="math inline">\(\theta_l\)</span> denote the state of chain <span class="math inline">\(l\)</span>. The joint state is <span class="math inline">\(\Theta = (\theta_1, \ldots, \theta_K)\)</span>, and the <strong>product target</strong> is <span class="math display">\[\Pi(\Theta) = \prod_{l=1}^K \pi_{\beta_l}(\theta_l) \propto \prod_{l=1}^K \pi(\theta_l)^{\beta_l}.\]</span></p>
+<div class="note">
+<p>The marginal distribution of <span class="math inline">\(\theta_1\)</span> (the cold chain) is exactly <span class="math display">\[\pi_{\beta_1}(\theta_1) = \pi(\theta_1),\]</span> since <span class="math inline">\(\beta_1 = 1\)</span>. Samples from the cold chain are valid posterior samples, and expectations computed from the cold chain are unbiased estimates of posterior expectations.</p>
+</div>
+</section>
+<section id="within-temperature-moves" class="level3" data-number="11.4.3">
+<h3 data-number="11.4.3" class="anchored" data-anchor-id="within-temperature-moves"><span class="header-section-number">11.4.3</span> Within-temperature moves</h3>
+<p>At each temperature, we perform a standard Metropolis–Hastings move with the tempered acceptance probability. For chain <span class="math inline">\(l\)</span>: <span class="math display">\[\alpha_l(\theta_l \to \theta_l') = \min\left\{1, \left(\frac{\pi(\theta_l')}{\pi(\theta_l)}\right)^{\beta_l} \frac{q(\theta_l \mid \theta_l')}{q(\theta_l' \mid \theta_l)}\right\}.\]</span></p>
+<p>Hot chains (small <span class="math inline">\(\beta_l\)</span>) accept uphill moves more readily, allowing them to traverse the landscape freely.</p>
+</section>
+<section id="swap-moves-and-detailed-balance" class="level3" data-number="11.4.4">
+<h3 data-number="11.4.4" class="anchored" data-anchor-id="swap-moves-and-detailed-balance"><span class="header-section-number">11.4.4</span> Swap moves and detailed balance</h3>
+<p>The second type of move exchanges states between neighbouring chains <span class="math inline">\(l\)</span> and <span class="math inline">\(l+1\)</span>: <span class="math display">\[(\theta_l, \theta_{l+1}) \to (\theta_{l+1}, \theta_l).\]</span></p>
+<p>The Metropolis acceptance probability for this move is <span class="math display">\[\alpha_{\text{swap}}(\theta_l, \theta_{l+1}) = \min\left\{1, \frac{\pi(\theta_{l+1})^{\beta_l} \pi(\theta_l)^{\beta_{l+1}}}{\pi(\theta_l)^{\beta_l} \pi(\theta_{l+1})^{\beta_{l+1}}}\right\}.\]</span></p>
+<p>In log form (preferred numerically): <span class="math display">\[\log \alpha_{\text{swap}} = \min\{0, (\beta_l - \beta_{l+1})[E(\theta_l) - E(\theta_{l+1})]\}.\]</span></p>
+<p>The normalizing constants cancel, making the swap probability independent of the partition function.</p>
+<div class="theorem">
+<p>The combined algorithm of within-temperature MH updates and swap moves satisfies detailed balance with respect to the product target <span class="math inline">\(\Pi(\Theta)\)</span>. Therefore, the cold chain’s marginal converges to <span class="math inline">\(\pi\)</span>.</p>
+</div>
+<div class="proof">
+<p><span class="proof-title"><em>Proof</em>. </span>Within-temperature moves leave <span class="math inline">\(\pi_{\beta_l}(\theta_l)\)</span> invariant at each temperature. Swap moves satisfy detailed balance for the product density: the probability of being in state <span class="math inline">\((\theta_l, \theta_{l+1})\)</span> and swapping to <span class="math inline">\((\theta_{l+1}, \theta_l)\)</span> equals the probability of being in <span class="math inline">\((\theta_{l+1}, \theta_l)\)</span> and swapping back (by the Metropolis ratio). The product of these two reversible operations preserves <span class="math inline">\(\Pi(\Theta)\)</span>.</p>
+</div>
+</section>
+<section id="how-parallel-tempering-works" class="level3" data-number="11.4.5">
+<h3 data-number="11.4.5" class="anchored" data-anchor-id="how-parallel-tempering-works"><span class="header-section-number">11.4.5</span> How parallel tempering works</h3>
+<ol type="1">
+<li><strong>Hot chains explore freely</strong>: Because <span class="math inline">\(\beta_l\)</span> is small for hot chains, they traverse the landscape easily, finding new modes.</li>
+<li><strong>Swaps transport information</strong>: When a hot chain discovers a mode, a swap can move it to a colder chain, bringing the discovery closer to the target.</li>
+<li><strong>Cold chain remains on target</strong>: The cold chain never leaves the target distribution <span class="math inline">\(\pi\)</span>, yet it benefits from the hot chains’ discoveries via successful swaps.</li>
+</ol>
+<p>This is the crucial difference from simulated annealing: the temperature is fixed, not decreasing. The algorithm is homogeneous, run indefinitely, and all cold-chain samples are valid posterior samples.</p>
+</section>
+</section>
+<section id="temperature-ladder-design" class="level2" data-number="11.5">
+<h2 data-number="11.5" class="anchored" data-anchor-id="temperature-ladder-design"><span class="header-section-number">11.5</span> Temperature ladder design</h2>
+<section id="geometric-spacing" class="level3" data-number="11.5.1">
+<h3 data-number="11.5.1" class="anchored" data-anchor-id="geometric-spacing"><span class="header-section-number">11.5.1</span> Geometric spacing</h3>
+<p>The spacing of temperatures is critical. If <span class="math inline">\(\beta\)</span> values are too far apart, swap acceptance rates become vanishingly small, and information cannot flow between chains. If they are too close, many chains are needed.</p>
+<p>A simple and effective choice is <strong>geometric spacing</strong>: <span class="math display">\[\beta_l = \beta_1 r^{l-1}, \quad 0 &lt; r &lt; 1.\]</span></p>
+<p>This keeps temperatures evenly spaced in a logarithmic sense.</p>
+</section>
+<section id="target-swap-acceptance" class="level3" data-number="11.5.2">
+<h3 data-number="11.5.2" class="anchored" data-anchor-id="target-swap-acceptance"><span class="header-section-number">11.5.2</span> Target swap acceptance</h3>
+<p>A practical rule of thumb is to set the temperature ladder such that the swap acceptance probability between adjacent chains is in the range 20–40%. This balances exploration and computational efficiency.</p>
+</section>
+<section id="all-pairs-vs.-neighbour-only-swaps" class="level3" data-number="11.5.3">
+<h3 data-number="11.5.3" class="anchored" data-anchor-id="all-pairs-vs.-neighbour-only-swaps"><span class="header-section-number">11.5.3</span> All-pairs vs.&nbsp;neighbour-only swaps</h3>
+<p>The basic algorithm swaps only neighbouring pairs. Allowing swaps between arbitrary chains (“all-pairs”) can improve mixing but at higher computational cost. For most problems, neighbour-only swaps are sufficient if the ladder is carefully tuned.</p>
+</section>
+</section>
+<section id="worked-example-bimodal-1d-mixture" class="level2" data-number="11.6">
+<h2 data-number="11.6" class="anchored" data-anchor-id="worked-example-bimodal-1d-mixture"><span class="header-section-number">11.6</span> Worked example: bimodal 1D mixture</h2>
+<div class="example">
+<p>Consider a bimodal posterior that is a mixture of two Gaussians: <span class="math display">\[\pi(\theta) \propto 0.35 \, N(\theta; -4, 1) + 0.65 \, N(\theta; 3, 0.7^2).\]</span></p>
+<p>The right mode is higher. We will show that a single-chain MH sampler gets trapped, while parallel tempering explores both modes.</p>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1" data-lst-cap="Metropolis update at tempered temperature."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-posterior for bimodal mixture (minus normalization)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>log_pi <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="fl">0.35</span>) <span class="sc">+</span> <span class="fu">dnorm</span>(x, <span class="sc">-</span><span class="dv">4</span>, <span class="dv">1</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="fl">0.65</span>) <span class="sc">+</span> <span class="fu">dnorm</span>(x, <span class="dv">3</span>, <span class="fl">0.7</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">pmax</span>(a, b)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  m <span class="sc">+</span> <span class="fu">log</span>(<span class="fu">exp</span>(a <span class="sc">-</span> m) <span class="sc">+</span> <span class="fu">exp</span>(b <span class="sc">-</span> m))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Target density (for plotting)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>pi_density <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.35</span> <span class="sc">*</span> <span class="fu">dnorm</span>(x, <span class="sc">-</span><span class="dv">4</span>, <span class="dv">1</span>) <span class="sc">+</span> <span class="fl">0.65</span> <span class="sc">*</span> <span class="fu">dnorm</span>(x, <span class="dv">3</span>, <span class="fl">0.7</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Single MH step at temperature beta</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>tempered_step <span class="ot">&lt;-</span> <span class="cf">function</span>(x, beta, <span class="at">step =</span> <span class="fl">1.0</span>) {</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  x_prop <span class="ot">&lt;-</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, step)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  loga <span class="ot">&lt;-</span> beta <span class="sc">*</span> (<span class="fu">log_pi</span>(x_prop) <span class="sc">-</span> <span class="fu">log_pi</span>(x))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> loga) x_prop <span class="cf">else</span> x</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2" data-lst-cap="Single-chain MH sampler on bimodal target."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>single_chain_mh <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n_iter =</span> <span class="dv">20000</span>, <span class="at">x0 =</span> <span class="sc">-</span><span class="dv">4</span>, <span class="at">step =</span> <span class="fl">1.0</span>) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x0</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_iter)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_iter) {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">tempered_step</span>(x, <span class="at">beta =</span> <span class="fl">1.0</span>, <span class="at">step =</span> step)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    out[i] <span class="ot">&lt;-</span> x</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>trace_single <span class="ot">&lt;-</span> <span class="fu">single_chain_mh</span>(<span class="at">n_iter =</span> <span class="dv">20000</span>, <span class="at">x0 =</span> <span class="sc">-</span><span class="dv">4</span>, <span class="at">step =</span> <span class="fl">1.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3" data-lst-cap="Parallel tempering algorithm with swaps."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>parallel_tempering <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n_iter =</span> <span class="dv">20000</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                               <span class="at">betas =</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">0.65</span>, <span class="fl">0.4</span>, <span class="fl">0.2</span>, <span class="fl">0.08</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">step =</span> <span class="fl">1.2</span>) {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  L <span class="ot">&lt;-</span> <span class="fu">length</span>(betas)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="at">length.out =</span> L)  <span class="co"># Initialize chains at different locations</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  x_by_temp <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> n_iter, <span class="at">ncol =</span> L)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_iter) {</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Within-temperature MH updates</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (l <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>L) {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      x[l] <span class="ot">&lt;-</span> <span class="fu">tempered_step</span>(x[l], betas[l], <span class="at">step =</span> step)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Swap moves between neighbouring chains</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (l <span class="cf">in</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>(L <span class="sc">-</span> <span class="dv">1</span>))) {</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      loga <span class="ot">&lt;-</span> (betas[l] <span class="sc">-</span> betas[l <span class="sc">+</span> <span class="dv">1</span>]) <span class="sc">*</span> (<span class="fu">log_pi</span>(x[l <span class="sc">+</span> <span class="dv">1</span>]) <span class="sc">-</span> <span class="fu">log_pi</span>(x[l]))</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> loga) {</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        tmp <span class="ot">&lt;-</span> x[l]</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        x[l] <span class="ot">&lt;-</span> x[l <span class="sc">+</span> <span class="dv">1</span>]</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        x[l <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> tmp</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store state of cold chain (beta = 1)</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    x_by_temp[i, ] <span class="ot">&lt;-</span> x</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">x_by_temp =</span> x_by_temp, <span class="at">betas =</span> betas)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>res_pt <span class="ot">&lt;-</span> <span class="fu">parallel_tempering</span>(<span class="at">n_iter =</span> <span class="dv">20000</span>,</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>                             <span class="at">betas =</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">0.65</span>, <span class="fl">0.4</span>, <span class="fl">0.2</span>, <span class="fl">0.08</span>),</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>                             <span class="at">step =</span> <span class="fl">1.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb4" data-lst-cap="Fig single chain trace"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trace_single[<span class="dv">1</span><span class="sc">:</span><span class="dv">5000</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">1.2</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="fu">expression</span>(theta),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Single-chain MH trace (first 5000 iterations)"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-single-chain-trace" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-single-chain-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="10_parallel_tempering_files/figure-html/fig-single-chain-trace-1.pdf" class="img-fluid quarto-figure quarto-figure-center" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-single-chain-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11.1: Single-chain MH on bimodal target: stays trapped near the left mode.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb5" data-lst-cap="Fig parallel tempering trace"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>cold_trace <span class="ot">&lt;-</span> res_pt<span class="sc">$</span>x_by_temp[<span class="dv">1</span><span class="sc">:</span><span class="dv">5000</span>, <span class="dv">1</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cold_trace, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">1.2</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="fu">expression</span>(theta),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Parallel tempering: cold chain trace (first 5000 iterations)"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-parallel-tempering-trace" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-parallel-tempering-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="10_parallel_tempering_files/figure-html/fig-parallel-tempering-trace-1.pdf" class="img-fluid quarto-figure quarto-figure-center" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-parallel-tempering-trace-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11.2: Parallel tempering: cold chain (β=1) explores both modes via swaps.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb6" data-lst-cap="Fig posterior comparison"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Burn-in</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>burn <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>x_single_burn <span class="ot">&lt;-</span> trace_single[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span>burn)]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>x_pt_burn <span class="ot">&lt;-</span> res_pt<span class="sc">$</span>x_by_temp[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span>burn), <span class="dv">1</span>]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot true density</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>xx <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>, <span class="dv">5</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(xx, <span class="fu">pi_density</span>(xx), <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"black"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"Density"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Posterior: true density vs. samples"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(<span class="fu">pi_density</span>(xx)) <span class="sc">*</span> <span class="fl">1.1</span>))</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of single-chain samples</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(x_single_burn, <span class="at">breaks =</span> <span class="dv">60</span>, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span>),</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"gray40"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of PT samples</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(x_pt_burn, <span class="at">breaks =</span> <span class="dv">60</span>, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.3</span>),</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"black"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"True density"</span>, <span class="st">"Single-chain MH samples"</span>, <span class="st">"PT cold chain samples"</span>),</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="cn">NA</span>, <span class="cn">NA</span>),</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="fu">rgb</span>(<span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span>), <span class="fu">rgb</span>(<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.3</span>)),</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>       <span class="at">border =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="st">"gray40"</span>, <span class="st">"black"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-posterior-comparison" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-posterior-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="10_parallel_tempering_files/figure-html/fig-posterior-comparison-1.pdf" class="img-fluid quarto-figure quarto-figure-center" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-posterior-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11.3: Posterior samples: single-chain MH misses the left mode, PT captures both.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb7" data-lst-cap="Fig temperature ladder"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>betas_plot <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">0.65</span>, <span class="fl">0.4</span>, <span class="fl">0.15</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>xx <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>, <span class="dv">5</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>colors_seq <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"gray40"</span>, <span class="st">"gray60"</span>, <span class="st">"gray70"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>ltys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(xx, <span class="fu">pi_density</span>(xx)<span class="sc">^</span>betas_plot[<span class="dv">1</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">1.2</span>, <span class="at">col =</span> colors_seq[<span class="dv">1</span>],</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">lty =</span> ltys[<span class="dv">1</span>], <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="fu">expression</span>(<span class="fu">pi</span>(theta)<span class="sc">^</span>beta),</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Effect of inverse temperature on posterior shape"</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(<span class="fu">pi_density</span>(xx)<span class="sc">^</span>betas_plot[<span class="dv">1</span>]) <span class="sc">*</span> <span class="fl">1.05</span>))</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(betas_plot)) {</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(xx, <span class="fu">pi_density</span>(xx)<span class="sc">^</span>betas_plot[i], <span class="at">lwd =</span> <span class="fl">1.2</span>, <span class="at">col =</span> colors_seq[i], <span class="at">lty =</span> ltys[i])</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">paste0</span>(<span class="fu">expression</span>(beta), <span class="st">" = "</span>, betas_plot),</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> colors_seq, <span class="at">lty =</span> ltys, <span class="at">lwd =</span> <span class="fl">1.2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-temperature-ladder" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-temperature-ladder-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<embed src="10_parallel_tempering_files/figure-html/fig-temperature-ladder-1.pdf" class="img-fluid quarto-figure quarto-figure-center" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-temperature-ladder-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;11.4: Tempered posteriors at different inverse temperatures, showing flattening at hot chains.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>The figures above illustrate the fundamental problem and solution:</p>
+<ul>
+<li><strong>Figure 1</strong> shows a single chain trapped in the left mode.</li>
+<li><strong>Figure 2</strong> shows the parallel tempering cold chain (at <span class="math inline">\(\beta = 1\)</span>) successfully switching between both modes.</li>
+<li><strong>Figure 3</strong> shows the histogram of samples: single-chain MH misses the left mode entirely, while PT recovers the true bimodal structure.</li>
+<li><strong>Figure 4</strong> visualizes how higher temperature (<span class="math inline">\(\beta \to 0\)</span>) flattens the posterior, enabling free movement.</li>
+</ul>
+</section>
+<section id="practical-considerations" class="level2" data-number="11.7">
+<h2 data-number="11.7" class="anchored" data-anchor-id="practical-considerations"><span class="header-section-number">11.7</span> Practical considerations</h2>
+<section id="when-to-use-parallel-tempering" class="level3" data-number="11.7.1">
+<h3 data-number="11.7.1" class="anchored" data-anchor-id="when-to-use-parallel-tempering"><span class="header-section-number">11.7.1</span> When to use parallel tempering</h3>
+<p><strong>Use parallel tempering when:</strong> - The posterior is multimodal with well-separated modes. - Standard MCMC chains get trapped. - Interest is in accurate posterior sampling and uncertainty quantification. - The problem involves phase transitions or critical phenomena (common in physics).</p>
+<p><strong>Use simulated annealing when:</strong> - The goal is to find the MAP estimate or a point estimate. - Optimization (not sampling) is the primary objective. - You need fast identification of the best fit, not uncertainty.</p>
+<p><strong>Avoid parallel tempering (prefer HMC/NUTS) when:</strong> - The posterior is unimodal and high-dimensional. - Gradient information is available. - Computational resources are limited and you cannot afford many chains.</p>
+<p>HMC and NUTS excel in high dimensions because they use gradient information to make large, informed moves. However, they fail on multimodal targets because a single trajectory cannot jump between modes.</p>
+</section>
+<section id="computational-cost" class="level3" data-number="11.7.2">
+<h3 data-number="11.7.2" class="anchored" data-anchor-id="computational-cost"><span class="header-section-number">11.7.2</span> Computational cost</h3>
+<p>Running <span class="math inline">\(K\)</span> chains costs roughly <span class="math inline">\(K\)</span> times as much as a single chain. However, this is often money well spent: the mixing time of the cold chain typically decreases dramatically when the temperature ladder is well-designed.</p>
+</section>
+</section>
+<section id="summary" class="level2" data-number="11.8">
+<h2 data-number="11.8" class="anchored" data-anchor-id="summary"><span class="header-section-number">11.8</span> Summary</h2>
+<div class="definition">
+<p><strong>Tempered distributions</strong> scale the exponent of the posterior: <span class="math inline">\(\pi_\beta(\theta) \propto \pi(\theta)^\beta\)</span>. At <span class="math inline">\(\beta = 1\)</span> we recover the target; at <span class="math inline">\(\beta \to 0\)</span> the distribution flattens.</p>
+</div>
+<p><strong>Simulated annealing</strong> is a single-chain method with a time-varying cooling schedule; it targets optimization (MAP estimation) and asymptotically concentrates on the global maximum.</p>
+<p><strong>Parallel tempering (replica exchange MCMC)</strong> runs <span class="math inline">\(K\)</span> chains at fixed inverse temperatures <span class="math inline">\(1 = \beta_1 &gt; \beta_2 &gt; \cdots &gt; \beta_K\)</span> and periodically swaps states between neighbours. The cold chain remains on the target distribution throughout and escapes local modes via information shared from hotter chains.</p>
+<p><strong>Detailed balance</strong> is satisfied: within-temperature moves are standard MH, and swap moves satisfy detailed balance with respect to the product target <span class="math inline">\(\Pi(\Theta) = \prod_{l=1}^K \pi_{\beta_l}(\theta_l)\)</span>. Thus the cold chain’s marginal is exactly <span class="math inline">\(\pi\)</span>.</p>
+<p><strong>Temperature ladder design</strong> is critical: geometric spacing in inverse temperature and target swap acceptance rates of 20–40% are practical guidelines.</p>
+<p>The worked example shows that parallel tempering succeeds where single-chain MH fails on a bimodal target, recovering the true posterior over both modes.</p>
+</section>
+<section id="sources" class="level2" data-number="11.9">
+<h2 data-number="11.9" class="anchored" data-anchor-id="sources"><span class="header-section-number">11.9</span> Sources</h2>
+<ul>
+<li>Falasco, G. Advanced Statistics for Physics Analysis: Monte Carlo methods and annealing for multimodal targets. Lecture slides, May 8, 2026.</li>
+<li>Robert, C. P. and Casella, G. <em>Monte Carlo Statistical Methods</em>. Springer, 2nd ed., 2004. Chapter 10–11 (tempering, reversible jump, Gibbs sampling).</li>
+<li>Geyer, C. J. (1991). Markov chain Monte Carlo maximum likelihood. In <em>Proceedings of the 23rd Symposium on the Interface</em>, Fairfax Station, VA.</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/09_hamiltonian_mc.html" class="pagination-link" aria-label="Hamiltonian Monte Carlo">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/11_bayesian_regression.html" class="pagination-link" aria-label="Bayesian regression">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb8" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Parallel tempering"</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction: The multimodality trap</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>Standard Metropolis--Hastings and Hamiltonian Monte Carlo samplers work well when the target posterior is unimodal or has modes close together. However, when the posterior has several well-separated modes, a single MCMC chain becomes trapped near the mode it encounters first. It cannot escape because crossing the energy barrier between modes occurs with probability decaying exponentially in the barrier height.</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>Consider two modes separated by a barrier of height $\Delta E$. The probability of escaping is approximately</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>$$p \approx \exp\left(-\frac{\Delta E}{T}\right)$$</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>by the Arrhenius formula, where we write the posterior as $\pi(\theta) = \exp<span class="co">[</span><span class="ot">-E(\theta)</span><span class="co">]</span>$. When $\Delta E \gg 1$, this probability is negligibly small, and the chain explores only a tiny fraction of the parameter space.</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>Simulated annealing and parallel tempering both tackle this problem by introducing a temperature parameter. They exploit a key observation: at high temperature $T$, the posterior is flattened, and energy barriers become easier to cross. The two methods differ in how they use this idea.</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tempered distributions and temperatures</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">### Definition</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>For any target posterior $\pi(\theta)$ with energy representation $\pi(\theta) = \exp<span class="co">[</span><span class="ot">-E(\theta)</span><span class="co">]</span>$, we define the **tempered posterior** at inverse temperature $\beta \in (0, 1]$ by</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>$$\pi_\beta(\theta) \propto \pi(\theta)^\beta = \exp<span class="co">[</span><span class="ot">-\beta E(\theta)</span><span class="co">]</span>.$$</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>Equivalently, using temperature $T = 1/\beta$,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>$$\pi_T(\theta) \propto \pi(\theta)^{1/T} = \exp\left<span class="co">[</span><span class="ot">-\frac{E(\theta)}{T}\right</span><span class="co">]</span>.$$</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="fu">### Limiting behaviour</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Cold limit** ($\beta \to 1$ or $T \to 1$): $\pi_\beta(\theta) \to \pi(\theta)$, the original posterior.</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Hot limit** ($\beta \to 0$ or $T \to \infty$): $\pi_\beta(\theta)$ becomes nearly flat, and the chain explores the entire space freely.</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Concentrated limits** ($\beta \to 0$ in the context of optimization): As the temperature decreases to zero, $\pi_T(\theta)$ concentrates its mass on the global minima of $E(\theta)$.</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>At high temperature, the contrast between modes vanishes, making it easy for the chain to move between them. As the temperature decreases, the modes become increasingly separated again.</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="fu">## Simulated annealing</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="fu">### Purpose and algorithm</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>Simulated annealing is an optimization method that cools a single chain to find the maximum a posteriori (MAP) estimator $\hat{\theta}_{\text{MAP}} = \arg\max_\theta \pi(\theta)$. It generates a sequence of increasingly concentrated distributions by running a cooling schedule.</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>**Simulated annealing algorithm:**</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Initialize $\theta_0$ and temperature $T_0 &gt; 0$.</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>For $k = 0, 1, \ldots, K$:</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Propose $\theta' \sim q(\theta' \mid \theta_k)$.</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Accept with probability $\alpha_T(\theta_k \to \theta') = \min<span class="sc">\{</span>1, \exp<span class="co">[</span><span class="ot">-\beta_k(E(\theta') - E(\theta_k))</span><span class="co">]</span><span class="sc">\}</span>$ where $\beta_k = 1/T_k$.</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Update $T_{k+1} = \gamma T_k$ for some $0 &lt; \gamma &lt; 1$ (e.g., geometric cooling) or use $T_k = c / \log k$ (logarithmic cooling).</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Return the state $\theta$ with highest $\pi(\theta)$ encountered.</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cooling schedule and barrier crossing</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>A crucial result: if we use a logarithmic cooling schedule $T_k = c / \log k$, then the chain crosses any fixed energy barrier infinitely often (with probability 1) as $k \to \infty$. This is because the cumulative escape probability</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>$$\sum_{k=1}^\infty p_k = \sum_{k=1}^\infty \exp\left(-\frac{\Delta E \cdot \log k}{c}\right) = \sum_{k=1}^\infty k^{-\Delta E/c}$$</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>diverges if and only if $\Delta E/c \leq 1$, i.e., $c \geq \Delta E$. Thus simulated annealing is theoretically guaranteed to find the global optimum (almost surely) with sufficiently slow cooling. In practice, slower cooling requires more iterations, and geometric schedules are often preferred for computational speed.</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="fu">## Parallel tempering (replica exchange)</span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="fu">### The parallel tempering framework</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>Parallel tempering runs **$K$ chains in parallel**, each at a different inverse temperature $\beta_1 = 1 &gt; \beta_2 &gt; \cdots &gt; \beta_K &gt; 0$. The chain at $\beta_1 = 1$ is the "cold chain" that targets the posterior of interest. Chains at smaller $\beta$ are "hot chains" that explore more freely.</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>The key innovation is **swaps**: occasionally, we exchange the states of neighbouring chains. This allows the cold chain to benefit from discoveries made by hot chains, enabling it to escape local modes without the cold chain ever needing to climb the barrier alone.</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a><span class="fu">### Joint target</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>Let $\theta_l$ denote the state of chain $l$. The joint state is $\Theta = (\theta_1, \ldots, \theta_K)$, and the **product target** is</span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>$$\Pi(\Theta) = \prod_{l=1}^K \pi_{\beta_l}(\theta_l) \propto \prod_{l=1}^K \pi(\theta_l)^{\beta_l}.$$</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>:::{.note}</span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>The marginal distribution of $\theta_1$ (the cold chain) is exactly</span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>$$\pi_{\beta_1}(\theta_1) = \pi(\theta_1),$$</span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>since $\beta_1 = 1$. Samples from the cold chain are valid posterior samples, and expectations computed from the cold chain are unbiased estimates of posterior expectations.</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a><span class="fu">### Within-temperature moves</span></span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>At each temperature, we perform a standard Metropolis--Hastings move with the tempered acceptance probability. For chain $l$:</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>$$\alpha_l(\theta_l \to \theta_l') = \min\left<span class="sc">\{</span>1, \left(\frac{\pi(\theta_l')}{\pi(\theta_l)}\right)^{\beta_l} \frac{q(\theta_l \mid \theta_l')}{q(\theta_l' \mid \theta_l)}\right<span class="sc">\}</span>.$$</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>Hot chains (small $\beta_l$) accept uphill moves more readily, allowing them to traverse the landscape freely.</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a><span class="fu">### Swap moves and detailed balance</span></span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>The second type of move exchanges states between neighbouring chains $l$ and $l+1$:</span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>$$(\theta_l, \theta_{l+1}) \to (\theta_{l+1}, \theta_l).$$</span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a>The Metropolis acceptance probability for this move is</span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>$$\alpha_{\text{swap}}(\theta_l, \theta_{l+1}) = \min\left<span class="sc">\{</span>1, \frac{\pi(\theta_{l+1})^{\beta_l} \pi(\theta_l)^{\beta_{l+1}}}{\pi(\theta_l)^{\beta_l} \pi(\theta_{l+1})^{\beta_{l+1}}}\right<span class="sc">\}</span>.$$</span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>In log form (preferred numerically):</span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>$$\log \alpha_{\text{swap}} = \min<span class="sc">\{</span>0, (\beta_l - \beta_{l+1})<span class="co">[</span><span class="ot">E(\theta_l) - E(\theta_{l+1})</span><span class="co">]</span><span class="sc">\}</span>.$$</span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>The normalizing constants cancel, making the swap probability independent of the partition function.</span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>:::{.theorem}</span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>The combined algorithm of within-temperature MH updates and swap moves satisfies detailed balance with respect to the product target $\Pi(\Theta)$. Therefore, the cold chain's marginal converges to $\pi$.</span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>:::{.proof}</span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>Within-temperature moves leave $\pi_{\beta_l}(\theta_l)$ invariant at each temperature. Swap moves satisfy detailed balance for the product density: the probability of being in state $(\theta_l, \theta_{l+1})$ and swapping to $(\theta_{l+1}, \theta_l)$ equals the probability of being in $(\theta_{l+1}, \theta_l)$ and swapping back (by the Metropolis ratio). The product of these two reversible operations preserves $\Pi(\Theta)$.</span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a><span class="fu">### How parallel tempering works</span></span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Hot chains explore freely**: Because $\beta_l$ is small for hot chains, they traverse the landscape easily, finding new modes.</span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Swaps transport information**: When a hot chain discovers a mode, a swap can move it to a colder chain, bringing the discovery closer to the target.</span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Cold chain remains on target**: The cold chain never leaves the target distribution $\pi$, yet it benefits from the hot chains' discoveries via successful swaps.</span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>This is the crucial difference from simulated annealing: the temperature is fixed, not decreasing. The algorithm is homogeneous, run indefinitely, and all cold-chain samples are valid posterior samples.</span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a><span class="fu">## Temperature ladder design</span></span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a><span class="fu">### Geometric spacing</span></span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>The spacing of temperatures is critical. If $\beta$ values are too far apart, swap acceptance rates become vanishingly small, and information cannot flow between chains. If they are too close, many chains are needed.</span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>A simple and effective choice is **geometric spacing**:</span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>$$\beta_l = \beta_1 r^{l-1}, \quad 0 &lt; r &lt; 1.$$</span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>This keeps temperatures evenly spaced in a logarithmic sense.</span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a><span class="fu">### Target swap acceptance</span></span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>A practical rule of thumb is to set the temperature ladder such that the swap acceptance probability between adjacent chains is in the range 20--40%. This balances exploration and computational efficiency.</span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a><span class="fu">### All-pairs vs. neighbour-only swaps</span></span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>The basic algorithm swaps only neighbouring pairs. Allowing swaps between arbitrary chains ("all-pairs") can improve mixing but at higher computational cost. For most problems, neighbour-only swaps are sufficient if the ladder is carefully tuned.</span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a><span class="fu">## Worked example: bimodal 1D mixture</span></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a>:::{.example}</span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a>Consider a bimodal posterior that is a mixture of two Gaussians:</span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>$$\pi(\theta) \propto 0.35 \, N(\theta; -4, 1) + 0.65 \, N(\theta; 3, 0.7^2).$$</span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>The right mode is higher. We will show that a single-chain MH sampler gets trapped, while parallel tempering explores both modes.</span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-tempered-update</span></span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Metropolis update at tempered temperature."</span></span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-posterior for bimodal mixture (minus normalization)</span></span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>log_pi <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="fl">0.35</span>) <span class="sc">+</span> <span class="fu">dnorm</span>(x, <span class="sc">-</span><span class="dv">4</span>, <span class="dv">1</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">&lt;-</span> <span class="fu">log</span>(<span class="fl">0.65</span>) <span class="sc">+</span> <span class="fu">dnorm</span>(x, <span class="dv">3</span>, <span class="fl">0.7</span>, <span class="at">log =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">pmax</span>(a, b)</span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>  m <span class="sc">+</span> <span class="fu">log</span>(<span class="fu">exp</span>(a <span class="sc">-</span> m) <span class="sc">+</span> <span class="fu">exp</span>(b <span class="sc">-</span> m))</span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a><span class="co"># Target density (for plotting)</span></span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>pi_density <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>  <span class="fl">0.35</span> <span class="sc">*</span> <span class="fu">dnorm</span>(x, <span class="sc">-</span><span class="dv">4</span>, <span class="dv">1</span>) <span class="sc">+</span> <span class="fl">0.65</span> <span class="sc">*</span> <span class="fu">dnorm</span>(x, <span class="dv">3</span>, <span class="fl">0.7</span>)</span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a><span class="co"># Single MH step at temperature beta</span></span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a>tempered_step <span class="ot">&lt;-</span> <span class="cf">function</span>(x, beta, <span class="at">step =</span> <span class="fl">1.0</span>) {</span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>  x_prop <span class="ot">&lt;-</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>, <span class="dv">0</span>, step)</span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>  loga <span class="ot">&lt;-</span> beta <span class="sc">*</span> (<span class="fu">log_pi</span>(x_prop) <span class="sc">-</span> <span class="fu">log_pi</span>(x))</span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> loga) x_prop <span class="cf">else</span> x</span>
+<span id="cb8-160"><a href="#cb8-160" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-161"><a href="#cb8-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-162"><a href="#cb8-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-165"><a href="#cb8-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-166"><a href="#cb8-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-single-chain</span></span>
+<span id="cb8-167"><a href="#cb8-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Single-chain MH sampler on bimodal target."</span></span>
+<span id="cb8-168"><a href="#cb8-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-169"><a href="#cb8-169" aria-hidden="true" tabindex="-1"></a>single_chain_mh <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n_iter =</span> <span class="dv">20000</span>, <span class="at">x0 =</span> <span class="sc">-</span><span class="dv">4</span>, <span class="at">step =</span> <span class="fl">1.0</span>) {</span>
+<span id="cb8-170"><a href="#cb8-170" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x0</span>
+<span id="cb8-171"><a href="#cb8-171" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">numeric</span>(n_iter)</span>
+<span id="cb8-172"><a href="#cb8-172" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_iter) {</span>
+<span id="cb8-173"><a href="#cb8-173" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">tempered_step</span>(x, <span class="at">beta =</span> <span class="fl">1.0</span>, <span class="at">step =</span> step)</span>
+<span id="cb8-174"><a href="#cb8-174" aria-hidden="true" tabindex="-1"></a>    out[i] <span class="ot">&lt;-</span> x</span>
+<span id="cb8-175"><a href="#cb8-175" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-176"><a href="#cb8-176" aria-hidden="true" tabindex="-1"></a>  out</span>
+<span id="cb8-177"><a href="#cb8-177" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-178"><a href="#cb8-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-179"><a href="#cb8-179" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb8-180"><a href="#cb8-180" aria-hidden="true" tabindex="-1"></a>trace_single <span class="ot">&lt;-</span> <span class="fu">single_chain_mh</span>(<span class="at">n_iter =</span> <span class="dv">20000</span>, <span class="at">x0 =</span> <span class="sc">-</span><span class="dv">4</span>, <span class="at">step =</span> <span class="fl">1.2</span>)</span>
+<span id="cb8-181"><a href="#cb8-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-182"><a href="#cb8-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-185"><a href="#cb8-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-186"><a href="#cb8-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-parallel-tempering</span></span>
+<span id="cb8-187"><a href="#cb8-187" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Parallel tempering algorithm with swaps."</span></span>
+<span id="cb8-188"><a href="#cb8-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-189"><a href="#cb8-189" aria-hidden="true" tabindex="-1"></a>parallel_tempering <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n_iter =</span> <span class="dv">20000</span>,</span>
+<span id="cb8-190"><a href="#cb8-190" aria-hidden="true" tabindex="-1"></a>                               <span class="at">betas =</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">0.65</span>, <span class="fl">0.4</span>, <span class="fl">0.2</span>, <span class="fl">0.08</span>),</span>
+<span id="cb8-191"><a href="#cb8-191" aria-hidden="true" tabindex="-1"></a>                               <span class="at">step =</span> <span class="fl">1.2</span>) {</span>
+<span id="cb8-192"><a href="#cb8-192" aria-hidden="true" tabindex="-1"></a>  L <span class="ot">&lt;-</span> <span class="fu">length</span>(betas)</span>
+<span id="cb8-193"><a href="#cb8-193" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="at">length.out =</span> L)  <span class="co"># Initialize chains at different locations</span></span>
+<span id="cb8-194"><a href="#cb8-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-195"><a href="#cb8-195" aria-hidden="true" tabindex="-1"></a>  x_by_temp <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="cn">NA</span>, <span class="at">nrow =</span> n_iter, <span class="at">ncol =</span> L)</span>
+<span id="cb8-196"><a href="#cb8-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-197"><a href="#cb8-197" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_iter) {</span>
+<span id="cb8-198"><a href="#cb8-198" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Within-temperature MH updates</span></span>
+<span id="cb8-199"><a href="#cb8-199" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (l <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>L) {</span>
+<span id="cb8-200"><a href="#cb8-200" aria-hidden="true" tabindex="-1"></a>      x[l] <span class="ot">&lt;-</span> <span class="fu">tempered_step</span>(x[l], betas[l], <span class="at">step =</span> step)</span>
+<span id="cb8-201"><a href="#cb8-201" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-202"><a href="#cb8-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-203"><a href="#cb8-203" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Swap moves between neighbouring chains</span></span>
+<span id="cb8-204"><a href="#cb8-204" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (l <span class="cf">in</span> <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>(L <span class="sc">-</span> <span class="dv">1</span>))) {</span>
+<span id="cb8-205"><a href="#cb8-205" aria-hidden="true" tabindex="-1"></a>      loga <span class="ot">&lt;-</span> (betas[l] <span class="sc">-</span> betas[l <span class="sc">+</span> <span class="dv">1</span>]) <span class="sc">*</span> (<span class="fu">log_pi</span>(x[l <span class="sc">+</span> <span class="dv">1</span>]) <span class="sc">-</span> <span class="fu">log_pi</span>(x[l]))</span>
+<span id="cb8-206"><a href="#cb8-206" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">log</span>(<span class="fu">runif</span>(<span class="dv">1</span>)) <span class="sc">&lt;</span> loga) {</span>
+<span id="cb8-207"><a href="#cb8-207" aria-hidden="true" tabindex="-1"></a>        tmp <span class="ot">&lt;-</span> x[l]</span>
+<span id="cb8-208"><a href="#cb8-208" aria-hidden="true" tabindex="-1"></a>        x[l] <span class="ot">&lt;-</span> x[l <span class="sc">+</span> <span class="dv">1</span>]</span>
+<span id="cb8-209"><a href="#cb8-209" aria-hidden="true" tabindex="-1"></a>        x[l <span class="sc">+</span> <span class="dv">1</span>] <span class="ot">&lt;-</span> tmp</span>
+<span id="cb8-210"><a href="#cb8-210" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb8-211"><a href="#cb8-211" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-212"><a href="#cb8-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-213"><a href="#cb8-213" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Store state of cold chain (beta = 1)</span></span>
+<span id="cb8-214"><a href="#cb8-214" aria-hidden="true" tabindex="-1"></a>    x_by_temp[i, ] <span class="ot">&lt;-</span> x</span>
+<span id="cb8-215"><a href="#cb8-215" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-216"><a href="#cb8-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-217"><a href="#cb8-217" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">x_by_temp =</span> x_by_temp, <span class="at">betas =</span> betas)</span>
+<span id="cb8-218"><a href="#cb8-218" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-219"><a href="#cb8-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-220"><a href="#cb8-220" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb8-221"><a href="#cb8-221" aria-hidden="true" tabindex="-1"></a>res_pt <span class="ot">&lt;-</span> <span class="fu">parallel_tempering</span>(<span class="at">n_iter =</span> <span class="dv">20000</span>,</span>
+<span id="cb8-222"><a href="#cb8-222" aria-hidden="true" tabindex="-1"></a>                             <span class="at">betas =</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">0.65</span>, <span class="fl">0.4</span>, <span class="fl">0.2</span>, <span class="fl">0.08</span>),</span>
+<span id="cb8-223"><a href="#cb8-223" aria-hidden="true" tabindex="-1"></a>                             <span class="at">step =</span> <span class="fl">1.2</span>)</span>
+<span id="cb8-224"><a href="#cb8-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-225"><a href="#cb8-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-228"><a href="#cb8-228" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-229"><a href="#cb8-229" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-single-chain-trace</span></span>
+<span id="cb8-230"><a href="#cb8-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Fig single chain trace"</span></span>
+<span id="cb8-231"><a href="#cb8-231" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Single-chain MH on bimodal target: stays trapped near the left mode."</span></span>
+<span id="cb8-232"><a href="#cb8-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-233"><a href="#cb8-233" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb8-234"><a href="#cb8-234" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(trace_single[<span class="dv">1</span><span class="sc">:</span><span class="dv">5000</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">1.2</span>,</span>
+<span id="cb8-235"><a href="#cb8-235" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="fu">expression</span>(theta),</span>
+<span id="cb8-236"><a href="#cb8-236" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Single-chain MH trace (first 5000 iterations)"</span>,</span>
+<span id="cb8-237"><a href="#cb8-237" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb8-238"><a href="#cb8-238" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>()</span>
+<span id="cb8-239"><a href="#cb8-239" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-240"><a href="#cb8-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-243"><a href="#cb8-243" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-244"><a href="#cb8-244" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-parallel-tempering-trace</span></span>
+<span id="cb8-245"><a href="#cb8-245" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Fig parallel tempering trace"</span></span>
+<span id="cb8-246"><a href="#cb8-246" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Parallel tempering: cold chain (β=1) explores both modes via swaps."</span></span>
+<span id="cb8-247"><a href="#cb8-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-248"><a href="#cb8-248" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb8-249"><a href="#cb8-249" aria-hidden="true" tabindex="-1"></a>cold_trace <span class="ot">&lt;-</span> res_pt<span class="sc">$</span>x_by_temp[<span class="dv">1</span><span class="sc">:</span><span class="dv">5000</span>, <span class="dv">1</span>]</span>
+<span id="cb8-250"><a href="#cb8-250" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(cold_trace, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">1.2</span>,</span>
+<span id="cb8-251"><a href="#cb8-251" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Iteration"</span>, <span class="at">ylab =</span> <span class="fu">expression</span>(theta),</span>
+<span id="cb8-252"><a href="#cb8-252" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Parallel tempering: cold chain trace (first 5000 iterations)"</span>,</span>
+<span id="cb8-253"><a href="#cb8-253" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb8-254"><a href="#cb8-254" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>()</span>
+<span id="cb8-255"><a href="#cb8-255" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-256"><a href="#cb8-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-259"><a href="#cb8-259" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-260"><a href="#cb8-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-posterior-comparison</span></span>
+<span id="cb8-261"><a href="#cb8-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Fig posterior comparison"</span></span>
+<span id="cb8-262"><a href="#cb8-262" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Posterior samples: single-chain MH misses the left mode, PT captures both."</span></span>
+<span id="cb8-263"><a href="#cb8-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-264"><a href="#cb8-264" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb8-265"><a href="#cb8-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-266"><a href="#cb8-266" aria-hidden="true" tabindex="-1"></a><span class="co"># Burn-in</span></span>
+<span id="cb8-267"><a href="#cb8-267" aria-hidden="true" tabindex="-1"></a>burn <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb8-268"><a href="#cb8-268" aria-hidden="true" tabindex="-1"></a>x_single_burn <span class="ot">&lt;-</span> trace_single[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span>burn)]</span>
+<span id="cb8-269"><a href="#cb8-269" aria-hidden="true" tabindex="-1"></a>x_pt_burn <span class="ot">&lt;-</span> res_pt<span class="sc">$</span>x_by_temp[<span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span>burn), <span class="dv">1</span>]</span>
+<span id="cb8-270"><a href="#cb8-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-271"><a href="#cb8-271" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot true density</span></span>
+<span id="cb8-272"><a href="#cb8-272" aria-hidden="true" tabindex="-1"></a>xx <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>, <span class="dv">5</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb8-273"><a href="#cb8-273" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(xx, <span class="fu">pi_density</span>(xx), <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"black"</span>,</span>
+<span id="cb8-274"><a href="#cb8-274" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="st">"Density"</span>,</span>
+<span id="cb8-275"><a href="#cb8-275" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Posterior: true density vs. samples"</span>,</span>
+<span id="cb8-276"><a href="#cb8-276" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(<span class="fu">pi_density</span>(xx)) <span class="sc">*</span> <span class="fl">1.1</span>))</span>
+<span id="cb8-277"><a href="#cb8-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-278"><a href="#cb8-278" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of single-chain samples</span></span>
+<span id="cb8-279"><a href="#cb8-279" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(x_single_burn, <span class="at">breaks =</span> <span class="dv">60</span>, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span>),</span>
+<span id="cb8-280"><a href="#cb8-280" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"gray40"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-281"><a href="#cb8-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-282"><a href="#cb8-282" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram of PT samples</span></span>
+<span id="cb8-283"><a href="#cb8-283" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(x_pt_burn, <span class="at">breaks =</span> <span class="dv">60</span>, <span class="at">freq =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.3</span>),</span>
+<span id="cb8-284"><a href="#cb8-284" aria-hidden="true" tabindex="-1"></a>     <span class="at">border =</span> <span class="st">"black"</span>, <span class="at">add =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-285"><a href="#cb8-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-286"><a href="#cb8-286" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>,</span>
+<span id="cb8-287"><a href="#cb8-287" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"True density"</span>, <span class="st">"Single-chain MH samples"</span>, <span class="st">"PT cold chain samples"</span>),</span>
+<span id="cb8-288"><a href="#cb8-288" aria-hidden="true" tabindex="-1"></a>       <span class="at">lty =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="cn">NA</span>, <span class="cn">NA</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="cn">NA</span>, <span class="cn">NA</span>),</span>
+<span id="cb8-289"><a href="#cb8-289" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="fu">rgb</span>(<span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span>), <span class="fu">rgb</span>(<span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.7</span>, <span class="fl">0.3</span>)),</span>
+<span id="cb8-290"><a href="#cb8-290" aria-hidden="true" tabindex="-1"></a>       <span class="at">border =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="st">"gray40"</span>, <span class="st">"black"</span>))</span>
+<span id="cb8-291"><a href="#cb8-291" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-292"><a href="#cb8-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-295"><a href="#cb8-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb8-296"><a href="#cb8-296" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-temperature-ladder</span></span>
+<span id="cb8-297"><a href="#cb8-297" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Fig temperature ladder"</span></span>
+<span id="cb8-298"><a href="#cb8-298" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Tempered posteriors at different inverse temperatures, showing flattening at hot chains."</span></span>
+<span id="cb8-299"><a href="#cb8-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-300"><a href="#cb8-300" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb8-301"><a href="#cb8-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-302"><a href="#cb8-302" aria-hidden="true" tabindex="-1"></a>betas_plot <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">0.65</span>, <span class="fl">0.4</span>, <span class="fl">0.15</span>)</span>
+<span id="cb8-303"><a href="#cb8-303" aria-hidden="true" tabindex="-1"></a>xx <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">7</span>, <span class="dv">5</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb8-304"><a href="#cb8-304" aria-hidden="true" tabindex="-1"></a>colors_seq <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"gray40"</span>, <span class="st">"gray60"</span>, <span class="st">"gray70"</span>)</span>
+<span id="cb8-305"><a href="#cb8-305" aria-hidden="true" tabindex="-1"></a>ltys <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb8-306"><a href="#cb8-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-307"><a href="#cb8-307" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(xx, <span class="fu">pi_density</span>(xx)<span class="sc">^</span>betas_plot[<span class="dv">1</span>], <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">1.2</span>, <span class="at">col =</span> colors_seq[<span class="dv">1</span>],</span>
+<span id="cb8-308"><a href="#cb8-308" aria-hidden="true" tabindex="-1"></a>     <span class="at">lty =</span> ltys[<span class="dv">1</span>], <span class="at">xlab =</span> <span class="fu">expression</span>(theta), <span class="at">ylab =</span> <span class="fu">expression</span>(<span class="fu">pi</span>(theta)<span class="sc">^</span>beta),</span>
+<span id="cb8-309"><a href="#cb8-309" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Effect of inverse temperature on posterior shape"</span>,</span>
+<span id="cb8-310"><a href="#cb8-310" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(<span class="fu">pi_density</span>(xx)<span class="sc">^</span>betas_plot[<span class="dv">1</span>]) <span class="sc">*</span> <span class="fl">1.05</span>))</span>
+<span id="cb8-311"><a href="#cb8-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-312"><a href="#cb8-312" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span><span class="fu">length</span>(betas_plot)) {</span>
+<span id="cb8-313"><a href="#cb8-313" aria-hidden="true" tabindex="-1"></a>  <span class="fu">lines</span>(xx, <span class="fu">pi_density</span>(xx)<span class="sc">^</span>betas_plot[i], <span class="at">lwd =</span> <span class="fl">1.2</span>, <span class="at">col =</span> colors_seq[i], <span class="at">lty =</span> ltys[i])</span>
+<span id="cb8-314"><a href="#cb8-314" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-315"><a href="#cb8-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-316"><a href="#cb8-316" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.75</span>,</span>
+<span id="cb8-317"><a href="#cb8-317" aria-hidden="true" tabindex="-1"></a>       <span class="at">legend =</span> <span class="fu">paste0</span>(<span class="fu">expression</span>(beta), <span class="st">" = "</span>, betas_plot),</span>
+<span id="cb8-318"><a href="#cb8-318" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> colors_seq, <span class="at">lty =</span> ltys, <span class="at">lwd =</span> <span class="fl">1.2</span>)</span>
+<span id="cb8-319"><a href="#cb8-319" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb8-320"><a href="#cb8-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-321"><a href="#cb8-321" aria-hidden="true" tabindex="-1"></a>The figures above illustrate the fundamental problem and solution:</span>
+<span id="cb8-322"><a href="#cb8-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-323"><a href="#cb8-323" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Figure 1** shows a single chain trapped in the left mode.</span>
+<span id="cb8-324"><a href="#cb8-324" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Figure 2** shows the parallel tempering cold chain (at $\beta = 1$) successfully switching between both modes.</span>
+<span id="cb8-325"><a href="#cb8-325" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Figure 3** shows the histogram of samples: single-chain MH misses the left mode entirely, while PT recovers the true bimodal structure.</span>
+<span id="cb8-326"><a href="#cb8-326" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Figure 4** visualizes how higher temperature ($\beta \to 0$) flattens the posterior, enabling free movement.</span>
+<span id="cb8-327"><a href="#cb8-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-328"><a href="#cb8-328" aria-hidden="true" tabindex="-1"></a><span class="fu">## Practical considerations</span></span>
+<span id="cb8-329"><a href="#cb8-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-330"><a href="#cb8-330" aria-hidden="true" tabindex="-1"></a><span class="fu">### When to use parallel tempering</span></span>
+<span id="cb8-331"><a href="#cb8-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-332"><a href="#cb8-332" aria-hidden="true" tabindex="-1"></a>**Use parallel tempering when:**</span>
+<span id="cb8-333"><a href="#cb8-333" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The posterior is multimodal with well-separated modes.</span>
+<span id="cb8-334"><a href="#cb8-334" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Standard MCMC chains get trapped.</span>
+<span id="cb8-335"><a href="#cb8-335" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Interest is in accurate posterior sampling and uncertainty quantification.</span>
+<span id="cb8-336"><a href="#cb8-336" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The problem involves phase transitions or critical phenomena (common in physics).</span>
+<span id="cb8-337"><a href="#cb8-337" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-338"><a href="#cb8-338" aria-hidden="true" tabindex="-1"></a>**Use simulated annealing when:**</span>
+<span id="cb8-339"><a href="#cb8-339" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The goal is to find the MAP estimate or a point estimate.</span>
+<span id="cb8-340"><a href="#cb8-340" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Optimization (not sampling) is the primary objective.</span>
+<span id="cb8-341"><a href="#cb8-341" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>You need fast identification of the best fit, not uncertainty.</span>
+<span id="cb8-342"><a href="#cb8-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-343"><a href="#cb8-343" aria-hidden="true" tabindex="-1"></a>**Avoid parallel tempering (prefer HMC/NUTS) when:**</span>
+<span id="cb8-344"><a href="#cb8-344" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The posterior is unimodal and high-dimensional.</span>
+<span id="cb8-345"><a href="#cb8-345" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Gradient information is available.</span>
+<span id="cb8-346"><a href="#cb8-346" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Computational resources are limited and you cannot afford many chains.</span>
+<span id="cb8-347"><a href="#cb8-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-348"><a href="#cb8-348" aria-hidden="true" tabindex="-1"></a>HMC and NUTS excel in high dimensions because they use gradient information to make large, informed moves. However, they fail on multimodal targets because a single trajectory cannot jump between modes.</span>
+<span id="cb8-349"><a href="#cb8-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-350"><a href="#cb8-350" aria-hidden="true" tabindex="-1"></a><span class="fu">### Computational cost</span></span>
+<span id="cb8-351"><a href="#cb8-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-352"><a href="#cb8-352" aria-hidden="true" tabindex="-1"></a>Running $K$ chains costs roughly $K$ times as much as a single chain. However, this is often money well spent: the mixing time of the cold chain typically decreases dramatically when the temperature ladder is well-designed.</span>
+<span id="cb8-353"><a href="#cb8-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-354"><a href="#cb8-354" aria-hidden="true" tabindex="-1"></a><span class="fu">## Summary</span></span>
+<span id="cb8-355"><a href="#cb8-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-356"><a href="#cb8-356" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb8-357"><a href="#cb8-357" aria-hidden="true" tabindex="-1"></a>**Tempered distributions** scale the exponent of the posterior: $\pi_\beta(\theta) \propto \pi(\theta)^\beta$. At $\beta = 1$ we recover the target; at $\beta \to 0$ the distribution flattens.</span>
+<span id="cb8-358"><a href="#cb8-358" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-359"><a href="#cb8-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-360"><a href="#cb8-360" aria-hidden="true" tabindex="-1"></a>**Simulated annealing** is a single-chain method with a time-varying cooling schedule; it targets optimization (MAP estimation) and asymptotically concentrates on the global maximum.</span>
+<span id="cb8-361"><a href="#cb8-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-362"><a href="#cb8-362" aria-hidden="true" tabindex="-1"></a>**Parallel tempering (replica exchange MCMC)** runs $K$ chains at fixed inverse temperatures $1 = \beta_1 &gt; \beta_2 &gt; \cdots &gt; \beta_K$ and periodically swaps states between neighbours. The cold chain remains on the target distribution throughout and escapes local modes via information shared from hotter chains.</span>
+<span id="cb8-363"><a href="#cb8-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-364"><a href="#cb8-364" aria-hidden="true" tabindex="-1"></a>**Detailed balance** is satisfied: within-temperature moves are standard MH, and swap moves satisfy detailed balance with respect to the product target $\Pi(\Theta) = \prod_{l=1}^K \pi_{\beta_l}(\theta_l)$. Thus the cold chain's marginal is exactly $\pi$.</span>
+<span id="cb8-365"><a href="#cb8-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-366"><a href="#cb8-366" aria-hidden="true" tabindex="-1"></a>**Temperature ladder design** is critical: geometric spacing in inverse temperature and target swap acceptance rates of 20--40% are practical guidelines.</span>
+<span id="cb8-367"><a href="#cb8-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-368"><a href="#cb8-368" aria-hidden="true" tabindex="-1"></a>The worked example shows that parallel tempering succeeds where single-chain MH fails on a bimodal target, recovering the true posterior over both modes.</span>
+<span id="cb8-369"><a href="#cb8-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-370"><a href="#cb8-370" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb8-371"><a href="#cb8-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-372"><a href="#cb8-372" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Falasco, G. Advanced Statistics for Physics Analysis: Monte Carlo methods and annealing for multimodal targets. Lecture slides, May 8, 2026.</span>
+<span id="cb8-373"><a href="#cb8-373" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Robert, C. P. and Casella, G. *Monte Carlo Statistical Methods*. Springer, 2nd ed., 2004. Chapter 10--11 (tempering, reversible jump, Gibbs sampling).</span>
+<span id="cb8-374"><a href="#cb8-374" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Geyer, C. J. (1991). Markov chain Monte Carlo maximum likelihood. In *Proceedings of the 23rd Symposium on the Interface*, Fairfax Station, VA.</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

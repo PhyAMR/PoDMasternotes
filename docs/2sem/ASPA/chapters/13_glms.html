@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>14&nbsp; Generalized linear models – Advanced Statistics for Physics Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/99_appendix_source_code.html" rel="next">
+<link href="../chapters/12_probabilistic_programming.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/11_bayesian_regression.html">PART IV: APPLIED BAYESIAN MODELLING</a></li><li class="breadcrumb-item"><a href="../chapters/13_glms.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Advanced Statistics for Physics Analysis</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01_R_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to R for Bayesian inference</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: PROBABILITY RECAP</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02_discrete_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Discrete probability</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03_continuous_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Continuous probability and limit theorems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: BAYESIAN INFERENCE</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04_model_comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05_parameter_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian parameter estimation, intervals and prediction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06_gaussian_inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: MONTE CARLO METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07_monte_carlo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Monte Carlo methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08_independence_and_gibbs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09_hamiltonian_mc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10_parallel_tempering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: APPLIED BAYESIAN MODELLING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11_bayesian_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12_probabilistic_programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13_glms.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDIX</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99_appendix_source_code.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Appendix: Source code</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-when-linear-regression-fails" id="toc-introduction-when-linear-regression-fails" class="nav-link active" data-scroll-target="#introduction-when-linear-regression-fails"><span class="header-section-number">14.1</span> Introduction: When linear regression fails</a></li>
+  <li><a href="#the-three-ingredients-of-a-glm" id="toc-the-three-ingredients-of-a-glm" class="nav-link" data-scroll-target="#the-three-ingredients-of-a-glm"><span class="header-section-number">14.2</span> The three ingredients of a GLM</a></li>
+  <li><a href="#the-exponential-family-and-canonical-form" id="toc-the-exponential-family-and-canonical-form" class="nav-link" data-scroll-target="#the-exponential-family-and-canonical-form"><span class="header-section-number">14.3</span> The exponential family and canonical form</a></li>
+  <li><a href="#canonical-links-and-the-link-function-table" id="toc-canonical-links-and-the-link-function-table" class="nav-link" data-scroll-target="#canonical-links-and-the-link-function-table"><span class="header-section-number">14.4</span> Canonical links and the link-function table</a></li>
+  <li><a href="#logistic-regression-bernoulli-response" id="toc-logistic-regression-bernoulli-response" class="nav-link" data-scroll-target="#logistic-regression-bernoulli-response"><span class="header-section-number">14.5</span> Logistic regression: Bernoulli response</a>
+  <ul class="collapse">
+  <li><a href="#model-and-likelihood" id="toc-model-and-likelihood" class="nav-link" data-scroll-target="#model-and-likelihood"><span class="header-section-number">14.5.1</span> Model and likelihood</a></li>
+  <li><a href="#interpretation-log-odds-and-odds-ratios" id="toc-interpretation-log-odds-and-odds-ratios" class="nav-link" data-scroll-target="#interpretation-log-odds-and-odds-ratios"><span class="header-section-number">14.5.2</span> Interpretation: log-odds and odds ratios</a></li>
+  <li><a href="#logistic-function-visualization" id="toc-logistic-function-visualization" class="nav-link" data-scroll-target="#logistic-function-visualization"><span class="header-section-number">14.5.3</span> Logistic function visualization</a></li>
+  </ul></li>
+  <li><a href="#poisson-regression-count-response" id="toc-poisson-regression-count-response" class="nav-link" data-scroll-target="#poisson-regression-count-response"><span class="header-section-number">14.6</span> Poisson regression: Count response</a>
+  <ul class="collapse">
+  <li><a href="#model-and-likelihood-1" id="toc-model-and-likelihood-1" class="nav-link" data-scroll-target="#model-and-likelihood-1"><span class="header-section-number">14.6.1</span> Model and likelihood</a></li>
+  <li><a href="#interpretation-exponential-effects" id="toc-interpretation-exponential-effects" class="nav-link" data-scroll-target="#interpretation-exponential-effects"><span class="header-section-number">14.6.2</span> Interpretation: exponential effects</a></li>
+  <li><a href="#offsets-and-exposure" id="toc-offsets-and-exposure" class="nav-link" data-scroll-target="#offsets-and-exposure"><span class="header-section-number">14.6.3</span> Offsets and exposure</a></li>
+  <li><a href="#simulated-poisson-regression-example" id="toc-simulated-poisson-regression-example" class="nav-link" data-scroll-target="#simulated-poisson-regression-example"><span class="header-section-number">14.6.4</span> Simulated Poisson regression example</a></li>
+  <li><a href="#overdispersion-and-negative-binomial-extension" id="toc-overdispersion-and-negative-binomial-extension" class="nav-link" data-scroll-target="#overdispersion-and-negative-binomial-extension"><span class="header-section-number">14.6.5</span> Overdispersion and negative binomial extension</a></li>
+  </ul></li>
+  <li><a href="#illustration-link-functions" id="toc-illustration-link-functions" class="nav-link" data-scroll-target="#illustration-link-functions"><span class="header-section-number">14.7</span> Illustration: link functions</a></li>
+  <li><a href="#bayesian-inference-via-mcmc" id="toc-bayesian-inference-via-mcmc" class="nav-link" data-scroll-target="#bayesian-inference-via-mcmc"><span class="header-section-number">14.8</span> Bayesian inference via MCMC</a>
+  <ul class="collapse">
+  <li><a href="#logistic-regression-in-stan" id="toc-logistic-regression-in-stan" class="nav-link" data-scroll-target="#logistic-regression-in-stan"><span class="header-section-number">14.8.1</span> Logistic regression in Stan</a></li>
+  <li><a href="#poisson-regression-in-stan" id="toc-poisson-regression-in-stan" class="nav-link" data-scroll-target="#poisson-regression-in-stan"><span class="header-section-number">14.8.2</span> Poisson regression in Stan</a></li>
+  <li><a href="#fitted-logistic-regression-example" id="toc-fitted-logistic-regression-example" class="nav-link" data-scroll-target="#fitted-logistic-regression-example"><span class="header-section-number">14.8.3</span> Fitted logistic regression example</a></li>
+  </ul></li>
+  <li><a href="#residual-diagnostics-and-posterior-predictive-checks" id="toc-residual-diagnostics-and-posterior-predictive-checks" class="nav-link" data-scroll-target="#residual-diagnostics-and-posterior-predictive-checks"><span class="header-section-number">14.9</span> Residual diagnostics and posterior predictive checks</a>
+  <ul class="collapse">
+  <li><a href="#deviance-and-residuals" id="toc-deviance-and-residuals" class="nav-link" data-scroll-target="#deviance-and-residuals"><span class="header-section-number">14.9.1</span> Deviance and residuals</a></li>
+  <li><a href="#posterior-predictive-checks" id="toc-posterior-predictive-checks" class="nav-link" data-scroll-target="#posterior-predictive-checks"><span class="header-section-number">14.9.2</span> Posterior predictive checks</a></li>
+  </ul></li>
+  <li><a href="#coefficient-interpretation-and-prediction" id="toc-coefficient-interpretation-and-prediction" class="nav-link" data-scroll-target="#coefficient-interpretation-and-prediction"><span class="header-section-number">14.10</span> Coefficient interpretation and prediction</a>
+  <ul class="collapse">
+  <li><a href="#logistic-regression-coefficients" id="toc-logistic-regression-coefficients" class="nav-link" data-scroll-target="#logistic-regression-coefficients"><span class="header-section-number">14.10.1</span> Logistic regression coefficients</a></li>
+  <li><a href="#poisson-regression-coefficients" id="toc-poisson-regression-coefficients" class="nav-link" data-scroll-target="#poisson-regression-coefficients"><span class="header-section-number">14.10.2</span> Poisson regression coefficients</a></li>
+  <li><a href="#posterior-predictive-intervals" id="toc-posterior-predictive-intervals" class="nav-link" data-scroll-target="#posterior-predictive-intervals"><span class="header-section-number">14.10.3</span> Posterior predictive intervals</a></li>
+  </ul></li>
+  <li><a href="#overdispersion-illustration-simulated-data-with-variance-inflation" id="toc-overdispersion-illustration-simulated-data-with-variance-inflation" class="nav-link" data-scroll-target="#overdispersion-illustration-simulated-data-with-variance-inflation"><span class="header-section-number">14.11</span> Overdispersion illustration: simulated data with variance inflation</a></li>
+  <li><a href="#common-pitfalls-and-best-practices" id="toc-common-pitfalls-and-best-practices" class="nav-link" data-scroll-target="#common-pitfalls-and-best-practices"><span class="header-section-number">14.12</span> Common pitfalls and best practices</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">14.13</span> Conclusion</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">14.14</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/11_bayesian_regression.html">PART IV: APPLIED BAYESIAN MODELLING</a></li><li class="breadcrumb-item"><a href="../chapters/13_glms.html"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction-when-linear-regression-fails" class="level2" data-number="14.1">
+<h2 data-number="14.1" class="anchored" data-anchor-id="introduction-when-linear-regression-fails"><span class="header-section-number">14.1</span> Introduction: When linear regression fails</h2>
+<p>Classical Gaussian linear regression assumes that the response variable <span class="math inline">\(y_i\)</span> is continuous and approximately normally distributed with mean <span class="math inline">\(\mu_i = f(x_i; \beta)\)</span> and constant variance <span class="math inline">\(\sigma^2\)</span>. This assumption works well for many physical measurements with small, additive noise.</p>
+<p>However, in many experiments we encounter response variables that violate this assumption fundamentally:</p>
+<ul>
+<li><strong>Count data</strong>: number of detected photons in a time window, decay events in a bin, or success counts in repeated trials. These are non-negative integers with variance proportional to the mean, not constant.</li>
+<li><strong>Binary outcomes</strong>: detection (yes/no), selection success (pass/fail), or signal presence (present/absent). The mean must lie in <span class="math inline">\((0,1)\)</span> to represent a probability.</li>
+<li><strong>Positive-only data</strong>: time-to-event, energy, or rate parameters. The mean must be strictly positive.</li>
+</ul>
+<p>Fitting a standard linear model <span class="math inline">\(y_i \sim N(\beta_0 + \beta_1 x_i, \sigma^2)\)</span> to such data produces:</p>
+<ul>
+<li><strong>Invalid predictions</strong>: fitted means may fall outside the natural parameter space (e.g., negative counts or probabilities outside <span class="math inline">\([0,1]\)</span>).</li>
+<li><strong>Incorrect uncertainty quantification</strong>: constant-variance assumptions badly misrepresent the variability structure of heteroscedastic responses.</li>
+<li><strong>Biased inference</strong>: parameter estimates become inefficient and confidence intervals lose their intended coverage.</li>
+</ul>
+<p><strong>Generalized linear models</strong> extend regression to non-Gaussian responses by replacing the normality assumption with a member of the exponential family and introducing a <strong>link function</strong> that maps the linear predictor onto the valid parameter space.</p>
+</section>
+<section id="the-three-ingredients-of-a-glm" class="level2" data-number="14.2">
+<h2 data-number="14.2" class="anchored" data-anchor-id="the-three-ingredients-of-a-glm"><span class="header-section-number">14.2</span> The three ingredients of a GLM</h2>
+<p>A generalized linear model comprises three interconnected components:</p>
+<div class="definition">
+<p><strong>Definition (GLM structure)</strong>: A generalized linear model for observations <span class="math inline">\(y_1, \ldots, y_N\)</span> is specified by:</p>
+<ol type="1">
+<li><p><strong>Random component</strong>: <span class="math inline">\(y_i \mid \theta_i \sim p(y_i; \theta_i)\)</span>, where <span class="math inline">\(p\)</span> belongs to an exponential-family distribution parameterized by a natural parameter <span class="math inline">\(\theta_i\)</span>.</p></li>
+<li><p><strong>Systematic component</strong>: a linear predictor <span class="math display">\[\eta_i = \beta_0 + \beta_1 x_{i,1} + \cdots + \beta_p x_{i,p} = \mathbf{x}_i^\top \boldsymbol{\beta},\]</span> where <span class="math inline">\(\boldsymbol{\beta}\)</span> is a vector of regression coefficients and <span class="math inline">\(\mathbf{x}_i\)</span> is the design vector for observation <span class="math inline">\(i\)</span>.</p></li>
+<li><p><strong>Link function</strong>: a smooth, invertible function <span class="math inline">\(g(\cdot)\)</span> that relates the mean <span class="math inline">\(\mu_i = \mathbb{E}[y_i \mid \mathbf{x}_i]\)</span> to the linear predictor: <span class="math display">\[g(\mu_i) = \eta_i, \quad \text{equivalently} \quad \mu_i = g^{-1}(\eta_i).\]</span> The inverse link, <span class="math inline">\(g^{-1}\)</span>, is called the <strong>mean function</strong>.</p></li>
+</ol>
+</div>
+<p>The link function ensures that even though <span class="math inline">\(\eta_i\)</span> can take any real value, the predicted mean <span class="math inline">\(\mu_i = g^{-1}(\eta_i)\)</span> respects the constraints of the response distribution.</p>
+</section>
+<section id="the-exponential-family-and-canonical-form" class="level2" data-number="14.3">
+<h2 data-number="14.3" class="anchored" data-anchor-id="the-exponential-family-and-canonical-form"><span class="header-section-number">14.3</span> The exponential family and canonical form</h2>
+<p>The exponential family is a large class of distributions sharing a common parameterization that unifies likelihood inference for GLMs.</p>
+<div class="definition">
+<p><strong>Definition (Exponential family canonical form)</strong>: A probability distribution for <span class="math inline">\(y\)</span> belongs to the exponential family if it can be written as <span class="math display">\[p(y; \theta, \phi) = h(y, \phi) \exp\left(\frac{\theta y - A(\theta)}{\phi}\right),\]</span> where: - <span class="math inline">\(\theta\)</span> is the <strong>natural parameter</strong> (or canonical parameter). - <span class="math inline">\(\phi &gt; 0\)</span> is the <strong>dispersion parameter</strong>, often related to variance. - <span class="math inline">\(A(\theta)\)</span> is the <strong>cumulant function</strong> or <strong>log-partition function</strong>. - <span class="math inline">\(h(y, \phi)\)</span> is the <strong>base measure</strong> (carries <span class="math inline">\(y\)</span>-dependent normalization and <span class="math inline">\(\phi\)</span> terms not involving <span class="math inline">\(\theta\)</span>).</p>
+<p>The term <span class="math inline">\(A(\theta)\)</span> ensures the distribution integrates or sums to one.</p>
+</div>
+<div class="theorem">
+<p><strong>Theorem (Moment relations)</strong>: For a distribution in exponential-family form, <span class="math display">\[\mathbb{E}[y] = A'(\theta), \quad \mathrm{Var}(y) = \phi \cdot A''(\theta).\]</span></p>
+<p><strong>Proof sketch</strong>: The log-likelihood is <span class="math inline">\(\ell(\theta; y) = \theta y - A(\theta) + \text{const}\)</span>. The score is <span class="math inline">\(\frac{\partial \ell}{\partial \theta} = y - A'(\theta)\)</span>. Setting <span class="math inline">\(\mathbb{E}[\text{score}] = 0\)</span> gives <span class="math inline">\(\mathbb{E}[y] = A'(\theta)\)</span>. The variance follows from the Hessian of <span class="math inline">\(\ell\)</span>.</p>
+</div>
+<p>These moment relations are powerful: they immediately connect the natural parameter <span class="math inline">\(\theta\)</span> to the mean <span class="math inline">\(\mu\)</span> and relate the mean to the variance through <span class="math inline">\(A''(\theta)\)</span>.</p>
+</section>
+<section id="canonical-links-and-the-link-function-table" class="level2" data-number="14.4">
+<h2 data-number="14.4" class="anchored" data-anchor-id="canonical-links-and-the-link-function-table"><span class="header-section-number">14.4</span> Canonical links and the link-function table</h2>
+<p>A <strong>canonical link</strong> is the link function such that <span class="math inline">\(g(\mu) = \theta\)</span>. For canonical links, the natural parameter equals the linear predictor directly, which simplifies both interpretation and computation (the sufficient statistics for <span class="math inline">\(\boldsymbol{\beta}\)</span> are linear in the data).</p>
+<p>The following table summarizes the most common GLM families used in practice:</p>
+<div id="tbl-canonical" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-canonical-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;14.1: <strong>Table: Exponential families and canonical links</strong>
+</figcaption>
+<div aria-describedby="tbl-canonical-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Distribution</th>
+<th><span class="math inline">\(A(\theta)\)</span></th>
+<th><span class="math inline">\(\theta = g(\mu)\)</span> (canonical)</th>
+<th><span class="math inline">\(g^{-1}(\eta)\)</span> (inverse link)</th>
+<th>Constraint</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Gaussian</strong></td>
+<td><span class="math inline">\(\theta^2/2\)</span></td>
+<td><span class="math inline">\(\mu\)</span></td>
+<td><span class="math inline">\(\eta\)</span></td>
+<td><span class="math inline">\(\mu \in \mathbb{R}\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Bernoulli</strong></td>
+<td><span class="math inline">\(\log(1 + e^\theta)\)</span></td>
+<td><span class="math inline">\(\log\frac{\mu}{1-\mu}\)</span> (logit)</td>
+<td><span class="math inline">\(\frac{1}{1+e^{-\eta}}\)</span></td>
+<td><span class="math inline">\(\mu \in (0,1)\)</span></td>
+</tr>
+<tr class="odd">
+<td><strong>Poisson</strong></td>
+<td><span class="math inline">\(e^\theta\)</span></td>
+<td><span class="math inline">\(\log \mu\)</span></td>
+<td><span class="math inline">\(e^\eta\)</span></td>
+<td><span class="math inline">\(\mu &gt; 0\)</span></td>
+</tr>
+<tr class="even">
+<td><strong>Gamma</strong></td>
+<td><span class="math inline">\(-\log(-\theta)\)</span></td>
+<td><span class="math inline">\(-1/\mu\)</span></td>
+<td><span class="math inline">\(-1/\eta\)</span></td>
+<td><span class="math inline">\(\mu &gt; 0\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="logistic-regression-bernoulli-response" class="level2" data-number="14.5">
+<h2 data-number="14.5" class="anchored" data-anchor-id="logistic-regression-bernoulli-response"><span class="header-section-number">14.5</span> Logistic regression: Bernoulli response</h2>
+<section id="model-and-likelihood" class="level3" data-number="14.5.1">
+<h3 data-number="14.5.1" class="anchored" data-anchor-id="model-and-likelihood"><span class="header-section-number">14.5.1</span> Model and likelihood</h3>
+<p>Logistic regression models a <strong>binary response</strong> <span class="math inline">\(y_i \in \{0, 1\}\)</span> as a Bernoulli trial: <span class="math display">\[y_i \mid \pi_i \sim \text{Bernoulli}(\pi_i),\]</span> where <span class="math inline">\(\pi_i = \Pr(y_i = 1 \mid \mathbf{x}_i)\)</span> is the success probability.</p>
+<p>The Bernoulli distribution has mean <span class="math inline">\(\mu_i = \pi_i\)</span> and variance <span class="math inline">\(\pi_i(1 - \pi_i)\)</span>. The cumulant function is <span class="math inline">\(A(\theta) = \log(1 + e^\theta)\)</span>, so the canonical link is the <strong>logit</strong>: <span class="math display">\[g(\pi_i) = \log\frac{\pi_i}{1 - \pi_i} = \eta_i = \mathbf{x}_i^\top \boldsymbol{\beta}.\]</span></p>
+<p>The <strong>inverse logit</strong> or <strong>logistic function</strong> recovers the probability: <span class="math display">\[\pi_i = \sigma(\eta_i) = \frac{1}{1 + e^{-\eta_i}}.\]</span></p>
+<p>The likelihood for <span class="math inline">\(N\)</span> independent observations is <span class="math display">\[p(D \mid \boldsymbol{\beta}) = \prod_{i=1}^{N} \pi_i^{y_i} (1 - \pi_i)^{1 - y_i},\]</span> with log-likelihood <span class="math display">\[\ell(\boldsymbol{\beta}; D) = \sum_{i=1}^{N} \left[ y_i \eta_i - \log(1 + e^{\eta_i}) \right].\]</span></p>
+</section>
+<section id="interpretation-log-odds-and-odds-ratios" class="level3" data-number="14.5.2">
+<h3 data-number="14.5.2" class="anchored" data-anchor-id="interpretation-log-odds-and-odds-ratios"><span class="header-section-number">14.5.2</span> Interpretation: log-odds and odds ratios</h3>
+<p>The logit transforms the probability <span class="math inline">\(\pi\)</span> into the <strong>log-odds</strong>. The <strong>odds</strong> are <span class="math inline">\(\frac{\pi}{1-\pi}\)</span>, the ratio of success to failure probability. Logistic regression is linear on the log-odds scale: <span class="math display">\[\log\frac{\pi_i}{1-\pi_i} = \beta_0 + \beta_1 x_{i,1} + \cdots.\]</span></p>
+<p>A one-unit increase in <span class="math inline">\(x_j\)</span> changes the log-odds by <span class="math inline">\(\beta_j\)</span>, or equivalently, <strong>multiplies the odds by <span class="math inline">\(e^{\beta_j}\)</span></strong>. If <span class="math inline">\(\beta_1 = 0.5\)</span>, a one-unit increase in <span class="math inline">\(x_1\)</span> multiplies the odds of success by <span class="math inline">\(e^{0.5} \approx 1.65\)</span>.</p>
+<p>The change in probability is nonlinear: the same increase in <span class="math inline">\(x\)</span> produces a larger change in <span class="math inline">\(\pi\)</span> near <span class="math inline">\(\pi = 0.5\)</span> and smaller changes near 0 or 1.</p>
+</section>
+<section id="logistic-function-visualization" class="level3" data-number="14.5.3">
+<h3 data-number="14.5.3" class="anchored" data-anchor-id="logistic-function-visualization"><span class="header-section-number">14.5.3</span> Logistic function visualization</h3>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1" data-lst-cap="Logistic function"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>eta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pi <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>eta))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(eta, pi, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"black"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(eta), <span class="at">ylab =</span> <span class="fu">expression</span>(pi),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"gray80"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="fl">0.5</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray40"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">0</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray40"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="13_glms_files/figure-html/lst-logistic-function-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>The logistic function <span class="math inline">\(\sigma(\eta) = 1/(1+\exp(-\eta))\)</span>.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="poisson-regression-count-response" class="level2" data-number="14.6">
+<h2 data-number="14.6" class="anchored" data-anchor-id="poisson-regression-count-response"><span class="header-section-number">14.6</span> Poisson regression: Count response</h2>
+<section id="model-and-likelihood-1" class="level3" data-number="14.6.1">
+<h3 data-number="14.6.1" class="anchored" data-anchor-id="model-and-likelihood-1"><span class="header-section-number">14.6.1</span> Model and likelihood</h3>
+<p>Poisson regression models <strong>count data</strong> <span class="math inline">\(y_i \in \{0, 1, 2, \ldots\}\)</span> as a Poisson distribution: <span class="math display">\[y_i \mid \lambda_i \sim \text{Poisson}(\lambda_i),\]</span> where <span class="math inline">\(\lambda_i &gt; 0\)</span> is the expected count or rate. Both mean and variance equal <span class="math inline">\(\lambda_i\)</span>: <span class="math inline">\(\mathbb{E}[y_i] = \mathrm{Var}(y_i) = \lambda_i\)</span>.</p>
+<p>The cumulant function is <span class="math inline">\(A(\theta) = e^\theta\)</span>, and the canonical link is the <strong>log link</strong>: <span class="math display">\[g(\lambda_i) = \log \lambda_i = \eta_i = \beta_0 + \beta_1 x_{i,1} + \cdots,\]</span> so <span class="math inline">\(\lambda_i = e^{\eta_i}\)</span>.</p>
+<p>The Poisson likelihood is <span class="math display">\[p(D \mid \boldsymbol{\beta}) = \prod_{i=1}^{N} \frac{\lambda_i^{y_i} e^{-\lambda_i}}{y_i!},\]</span> with log-likelihood <span class="math display">\[\ell(\boldsymbol{\beta}; D) = \sum_{i=1}^{N} \left[ y_i \log \lambda_i - \lambda_i - \log(y_i!) \right].\]</span></p>
+</section>
+<section id="interpretation-exponential-effects" class="level3" data-number="14.6.2">
+<h3 data-number="14.6.2" class="anchored" data-anchor-id="interpretation-exponential-effects"><span class="header-section-number">14.6.2</span> Interpretation: exponential effects</h3>
+<p>The log link means that coefficients have <strong>exponential interpretation</strong>. A one-unit increase in <span class="math inline">\(x_j\)</span> multiplies the expected count by <span class="math inline">\(e^{\beta_j}\)</span>: <span class="math display">\[\frac{\lambda(x_j + 1)}{\lambda(x_j)} = e^{\beta_j}.\]</span></p>
+<p>If <span class="math inline">\(\beta_1 = 0.3\)</span>, then increasing <span class="math inline">\(x_1\)</span> by one unit multiplies the expected count by <span class="math inline">\(e^{0.3} \approx 1.35\)</span>, a 35% increase.</p>
+</section>
+<section id="offsets-and-exposure" class="level3" data-number="14.6.3">
+<h3 data-number="14.6.3" class="anchored" data-anchor-id="offsets-and-exposure"><span class="header-section-number">14.6.3</span> Offsets and exposure</h3>
+<p>In many applications, observations have different <strong>exposure times</strong> or <strong>bin widths</strong>. For example, detector data collected over different durations <span class="math inline">\(E_i\)</span>. The expected count scales with exposure: <span class="math inline">\(\lambda_i = E_i r_i\)</span>, where <span class="math inline">\(r_i\)</span> is the event rate.</p>
+<p>Using the log link, <span class="math display">\[\log \lambda_i = \log(E_i r_i) = \log E_i + \log r_i = \log E_i + \eta_i,\]</span> where <span class="math inline">\(\eta_i = \beta_0 + \beta_1 x_{i,1} + \cdots\)</span>. The term <span class="math inline">\(\log E_i\)</span> is a known <strong>offset</strong>, a coefficient fixed at 1.</p>
+<p>In Stan or R, specify <code>log(exposure) + w0 + w1*x</code> in the linear predictor; the software interprets the known contribution separately.</p>
+</section>
+<section id="simulated-poisson-regression-example" class="level3" data-number="14.6.4">
+<h3 data-number="14.6.4" class="anchored" data-anchor-id="simulated-poisson-regression-example"><span class="header-section-number">14.6.4</span> Simulated Poisson regression example</h3>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2" data-lst-cap="Poisson sim"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="at">length.out =</span> N)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>w0_true <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>w1_true <span class="ot">&lt;-</span> <span class="fl">0.35</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>eta <span class="ot">&lt;-</span> w0_true <span class="sc">+</span> w1_true <span class="sc">*</span> x</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="fu">exp</span>(eta)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rpois</span>(N, <span class="at">lambda =</span> lambda)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">xlab =</span> <span class="st">"x"</span>, <span class="at">ylab =</span> <span class="st">"count"</span>,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(y) <span class="sc">*</span> <span class="fl">1.1</span>), <span class="at">cex =</span> <span class="fl">0.9</span>, <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, lambda, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"gray80"</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"observed"</span>, <span class="st">"true rate"</span>),</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">19</span>, <span class="cn">NA</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">1</span>), <span class="at">lwd =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="fl">2.5</span>),</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"#b8123e"</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="13_glms_files/figure-html/lst-poisson-sim-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Simulated Poisson regression data and fitted rate curve.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="overdispersion-and-negative-binomial-extension" class="level3" data-number="14.6.5">
+<h3 data-number="14.6.5" class="anchored" data-anchor-id="overdispersion-and-negative-binomial-extension"><span class="header-section-number">14.6.5</span> Overdispersion and negative binomial extension</h3>
+<p>A fundamental property of the Poisson is that <strong>variance equals the mean</strong>. In real count data, the variance often exceeds the mean—a phenomenon called <strong>overdispersion</strong>. Causes include:</p>
+<ul>
+<li>Unobserved heterogeneity: different subgroups have different rates.</li>
+<li>Clustering: observations within groups are not independent.</li>
+<li>Extra-Poisson variability: a genuine excess beyond Poisson noise.</li>
+</ul>
+<div class="proposition">
+<p><strong>Overdispersion test</strong>: Compute <span class="math inline">\(\hat{\lambda}\)</span> from fitted Poisson regression. If the sample variance of residuals <span class="math inline">\(\sum_i (y_i - \hat{\lambda}_i)^2 / (N - p)\)</span> is much larger than the average fitted rate, overdispersion is present.</p>
+</div>
+<p>The <strong>negative binomial</strong> distribution extends Poisson regression by adding a shape parameter <span class="math inline">\(\phi\)</span> that allows variance to exceed the mean: <span class="math display">\[\mathrm{Var}(y_i) = \lambda_i + \frac{\lambda_i^2}{\phi}.\]</span> As <span class="math inline">\(\phi \to \infty\)</span>, the negative binomial approaches Poisson. A negative-binomial GLM is fitted similarly to Poisson but with an additional dispersion parameter to estimate.</p>
+</section>
+</section>
+<section id="illustration-link-functions" class="level2" data-number="14.7">
+<h2 data-number="14.7" class="anchored" data-anchor-id="illustration-link-functions"><span class="header-section-number">14.7</span> Illustration: link functions</h2>
+<p>The choice of link function transforms the linear predictor onto the appropriate scale. Here we compare logit (for Bernoulli) and log (for Poisson) side by side:</p>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3" data-lst-cap="Link comparison"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>eta_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Logit (inverse)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>pi <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>eta_seq))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(eta_seq, pi, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(eta), <span class="at">ylab =</span> <span class="fu">expression</span>(mu),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Logit inverse link"</span>, <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"gray80"</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Log (inverse)</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="fu">exp</span>(eta_seq)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(eta_seq, lambda, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>,</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(eta), <span class="at">ylab =</span> <span class="fu">expression</span>(mu),</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Log inverse link"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">55</span>), <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"gray80"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="13_glms_files/figure-html/lst-link-comparison-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Canonical link functions: logit maps <span class="math inline">\(\eta\)</span> to <span class="math inline">\((0,1)\)</span> for probabilities; log maps <span class="math inline">\(\eta\)</span> to <span class="math inline">\((0, \infty)\)</span> for rates.</figcaption>
+</figure>
+</div>
+</div>
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb4" data-lst-cap="Link comparison"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="bayesian-inference-via-mcmc" class="level2" data-number="14.8">
+<h2 data-number="14.8" class="anchored" data-anchor-id="bayesian-inference-via-mcmc"><span class="header-section-number">14.8</span> Bayesian inference via MCMC</h2>
+<p>Frequentist GLMs are typically fitted by maximum likelihood using iteratively reweighted least squares (IRLS). The Bayesian approach places a prior on the coefficients and explores the posterior via Markov chain Monte Carlo.</p>
+<section id="logistic-regression-in-stan" class="level3" data-number="14.8.1">
+<h3 data-number="14.8.1" class="anchored" data-anchor-id="logistic-regression-in-stan"><span class="header-section-number">14.8.1</span> Logistic regression in Stan</h3>
+<p>The following Stan model fits logistic regression with weakly informative normal priors:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; N;</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] x;</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>, <span class="kw">upper</span>=<span class="dv">1</span>&gt; y;</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> w0;</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> w1;</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  w0 ~ normal(<span class="dv">0</span>, <span class="dv">5</span>);</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  w1 ~ normal(<span class="dv">0</span>, <span class="dv">5</span>);</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  y ~ bernoulli_logit(w0 + w1 * x);</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">array</span>[N] <span class="dt">int</span> y_rep;</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    y_rep[i] = bernoulli_logit_rng(w0 + w1 * x[i]);</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Stan’s <code>bernoulli_logit</code> function is numerically stable; it computes the log-likelihood directly without forming <span class="math inline">\(\pi_i\)</span> explicitly.</p>
+</section>
+<section id="poisson-regression-in-stan" class="level3" data-number="14.8.2">
+<h3 data-number="14.8.2" class="anchored" data-anchor-id="poisson-regression-in-stan"><span class="header-section-number">14.8.2</span> Poisson regression in Stan</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; N;</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] x;</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">array</span>[N] <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; y;</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> w0;</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> w1;</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  w0 ~ normal(<span class="dv">0</span>, <span class="dv">5</span>);</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  w1 ~ normal(<span class="dv">0</span>, <span class="dv">5</span>);</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  y ~ poisson_log(w0 + w1 * x);</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="kw">generated quantities</span> {</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">array</span>[N] <span class="dt">int</span> y_rep;</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span>:N) {</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    y_rep[i] = poisson_log_rng(w0 + w1 * x[i]);</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The <code>poisson_log</code> function computes the Poisson likelihood with log link: given <span class="math inline">\(\eta = w_0 + w_1 x\)</span>, it increments log-probability by <span class="math inline">\(y \eta - e^\eta - \log(y!)\)</span>. The generated quantities block produces posterior predictive replicates for model checking.</p>
+</section>
+<section id="fitted-logistic-regression-example" class="level3" data-number="14.8.3">
+<h3 data-number="14.8.3" class="anchored" data-anchor-id="fitted-logistic-regression-example"><span class="header-section-number">14.8.3</span> Fitted logistic regression example</h3>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb7" data-lst-cap="Logistic fit"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">80</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="at">length.out =</span> N)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>w0_true <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.4</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>w1_true <span class="ot">&lt;-</span> <span class="fl">1.2</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>eta <span class="ot">&lt;-</span> w0_true <span class="sc">+</span> w1_true <span class="sc">*</span> x</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>pi <span class="ot">&lt;-</span> <span class="fu">plogis</span>(eta)  <span class="co"># 1 / (1 + exp(-eta))</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(N, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> pi)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.1</span>, <span class="fl">1.1</span>),</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"x"</span>, <span class="at">ylab =</span> <span class="st">"y (0 or 1)"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, pi, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"gray80"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"observed"</span>, <span class="st">"true probability"</span>),</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">19</span>, <span class="cn">NA</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">1</span>), <span class="at">lwd =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="fl">2.5</span>),</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"#b8123e"</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="13_glms_files/figure-html/lst-logistic-fit-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Simulated binary data (0/1 points) with fitted logistic curve.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="residual-diagnostics-and-posterior-predictive-checks" class="level2" data-number="14.9">
+<h2 data-number="14.9" class="anchored" data-anchor-id="residual-diagnostics-and-posterior-predictive-checks"><span class="header-section-number">14.9</span> Residual diagnostics and posterior predictive checks</h2>
+<section id="deviance-and-residuals" class="level3" data-number="14.9.1">
+<h3 data-number="14.9.1" class="anchored" data-anchor-id="deviance-and-residuals"><span class="header-section-number">14.9.1</span> Deviance and residuals</h3>
+<p>In a fitted GLM, the <strong>deviance</strong> is twice the log-likelihood difference between the saturated model (one parameter per observation) and the fitted model: <span class="math display">\[D = 2 \sum_{i=1}^{N} \left[ \ell_{\text{sat}}(y_i) - \ell_{\text{fitted}}(\hat{\mu}_i, y_i) \right].\]</span></p>
+<p>For logistic regression, this simplifies to a sum of log-likelihood comparisons; for Poisson, it involves Kullback–Leibler divergence between observed and fitted counts.</p>
+<p><strong>Pearson residuals</strong> scale differences by the estimated standard deviation: <span class="math display">\[r_i^{\text{Pearson}} = \frac{y_i - \hat{\mu}_i}{\sqrt{\widehat{\mathrm{Var}}(y_i)}}.\]</span></p>
+<p>In well-fitting models, Pearson residuals should be approximately standard normal. Large residuals flag individual observations that the model does not explain well.</p>
+</section>
+<section id="posterior-predictive-checks" class="level3" data-number="14.9.2">
+<h3 data-number="14.9.2" class="anchored" data-anchor-id="posterior-predictive-checks"><span class="header-section-number">14.9.2</span> Posterior predictive checks</h3>
+<p>In Bayesian inference, we can generate <strong>replicated data</strong> <span class="math inline">\(y_{\text{rep}}^{(s)}\)</span> from the posterior predictive distribution for each MCMC draw <span class="math inline">\((s)\)</span>. By comparing summaries of observed data <span class="math inline">\(y\)</span> to summaries of replicated data, we can assess whether the model is plausible:</p>
+<ul>
+<li><strong>Poisson</strong>: Check the proportion of zeros, the maximum count, the ratio of variance to mean.</li>
+<li><strong>Bernoulli</strong>: Check the total number of successes, the success fraction in subgroups, the patterns of runs.</li>
+</ul>
+<p>If the observed summary is consistently in the tail of the replicated-data distribution, the model misses important structure.</p>
+</section>
+</section>
+<section id="coefficient-interpretation-and-prediction" class="level2" data-number="14.10">
+<h2 data-number="14.10" class="anchored" data-anchor-id="coefficient-interpretation-and-prediction"><span class="header-section-number">14.10</span> Coefficient interpretation and prediction</h2>
+<section id="logistic-regression-coefficients" class="level3" data-number="14.10.1">
+<h3 data-number="14.10.1" class="anchored" data-anchor-id="logistic-regression-coefficients"><span class="header-section-number">14.10.1</span> Logistic regression coefficients</h3>
+<p>In logistic regression with predictor <span class="math inline">\(x_j\)</span>, a one-unit increase in <span class="math inline">\(x_j\)</span> (holding others fixed) changes the <strong>odds</strong> by a factor of <span class="math inline">\(e^{\beta_j}\)</span>: - If <span class="math inline">\(\beta_j = 0.5\)</span>, the odds increase by a factor of <span class="math inline">\(e^{0.5} \approx 1.65\)</span> (65% increase). - If <span class="math inline">\(\beta_j = -0.3\)</span>, the odds decrease by a factor of <span class="math inline">\(e^{-0.3} \approx 0.74\)</span> (26% decrease).</p>
+<p>The corresponding <strong>probability</strong> change depends on the current probability level. Near <span class="math inline">\(\pi = 0.5\)</span> (maximum sensitivity), a one-unit change in <span class="math inline">\(x_j\)</span> shifts <span class="math inline">\(\pi\)</span> by approximately <span class="math inline">\(\beta_j / 4\)</span>. Near extreme probabilities, the shift is much smaller.</p>
+<p>Always report uncertainty: credible intervals for <span class="math inline">\(\beta_j\)</span> quantify the precision of the estimate. Transform endpoints through <span class="math inline">\(e^{\beta_j}\)</span> to report odds ratios and their intervals.</p>
+</section>
+<section id="poisson-regression-coefficients" class="level3" data-number="14.10.2">
+<h3 data-number="14.10.2" class="anchored" data-anchor-id="poisson-regression-coefficients"><span class="header-section-number">14.10.2</span> Poisson regression coefficients</h3>
+<p>In Poisson regression, <span class="math inline">\(\beta_j\)</span> is the change in log rate per unit increase in <span class="math inline">\(x_j\)</span>. The expected count is multiplied by <span class="math inline">\(e^{\beta_j}\)</span> per unit increase: - If <span class="math inline">\(\beta_1 = 0.3\)</span>, a one-unit increase in <span class="math inline">\(x_1\)</span> multiplies the expected count by <span class="math inline">\(e^{0.3} \approx 1.35\)</span> (35% increase). - If <span class="math inline">\(\beta_2 = -0.2\)</span>, a one-unit increase in <span class="math inline">\(x_2\)</span> multiplies the expected count by <span class="math inline">\(e^{-0.2} \approx 0.82\)</span> (18% decrease).</p>
+<p>These are <strong>relative effects</strong>: they describe multiplicative changes in the rate, not absolute changes. In a detector experiment, a 35% increase in count rate might be substantial or negligible depending on the baseline and the experimental goal.</p>
+</section>
+<section id="posterior-predictive-intervals" class="level3" data-number="14.10.3">
+<h3 data-number="14.10.3" class="anchored" data-anchor-id="posterior-predictive-intervals"><span class="header-section-number">14.10.3</span> Posterior predictive intervals</h3>
+<p>After fitting, we typically want to predict for new observations. For <strong>logistic regression</strong>, posterior draws of <span class="math inline">\((w_0, w_1)\)</span> give posterior samples of <span class="math inline">\(\pi_* = \sigma(w_0 + w_1 x_*)\)</span> at a new location <span class="math inline">\(x_*\)</span>. The credible interval for <span class="math inline">\(\pi_*\)</span> quantifies uncertainty in the <strong>probability</strong>; a separate predictive interval addresses the binary outcome itself (<span class="math inline">\(y_* \in \{0, 1\}\)</span> with some probability).</p>
+<p>For <strong>Poisson regression</strong>, the posterior predictive interval for a new count <span class="math inline">\(y_*\)</span> at <span class="math inline">\(x_*\)</span> involves: 1. Drawing <span class="math inline">\((w_0^{(s)}, w_1^{(s)})\)</span> from the posterior. 2. Computing <span class="math inline">\(\lambda_*^{(s)} = \exp(w_0^{(s)} + w_1^{(s)} x_*)\)</span>. 3. Drawing <span class="math inline">\(y_*^{(s)} \sim \text{Poisson}(\lambda_*^{(s)})\)</span>. 4. Summarizing the empirical distribution of <span class="math inline">\(y_*^{(s)}\)</span> by quantiles (e.g., 2.5%, 50%, 97.5%).</p>
+<p>The predictive interval is discrete and generally asymmetric, reflecting the discrete and skewed nature of Poisson noise.</p>
+</section>
+</section>
+<section id="overdispersion-illustration-simulated-data-with-variance-inflation" class="level2" data-number="14.11">
+<h2 data-number="14.11" class="anchored" data-anchor-id="overdispersion-illustration-simulated-data-with-variance-inflation"><span class="header-section-number">14.11</span> Overdispersion illustration: simulated data with variance inflation</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb8" data-lst-cap="Overdispersion"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">303</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="at">length.out =</span> N)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> x</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Poisson: variance = mean</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>y_poisson <span class="ot">&lt;-</span> <span class="fu">rpois</span>(N, <span class="at">lambda =</span> lambda)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Overdispersed: inflate variance by factor of 2</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>y_overdispersed <span class="ot">&lt;-</span> <span class="fu">sapply</span>(lambda, <span class="cf">function</span>(mu) {</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  nb_size <span class="ot">&lt;-</span> mu <span class="sc">/</span> <span class="dv">1</span>  <span class="co"># size parameter for negative binomial</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnbinom</span>(<span class="dv">1</span>, <span class="at">size =</span> nb_size, <span class="at">mu =</span> mu)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y_poisson, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"gray40"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"x"</span>, <span class="at">ylab =</span> <span class="st">"count"</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">30</span>))</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(x, y_overdispersed, <span class="at">pch =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, lambda, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"black"</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Poisson (Var=mean)"</span>, <span class="st">"Overdispersed (Var&gt;mean)"</span>, <span class="st">"true mean"</span>),</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">19</span>, <span class="dv">1</span>, <span class="cn">NA</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">1</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"gray40"</span>, <span class="st">"#b8123e"</span>, <span class="st">"black"</span>),</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>       <span class="at">bty =</span> <span class="st">"n"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="13_glms_files/figure-html/lst-overdispersion-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Poisson data (dashed line, Var = mean) vs.&nbsp;overdispersed count data (solid line, Var &gt;&gt; mean).</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="common-pitfalls-and-best-practices" class="level2" data-number="14.12">
+<h2 data-number="14.12" class="anchored" data-anchor-id="common-pitfalls-and-best-practices"><span class="header-section-number">14.12</span> Common pitfalls and best practices</h2>
+<div class="note">
+<p><strong>Common mistakes</strong>:</p>
+<ol type="1">
+<li><p><strong>Ignoring distributional mismatch</strong>: Fitting Gaussian regression to counts or binary data leads to invalid predictions and misaligned uncertainty.</p></li>
+<li><p><strong>Forgetting the offset</strong>: In exposure-weighted Poisson models, omitting the offset biases rate estimates and inflates uncertainty.</p></li>
+<li><p><strong>Misinterpreting coefficients</strong>: Logistic coefficients are log-odds, not probability changes. Poisson coefficients are log-rates, not expected count changes.</p></li>
+<li><p><strong>Reporting point estimates without credible intervals</strong>: GLM coefficients are estimated quantities; always include uncertainty via posterior quantiles.</p></li>
+<li><p><strong>Confusing credible and predictive intervals</strong>: The credible interval for <span class="math inline">\(\mu\)</span> (or <span class="math inline">\(\pi\)</span>, <span class="math inline">\(\lambda\)</span>) reflects estimation uncertainty. The predictive interval for <span class="math inline">\(y\)</span> also includes observation noise and is wider.</p></li>
+<li><p><strong>Ignoring posterior predictive checks</strong>: A high likelihood value does not guarantee model adequacy. Generate replicated data and compare to observed summaries.</p></li>
+<li><p><strong>Trusting diagnostics without thought</strong>: High <span class="math inline">\(\hat{R}\)</span> and large ESS are necessary but not sufficient. Check trace plots, residual patterns, and posterior predictive checks for deeper assessment.</p></li>
+</ol>
+</div>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span><strong>Best practices</strong>:</p>
+<ul>
+<li><strong>Center or standardize predictors</strong> before fitting to reduce collinearity and improve MCMC mixing. A unit increase in a centered <span class="math inline">\(x\)</span> is meaningful and comparable across covariates.</li>
+<li><strong>Visualize the fitted curve</strong> with uncertainty bands overlaid on the data. This reveals whether the model captures the dominant patterns.</li>
+<li><strong>Use weakly informative priors</strong> that regularize without imposing strong prior beliefs. For coefficients on a standardized scale, <span class="math inline">\(\text{Normal}(0, 2)\)</span> or <span class="math inline">\(\text{Normal}(0, 3)\)</span> is reasonable.</li>
+<li><strong>Check trace plots</strong> for all parameters after sampling. Chains should mix well (no trending, not stuck, high autocorrelation).</li>
+<li><strong>Report both point and interval estimates</strong> and be explicit about the scale (log-odds, log-rate, probability, count).</li>
+<li><strong>Document the model specification</strong> (link function, prior, offset, if any) to enable reproducibility and interpretation.</li>
+</ul>
+</div>
+</section>
+<section id="conclusion" class="level2" data-number="14.13">
+<h2 data-number="14.13" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">14.13</span> Conclusion</h2>
+<p>Generalized linear models extend Bayesian regression to count, binary, and other non-Gaussian responses by:</p>
+<ul>
+<li>Specifying a response distribution from the exponential family (Poisson, Bernoulli, etc.).</li>
+<li>Connecting the mean to a linear predictor via a link function that respects parameter constraints.</li>
+<li>Inferring the linear coefficients while propagating uncertainty through the posterior.</li>
+</ul>
+<p>The three ingredients—random component, linear predictor, and link function—unify a diverse set of regression tasks under one framework. Logistic regression models probabilities; Poisson regression models rates and counts; gamma and inverse-Gaussian regressions model positive continuous data. MCMC and probabilistic programming allow flexible, fully Bayesian inference, with posterior checks guiding model refinement.</p>
+</section>
+<section id="sources" class="level2" data-number="14.14">
+<h2 data-number="14.14" class="anchored" data-anchor-id="sources"><span class="header-section-number">14.14</span> Sources</h2>
+<ul>
+<li>Sivia, D.S., &amp; Skilling, J. (2006). <em>Data analysis: A Bayesian tutorial for scientists and engineers.</em> Oxford University Press. [Chapter 8: Model fitting.]</li>
+<li>McCullagh, P., &amp; Nelder, J.A. (1989). <em>Generalized linear models</em> (2nd ed.). Chapman &amp; Hall. [Classic reference; foundational theory of GLMs.]</li>
+<li>Gelman, A., Hill, J., Vehtari, A., &amp; Burkner, P.C. (2020). <em>Regression and other stories.</em> Cambridge University Press. [Modern Bayesian regression, GLMs, and causal inference.]</li>
+<li>Stan Development Team (2023). <em>Stan User’s Guide</em>. [Probabilistic programming; chapters on GLMs and efficient computation.]</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/12_probabilistic_programming.html" class="pagination-link" aria-label="Probabilistic programming: JAGS, Stan, ADVI">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/99_appendix_source_code.html" class="pagination-link" aria-label="Appendix: Source code">
+        <span class="nav-page-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Appendix: Source code</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb9" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Generalized linear models"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction: When linear regression fails</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>Classical Gaussian linear regression assumes that the response variable $y_i$ is continuous and approximately normally distributed with mean $\mu_i = f(x_i; \beta)$ and constant variance $\sigma^2$. This assumption works well for many physical measurements with small, additive noise.</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>However, in many experiments we encounter response variables that violate this assumption fundamentally:</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Count data**: number of detected photons in a time window, decay events in a bin, or success counts in repeated trials. These are non-negative integers with variance proportional to the mean, not constant.</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Binary outcomes**: detection (yes/no), selection success (pass/fail), or signal presence (present/absent). The mean must lie in $(0,1)$ to represent a probability.</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Positive-only data**: time-to-event, energy, or rate parameters. The mean must be strictly positive.</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>Fitting a standard linear model $y_i \sim N(\beta_0 + \beta_1 x_i, \sigma^2)$ to such data produces:</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Invalid predictions**: fitted means may fall outside the natural parameter space (e.g., negative counts or probabilities outside $<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$).</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Incorrect uncertainty quantification**: constant-variance assumptions badly misrepresent the variability structure of heteroscedastic responses.</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Biased inference**: parameter estimates become inefficient and confidence intervals lose their intended coverage.</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>**Generalized linear models** extend regression to non-Gaussian responses by replacing the normality assumption with a member of the exponential family and introducing a **link function** that maps the linear predictor onto the valid parameter space.</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## The three ingredients of a GLM</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>A generalized linear model comprises three interconnected components:</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>**Definition (GLM structure)**: A generalized linear model for observations $y_1, \ldots, y_N$ is specified by:</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Random component**: $y_i \mid \theta_i \sim p(y_i; \theta_i)$, where $p$ belongs to an exponential-family distribution parameterized by a natural parameter $\theta_i$.</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Systematic component**: a linear predictor</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>   $$\eta_i = \beta_0 + \beta_1 x_{i,1} + \cdots + \beta_p x_{i,p} = \mathbf{x}_i^\top \boldsymbol{\beta},$$</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>   where $\boldsymbol{\beta}$ is a vector of regression coefficients and $\mathbf{x}_i$ is the design vector for observation $i$.</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Link function**: a smooth, invertible function $g(\cdot)$ that relates the mean $\mu_i = \mathbb{E}<span class="co">[</span><span class="ot">y_i \mid \mathbf{x}_i</span><span class="co">]</span>$ to the linear predictor:</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>   $$g(\mu_i) = \eta_i, \quad \text{equivalently} \quad \mu_i = g^{-1}(\eta_i).$$</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>   The inverse link, $g^{-1}$, is called the **mean function**.</span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>The link function ensures that even though $\eta_i$ can take any real value, the predicted mean $\mu_i = g^{-1}(\eta_i)$ respects the constraints of the response distribution.</span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## The exponential family and canonical form</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>The exponential family is a large class of distributions sharing a common parameterization that unifies likelihood inference for GLMs.</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>:::{.definition}</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>**Definition (Exponential family canonical form)**: A probability distribution for $y$ belongs to the exponential family if it can be written as</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>$$p(y; \theta, \phi) = h(y, \phi) \exp\left(\frac{\theta y - A(\theta)}{\phi}\right),$$</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>where:</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\theta$ is the **natural parameter** (or canonical parameter).</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\phi &gt; 0$ is the **dispersion parameter**, often related to variance.</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$A(\theta)$ is the **cumulant function** or **log-partition function**.</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$h(y, \phi)$ is the **base measure** (carries $y$-dependent normalization and $\phi$ terms not involving $\theta$).</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>The term $A(\theta)$ ensures the distribution integrates or sums to one.</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a>:::{.theorem}</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>**Theorem (Moment relations)**: For a distribution in exponential-family form,</span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a>$$\mathbb{E}<span class="co">[</span><span class="ot">y</span><span class="co">]</span> = A'(\theta), \quad \mathrm{Var}(y) = \phi \cdot A''(\theta).$$</span>
+<span id="cb9-62"><a href="#cb9-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-63"><a href="#cb9-63" aria-hidden="true" tabindex="-1"></a>**Proof sketch**: The log-likelihood is $\ell(\theta; y) = \theta y - A(\theta) + \text{const}$. The score is $\frac{\partial \ell}{\partial \theta} = y - A'(\theta)$. Setting $\mathbb{E}<span class="co">[</span><span class="ot">\text{score}</span><span class="co">]</span> = 0$ gives $\mathbb{E}<span class="co">[</span><span class="ot">y</span><span class="co">]</span> = A'(\theta)$. The variance follows from the Hessian of $\ell$.</span>
+<span id="cb9-64"><a href="#cb9-64" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-65"><a href="#cb9-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-66"><a href="#cb9-66" aria-hidden="true" tabindex="-1"></a>These moment relations are powerful: they immediately connect the natural parameter $\theta$ to the mean $\mu$ and relate the mean to the variance through $A''(\theta)$.</span>
+<span id="cb9-67"><a href="#cb9-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-68"><a href="#cb9-68" aria-hidden="true" tabindex="-1"></a><span class="fu">## Canonical links and the link-function table</span></span>
+<span id="cb9-69"><a href="#cb9-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-70"><a href="#cb9-70" aria-hidden="true" tabindex="-1"></a>A **canonical link** is the link function such that $g(\mu) = \theta$. For canonical links, the natural parameter equals the linear predictor directly, which simplifies both interpretation and computation (the sufficient statistics for $\boldsymbol{\beta}$ are linear in the data).</span>
+<span id="cb9-71"><a href="#cb9-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-72"><a href="#cb9-72" aria-hidden="true" tabindex="-1"></a>The following table summarizes the most common GLM families used in practice:</span>
+<span id="cb9-73"><a href="#cb9-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-74"><a href="#cb9-74" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Distribution <span class="pp">|</span> $A(\theta)$ <span class="pp">|</span> $\theta = g(\mu)$ (canonical) <span class="pp">|</span> $g^{-1}(\eta)$ (inverse link) <span class="pp">|</span> Constraint <span class="pp">|</span></span>
+<span id="cb9-75"><a href="#cb9-75" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|---|---|---|</span></span>
+<span id="cb9-76"><a href="#cb9-76" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Gaussian** <span class="pp">|</span> $\theta^2/2$ <span class="pp">|</span> $\mu$ <span class="pp">|</span> $\eta$ <span class="pp">|</span> $\mu \in \mathbb{R}$ <span class="pp">|</span></span>
+<span id="cb9-77"><a href="#cb9-77" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Bernoulli** <span class="pp">|</span> $\log(1 + e^\theta)$ <span class="pp">|</span> $\log\frac{\mu}{1-\mu}$ (logit) <span class="pp">|</span> $\frac{1}{1+e^{-\eta}}$ <span class="pp">|</span> $\mu \in (0,1)$ <span class="pp">|</span></span>
+<span id="cb9-78"><a href="#cb9-78" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Poisson** <span class="pp">|</span> $e^\theta$ <span class="pp">|</span> $\log \mu$ <span class="pp">|</span> $e^\eta$ <span class="pp">|</span> $\mu &gt; 0$ <span class="pp">|</span></span>
+<span id="cb9-79"><a href="#cb9-79" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Gamma** <span class="pp">|</span> $-\log(-\theta)$ <span class="pp">|</span> $-1/\mu$ <span class="pp">|</span> $-1/\eta$ <span class="pp">|</span> $\mu &gt; 0$ <span class="pp">|</span></span>
+<span id="cb9-80"><a href="#cb9-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-81"><a href="#cb9-81" aria-hidden="true" tabindex="-1"></a>: **Table: Exponential families and canonical links** {#tbl-canonical}</span>
+<span id="cb9-82"><a href="#cb9-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-83"><a href="#cb9-83" aria-hidden="true" tabindex="-1"></a><span class="fu">## Logistic regression: Bernoulli response</span></span>
+<span id="cb9-84"><a href="#cb9-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-85"><a href="#cb9-85" aria-hidden="true" tabindex="-1"></a><span class="fu">### Model and likelihood</span></span>
+<span id="cb9-86"><a href="#cb9-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-87"><a href="#cb9-87" aria-hidden="true" tabindex="-1"></a>Logistic regression models a **binary response** $y_i \in <span class="sc">\{</span>0, 1<span class="sc">\}</span>$ as a Bernoulli trial:</span>
+<span id="cb9-88"><a href="#cb9-88" aria-hidden="true" tabindex="-1"></a>$$y_i \mid \pi_i \sim \text{Bernoulli}(\pi_i),$$</span>
+<span id="cb9-89"><a href="#cb9-89" aria-hidden="true" tabindex="-1"></a>where $\pi_i = \Pr(y_i = 1 \mid \mathbf{x}_i)$ is the success probability.</span>
+<span id="cb9-90"><a href="#cb9-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-91"><a href="#cb9-91" aria-hidden="true" tabindex="-1"></a>The Bernoulli distribution has mean $\mu_i = \pi_i$ and variance $\pi_i(1 - \pi_i)$. The cumulant function is $A(\theta) = \log(1 + e^\theta)$, so the canonical link is the **logit**:</span>
+<span id="cb9-92"><a href="#cb9-92" aria-hidden="true" tabindex="-1"></a>$$g(\pi_i) = \log\frac{\pi_i}{1 - \pi_i} = \eta_i = \mathbf{x}_i^\top \boldsymbol{\beta}.$$</span>
+<span id="cb9-93"><a href="#cb9-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-94"><a href="#cb9-94" aria-hidden="true" tabindex="-1"></a>The **inverse logit** or **logistic function** recovers the probability:</span>
+<span id="cb9-95"><a href="#cb9-95" aria-hidden="true" tabindex="-1"></a>$$\pi_i = \sigma(\eta_i) = \frac{1}{1 + e^{-\eta_i}}.$$</span>
+<span id="cb9-96"><a href="#cb9-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-97"><a href="#cb9-97" aria-hidden="true" tabindex="-1"></a>The likelihood for $N$ independent observations is</span>
+<span id="cb9-98"><a href="#cb9-98" aria-hidden="true" tabindex="-1"></a>$$p(D \mid \boldsymbol{\beta}) = \prod_{i=1}^{N} \pi_i^{y_i} (1 - \pi_i)^{1 - y_i},$$</span>
+<span id="cb9-99"><a href="#cb9-99" aria-hidden="true" tabindex="-1"></a>with log-likelihood</span>
+<span id="cb9-100"><a href="#cb9-100" aria-hidden="true" tabindex="-1"></a>$$\ell(\boldsymbol{\beta}; D) = \sum_{i=1}^{N} \left<span class="co">[</span><span class="ot"> y_i \eta_i - \log(1 + e^{\eta_i}) \right</span><span class="co">]</span>.$$</span>
+<span id="cb9-101"><a href="#cb9-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-102"><a href="#cb9-102" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpretation: log-odds and odds ratios</span></span>
+<span id="cb9-103"><a href="#cb9-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-104"><a href="#cb9-104" aria-hidden="true" tabindex="-1"></a>The logit transforms the probability $\pi$ into the **log-odds**. The **odds** are $\frac{\pi}{1-\pi}$, the ratio of success to failure probability. Logistic regression is linear on the log-odds scale:</span>
+<span id="cb9-105"><a href="#cb9-105" aria-hidden="true" tabindex="-1"></a>$$\log\frac{\pi_i}{1-\pi_i} = \beta_0 + \beta_1 x_{i,1} + \cdots.$$</span>
+<span id="cb9-106"><a href="#cb9-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-107"><a href="#cb9-107" aria-hidden="true" tabindex="-1"></a>A one-unit increase in $x_j$ changes the log-odds by $\beta_j$, or equivalently, **multiplies the odds by $e^{\beta_j}$**. If $\beta_1 = 0.5$, a one-unit increase in $x_1$ multiplies the odds of success by $e^{0.5} \approx 1.65$.</span>
+<span id="cb9-108"><a href="#cb9-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-109"><a href="#cb9-109" aria-hidden="true" tabindex="-1"></a>The change in probability is nonlinear: the same increase in $x$ produces a larger change in $\pi$ near $\pi = 0.5$ and smaller changes near 0 or 1.</span>
+<span id="cb9-110"><a href="#cb9-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-111"><a href="#cb9-111" aria-hidden="true" tabindex="-1"></a><span class="fu">### Logistic function visualization</span></span>
+<span id="cb9-112"><a href="#cb9-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-115"><a href="#cb9-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb9-116"><a href="#cb9-116" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-logistic-function</span></span>
+<span id="cb9-117"><a href="#cb9-117" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Logistic function"</span></span>
+<span id="cb9-118"><a href="#cb9-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The logistic function $\\sigma(\\eta) = 1/(1+\\exp(-\\eta))$."</span></span>
+<span id="cb9-119"><a href="#cb9-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-120"><a href="#cb9-120" aria-hidden="true" tabindex="-1"></a>eta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">6</span>, <span class="dv">6</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb9-121"><a href="#cb9-121" aria-hidden="true" tabindex="-1"></a>pi <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>eta))</span>
+<span id="cb9-122"><a href="#cb9-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-123"><a href="#cb9-123" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(eta, pi, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"black"</span>,</span>
+<span id="cb9-124"><a href="#cb9-124" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(eta), <span class="at">ylab =</span> <span class="fu">expression</span>(pi),</span>
+<span id="cb9-125"><a href="#cb9-125" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb9-126"><a href="#cb9-126" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"gray80"</span>)</span>
+<span id="cb9-127"><a href="#cb9-127" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="fl">0.5</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray40"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>)</span>
+<span id="cb9-128"><a href="#cb9-128" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="dv">0</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"gray40"</span>, <span class="at">lwd =</span> <span class="fl">1.5</span>)</span>
+<span id="cb9-129"><a href="#cb9-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-130"><a href="#cb9-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-131"><a href="#cb9-131" aria-hidden="true" tabindex="-1"></a><span class="fu">## Poisson regression: Count response</span></span>
+<span id="cb9-132"><a href="#cb9-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-133"><a href="#cb9-133" aria-hidden="true" tabindex="-1"></a><span class="fu">### Model and likelihood</span></span>
+<span id="cb9-134"><a href="#cb9-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-135"><a href="#cb9-135" aria-hidden="true" tabindex="-1"></a>Poisson regression models **count data** $y_i \in <span class="sc">\{</span>0, 1, 2, \ldots<span class="sc">\}</span>$ as a Poisson distribution:</span>
+<span id="cb9-136"><a href="#cb9-136" aria-hidden="true" tabindex="-1"></a>$$y_i \mid \lambda_i \sim \text{Poisson}(\lambda_i),$$</span>
+<span id="cb9-137"><a href="#cb9-137" aria-hidden="true" tabindex="-1"></a>where $\lambda_i &gt; 0$ is the expected count or rate. Both mean and variance equal $\lambda_i$: $\mathbb{E}<span class="co">[</span><span class="ot">y_i</span><span class="co">]</span> = \mathrm{Var}(y_i) = \lambda_i$.</span>
+<span id="cb9-138"><a href="#cb9-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-139"><a href="#cb9-139" aria-hidden="true" tabindex="-1"></a>The cumulant function is $A(\theta) = e^\theta$, and the canonical link is the **log link**:</span>
+<span id="cb9-140"><a href="#cb9-140" aria-hidden="true" tabindex="-1"></a>$$g(\lambda_i) = \log \lambda_i = \eta_i = \beta_0 + \beta_1 x_{i,1} + \cdots,$$</span>
+<span id="cb9-141"><a href="#cb9-141" aria-hidden="true" tabindex="-1"></a>so $\lambda_i = e^{\eta_i}$.</span>
+<span id="cb9-142"><a href="#cb9-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-143"><a href="#cb9-143" aria-hidden="true" tabindex="-1"></a>The Poisson likelihood is</span>
+<span id="cb9-144"><a href="#cb9-144" aria-hidden="true" tabindex="-1"></a>$$p(D \mid \boldsymbol{\beta}) = \prod_{i=1}^{N} \frac{\lambda_i^{y_i} e^{-\lambda_i}}{y_i!},$$</span>
+<span id="cb9-145"><a href="#cb9-145" aria-hidden="true" tabindex="-1"></a>with log-likelihood</span>
+<span id="cb9-146"><a href="#cb9-146" aria-hidden="true" tabindex="-1"></a>$$\ell(\boldsymbol{\beta}; D) = \sum_{i=1}^{N} \left<span class="co">[</span><span class="ot"> y_i \log \lambda_i - \lambda_i - \log(y_i!) \right</span><span class="co">]</span>.$$</span>
+<span id="cb9-147"><a href="#cb9-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-148"><a href="#cb9-148" aria-hidden="true" tabindex="-1"></a><span class="fu">### Interpretation: exponential effects</span></span>
+<span id="cb9-149"><a href="#cb9-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-150"><a href="#cb9-150" aria-hidden="true" tabindex="-1"></a>The log link means that coefficients have **exponential interpretation**. A one-unit increase in $x_j$ multiplies the expected count by $e^{\beta_j}$:</span>
+<span id="cb9-151"><a href="#cb9-151" aria-hidden="true" tabindex="-1"></a>$$\frac{\lambda(x_j + 1)}{\lambda(x_j)} = e^{\beta_j}.$$</span>
+<span id="cb9-152"><a href="#cb9-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-153"><a href="#cb9-153" aria-hidden="true" tabindex="-1"></a>If $\beta_1 = 0.3$, then increasing $x_1$ by one unit multiplies the expected count by $e^{0.3} \approx 1.35$, a 35\% increase.</span>
+<span id="cb9-154"><a href="#cb9-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-155"><a href="#cb9-155" aria-hidden="true" tabindex="-1"></a><span class="fu">### Offsets and exposure</span></span>
+<span id="cb9-156"><a href="#cb9-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-157"><a href="#cb9-157" aria-hidden="true" tabindex="-1"></a>In many applications, observations have different **exposure times** or **bin widths**. For example, detector data collected over different durations $E_i$. The expected count scales with exposure: $\lambda_i = E_i r_i$, where $r_i$ is the event rate.</span>
+<span id="cb9-158"><a href="#cb9-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-159"><a href="#cb9-159" aria-hidden="true" tabindex="-1"></a>Using the log link,</span>
+<span id="cb9-160"><a href="#cb9-160" aria-hidden="true" tabindex="-1"></a>$$\log \lambda_i = \log(E_i r_i) = \log E_i + \log r_i = \log E_i + \eta_i,$$</span>
+<span id="cb9-161"><a href="#cb9-161" aria-hidden="true" tabindex="-1"></a>where $\eta_i = \beta_0 + \beta_1 x_{i,1} + \cdots$. The term $\log E_i$ is a known **offset**, a coefficient fixed at 1.</span>
+<span id="cb9-162"><a href="#cb9-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-163"><a href="#cb9-163" aria-hidden="true" tabindex="-1"></a>In Stan or R, specify <span class="in">`log(exposure) + w0 + w1*x`</span> in the linear predictor; the software interprets the known contribution separately.</span>
+<span id="cb9-164"><a href="#cb9-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-165"><a href="#cb9-165" aria-hidden="true" tabindex="-1"></a><span class="fu">### Simulated Poisson regression example</span></span>
+<span id="cb9-166"><a href="#cb9-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-169"><a href="#cb9-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb9-170"><a href="#cb9-170" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-poisson-sim</span></span>
+<span id="cb9-171"><a href="#cb9-171" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Poisson sim"</span></span>
+<span id="cb9-172"><a href="#cb9-172" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Simulated Poisson regression data and fitted rate curve."</span></span>
+<span id="cb9-173"><a href="#cb9-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-174"><a href="#cb9-174" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">101</span>)</span>
+<span id="cb9-175"><a href="#cb9-175" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">30</span></span>
+<span id="cb9-176"><a href="#cb9-176" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="at">length.out =</span> N)</span>
+<span id="cb9-177"><a href="#cb9-177" aria-hidden="true" tabindex="-1"></a>w0_true <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb9-178"><a href="#cb9-178" aria-hidden="true" tabindex="-1"></a>w1_true <span class="ot">&lt;-</span> <span class="fl">0.35</span></span>
+<span id="cb9-179"><a href="#cb9-179" aria-hidden="true" tabindex="-1"></a>eta <span class="ot">&lt;-</span> w0_true <span class="sc">+</span> w1_true <span class="sc">*</span> x</span>
+<span id="cb9-180"><a href="#cb9-180" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="fu">exp</span>(eta)</span>
+<span id="cb9-181"><a href="#cb9-181" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rpois</span>(N, <span class="at">lambda =</span> lambda)</span>
+<span id="cb9-182"><a href="#cb9-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-183"><a href="#cb9-183" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">xlab =</span> <span class="st">"x"</span>, <span class="at">ylab =</span> <span class="st">"count"</span>,</span>
+<span id="cb9-184"><a href="#cb9-184" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(y) <span class="sc">*</span> <span class="fl">1.1</span>), <span class="at">cex =</span> <span class="fl">0.9</span>, <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb9-185"><a href="#cb9-185" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, lambda, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>)</span>
+<span id="cb9-186"><a href="#cb9-186" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"gray80"</span>)</span>
+<span id="cb9-187"><a href="#cb9-187" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"observed"</span>, <span class="st">"true rate"</span>),</span>
+<span id="cb9-188"><a href="#cb9-188" aria-hidden="true" tabindex="-1"></a>       <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">19</span>, <span class="cn">NA</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">1</span>), <span class="at">lwd =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="fl">2.5</span>),</span>
+<span id="cb9-189"><a href="#cb9-189" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"#b8123e"</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb9-190"><a href="#cb9-190" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-191"><a href="#cb9-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-192"><a href="#cb9-192" aria-hidden="true" tabindex="-1"></a><span class="fu">### Overdispersion and negative binomial extension</span></span>
+<span id="cb9-193"><a href="#cb9-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-194"><a href="#cb9-194" aria-hidden="true" tabindex="-1"></a>A fundamental property of the Poisson is that **variance equals the mean**. In real count data, the variance often exceeds the mean—a phenomenon called **overdispersion**. Causes include:</span>
+<span id="cb9-195"><a href="#cb9-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-196"><a href="#cb9-196" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Unobserved heterogeneity: different subgroups have different rates.</span>
+<span id="cb9-197"><a href="#cb9-197" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Clustering: observations within groups are not independent.</span>
+<span id="cb9-198"><a href="#cb9-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Extra-Poisson variability: a genuine excess beyond Poisson noise.</span>
+<span id="cb9-199"><a href="#cb9-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-200"><a href="#cb9-200" aria-hidden="true" tabindex="-1"></a>:::{.proposition}</span>
+<span id="cb9-201"><a href="#cb9-201" aria-hidden="true" tabindex="-1"></a>**Overdispersion test**: Compute $\hat{\lambda}$ from fitted Poisson regression. If the sample variance of residuals $\sum_i (y_i - \hat{\lambda}_i)^2 / (N - p)$ is much larger than the average fitted rate, overdispersion is present.</span>
+<span id="cb9-202"><a href="#cb9-202" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-203"><a href="#cb9-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-204"><a href="#cb9-204" aria-hidden="true" tabindex="-1"></a>The **negative binomial** distribution extends Poisson regression by adding a shape parameter $\phi$ that allows variance to exceed the mean:</span>
+<span id="cb9-205"><a href="#cb9-205" aria-hidden="true" tabindex="-1"></a>$$\mathrm{Var}(y_i) = \lambda_i + \frac{\lambda_i^2}{\phi}.$$</span>
+<span id="cb9-206"><a href="#cb9-206" aria-hidden="true" tabindex="-1"></a>As $\phi \to \infty$, the negative binomial approaches Poisson. A negative-binomial GLM is fitted similarly to Poisson but with an additional dispersion parameter to estimate.</span>
+<span id="cb9-207"><a href="#cb9-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-208"><a href="#cb9-208" aria-hidden="true" tabindex="-1"></a><span class="fu">## Illustration: link functions</span></span>
+<span id="cb9-209"><a href="#cb9-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-210"><a href="#cb9-210" aria-hidden="true" tabindex="-1"></a>The choice of link function transforms the linear predictor onto the appropriate scale. Here we compare logit (for Bernoulli) and log (for Poisson) side by side:</span>
+<span id="cb9-211"><a href="#cb9-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-214"><a href="#cb9-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb9-215"><a href="#cb9-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-link-comparison</span></span>
+<span id="cb9-216"><a href="#cb9-216" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Link comparison"</span></span>
+<span id="cb9-217"><a href="#cb9-217" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Canonical link functions: logit maps $\\eta$ to $(0,1)$ for probabilities; log maps $\\eta$ to $(0, \\infty)$ for rates."</span></span>
+<span id="cb9-218"><a href="#cb9-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-219"><a href="#cb9-219" aria-hidden="true" tabindex="-1"></a>eta_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="at">length.out =</span> <span class="dv">200</span>)</span>
+<span id="cb9-220"><a href="#cb9-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-221"><a href="#cb9-221" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">1</span>))</span>
+<span id="cb9-222"><a href="#cb9-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-223"><a href="#cb9-223" aria-hidden="true" tabindex="-1"></a><span class="co"># Logit (inverse)</span></span>
+<span id="cb9-224"><a href="#cb9-224" aria-hidden="true" tabindex="-1"></a>pi <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(<span class="sc">-</span>eta_seq))</span>
+<span id="cb9-225"><a href="#cb9-225" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(eta_seq, pi, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>,</span>
+<span id="cb9-226"><a href="#cb9-226" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(eta), <span class="at">ylab =</span> <span class="fu">expression</span>(mu),</span>
+<span id="cb9-227"><a href="#cb9-227" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Logit inverse link"</span>, <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb9-228"><a href="#cb9-228" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"gray80"</span>)</span>
+<span id="cb9-229"><a href="#cb9-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-230"><a href="#cb9-230" aria-hidden="true" tabindex="-1"></a><span class="co"># Log (inverse)</span></span>
+<span id="cb9-231"><a href="#cb9-231" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="fu">exp</span>(eta_seq)</span>
+<span id="cb9-232"><a href="#cb9-232" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(eta_seq, lambda, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>,</span>
+<span id="cb9-233"><a href="#cb9-233" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="fu">expression</span>(eta), <span class="at">ylab =</span> <span class="fu">expression</span>(mu),</span>
+<span id="cb9-234"><a href="#cb9-234" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Log inverse link"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">55</span>), <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb9-235"><a href="#cb9-235" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"gray80"</span>)</span>
+<span id="cb9-236"><a href="#cb9-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-237"><a href="#cb9-237" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb9-238"><a href="#cb9-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-239"><a href="#cb9-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-240"><a href="#cb9-240" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bayesian inference via MCMC</span></span>
+<span id="cb9-241"><a href="#cb9-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-242"><a href="#cb9-242" aria-hidden="true" tabindex="-1"></a>Frequentist GLMs are typically fitted by maximum likelihood using iteratively reweighted least squares (IRLS). The Bayesian approach places a prior on the coefficients and explores the posterior via Markov chain Monte Carlo.</span>
+<span id="cb9-243"><a href="#cb9-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-244"><a href="#cb9-244" aria-hidden="true" tabindex="-1"></a><span class="fu">### Logistic regression in Stan</span></span>
+<span id="cb9-245"><a href="#cb9-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-246"><a href="#cb9-246" aria-hidden="true" tabindex="-1"></a>The following Stan model fits logistic regression with weakly informative normal priors:</span>
+<span id="cb9-247"><a href="#cb9-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-248"><a href="#cb9-248" aria-hidden="true" tabindex="-1"></a><span class="in">```stan</span></span>
+<span id="cb9-249"><a href="#cb9-249" aria-hidden="true" tabindex="-1"></a><span class="in">data {</span></span>
+<span id="cb9-250"><a href="#cb9-250" aria-hidden="true" tabindex="-1"></a><span class="in">  int&lt;lower=1&gt; N;</span></span>
+<span id="cb9-251"><a href="#cb9-251" aria-hidden="true" tabindex="-1"></a><span class="in">  vector[N] x;</span></span>
+<span id="cb9-252"><a href="#cb9-252" aria-hidden="true" tabindex="-1"></a><span class="in">  array[N] int&lt;lower=0, upper=1&gt; y;</span></span>
+<span id="cb9-253"><a href="#cb9-253" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb9-254"><a href="#cb9-254" aria-hidden="true" tabindex="-1"></a><span class="in">parameters {</span></span>
+<span id="cb9-255"><a href="#cb9-255" aria-hidden="true" tabindex="-1"></a><span class="in">  real w0;</span></span>
+<span id="cb9-256"><a href="#cb9-256" aria-hidden="true" tabindex="-1"></a><span class="in">  real w1;</span></span>
+<span id="cb9-257"><a href="#cb9-257" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb9-258"><a href="#cb9-258" aria-hidden="true" tabindex="-1"></a><span class="in">model {</span></span>
+<span id="cb9-259"><a href="#cb9-259" aria-hidden="true" tabindex="-1"></a><span class="in">  w0 ~ normal(0, 5);</span></span>
+<span id="cb9-260"><a href="#cb9-260" aria-hidden="true" tabindex="-1"></a><span class="in">  w1 ~ normal(0, 5);</span></span>
+<span id="cb9-261"><a href="#cb9-261" aria-hidden="true" tabindex="-1"></a><span class="in">  y ~ bernoulli_logit(w0 + w1 * x);</span></span>
+<span id="cb9-262"><a href="#cb9-262" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb9-263"><a href="#cb9-263" aria-hidden="true" tabindex="-1"></a><span class="in">generated quantities {</span></span>
+<span id="cb9-264"><a href="#cb9-264" aria-hidden="true" tabindex="-1"></a><span class="in">  array[N] int y_rep;</span></span>
+<span id="cb9-265"><a href="#cb9-265" aria-hidden="true" tabindex="-1"></a><span class="in">  for (i in 1:N) {</span></span>
+<span id="cb9-266"><a href="#cb9-266" aria-hidden="true" tabindex="-1"></a><span class="in">    y_rep[i] = bernoulli_logit_rng(w0 + w1 * x[i]);</span></span>
+<span id="cb9-267"><a href="#cb9-267" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb9-268"><a href="#cb9-268" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb9-269"><a href="#cb9-269" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-270"><a href="#cb9-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-271"><a href="#cb9-271" aria-hidden="true" tabindex="-1"></a>Stan's <span class="in">`bernoulli_logit`</span> function is numerically stable; it computes the log-likelihood directly without forming $\pi_i$ explicitly.</span>
+<span id="cb9-272"><a href="#cb9-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-273"><a href="#cb9-273" aria-hidden="true" tabindex="-1"></a><span class="fu">### Poisson regression in Stan</span></span>
+<span id="cb9-274"><a href="#cb9-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-275"><a href="#cb9-275" aria-hidden="true" tabindex="-1"></a><span class="in">```stan</span></span>
+<span id="cb9-276"><a href="#cb9-276" aria-hidden="true" tabindex="-1"></a><span class="in">data {</span></span>
+<span id="cb9-277"><a href="#cb9-277" aria-hidden="true" tabindex="-1"></a><span class="in">  int&lt;lower=1&gt; N;</span></span>
+<span id="cb9-278"><a href="#cb9-278" aria-hidden="true" tabindex="-1"></a><span class="in">  vector[N] x;</span></span>
+<span id="cb9-279"><a href="#cb9-279" aria-hidden="true" tabindex="-1"></a><span class="in">  array[N] int&lt;lower=0&gt; y;</span></span>
+<span id="cb9-280"><a href="#cb9-280" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb9-281"><a href="#cb9-281" aria-hidden="true" tabindex="-1"></a><span class="in">parameters {</span></span>
+<span id="cb9-282"><a href="#cb9-282" aria-hidden="true" tabindex="-1"></a><span class="in">  real w0;</span></span>
+<span id="cb9-283"><a href="#cb9-283" aria-hidden="true" tabindex="-1"></a><span class="in">  real w1;</span></span>
+<span id="cb9-284"><a href="#cb9-284" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb9-285"><a href="#cb9-285" aria-hidden="true" tabindex="-1"></a><span class="in">model {</span></span>
+<span id="cb9-286"><a href="#cb9-286" aria-hidden="true" tabindex="-1"></a><span class="in">  w0 ~ normal(0, 5);</span></span>
+<span id="cb9-287"><a href="#cb9-287" aria-hidden="true" tabindex="-1"></a><span class="in">  w1 ~ normal(0, 5);</span></span>
+<span id="cb9-288"><a href="#cb9-288" aria-hidden="true" tabindex="-1"></a><span class="in">  y ~ poisson_log(w0 + w1 * x);</span></span>
+<span id="cb9-289"><a href="#cb9-289" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb9-290"><a href="#cb9-290" aria-hidden="true" tabindex="-1"></a><span class="in">generated quantities {</span></span>
+<span id="cb9-291"><a href="#cb9-291" aria-hidden="true" tabindex="-1"></a><span class="in">  array[N] int y_rep;</span></span>
+<span id="cb9-292"><a href="#cb9-292" aria-hidden="true" tabindex="-1"></a><span class="in">  for (i in 1:N) {</span></span>
+<span id="cb9-293"><a href="#cb9-293" aria-hidden="true" tabindex="-1"></a><span class="in">    y_rep[i] = poisson_log_rng(w0 + w1 * x[i]);</span></span>
+<span id="cb9-294"><a href="#cb9-294" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb9-295"><a href="#cb9-295" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb9-296"><a href="#cb9-296" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-297"><a href="#cb9-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-298"><a href="#cb9-298" aria-hidden="true" tabindex="-1"></a>The <span class="in">`poisson_log`</span> function computes the Poisson likelihood with log link: given $\eta = w_0 + w_1 x$, it increments log-probability by $y \eta - e^\eta - \log(y!)$. The generated quantities block produces posterior predictive replicates for model checking.</span>
+<span id="cb9-299"><a href="#cb9-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-300"><a href="#cb9-300" aria-hidden="true" tabindex="-1"></a><span class="fu">### Fitted logistic regression example</span></span>
+<span id="cb9-301"><a href="#cb9-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-304"><a href="#cb9-304" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb9-305"><a href="#cb9-305" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-logistic-fit</span></span>
+<span id="cb9-306"><a href="#cb9-306" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Logistic fit"</span></span>
+<span id="cb9-307"><a href="#cb9-307" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Simulated binary data (0/1 points) with fitted logistic curve."</span></span>
+<span id="cb9-308"><a href="#cb9-308" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-309"><a href="#cb9-309" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">202</span>)</span>
+<span id="cb9-310"><a href="#cb9-310" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">80</span></span>
+<span id="cb9-311"><a href="#cb9-311" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">4</span>, <span class="dv">4</span>, <span class="at">length.out =</span> N)</span>
+<span id="cb9-312"><a href="#cb9-312" aria-hidden="true" tabindex="-1"></a>w0_true <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">0.4</span></span>
+<span id="cb9-313"><a href="#cb9-313" aria-hidden="true" tabindex="-1"></a>w1_true <span class="ot">&lt;-</span> <span class="fl">1.2</span></span>
+<span id="cb9-314"><a href="#cb9-314" aria-hidden="true" tabindex="-1"></a>eta <span class="ot">&lt;-</span> w0_true <span class="sc">+</span> w1_true <span class="sc">*</span> x</span>
+<span id="cb9-315"><a href="#cb9-315" aria-hidden="true" tabindex="-1"></a>pi <span class="ot">&lt;-</span> <span class="fu">plogis</span>(eta)  <span class="co"># 1 / (1 + exp(-eta))</span></span>
+<span id="cb9-316"><a href="#cb9-316" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(N, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> pi)</span>
+<span id="cb9-317"><a href="#cb9-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-318"><a href="#cb9-318" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"black"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.1</span>, <span class="fl">1.1</span>),</span>
+<span id="cb9-319"><a href="#cb9-319" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"x"</span>, <span class="at">ylab =</span> <span class="st">"y (0 or 1)"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">las =</span> <span class="dv">1</span>)</span>
+<span id="cb9-320"><a href="#cb9-320" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, pi, <span class="at">lwd =</span> <span class="fl">2.5</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>)</span>
+<span id="cb9-321"><a href="#cb9-321" aria-hidden="true" tabindex="-1"></a><span class="fu">grid</span>(<span class="at">col =</span> <span class="st">"gray80"</span>)</span>
+<span id="cb9-322"><a href="#cb9-322" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"observed"</span>, <span class="st">"true probability"</span>),</span>
+<span id="cb9-323"><a href="#cb9-323" aria-hidden="true" tabindex="-1"></a>       <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">19</span>, <span class="cn">NA</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">1</span>), <span class="at">lwd =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="fl">2.5</span>),</span>
+<span id="cb9-324"><a href="#cb9-324" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"black"</span>, <span class="st">"#b8123e"</span>), <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb9-325"><a href="#cb9-325" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-326"><a href="#cb9-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-327"><a href="#cb9-327" aria-hidden="true" tabindex="-1"></a><span class="fu">## Residual diagnostics and posterior predictive checks</span></span>
+<span id="cb9-328"><a href="#cb9-328" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-329"><a href="#cb9-329" aria-hidden="true" tabindex="-1"></a><span class="fu">### Deviance and residuals</span></span>
+<span id="cb9-330"><a href="#cb9-330" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-331"><a href="#cb9-331" aria-hidden="true" tabindex="-1"></a>In a fitted GLM, the **deviance** is twice the log-likelihood difference between the saturated model (one parameter per observation) and the fitted model:</span>
+<span id="cb9-332"><a href="#cb9-332" aria-hidden="true" tabindex="-1"></a>$$D = 2 \sum_{i=1}^{N} \left<span class="co">[</span><span class="ot"> \ell_{\text{sat}}(y_i) - \ell_{\text{fitted}}(\hat{\mu}_i, y_i) \right</span><span class="co">]</span>.$$</span>
+<span id="cb9-333"><a href="#cb9-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-334"><a href="#cb9-334" aria-hidden="true" tabindex="-1"></a>For logistic regression, this simplifies to a sum of log-likelihood comparisons; for Poisson, it involves Kullback–Leibler divergence between observed and fitted counts.</span>
+<span id="cb9-335"><a href="#cb9-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-336"><a href="#cb9-336" aria-hidden="true" tabindex="-1"></a>**Pearson residuals** scale differences by the estimated standard deviation:</span>
+<span id="cb9-337"><a href="#cb9-337" aria-hidden="true" tabindex="-1"></a>$$r_i^{\text{Pearson}} = \frac{y_i - \hat{\mu}_i}{\sqrt{\widehat{\mathrm{Var}}(y_i)}}.$$</span>
+<span id="cb9-338"><a href="#cb9-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-339"><a href="#cb9-339" aria-hidden="true" tabindex="-1"></a>In well-fitting models, Pearson residuals should be approximately standard normal. Large residuals flag individual observations that the model does not explain well.</span>
+<span id="cb9-340"><a href="#cb9-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-341"><a href="#cb9-341" aria-hidden="true" tabindex="-1"></a><span class="fu">### Posterior predictive checks</span></span>
+<span id="cb9-342"><a href="#cb9-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-343"><a href="#cb9-343" aria-hidden="true" tabindex="-1"></a>In Bayesian inference, we can generate **replicated data** $y_{\text{rep}}^{(s)}$ from the posterior predictive distribution for each MCMC draw $(s)$. By comparing summaries of observed data $y$ to summaries of replicated data, we can assess whether the model is plausible:</span>
+<span id="cb9-344"><a href="#cb9-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-345"><a href="#cb9-345" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Poisson**: Check the proportion of zeros, the maximum count, the ratio of variance to mean.</span>
+<span id="cb9-346"><a href="#cb9-346" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bernoulli**: Check the total number of successes, the success fraction in subgroups, the patterns of runs.</span>
+<span id="cb9-347"><a href="#cb9-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-348"><a href="#cb9-348" aria-hidden="true" tabindex="-1"></a>If the observed summary is consistently in the tail of the replicated-data distribution, the model misses important structure.</span>
+<span id="cb9-349"><a href="#cb9-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-350"><a href="#cb9-350" aria-hidden="true" tabindex="-1"></a><span class="fu">## Coefficient interpretation and prediction</span></span>
+<span id="cb9-351"><a href="#cb9-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-352"><a href="#cb9-352" aria-hidden="true" tabindex="-1"></a><span class="fu">### Logistic regression coefficients</span></span>
+<span id="cb9-353"><a href="#cb9-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-354"><a href="#cb9-354" aria-hidden="true" tabindex="-1"></a>In logistic regression with predictor $x_j$, a one-unit increase in $x_j$ (holding others fixed) changes the **odds** by a factor of $e^{\beta_j}$:</span>
+<span id="cb9-355"><a href="#cb9-355" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>If $\beta_j = 0.5$, the odds increase by a factor of $e^{0.5} \approx 1.65$ (65\% increase).</span>
+<span id="cb9-356"><a href="#cb9-356" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>If $\beta_j = -0.3$, the odds decrease by a factor of $e^{-0.3} \approx 0.74$ (26\% decrease).</span>
+<span id="cb9-357"><a href="#cb9-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-358"><a href="#cb9-358" aria-hidden="true" tabindex="-1"></a>The corresponding **probability** change depends on the current probability level. Near $\pi = 0.5$ (maximum sensitivity), a one-unit change in $x_j$ shifts $\pi$ by approximately $\beta_j / 4$. Near extreme probabilities, the shift is much smaller.</span>
+<span id="cb9-359"><a href="#cb9-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-360"><a href="#cb9-360" aria-hidden="true" tabindex="-1"></a>Always report uncertainty: credible intervals for $\beta_j$ quantify the precision of the estimate. Transform endpoints through $e^{\beta_j}$ to report odds ratios and their intervals.</span>
+<span id="cb9-361"><a href="#cb9-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-362"><a href="#cb9-362" aria-hidden="true" tabindex="-1"></a><span class="fu">### Poisson regression coefficients</span></span>
+<span id="cb9-363"><a href="#cb9-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-364"><a href="#cb9-364" aria-hidden="true" tabindex="-1"></a>In Poisson regression, $\beta_j$ is the change in log rate per unit increase in $x_j$. The expected count is multiplied by $e^{\beta_j}$ per unit increase:</span>
+<span id="cb9-365"><a href="#cb9-365" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>If $\beta_1 = 0.3$, a one-unit increase in $x_1$ multiplies the expected count by $e^{0.3} \approx 1.35$ (35\% increase).</span>
+<span id="cb9-366"><a href="#cb9-366" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>If $\beta_2 = -0.2$, a one-unit increase in $x_2$ multiplies the expected count by $e^{-0.2} \approx 0.82$ (18\% decrease).</span>
+<span id="cb9-367"><a href="#cb9-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-368"><a href="#cb9-368" aria-hidden="true" tabindex="-1"></a>These are **relative effects**: they describe multiplicative changes in the rate, not absolute changes. In a detector experiment, a 35\% increase in count rate might be substantial or negligible depending on the baseline and the experimental goal.</span>
+<span id="cb9-369"><a href="#cb9-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-370"><a href="#cb9-370" aria-hidden="true" tabindex="-1"></a><span class="fu">### Posterior predictive intervals</span></span>
+<span id="cb9-371"><a href="#cb9-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-372"><a href="#cb9-372" aria-hidden="true" tabindex="-1"></a>After fitting, we typically want to predict for new observations. For **logistic regression**, posterior draws of $(w_0, w_1)$ give posterior samples of $\pi_* = \sigma(w_0 + w_1 x_*)$ at a new location $x_*$. The credible interval for $\pi_*$ quantifies uncertainty in the **probability**; a separate predictive interval addresses the binary outcome itself ($y_* \in <span class="sc">\{</span>0, 1<span class="sc">\}</span>$ with some probability).</span>
+<span id="cb9-373"><a href="#cb9-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-374"><a href="#cb9-374" aria-hidden="true" tabindex="-1"></a>For **Poisson regression**, the posterior predictive interval for a new count $y_*$ at $x_*$ involves:</span>
+<span id="cb9-375"><a href="#cb9-375" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Drawing $(w_0^{(s)}, w_1^{(s)})$ from the posterior.</span>
+<span id="cb9-376"><a href="#cb9-376" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Computing $\lambda_*^{(s)} = \exp(w_0^{(s)} + w_1^{(s)} x_*)$.</span>
+<span id="cb9-377"><a href="#cb9-377" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Drawing $y_*^{(s)} \sim \text{Poisson}(\lambda_*^{(s)})$.</span>
+<span id="cb9-378"><a href="#cb9-378" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Summarizing the empirical distribution of $y_*^{(s)}$ by quantiles (e.g., 2.5\%, 50\%, 97.5\%).</span>
+<span id="cb9-379"><a href="#cb9-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-380"><a href="#cb9-380" aria-hidden="true" tabindex="-1"></a>The predictive interval is discrete and generally asymmetric, reflecting the discrete and skewed nature of Poisson noise.</span>
+<span id="cb9-381"><a href="#cb9-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-382"><a href="#cb9-382" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overdispersion illustration: simulated data with variance inflation</span></span>
+<span id="cb9-383"><a href="#cb9-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-386"><a href="#cb9-386" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb9-387"><a href="#cb9-387" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-overdispersion</span></span>
+<span id="cb9-388"><a href="#cb9-388" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Overdispersion"</span></span>
+<span id="cb9-389"><a href="#cb9-389" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Poisson data (dashed line, Var = mean) vs. overdispersed count data (solid line, Var &gt;&gt; mean)."</span></span>
+<span id="cb9-390"><a href="#cb9-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-391"><a href="#cb9-391" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">303</span>)</span>
+<span id="cb9-392"><a href="#cb9-392" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">100</span></span>
+<span id="cb9-393"><a href="#cb9-393" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="at">length.out =</span> N)</span>
+<span id="cb9-394"><a href="#cb9-394" aria-hidden="true" tabindex="-1"></a>lambda <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">+</span> <span class="dv">3</span> <span class="sc">*</span> x</span>
+<span id="cb9-395"><a href="#cb9-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-396"><a href="#cb9-396" aria-hidden="true" tabindex="-1"></a><span class="co"># Poisson: variance = mean</span></span>
+<span id="cb9-397"><a href="#cb9-397" aria-hidden="true" tabindex="-1"></a>y_poisson <span class="ot">&lt;-</span> <span class="fu">rpois</span>(N, <span class="at">lambda =</span> lambda)</span>
+<span id="cb9-398"><a href="#cb9-398" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-399"><a href="#cb9-399" aria-hidden="true" tabindex="-1"></a><span class="co"># Overdispersed: inflate variance by factor of 2</span></span>
+<span id="cb9-400"><a href="#cb9-400" aria-hidden="true" tabindex="-1"></a>y_overdispersed <span class="ot">&lt;-</span> <span class="fu">sapply</span>(lambda, <span class="cf">function</span>(mu) {</span>
+<span id="cb9-401"><a href="#cb9-401" aria-hidden="true" tabindex="-1"></a>  nb_size <span class="ot">&lt;-</span> mu <span class="sc">/</span> <span class="dv">1</span>  <span class="co"># size parameter for negative binomial</span></span>
+<span id="cb9-402"><a href="#cb9-402" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rnbinom</span>(<span class="dv">1</span>, <span class="at">size =</span> nb_size, <span class="at">mu =</span> mu)</span>
+<span id="cb9-403"><a href="#cb9-403" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb9-404"><a href="#cb9-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-405"><a href="#cb9-405" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x, y_poisson, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">col =</span> <span class="st">"gray40"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>,</span>
+<span id="cb9-406"><a href="#cb9-406" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"x"</span>, <span class="at">ylab =</span> <span class="st">"count"</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">30</span>))</span>
+<span id="cb9-407"><a href="#cb9-407" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(x, y_overdispersed, <span class="at">pch =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"#b8123e"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb9-408"><a href="#cb9-408" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x, lambda, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"black"</span>)</span>
+<span id="cb9-409"><a href="#cb9-409" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topleft"</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">"Poisson (Var=mean)"</span>, <span class="st">"Overdispersed (Var&gt;mean)"</span>, <span class="st">"true mean"</span>),</span>
+<span id="cb9-410"><a href="#cb9-410" aria-hidden="true" tabindex="-1"></a>       <span class="at">pch =</span> <span class="fu">c</span>(<span class="dv">19</span>, <span class="dv">1</span>, <span class="cn">NA</span>), <span class="at">lty =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="cn">NA</span>, <span class="dv">1</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"gray40"</span>, <span class="st">"#b8123e"</span>, <span class="st">"black"</span>),</span>
+<span id="cb9-411"><a href="#cb9-411" aria-hidden="true" tabindex="-1"></a>       <span class="at">bty =</span> <span class="st">"n"</span>)</span>
+<span id="cb9-412"><a href="#cb9-412" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb9-413"><a href="#cb9-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-414"><a href="#cb9-414" aria-hidden="true" tabindex="-1"></a><span class="fu">## Common pitfalls and best practices</span></span>
+<span id="cb9-415"><a href="#cb9-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-416"><a href="#cb9-416" aria-hidden="true" tabindex="-1"></a>:::{.note}</span>
+<span id="cb9-417"><a href="#cb9-417" aria-hidden="true" tabindex="-1"></a>**Common mistakes**:</span>
+<span id="cb9-418"><a href="#cb9-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-419"><a href="#cb9-419" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Ignoring distributional mismatch**: Fitting Gaussian regression to counts or binary data leads to invalid predictions and misaligned uncertainty.</span>
+<span id="cb9-420"><a href="#cb9-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-421"><a href="#cb9-421" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Forgetting the offset**: In exposure-weighted Poisson models, omitting the offset biases rate estimates and inflates uncertainty.</span>
+<span id="cb9-422"><a href="#cb9-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-423"><a href="#cb9-423" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Misinterpreting coefficients**: Logistic coefficients are log-odds, not probability changes. Poisson coefficients are log-rates, not expected count changes.</span>
+<span id="cb9-424"><a href="#cb9-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-425"><a href="#cb9-425" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Reporting point estimates without credible intervals**: GLM coefficients are estimated quantities; always include uncertainty via posterior quantiles.</span>
+<span id="cb9-426"><a href="#cb9-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-427"><a href="#cb9-427" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Confusing credible and predictive intervals**: The credible interval for $\mu$ (or $\pi$, $\lambda$) reflects estimation uncertainty. The predictive interval for $y$ also includes observation noise and is wider.</span>
+<span id="cb9-428"><a href="#cb9-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-429"><a href="#cb9-429" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Ignoring posterior predictive checks**: A high likelihood value does not guarantee model adequacy. Generate replicated data and compare to observed summaries.</span>
+<span id="cb9-430"><a href="#cb9-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-431"><a href="#cb9-431" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>**Trusting diagnostics without thought**: High $\hat{R}$ and large ESS are necessary but not sufficient. Check trace plots, residual patterns, and posterior predictive checks for deeper assessment.</span>
+<span id="cb9-432"><a href="#cb9-432" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-433"><a href="#cb9-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-434"><a href="#cb9-434" aria-hidden="true" tabindex="-1"></a>:::{.remark}</span>
+<span id="cb9-435"><a href="#cb9-435" aria-hidden="true" tabindex="-1"></a>**Best practices**:</span>
+<span id="cb9-436"><a href="#cb9-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-437"><a href="#cb9-437" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Center or standardize predictors** before fitting to reduce collinearity and improve MCMC mixing. A unit increase in a centered $x$ is meaningful and comparable across covariates.</span>
+<span id="cb9-438"><a href="#cb9-438" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Visualize the fitted curve** with uncertainty bands overlaid on the data. This reveals whether the model captures the dominant patterns.</span>
+<span id="cb9-439"><a href="#cb9-439" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Use weakly informative priors** that regularize without imposing strong prior beliefs. For coefficients on a standardized scale, $\text{Normal}(0, 2)$ or $\text{Normal}(0, 3)$ is reasonable.</span>
+<span id="cb9-440"><a href="#cb9-440" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Check trace plots** for all parameters after sampling. Chains should mix well (no trending, not stuck, high autocorrelation).</span>
+<span id="cb9-441"><a href="#cb9-441" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Report both point and interval estimates** and be explicit about the scale (log-odds, log-rate, probability, count).</span>
+<span id="cb9-442"><a href="#cb9-442" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Document the model specification** (link function, prior, offset, if any) to enable reproducibility and interpretation.</span>
+<span id="cb9-443"><a href="#cb9-443" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb9-444"><a href="#cb9-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-445"><a href="#cb9-445" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusion</span></span>
+<span id="cb9-446"><a href="#cb9-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-447"><a href="#cb9-447" aria-hidden="true" tabindex="-1"></a>Generalized linear models extend Bayesian regression to count, binary, and other non-Gaussian responses by:</span>
+<span id="cb9-448"><a href="#cb9-448" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-449"><a href="#cb9-449" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Specifying a response distribution from the exponential family (Poisson, Bernoulli, etc.).</span>
+<span id="cb9-450"><a href="#cb9-450" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Connecting the mean to a linear predictor via a link function that respects parameter constraints.</span>
+<span id="cb9-451"><a href="#cb9-451" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Inferring the linear coefficients while propagating uncertainty through the posterior.</span>
+<span id="cb9-452"><a href="#cb9-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-453"><a href="#cb9-453" aria-hidden="true" tabindex="-1"></a>The three ingredients—random component, linear predictor, and link function—unify a diverse set of regression tasks under one framework. Logistic regression models probabilities; Poisson regression models rates and counts; gamma and inverse-Gaussian regressions model positive continuous data. MCMC and probabilistic programming allow flexible, fully Bayesian inference, with posterior checks guiding model refinement.</span>
+<span id="cb9-454"><a href="#cb9-454" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-455"><a href="#cb9-455" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb9-456"><a href="#cb9-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-457"><a href="#cb9-457" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sivia, D.S., &amp; Skilling, J. (2006). *Data analysis: A Bayesian tutorial for scientists and engineers.* Oxford University Press. <span class="co">[</span><span class="ot">Chapter 8: Model fitting.</span><span class="co">]</span></span>
+<span id="cb9-458"><a href="#cb9-458" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>McCullagh, P., &amp; Nelder, J.A. (1989). *Generalized linear models* (2nd ed.). Chapman &amp; Hall. <span class="co">[</span><span class="ot">Classic reference; foundational theory of GLMs.</span><span class="co">]</span></span>
+<span id="cb9-459"><a href="#cb9-459" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Gelman, A., Hill, J., Vehtari, A., &amp; Burkner, P.C. (2020). *Regression and other stories.* Cambridge University Press. <span class="co">[</span><span class="ot">Modern Bayesian regression, GLMs, and causal inference.</span><span class="co">]</span></span>
+<span id="cb9-460"><a href="#cb9-460" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Stan Development Team (2023). *Stan User's Guide*. <span class="co">[</span><span class="ot">Probabilistic programming; chapters on GLMs and efficient computation.</span><span class="co">]</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

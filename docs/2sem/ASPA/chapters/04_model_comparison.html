@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Model comparison and Bayes factors – Advanced Statistics for Physics Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/05_parameter_estimation.html" rel="next">
+<link href="../chapters/03_continuous_probability.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04_model_comparison.html">PART II: BAYESIAN INFERENCE</a></li><li class="breadcrumb-item"><a href="../chapters/04_model_comparison.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Advanced Statistics for Physics Analysis</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01_R_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to R for Bayesian inference</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: PROBABILITY RECAP</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02_discrete_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Discrete probability</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03_continuous_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Continuous probability and limit theorems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: BAYESIAN INFERENCE</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04_model_comparison.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05_parameter_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian parameter estimation, intervals and prediction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06_gaussian_inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: MONTE CARLO METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07_monte_carlo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Monte Carlo methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08_independence_and_gibbs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09_hamiltonian_mc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10_parallel_tempering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: APPLIED BAYESIAN MODELLING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11_bayesian_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12_probabilistic_programming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13_glms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDIX</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99_appendix_source_code.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Appendix: Source code</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">5.1</span> Introduction</a></li>
+  <li><a href="#posterior-odds-and-the-bayes-factor" id="toc-posterior-odds-and-the-bayes-factor" class="nav-link" data-scroll-target="#posterior-odds-and-the-bayes-factor"><span class="header-section-number">5.2</span> Posterior odds and the Bayes factor</a></li>
+  <li><a href="#interpreting-the-bayes-factor" id="toc-interpreting-the-bayes-factor" class="nav-link" data-scroll-target="#interpreting-the-bayes-factor"><span class="header-section-number">5.3</span> Interpreting the Bayes factor</a></li>
+  <li><a href="#the-marginal-likelihood-and-occams-razor" id="toc-the-marginal-likelihood-and-occams-razor" class="nav-link" data-scroll-target="#the-marginal-likelihood-and-occams-razor"><span class="header-section-number">5.4</span> The marginal likelihood and Occam’s razor</a></li>
+  <li><a href="#laplace-approximation-and-the-occam-factor" id="toc-laplace-approximation-and-the-occam-factor" class="nav-link" data-scroll-target="#laplace-approximation-and-the-occam-factor"><span class="header-section-number">5.5</span> Laplace approximation and the Occam factor</a></li>
+  <li><a href="#example-testing-coin-fairness" id="toc-example-testing-coin-fairness" class="nav-link" data-scroll-target="#example-testing-coin-fairness"><span class="header-section-number">5.6</span> Example: Testing coin fairness</a></li>
+  <li><a href="#lindleys-paradox" id="toc-lindleys-paradox" class="nav-link" data-scroll-target="#lindleys-paradox"><span class="header-section-number">5.7</span> Lindley’s paradox</a></li>
+  <li><a href="#sensitivity-analysis-and-recommendations" id="toc-sensitivity-analysis-and-recommendations" class="nav-link" data-scroll-target="#sensitivity-analysis-and-recommendations"><span class="header-section-number">5.8</span> Sensitivity analysis and recommendations</a></li>
+  <li><a href="#brief-comparison-with-frequentist-hypothesis-testing" id="toc-brief-comparison-with-frequentist-hypothesis-testing" class="nav-link" data-scroll-target="#brief-comparison-with-frequentist-hypothesis-testing"><span class="header-section-number">5.9</span> Brief comparison with frequentist hypothesis testing</a></li>
+  <li><a href="#computational-aspects" id="toc-computational-aspects" class="nav-link" data-scroll-target="#computational-aspects"><span class="header-section-number">5.10</span> Computational aspects</a></li>
+  <li><a href="#examples-and-visualization" id="toc-examples-and-visualization" class="nav-link" data-scroll-target="#examples-and-visualization"><span class="header-section-number">5.11</span> Examples and visualization</a></li>
+  <li><a href="#computing-the-marginal-likelihood" id="toc-computing-the-marginal-likelihood" class="nav-link" data-scroll-target="#computing-the-marginal-likelihood"><span class="header-section-number">5.12</span> Computing the marginal likelihood</a>
+  <ul class="collapse">
+  <li><a href="#laplace-approximation" id="toc-laplace-approximation" class="nav-link" data-scroll-target="#laplace-approximation"><span class="header-section-number">5.12.1</span> Laplace approximation</a></li>
+  <li><a href="#harmonic-mean-estimator" id="toc-harmonic-mean-estimator" class="nav-link" data-scroll-target="#harmonic-mean-estimator"><span class="header-section-number">5.12.2</span> Harmonic mean estimator</a></li>
+  <li><a href="#bridge-sampling" id="toc-bridge-sampling" class="nav-link" data-scroll-target="#bridge-sampling"><span class="header-section-number">5.12.3</span> Bridge sampling</a></li>
+  <li><a href="#nested-sampling" id="toc-nested-sampling" class="nav-link" data-scroll-target="#nested-sampling"><span class="header-section-number">5.12.4</span> Nested sampling</a></li>
+  <li><a href="#thermodynamic-integration-and-annealed-importance-sampling" id="toc-thermodynamic-integration-and-annealed-importance-sampling" class="nav-link" data-scroll-target="#thermodynamic-integration-and-annealed-importance-sampling"><span class="header-section-number">5.12.5</span> Thermodynamic integration and annealed importance sampling</a></li>
+  <li><a href="#comparison-table" id="toc-comparison-table" class="nav-link" data-scroll-target="#comparison-table"><span class="header-section-number">5.12.6</span> Comparison table</a></li>
+  <li><a href="#practical-recommendations" id="toc-practical-recommendations" class="nav-link" data-scroll-target="#practical-recommendations"><span class="header-section-number">5.12.7</span> Practical recommendations</a></li>
+  </ul></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">5.13</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04_model_comparison.html">PART II: BAYESIAN INFERENCE</a></li><li class="breadcrumb-item"><a href="../chapters/04_model_comparison.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">5.1</span> Introduction</h2>
+<p>When faced with multiple competing hypotheses or models, scientists need a principled way to compare them in light of observed data. The Bayesian framework provides an elegant and automatic way to do this: the posterior odds ratio, built from the Bayes factor and the prior odds. Unlike frequentist hypothesis tests that focus on rejecting a single null hypothesis, Bayesian model comparison directly assigns probabilities to models and penalizes unjustified complexity.</p>
+<p>The key insight—Occam’s razor—emerges automatically from the mathematics. Complex models that require fine-tuning of their parameters to fit data are penalized, while simple models that make robust predictions across a wide range of parameter values are favored. This chapter develops the theory and practice of Bayesian model selection, from the basic posterior odds formula to sophisticated applications in scientific inference.</p>
+</section>
+<section id="posterior-odds-and-the-bayes-factor" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="posterior-odds-and-the-bayes-factor"><span class="header-section-number">5.2</span> Posterior odds and the Bayes factor</h2>
+<p>Suppose we have two mutually exclusive and exhaustive hypotheses <span class="math inline">\(H_0\)</span> and <span class="math inline">\(H_1\)</span>, and we observe data <span class="math inline">\(D\)</span>. Bayes’ theorem tells us:</p>
+<p><span class="math display">\[P(H_i | D) = \frac{P(D | H_i) P(H_i)}{P(D)}\]</span></p>
+<p>where <span class="math inline">\(P(D) = P(D | H_0) P(H_0) + P(D | H_1) P(H_1)\)</span> is the total probability of the data, obtained by marginalizing over both hypotheses.</p>
+<div class="definition" name="Posterior odds ratio">
+<p>The posterior odds ratio is the ratio of the posterior probabilities:</p>
+<p><span class="math display">\[R = \frac{P(H_1 | D)}{P(H_0 | D)}\]</span></p>
+<p>This directly quantifies which hypothesis is more likely given the data. Values <span class="math inline">\(R &gt; 1\)</span> favor <span class="math inline">\(H_1\)</span>, while <span class="math inline">\(R &lt; 1\)</span> favor <span class="math inline">\(H_0\)</span>.</p>
+</div>
+<p>Now divide the posterior for <span class="math inline">\(H_1\)</span> by the posterior for <span class="math inline">\(H_0\)</span>:</p>
+<p><span class="math display">\[R = \frac{P(H_1 | D)}{P(H_0 | D)} = \frac{P(D | H_1)}{P(D | H_0)} \cdot \frac{P(H_1)}{P(H_0)}\]</span></p>
+<p>The first ratio is the Bayes factor; the second is the prior odds.</p>
+<div class="definition" name="Bayes factor">
+<p>The Bayes factor is:</p>
+<p><span class="math display">\[\text{BF}_{10} = \frac{P(D | H_1)}{P(D | H_0)}\]</span></p>
+<p>It expresses how much the data shifts the odds between the two models, independent of prior beliefs.</p>
+</div>
+<p>Thus we have the fundamental equation of Bayesian model comparison:</p>
+<p><span class="math display">\[R = \text{BF}_{10} \times \frac{P(H_1)}{P(H_0)}\]</span></p>
+<div class="note">
+<p>Under uniform priors—when <span class="math inline">\(P(H_1) = P(H_0) = 1/2\)</span>—the posterior odds equal the Bayes factor. This is why some practitioners use <span class="math inline">\(\text{BF} &gt; 1\)</span> as a criterion for favoring <span class="math inline">\(H_1\)</span> “objectively,” removing apparent subjectivity of the prior. However, this merely replaces one prior assumption (about models) with another (equal prior probability).</p>
+</div>
+</section>
+<section id="interpreting-the-bayes-factor" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="interpreting-the-bayes-factor"><span class="header-section-number">5.3</span> Interpreting the Bayes factor</h2>
+<p>Jeffreys (1961) proposed a scale for interpreting the magnitude of a Bayes factor:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;"><span class="math inline">\(\text{BF}_{10}\)</span></th>
+<th style="text-align: left;">Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(1\)</span> to <span class="math inline">\(3\)</span></td>
+<td style="text-align: left;">Weak evidence for <span class="math inline">\(H_1\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(3\)</span> to <span class="math inline">\(10\)</span></td>
+<td style="text-align: left;">Moderate evidence for <span class="math inline">\(H_1\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(10\)</span> to <span class="math inline">\(30\)</span></td>
+<td style="text-align: left;">Strong evidence for <span class="math inline">\(H_1\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(30\)</span> to <span class="math inline">\(100\)</span></td>
+<td style="text-align: left;">Very strong evidence for <span class="math inline">\(H_1\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(&gt; 100\)</span></td>
+<td style="text-align: left;">Decisive evidence for <span class="math inline">\(H_1\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>(Reverse the fractions for evidence against <span class="math inline">\(H_1\)</span>.)</p>
+<div class="note">
+<p>This scale is somewhat arbitrary and context-dependent. In practice, consider not just the magnitude but also the uncertainty in the Bayes factor and the scientific implications of being wrong.</p>
+</div>
+<p>The posterior probabilities of the hypotheses are recovered from the odds:</p>
+<p><span class="math display">\[P(H_0 | D) = \frac{1}{1 + R}, \quad P(H_1 | D) = \frac{R}{1 + R}\]</span></p>
+</section>
+<section id="the-marginal-likelihood-and-occams-razor" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="the-marginal-likelihood-and-occams-razor"><span class="header-section-number">5.4</span> The marginal likelihood and Occam’s razor</h2>
+<p>The Bayes factor depends on the marginal likelihood (also called the model evidence), the probability of the data averaged over all possible parameter values under that model:</p>
+<p><span class="math display">\[P(D | H_i) = \int P(D | \theta, H_i) \pi(\theta | H_i) \, d\theta\]</span></p>
+<p>Here <span class="math inline">\(\pi(\theta | H_i)\)</span> is the prior distribution over parameters under hypothesis <span class="math inline">\(H_i\)</span>, and <span class="math inline">\(P(D | \theta, H_i)\)</span> is the likelihood.</p>
+<div class="definition" name="Occam's razor in Bayesian inference">
+<p>Marginal likelihoods automatically encode a penalty for model complexity. A complex model with many parameters typically spreads its prior mass over a large region of parameter space. Only a small region of this parameter space will fit the data well. When we integrate over all parameters, the contribution from the region that fits data is small relative to the total prior volume, yielding a low marginal likelihood—even if the model achieves a higher best-fit likelihood than a simpler competitor.</p>
+</div>
+<p>To see this concretely, consider two models: - <span class="math inline">\(H_0\)</span>: a simple model with a fixed parameter value <span class="math inline">\(\theta_0\)</span>. - <span class="math inline">\(H_1\)</span>: a complex model with parameter <span class="math inline">\(\theta\)</span> uniformly distributed over the range <span class="math inline">\([a, b]\)</span>.</p>
+<p>If both models fit the data equally well at their best-fit parameter values, then <span class="math inline">\(P(D | \theta_0, H_0) \approx P(D | \hat{\theta}, H_1)\)</span> where <span class="math inline">\(\hat{\theta}\)</span> is the MLE under <span class="math inline">\(H_1\)</span>.</p>
+<p>But: <span class="math display">\[P(D | H_0) = P(D | \theta_0, H_0)\]</span> <span class="math display">\[P(D | H_1) \approx \frac{1}{b-a} \int_a^b P(D | \theta, H_1) \, d\theta \approx P(D | \hat{\theta}, H_1) \cdot \frac{\Delta\theta_{\text{eff}}}{b-a}\]</span></p>
+<p>where <span class="math inline">\(\Delta\theta_{\text{eff}}\)</span> is the effective width of the likelihood peak. If <span class="math inline">\(\Delta\theta_{\text{eff}} \ll b - a\)</span>, then <span class="math inline">\(P(D | H_1) \ll P(D | H_0)\)</span> despite <span class="math inline">\(H_1\)</span> fitting the data equally well locally. The Bayes factor penalizes <span class="math inline">\(H_1\)</span> for having a large prior parameter space most of which is inconsistent with the data.</p>
+</section>
+<section id="laplace-approximation-and-the-occam-factor" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="laplace-approximation-and-the-occam-factor"><span class="header-section-number">5.5</span> Laplace approximation and the Occam factor</h2>
+<p>For models with continuous parameters, we can approximate the marginal likelihood using Laplace’s approximation. Assume the likelihood <span class="math inline">\(P(D | \theta, H)\)</span> is sharply peaked around its maximum <span class="math inline">\(\hat{\theta}\)</span>, and the prior is smooth on the scale of the likelihood width.</p>
+<p>Then: <span class="math display">\[P(D | H) \approx P(D | \hat{\theta}, H) \cdot \pi(\hat{\theta}) \cdot \Delta\theta_{\text{eff}}\]</span></p>
+<div class="definition" name="Occam factor">
+<p>The Occam factor is:</p>
+<p><span class="math display">\[\text{Occam} = \pi(\hat{\theta}) \cdot \Delta\theta_{\text{eff}}\]</span></p>
+<p>It represents the prior probability of the region of parameter space that actually fits the data. For a model with <span class="math inline">\(d\)</span> parameters and roughly uniform prior over range <span class="math inline">\(L\)</span>, this is approximately <span class="math inline">\((L_1 \cdots L_d)^{-1}\)</span> if the likelihood width is much smaller than the prior width in each dimension.</p>
+</div>
+<p>The Bayes factor becomes: <span class="math display">\[\text{BF}_{10} = \frac{P(D | \hat{\theta}_1, H_1) \cdot \text{Occam}_1}{P(D | \hat{\theta}_0, H_0) \cdot \text{Occam}_0}\]</span></p>
+<p>The first term (ratio of best-fit likelihoods) favors the more flexible model. The second term (ratio of Occam factors) penalizes it for complexity. The balance determines the winner—a principle arising purely from integration, not from any ad-hoc penalty function.</p>
+</section>
+<section id="example-testing-coin-fairness" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="example-testing-coin-fairness"><span class="header-section-number">5.6</span> Example: Testing coin fairness</h2>
+<p>This classic example from Sivia (2006) illustrates the full machinery. Suppose we flip a coin <span class="math inline">\(n = 250\)</span> times and observe <span class="math inline">\(h = 140\)</span> heads. We compare:</p>
+<ul>
+<li><span class="math inline">\(H_0\)</span>: The coin is fair (<span class="math inline">\(\theta = 0.5\)</span>).</li>
+<li><span class="math inline">\(H_1\)</span>: The coin has unknown bias <span class="math inline">\(\theta \sim \text{Beta}(1,1)\)</span> (uniform on <span class="math inline">\([0,1]\)</span>).</li>
+</ul>
+<p>The likelihood for <span class="math inline">\(h\)</span> heads in <span class="math inline">\(n\)</span> flips is: <span class="math display">\[P(D | \theta) = \binom{n}{h} \theta^h (1-\theta)^{n-h}\]</span></p>
+<p>Under <span class="math inline">\(H_0\)</span>: <span class="math display">\[P(D | H_0) = \binom{n}{h} (0.5)^n\]</span></p>
+<p>Under <span class="math inline">\(H_1\)</span>, with the Beta(1,1) prior: <span class="math display">\[P(D | H_1) = \int_0^1 \binom{n}{h} \theta^h (1-\theta)^{n-h} \, d\theta = \binom{n}{h} \cdot \frac{h! (n-h)!}{(n+1)!}\]</span></p>
+<p>Therefore: <span class="math display">\[\text{BF}_{10} = \frac{P(D | H_1)}{P(D | H_0)} = \frac{h! (n-h)!}{(n+1)!} \cdot 2^n\]</span></p>
+<p>With <span class="math inline">\(n = 250\)</span> and <span class="math inline">\(h = 140\)</span>: <span class="math display">\[\text{BF}_{10} = \frac{140! \cdot 110!}{251!} \cdot 2^{250} \approx 0.044\]</span></p>
+<p>This strong evidence against the coin being fair makes intuitive sense: observing 140 heads in 250 flips is notably different from 50-50 randomness.</p>
+<div class="example" name="Sensitivity to prior width">
+<p>Now suppose we use a wider prior for <span class="math inline">\(H_1\)</span>: <span class="math inline">\(\theta \sim \text{Beta}(\alpha, \alpha)\)</span> for some <span class="math inline">\(\alpha &gt; 1\)</span>. This concentrates the prior more around <span class="math inline">\(\theta = 0.5\)</span>. The Occam factor shrinks, raising the Bayes factor. Conversely, using <span class="math inline">\(\alpha &lt; 1\)</span> (a U-shaped prior favoring extreme values) lowers it.</p>
+<p>This illustrates a key insight: the Bayes factor is not prior-independent. However, it responds <em>sensibly</em>: wider priors (more agnostic) increase the Occam penalty, favoring simpler models; narrower priors (more peaked) decrease the penalty. A practitioner should explore this sensitivity and report it alongside point estimates.</p>
+</div>
+</section>
+<section id="lindleys-paradox" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="lindleys-paradox"><span class="header-section-number">5.7</span> Lindley’s paradox</h2>
+<p>A famous puzzle arises when comparing a point null hypothesis (e.g., <span class="math inline">\(\theta = 0\)</span>) to a broad alternative. As sample size increases, frequentist p-values eventually fall below any threshold (e.g., 0.05), calling for rejection of the null. Yet the Bayes factor may simultaneously favor the null, if the alternative prior is very diffuse.</p>
+<div class="example" name="Lindley's paradox">
+<p>Suppose we test <span class="math inline">\(H_0: \mu = 0\)</span> versus <span class="math inline">\(H_1: \mu \sim N(0, \sigma_\mu^2)\)</span> on data <span class="math inline">\(x_1, \ldots, x_n \sim N(\mu, 1)\)</span>. With a very large sample and <span class="math inline">\(\bar{x}\)</span> only slightly away from zero, a frequentist test will reject <span class="math inline">\(H_0\)</span> (small p-value), but if <span class="math inline">\(\sigma_\mu\)</span> is very large (vague prior on <span class="math inline">\(\mu\)</span>), the Occam penalty under <span class="math inline">\(H_1\)</span> keeps the Bayes factor favoring <span class="math inline">\(H_0\)</span>.</p>
+<p>The resolution is that the “paradox” reflects a real difference in how the two frameworks treat vague alternatives. Frequentist tests focus on the likelihood under <span class="math inline">\(H_0\)</span>. Bayesian tests also account for where the alternative prior was placed. This is not an error but a feature: it discourages chasing phantom effects in vague parameter spaces.</p>
+</div>
+</section>
+<section id="sensitivity-analysis-and-recommendations" class="level2" data-number="5.8">
+<h2 data-number="5.8" class="anchored" data-anchor-id="sensitivity-analysis-and-recommendations"><span class="header-section-number">5.8</span> Sensitivity analysis and recommendations</h2>
+<p>Because the Bayes factor depends on prior specification under each model, responsible practice demands a sensitivity analysis:</p>
+<ol type="1">
+<li><strong>Vary the prior width</strong> under the complex model within a reasonable range.</li>
+<li><strong>Plot or tabulate</strong> the Bayes factor as a function of prior width.</li>
+<li><strong>Report the range</strong> of Bayes factors across plausible priors.</li>
+<li><strong>Use multiple Bayes factor values</strong> (e.g., the median and bounds) rather than a single point estimate.</li>
+</ol>
+<p>If the Bayes factor remains in the same evidential category across a wide range of prior specifications, the conclusion is robust. If it changes materially, the inference is prior-sensitive and deserves careful discussion.</p>
+<div class="note">
+<p>Some software implementations use automatic prior calibration rules (e.g., based on effect size or information content in the data) to reduce arbitrariness. While convenient, these methods still embed assumptions. Transparency about prior choice is always preferable to the illusion of objectivity.</p>
+</div>
+</section>
+<section id="brief-comparison-with-frequentist-hypothesis-testing" class="level2" data-number="5.9">
+<h2 data-number="5.9" class="anchored" data-anchor-id="brief-comparison-with-frequentist-hypothesis-testing"><span class="header-section-number">5.9</span> Brief comparison with frequentist hypothesis testing</h2>
+<p>The frequentist approach to hypothesis testing is conceptually different. It treats parameters as fixed but unknown and focuses on controlling error rates across repeated hypothetical samples:</p>
+<div class="definition" name="Frequentist hypothesis test">
+<p>A test statistic <span class="math inline">\(T(D)\)</span> is compared to a threshold derived from the null distribution <span class="math inline">\(P(T | H_0)\)</span>. The p-value is <span class="math inline">\(P(T(D) \geq t_{\text{obs}} | H_0)\)</span>, the probability of observing data as or more extreme than observed, if <span class="math inline">\(H_0\)</span> were true. A p-value below <span class="math inline">\(\alpha\)</span> (e.g., 0.05) triggers rejection of <span class="math inline">\(H_0\)</span>.</p>
+</div>
+<p>Key differences:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">Bayesian</th>
+<th style="text-align: left;">Frequentist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Assigns probability to hypotheses</td>
+<td style="text-align: left;">Yes</td>
+<td style="text-align: left;">No; tests hypothesis rejection rates</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Uses prior information</td>
+<td style="text-align: left;">Yes; explicitly</td>
+<td style="text-align: left;">No; aims for objectivity through error control</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Penalizes complexity</td>
+<td style="text-align: left;">Automatically via Occam factor</td>
+<td style="text-align: left;">Only through significance level (weak link)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Interpretation of p-value</td>
+<td style="text-align: left;">N/A</td>
+<td style="text-align: left;">Probability of data under <span class="math inline">\(H_0\)</span>, not probability <span class="math inline">\(H_0\)</span> is true</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sample size effects</td>
+<td style="text-align: left;">Accounted for naturally</td>
+<td style="text-align: left;">Strong: small effects are rejected in large samples, regardless of effect size</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Binary decision</td>
+<td style="text-align: left;">Unnecessary; provides probabilities</td>
+<td style="text-align: left;">Often yes/no; less flexible</td>
+</tr>
+</tbody>
+</table>
+<p>Both frameworks are useful and address different questions. Frequentist tests excel at controlling false-positive rates in exploratory settings. Bayesian methods excel when you want to rank competing theories and make decisions balancing evidence and consequences. Modern practice often combines both: use frequentist tests for initial screening, then Bayesian analysis for focused inference.</p>
+</section>
+<section id="computational-aspects" class="level2" data-number="5.10">
+<h2 data-number="5.10" class="anchored" data-anchor-id="computational-aspects"><span class="header-section-number">5.10</span> Computational aspects</h2>
+<p>Computing the marginal likelihood <span class="math inline">\(P(D | H)\)</span> is often the bottleneck in Bayesian model comparison. For simple models (coin flips, Gaussian data), closed-form solutions exist. For complex likelihoods and high-dimensional parameter spaces, numerical methods are essential:</p>
+<ul>
+<li><strong>Laplace approximation</strong>: Fast, requires only the posterior mode and Hessian matrix.</li>
+<li><strong>Markov Chain Monte Carlo</strong>: Generates posterior samples; marginal likelihood can be estimated using harmonic mean or bridge sampling.</li>
+<li><strong>Nested sampling</strong>: Efficient algorithm specifically designed for evidence computation.</li>
+<li><strong>Variational inference</strong>: Approximate posterior, often with tractable marginal likelihood.</li>
+</ul>
+<p>The choice depends on model complexity and available computational resources. For pedagogical purposes, we focus on settings where analytical solutions or Laplace approximation suffice.</p>
+</section>
+<section id="examples-and-visualization" class="level2" data-number="5.11">
+<h2 data-number="5.11" class="anchored" data-anchor-id="examples-and-visualization"><span class="header-section-number">5.11</span> Examples and visualization</h2>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1" data-lst-cap="Bayes factor for coin fairness as a function of prior width on theta under H1."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coin fairness example: n = 250 flips, h = 140 heads</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># H0: theta = 0.5 (fair coin)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># H1: theta ~ Beta(alpha, alpha) with varying alpha</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">250</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="dv">140</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Likelihood under H0</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>log_likelihood_H0 <span class="ot">&lt;-</span> h <span class="sc">*</span> <span class="fu">log</span>(<span class="fl">0.5</span>) <span class="sc">+</span> (n <span class="sc">-</span> h) <span class="sc">*</span> <span class="fu">log</span>(<span class="fl">0.5</span>) <span class="sc">+</span> <span class="fu">lchoose</span>(n, h)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Marginal likelihood under H1 with Beta(alpha, alpha) prior</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># For Beta-Binomial model: P(D|H1) = C(n,h) * Beta(h+alpha, n-h+alpha) / Beta(alpha, alpha)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>bayes_factor_beta_binomial <span class="ot">&lt;-</span> <span class="cf">function</span>(n, h, alpha) {</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  log_ll_H1 <span class="ot">&lt;-</span> <span class="fu">lchoose</span>(n, h) <span class="sc">+</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lbeta</span>(h <span class="sc">+</span> alpha, n <span class="sc">-</span> h <span class="sc">+</span> alpha) <span class="sc">-</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lbeta</span>(alpha, alpha)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp</span>(log_ll_H1 <span class="sc">-</span> log_likelihood_H0)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Grid of prior concentrations</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>alpha_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="dv">50</span>, <span class="at">by =</span> <span class="fl">0.5</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>bf_values <span class="ot">&lt;-</span> <span class="fu">sapply</span>(alpha_values, <span class="cf">function</span>(a) <span class="fu">bayes_factor_beta_binomial</span>(n, h, a))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Three-tone palette</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>col_bf <span class="ot">&lt;-</span> <span class="st">"#1f77b4"</span>      <span class="co"># Blue for BF curve</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>col_guide <span class="ot">&lt;-</span> <span class="st">"#ff7f0e"</span>   <span class="co"># Orange for prior-width guide</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>col_accent <span class="ot">&lt;-</span> <span class="st">"#2ca02c"</span>  <span class="co"># Green for annotations</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(alpha_values, bf_values, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Prior concentration (alpha)"</span>,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Bayes Factor (BF_10)"</span>,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> col_bf, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(bf_values) <span class="sc">*</span> <span class="fl">1.1</span>))</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> col_guide, <span class="at">lwd =</span> <span class="fl">0.8</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">30</span>, <span class="fl">1.05</span>, <span class="st">"BF = 1 (indifference)"</span>, <span class="at">col =</span> col_guide, <span class="at">cex =</span> <span class="fl">0.85</span>, <span class="at">adj =</span> <span class="dv">0</span>)</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Highlight a specific prior width</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>alpha_focus <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>bf_focus <span class="ot">&lt;-</span> <span class="fu">bayes_factor_beta_binomial</span>(n, h, alpha_focus)</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(alpha_focus, bf_focus, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="fu">segments</span>(alpha_focus, <span class="dv">0</span>, alpha_focus, bf_focus, <span class="at">lty =</span> <span class="dv">3</span>, <span class="at">col =</span> col_accent, <span class="at">lwd =</span> <span class="fl">0.8</span>)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(alpha_focus <span class="sc">-</span> <span class="dv">8</span>, bf_focus <span class="sc">+</span> <span class="fl">0.15</span>, <span class="fu">sprintf</span>(<span class="st">"alpha=%.1f</span><span class="sc">\n</span><span class="st">BF=%.3f"</span>, alpha_focus, bf_focus),</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="04_model_comparison_files/figure-html/lst-bayes-factor-vs-prior-width-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>The Bayes factor changes with the width of the prior under H1. A narrower prior (concentrated near 0.5) increases the Occam penalty, lowering the BF. A very wide prior spreads mass over the entire [0,1] interval, also increasing the penalty. An intermediate width balances fit and complexity.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2" data-lst-cap="Growth of posterior odds as data accumulates."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sequential analysis: build up data gradually</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>n_max <span class="ot">&lt;-</span> <span class="dv">250</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>h_max <span class="ot">&lt;-</span> <span class="dv">140</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Track data proportionally</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>flips_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">10</span>, n_max, <span class="at">by =</span> <span class="dv">10</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>heads_seq <span class="ot">&lt;-</span> <span class="fu">round</span>(flips_seq <span class="sc">*</span> (h_max <span class="sc">/</span> n_max))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Bayes factor at each stage</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>bf_seq <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(n_i, h_i) {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bayes_factor_beta_binomial</span>(n_i, h_i, <span class="at">alpha =</span> <span class="dv">1</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>}, flips_seq, heads_seq)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior odds with uniform prior on H0 vs H1</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>posterior_odds <span class="ot">&lt;-</span> bf_seq</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(flips_seq, posterior_odds, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Number of flips"</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Posterior odds ratio (R = BF)"</span>,</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> col_bf, <span class="at">log =</span> <span class="st">"y"</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> col_guide, <span class="at">lwd =</span> <span class="fl">0.8</span>)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">10</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> col_guide, <span class="at">lwd =</span> <span class="fl">0.8</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">20</span>, <span class="fl">0.8</span>, <span class="st">"R = 1 (equal)"</span>, <span class="at">col =</span> col_guide, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="dv">0</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">20</span>, <span class="dv">12</span>, <span class="st">"R = 10 (strong)"</span>, <span class="at">col =</span> col_guide, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="dv">0</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Mark final observation</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(n_max, posterior_odds[<span class="fu">length</span>(posterior_odds)], <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(n_max <span class="sc">-</span> <span class="dv">30</span>, posterior_odds[<span class="fu">length</span>(posterior_odds)] <span class="sc">*</span> <span class="fl">0.7</span>,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>     <span class="fu">sprintf</span>(<span class="st">"n=250</span><span class="sc">\n</span><span class="st">R=%.2e"</span>, posterior_odds[<span class="fu">length</span>(posterior_odds)]),</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="04_model_comparison_files/figure-html/lst-posterior-odds-over-time-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Sequential Bayes factor as we collect more coin flips. With 140 heads per 250 flips, the evidence against fairness accumulates rapidly. After ~80 flips, the posterior odds strongly favor the biased model.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3" data-lst-cap="Illustration of the Occam factor penalty for model complexity."><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Smooth likelihood function centered at theta_hat = 0.56</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>theta_hat <span class="ot">&lt;-</span> <span class="fl">0.56</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>delta_theta_eff <span class="ot">&lt;-</span> <span class="fl">0.08</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Likelihood (normalized for display)</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>likelihood <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>((theta <span class="sc">-</span> theta_hat)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="dv">2</span> <span class="sc">*</span> delta_theta_eff<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>likelihood <span class="ot">&lt;-</span> likelihood <span class="sc">/</span> <span class="fu">max</span>(likelihood)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Prior widths</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>prior_width_simple <span class="ot">&lt;-</span> <span class="fl">0.1</span>   <span class="co"># H0 narrow</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>prior_width_complex <span class="ot">&lt;-</span> <span class="fl">0.8</span>  <span class="co"># H1 wide</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Priors</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>prior_simple <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(theta <span class="sc">&gt;=</span> <span class="fl">0.45</span> <span class="sc">&amp;</span> theta <span class="sc">&lt;=</span> <span class="fl">0.55</span>, <span class="dv">1</span> <span class="sc">/</span> prior_width_simple, <span class="dv">0</span>)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>prior_complex <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="dv">1</span>, <span class="fu">length</span>(theta))  <span class="co"># Uniform over [0,1]</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(theta, likelihood, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> col_bf,</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Parameter theta"</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Density (normalized)"</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1.1</span>),</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw prior widths</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">c</span>(<span class="fl">0.45</span>, <span class="fl">0.55</span>), <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">1.0</span>), <span class="at">col =</span> col_accent, <span class="at">lwd =</span> <span class="dv">3</span>)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">c</span>(<span class="fl">0.45</span>, <span class="fl">0.55</span>), <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">1.0</span>), <span class="at">pch =</span> <span class="st">"|"</span>, <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="dv">2</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">0.5</span>, <span class="fl">1.05</span>, <span class="st">"H0 prior width"</span>, <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.85</span>), <span class="at">col =</span> col_guide, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.85</span>), <span class="at">pch =</span> <span class="st">"|"</span>, <span class="at">col =</span> col_guide, <span class="at">cex =</span> <span class="dv">2</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">0.5</span>, <span class="fl">0.90</span>, <span class="st">"H1 prior width"</span>, <span class="at">col =</span> col_guide, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Shade the effective width</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(theta_hat <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>delta_theta_eff, theta_hat <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>delta_theta_eff,</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>          theta_hat <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>delta_theta_eff, theta_hat <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>delta_theta_eff),</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.02</span>, <span class="sc">-</span><span class="fl">0.02</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>), <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.2</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(theta_hat, <span class="fl">0.12</span>, <span class="st">"Effective</span><span class="sc">\n</span><span class="st">likelihood</span><span class="sc">\n</span><span class="st">width"</span>, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">adj =</span> <span class="fl">0.5</span>)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="fu">c</span>(<span class="st">"Likelihood"</span>, <span class="st">"H0 prior"</span>, <span class="st">"H1 prior"</span>),</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(col_bf, col_accent, col_guide), <span class="at">lwd =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">2</span>),</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">bg =</span> <span class="st">"white"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><embed src="04_model_comparison_files/figure-html/lst-occam-factor-complexity-1.pdf" class="img-fluid" style="width:100.0%"></p>
+<figcaption>Two models fit data equally well at their best-fit values, but the complex model’s prior is spread over a wider parameter space. The effective width of the likelihood peak (Delta_theta_eff) is the same for both, but the prior width differs. The Occam factor penalizes the complex model by the ratio of prior widths.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="computing-the-marginal-likelihood" class="level2" data-number="5.12">
+<h2 data-number="5.12" class="anchored" data-anchor-id="computing-the-marginal-likelihood"><span class="header-section-number">5.12</span> Computing the marginal likelihood</h2>
+<p>Computing the marginal likelihood <span class="math inline">\(p(D \mid M) = \int p(D \mid \theta, M)\, p(\theta \mid M)\, d\theta\)</span> is often the primary computational bottleneck in Bayesian model comparison. For simple conjugate models—where the prior and likelihood are conjugate families—analytical solutions exist. In all other settings, we must resort to numerical approximation. This section surveys the four most practical methods, comparing their assumptions, computational costs, reliability, and pitfalls.</p>
+<section id="laplace-approximation" class="level3" data-number="5.12.1">
+<h3 data-number="5.12.1" class="anchored" data-anchor-id="laplace-approximation"><span class="header-section-number">5.12.1</span> Laplace approximation</h3>
+<p>The Laplace approximation provides a fast, analytic approximation to the marginal likelihood when the posterior is sharply peaked around its mode. Expanding the log-posterior around the maximum a posteriori (MAP) estimate <span class="math inline">\(\hat{\theta}\)</span> to second order and assuming the prior is smooth at the peak:</p>
+<div class="definition" name="Laplace approximation for marginal likelihood">
+<p><span class="math display">\[p(D \mid M) \approx p(D \mid \hat{\theta}, M)\, p(\hat{\theta} \mid M)\, (2\pi)^{d/2}\, |\mathcal{H}|^{-1/2}\]</span></p>
+<p>where <span class="math inline">\(d\)</span> is the dimension of the parameter space and <span class="math inline">\(\mathcal{H}\)</span> is the Hessian of the negative log-posterior evaluated at <span class="math inline">\(\hat{\theta}\)</span>.</p>
+</div>
+<p><strong>Strengths:</strong> Requires only the MAP and Hessian, making it computationally cheap; often accurate when the posterior is well-approximated by a high-dimensional Gaussian.</p>
+<p><strong>Weaknesses:</strong> Poor accuracy for multimodal posteriors, heavy-tailed posteriors, or when the likelihood is only weakly peaked. The approximation’s quality degrades in high dimensions.</p>
+<div class="note">
+<p>For many applied problems, the Laplace approximation is a good starting point. Use it as a baseline and compare with more robust methods if possible.</p>
+</div>
+</section>
+<section id="harmonic-mean-estimator" class="level3" data-number="5.12.2">
+<h3 data-number="5.12.2" class="anchored" data-anchor-id="harmonic-mean-estimator"><span class="header-section-number">5.12.2</span> Harmonic mean estimator</h3>
+<p>If posterior samples <span class="math inline">\(\theta^{(s)}, \, s = 1, \ldots, S\)</span> are available from MCMC, the harmonic mean estimator offers a simple plug-in approximation:</p>
+<p><span class="math display">\[\hat{Z}_{\mathrm{HM}} = \left[\frac{1}{S}\sum_{s=1}^S \frac{1}{p(D \mid \theta^{(s)}, M)}\right]^{-1}\]</span></p>
+<p>This estimator arises naturally as an importance-sampling approximation with the prior <span class="math inline">\(p(\theta \mid M)\)</span> as the proposal distribution. The key idea is that the posterior samples are reweighted by the reciprocal of the likelihood, inverting the usual likelihood weighting.</p>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span><strong>Pitfall: catastrophic instability.</strong> The harmonic mean estimator has infinite variance whenever the prior has lighter tails than the posterior, which occurs in nearly every realistic setting. A single posterior sample in a region of low prior density can dominate the sum, causing enormous variance and unreliable estimates. Newton &amp; Raftery (1994) and Wolpert &amp; Schmidler (2012) have thoroughly documented this pathology. <strong>We strongly discourage the use of the harmonic mean estimator in production analyses.</strong> Its tempting simplicity belies a fundamental flaw.</p>
+</div>
+</section>
+<section id="bridge-sampling" class="level3" data-number="5.12.3">
+<h3 data-number="5.12.3" class="anchored" data-anchor-id="bridge-sampling"><span class="header-section-number">5.12.3</span> Bridge sampling</h3>
+<p>Meng &amp; Wong (1996) introduced bridge sampling, a principled method that corrects the importance-sampling bias of the harmonic mean. The method is based on the identity:</p>
+<p><span class="math display">\[\frac{Z_1}{Z_2} = \frac{\mathbb{E}_{q_2}[\alpha(\theta)\,q_1(\theta)]}{\mathbb{E}_{q_1}[\alpha(\theta)\,q_2(\theta)]},\]</span></p>
+<p>where <span class="math inline">\(q_1\)</span> and <span class="math inline">\(q_2\)</span> are any two probability densities with known (or tractable) normalizing constants <span class="math inline">\(Z_1\)</span> and <span class="math inline">\(Z_2\)</span>, and <span class="math inline">\(\alpha\)</span> is an arbitrary “bridge” function. The optimal choice of <span class="math inline">\(\alpha\)</span> (in the sense of minimizing asymptotic variance) is the geometric-mean form. By setting <span class="math inline">\(q_1\)</span> to the posterior and <span class="math inline">\(q_2\)</span> to the prior, we recover an estimate of the marginal likelihood.</p>
+<p><strong>Strengths:</strong> Much lower variance than the harmonic mean; scales well to moderate-to-high dimensions; widely implemented (e.g., in the R package <code>bridgesampling</code> of Gronau et al.&nbsp;2017).</p>
+<p><strong>Weaknesses:</strong> Requires posterior samples and careful selection of the bridge function. Sensitivity to the proposal and the effective sample size.</p>
+<div class="note">
+<p>Bridge sampling is the recommended default when posterior samples are already in hand (e.g., from an MCMC run) and model comparison is a secondary goal. The <code>bridgesampling</code> R package provides a robust, production-ready implementation.</p>
+</div>
+</section>
+<section id="nested-sampling" class="level3" data-number="5.12.4">
+<h3 data-number="5.12.4" class="anchored" data-anchor-id="nested-sampling"><span class="header-section-number">5.12.4</span> Nested sampling</h3>
+<p>Skilling (2006) reformulated the marginal likelihood computation as an integration over the prior mass enclosed by likelihood contours. Define <span class="math inline">\(X(\lambda) = \int_{\{L(\theta) &gt; \lambda\}} p(\theta \mid M)\, d\theta\)</span> as the prior mass in regions where the likelihood exceeds <span class="math inline">\(\lambda\)</span>. Then:</p>
+<p><span class="math display">\[Z = \int p(D \mid \theta, M)\, p(\theta \mid M)\, d\theta = \int_0^1 L(X)\, dX,\]</span></p>
+<p>where <span class="math inline">\(L(X)\)</span> is the likelihood as a function of enclosed prior mass <span class="math inline">\(X\)</span>.</p>
+<p>The nested sampling algorithm maintains a set of <span class="math inline">\(K\)</span> “live points” uniformly distributed under the prior. At each iteration, the point with the lowest likelihood is removed (added to the “dead points”), and a new point is drawn uniformly from the prior restricted to the region of higher likelihood. The marginal likelihood is accumulated as:</p>
+<p><span class="math display">\[Z \approx \sum_{i} L_i \, \Delta X_i,\]</span></p>
+<p>where <span class="math inline">\(L_i\)</span> and <span class="math inline">\(\Delta X_i\)</span> are the likelihoods and prior-mass increments of dead points.</p>
+<p><strong>Strengths:</strong> Handles multimodal posteriors naturally (each mode is explored independently); provides both marginal likelihood and posterior samples (via importance reweighting of dead points); increasingly popular in astrophysics and cosmology.</p>
+<p><strong>Weaknesses:</strong> More computationally expensive than Laplace (requires many likelihood evaluations); requires careful tuning of the number of live points and the constrained-prior sampler.</p>
+<div class="note">
+<p>Nested sampling is implemented in <code>MultiNest</code> (Feroz et al.), <code>dynesty</code> (Speagle), and <code>PolyChord</code> (Handley et al.). Choose nested sampling when the posterior is complex, multimodal, or when you need both evidence and posterior samples with high confidence.</p>
+</div>
+</section>
+<section id="thermodynamic-integration-and-annealed-importance-sampling" class="level3" data-number="5.12.5">
+<h3 data-number="5.12.5" class="anchored" data-anchor-id="thermodynamic-integration-and-annealed-importance-sampling"><span class="header-section-number">5.12.5</span> Thermodynamic integration and annealed importance sampling</h3>
+<p>A fourth family of methods leverages a path of intermediate distributions. Define the tempered posterior:</p>
+<p><span class="math display">\[\pi_\beta(\theta) \propto p(D \mid \theta, M)^\beta\, p(\theta \mid M), \quad \beta \in [0, 1],\]</span></p>
+<p>interpolating from the prior (<span class="math inline">\(\beta = 0\)</span>) to the posterior (<span class="math inline">\(\beta = 1\)</span>). The marginal likelihood satisfies:</p>
+<p><span class="math display">\[\log Z = \int_0^1 \mathbb{E}_{\pi_\beta}\!\big[\log p(D \mid \theta, M)\big]\, d\beta.\]</span></p>
+<p>This identity is the foundation of thermodynamic integration (Gelman &amp; Meng 1998) and annealed importance sampling (Neal 2001), which numerically integrate the expected log-likelihood along the temperature path.</p>
+<p><strong>Strengths:</strong> Robust, applicable to high-dimensional and multimodal problems; naturally embedded in parallel-tempering MCMC schemes (Chapter 10).</p>
+<p><strong>Weaknesses:</strong> Requires careful choice of the temperature schedule and numerical integration scheme.</p>
+</section>
+<section id="comparison-table" class="level3" data-number="5.12.6">
+<h3 data-number="5.12.6" class="anchored" data-anchor-id="comparison-table"><span class="header-section-number">5.12.6</span> Comparison table</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">When to use</th>
+<th style="text-align: left;">Strengths</th>
+<th style="text-align: left;">Weaknesses</th>
+<th style="text-align: left;">Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Laplace</strong></td>
+<td style="text-align: left;">Quick baseline with smooth, unimodal posterior</td>
+<td style="text-align: left;">Fast; only MAP and Hessian needed</td>
+<td style="text-align: left;">Poor for multimodal or heavy-tailed posteriors</td>
+<td style="text-align: left;">Very low</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Harmonic mean</strong></td>
+<td style="text-align: left;"><em>Avoid</em></td>
+<td style="text-align: left;">Simplicity; uses existing MCMC samples</td>
+<td style="text-align: left;">Catastrophic instability; infinite variance</td>
+<td style="text-align: left;">Very low (but unreliable)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Bridge sampling</strong></td>
+<td style="text-align: left;">MCMC samples in hand; moderate-to-high dimensions</td>
+<td style="text-align: left;">Low variance; theoretically principled; well-implemented</td>
+<td style="text-align: left;">Requires tuning; sensitive to proposal</td>
+<td style="text-align: left;">Low-to-moderate</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Nested sampling</strong></td>
+<td style="text-align: left;">Multimodal or complex posteriors; want both <span class="math inline">\(Z\)</span> and posterior</td>
+<td style="text-align: left;">Handles multimodality naturally; provides full uncertainty; robust</td>
+<td style="text-align: left;">Computationally expensive; requires tuning</td>
+<td style="text-align: left;">Moderate-to-high</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Thermodynamic integration</strong></td>
+<td style="text-align: left;">High-dimensional problems; parallel tempering available</td>
+<td style="text-align: left;">Robust; scalable to high dimensions</td>
+<td style="text-align: left;">Needs temperature schedule; numerical integration error</td>
+<td style="text-align: left;">Moderate-to-high</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="practical-recommendations" class="level3" data-number="5.12.7">
+<h3 data-number="5.12.7" class="anchored" data-anchor-id="practical-recommendations"><span class="header-section-number">5.12.7</span> Practical recommendations</h3>
+<p>For rapid Bayes factor assessment with a well-conditioned, unimodal posterior, compute the Laplace approximation and treat it as a baseline estimate, supplemented by uncertainty bounds. If you have posterior samples from MCMC and seek a robust point estimate, <strong>use bridge sampling</strong>—it is the practical sweet spot of accuracy, interpretability, and implementation maturity. For complex, multimodal posteriors or when maximum confidence in the evidence is essential, <strong>employ nested sampling</strong> despite its higher computational cost. <strong>Never rely on the harmonic mean estimator</strong> for production analyses.</p>
+<p>In all cases, report not just a point estimate of the marginal likelihood but also an uncertainty band, and perform sensitivity analyses across prior specifications if feasible.</p>
+</section>
+</section>
+<section id="sources" class="level2" data-number="5.13">
+<h2 data-number="5.13" class="anchored" data-anchor-id="sources"><span class="header-section-number">5.13</span> Sources</h2>
+<p>Sivia, D. S., &amp; Skilling, J. (2006). <em>Data Analysis: A Bayesian Tutorial</em> (2nd ed.). Oxford University Press. - Chapter 2 (coin-tossing) and Chapter 4 (Bayes factors, Occam’s razor) provide pedagogical foundations and the classic fairness test.</p>
+<p>van der Linde, A., &amp; Robert, C. P. (2014). <em>Bayesian Probability Theory</em>. Cambridge University Press. - Chapter 17 covers marginal likelihoods, model evidence, and computational aspects in depth.</p>
+<p>Falasco, G. (2026). <em>Advanced Statistics for Physics Analysis</em> [Course Notes]. Università di Padova. - Section 4.1 synthesizes Bayes factors, the Occam factor, and sensitivity analysis in a concise framework.</p>
+<p>Kass, R. E., &amp; Raftery, A. E. (1995). Bayes factors. <em>Journal of the American Statistical Association</em>, 90(430), 773–795. - Comprehensive review and interpretation scale; the standard reference for practitioners.</p>
+<p>Jeffreys, H. (1961). <em>Theory of Probability</em> (3rd ed.). Oxford University Press. - Original proposal of the Bayes factor interpretation scale and philosophical foundations.</p>
+<p>Newton, M. A., &amp; Raftery, A. E. (1994). Approximate Bayesian inference with the weighted likelihood bootstrap. <em>Journal of the Royal Statistical Society</em>, 56(1), 3–48. - Foundational paper documenting the pathological instability of the harmonic mean estimator.</p>
+<p>Meng, X. L., &amp; Wong, W. H. (1996). Simulating ratios of normalizing constants via a simple identity. Technical Report 348, Department of Statistics, University of Chicago. - Introduction of bridge sampling and the importance-weighted identity for marginal likelihood estimation.</p>
+<p>Gelman, A., &amp; Meng, X. L. (1998). Simulating normalizing constants: From importance sampling to bridge sampling to path sampling. <em>Statistical Science</em>, 13(2), 163–185. - Comprehensive review of path-based methods including thermodynamic integration; unifies importance sampling and bridge sampling perspectives.</p>
+<p>Neal, R. M. (2001). Annealed importance sampling. <em>Journal of Machine Learning Research</em>, 6, 143–175. - Detailed treatment of annealed importance sampling (AIS) and connection to parallel tempering.</p>
+<p>Skilling, J. (2006). Nested sampling for general Bayesian computation. <em>Bayesian Analysis</em>, 4(6), 833–860. - Introduction of nested sampling and its application to evidence computation and multimodal posterior exploration.</p>
+<p>Wolpert, R. L., &amp; Schmidler, S. C. (2012). α-stable limit laws for harmonic mean estimators of marginal likelihoods. <em>Statistica Sinica</em>, 22(3), 1233–1251. - Rigorous analysis of the harmonic mean estimator’s failure modes and theoretical variance properties.</p>
+<p>Gronau, Q. F., Singmann, H., &amp; Wagenmakers, E. J. (2017). Bridgesampling: An R package for estimating normalizing constants. <em>Journal of Statistical Software</em>, 92(10), 1–29. - Implementation paper for the <code>bridgesampling</code> R package; practical guide to bridge sampling in production analyses.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/03_continuous_probability.html" class="pagination-link" aria-label="Continuous probability and limit theorems">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Continuous probability and limit theorems</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/05_parameter_estimation.html" class="pagination-link" aria-label="Bayesian parameter estimation, intervals and prediction">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian parameter estimation, intervals and prediction</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb4" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Model comparison and Bayes factors"</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>When faced with multiple competing hypotheses or models, scientists need a principled way to compare them in light of observed data. The Bayesian framework provides an elegant and automatic way to do this: the posterior odds ratio, built from the Bayes factor and the prior odds. Unlike frequentist hypothesis tests that focus on rejecting a single null hypothesis, Bayesian model comparison directly assigns probabilities to models and penalizes unjustified complexity.</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>The key insight—Occam's razor—emerges automatically from the mathematics. Complex models that require fine-tuning of their parameters to fit data are penalized, while simple models that make robust predictions across a wide range of parameter values are favored. This chapter develops the theory and practice of Bayesian model selection, from the basic posterior odds formula to sophisticated applications in scientific inference.</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">## Posterior odds and the Bayes factor</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>Suppose we have two mutually exclusive and exhaustive hypotheses $H_0$ and $H_1$, and we observe data $D$. Bayes' theorem tells us:</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>$$P(H_i | D) = \frac{P(D | H_i) P(H_i)}{P(D)}$$</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>where $P(D) = P(D | H_0) P(H_0) + P(D | H_1) P(H_1)$ is the total probability of the data, obtained by marginalizing over both hypotheses.</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Posterior odds ratio"}</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>The posterior odds ratio is the ratio of the posterior probabilities:</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>$$R = \frac{P(H_1 | D)}{P(H_0 | D)}$$</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>This directly quantifies which hypothesis is more likely given the data. Values $R &gt; 1$ favor $H_1$, while $R &lt; 1$ favor $H_0$.</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>Now divide the posterior for $H_1$ by the posterior for $H_0$:</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>$$R = \frac{P(H_1 | D)}{P(H_0 | D)} = \frac{P(D | H_1)}{P(D | H_0)} \cdot \frac{P(H_1)}{P(H_0)}$$</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>The first ratio is the Bayes factor; the second is the prior odds.</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Bayes factor"}</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>The Bayes factor is:</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>$$\text{BF}_{10} = \frac{P(D | H_1)}{P(D | H_0)}$$</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>It expresses how much the data shifts the odds between the two models, independent of prior beliefs.</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>Thus we have the fundamental equation of Bayesian model comparison:</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>$$R = \text{BF}_{10} \times \frac{P(H_1)}{P(H_0)}$$</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>::: {.note}</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>Under uniform priors—when $P(H_1) = P(H_0) = 1/2$—the posterior odds equal the Bayes factor. This is why some practitioners use $\text{BF} &gt; 1$ as a criterion for favoring $H_1$ "objectively," removing apparent subjectivity of the prior. However, this merely replaces one prior assumption (about models) with another (equal prior probability).</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## Interpreting the Bayes factor</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>Jeffreys (1961) proposed a scale for interpreting the magnitude of a Bayes factor:</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\text{BF}_{10}$ <span class="pp">|</span> Interpretation <span class="pp">|</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $1$ to $3$ <span class="pp">|</span> Weak evidence for $H_1$ <span class="pp">|</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $3$ to $10$ <span class="pp">|</span> Moderate evidence for $H_1$ <span class="pp">|</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $10$ to $30$ <span class="pp">|</span> Strong evidence for $H_1$ <span class="pp">|</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $30$ to $100$ <span class="pp">|</span> Very strong evidence for $H_1$ <span class="pp">|</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $&gt; 100$ <span class="pp">|</span> Decisive evidence for $H_1$ <span class="pp">|</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>(Reverse the fractions for evidence against $H_1$.)</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>::: {.note}</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>This scale is somewhat arbitrary and context-dependent. In practice, consider not just the magnitude but also the uncertainty in the Bayes factor and the scientific implications of being wrong.</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>The posterior probabilities of the hypotheses are recovered from the odds:</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>$$P(H_0 | D) = \frac{1}{1 + R}, \quad P(H_1 | D) = \frac{R}{1 + R}$$</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a><span class="fu">## The marginal likelihood and Occam's razor</span></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>The Bayes factor depends on the marginal likelihood (also called the model evidence), the probability of the data averaged over all possible parameter values under that model:</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>$$P(D | H_i) = \int P(D | \theta, H_i) \pi(\theta | H_i) \, d\theta$$</span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>Here $\pi(\theta | H_i)$ is the prior distribution over parameters under hypothesis $H_i$, and $P(D | \theta, H_i)$ is the likelihood.</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Occam's razor in Bayesian inference"}</span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>Marginal likelihoods automatically encode a penalty for model complexity. A complex model with many parameters typically spreads its prior mass over a large region of parameter space. Only a small region of this parameter space will fit the data well. When we integrate over all parameters, the contribution from the region that fits data is small relative to the total prior volume, yielding a low marginal likelihood—even if the model achieves a higher best-fit likelihood than a simpler competitor.</span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>To see this concretely, consider two models:</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$H_0$: a simple model with a fixed parameter value $\theta_0$.</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$H_1$: a complex model with parameter $\theta$ uniformly distributed over the range $<span class="co">[</span><span class="ot">a, b</span><span class="co">]</span>$.</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>If both models fit the data equally well at their best-fit parameter values, then $P(D | \theta_0, H_0) \approx P(D | \hat{\theta}, H_1)$ where $\hat{\theta}$ is the MLE under $H_1$.</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>But:</span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>$$P(D | H_0) = P(D | \theta_0, H_0)$$</span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>$$P(D | H_1) \approx \frac{1}{b-a} \int_a^b P(D | \theta, H_1) \, d\theta \approx P(D | \hat{\theta}, H_1) \cdot \frac{\Delta\theta_{\text{eff}}}{b-a}$$</span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>where $\Delta\theta_{\text{eff}}$ is the effective width of the likelihood peak. If $\Delta\theta_{\text{eff}} \ll b - a$, then $P(D | H_1) \ll P(D | H_0)$ despite $H_1$ fitting the data equally well locally. The Bayes factor penalizes $H_1$ for having a large prior parameter space most of which is inconsistent with the data.</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a><span class="fu">## Laplace approximation and the Occam factor</span></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>For models with continuous parameters, we can approximate the marginal likelihood using Laplace's approximation. Assume the likelihood $P(D | \theta, H)$ is sharply peaked around its maximum $\hat{\theta}$, and the prior is smooth on the scale of the likelihood width.</span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>Then:</span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>$$P(D | H) \approx P(D | \hat{\theta}, H) \cdot \pi(\hat{\theta}) \cdot \Delta\theta_{\text{eff}}$$</span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Occam factor"}</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>The Occam factor is:</span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>$$\text{Occam} = \pi(\hat{\theta}) \cdot \Delta\theta_{\text{eff}}$$</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>It represents the prior probability of the region of parameter space that actually fits the data. For a model with $d$ parameters and roughly uniform prior over range $L$, this is approximately $(L_1 \cdots L_d)^{-1}$ if the likelihood width is much smaller than the prior width in each dimension.</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>The Bayes factor becomes:</span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>$$\text{BF}_{10} = \frac{P(D | \hat{\theta}_1, H_1) \cdot \text{Occam}_1}{P(D | \hat{\theta}_0, H_0) \cdot \text{Occam}_0}$$</span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>The first term (ratio of best-fit likelihoods) favors the more flexible model. The second term (ratio of Occam factors) penalizes it for complexity. The balance determines the winner—a principle arising purely from integration, not from any ad-hoc penalty function.</span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example: Testing coin fairness</span></span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>This classic example from Sivia (2006) illustrates the full machinery. Suppose we flip a coin $n = 250$ times and observe $h = 140$ heads. We compare:</span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$H_0$: The coin is fair ($\theta = 0.5$).</span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$H_1$: The coin has unknown bias $\theta \sim \text{Beta}(1,1)$ (uniform on $<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$).</span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>The likelihood for $h$ heads in $n$ flips is:</span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>$$P(D | \theta) = \binom{n}{h} \theta^h (1-\theta)^{n-h}$$</span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>Under $H_0$:</span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>$$P(D | H_0) = \binom{n}{h} (0.5)^n$$</span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>Under $H_1$, with the Beta(1,1) prior:</span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>$$P(D | H_1) = \int_0^1 \binom{n}{h} \theta^h (1-\theta)^{n-h} \, d\theta = \binom{n}{h} \cdot \frac{h! (n-h)!}{(n+1)!}$$</span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>Therefore:</span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>$$\text{BF}_{10} = \frac{P(D | H_1)}{P(D | H_0)} = \frac{h! (n-h)!}{(n+1)!} \cdot 2^n$$</span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>With $n = 250$ and $h = 140$:</span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a>$$\text{BF}_{10} = \frac{140! \cdot 110!}{251!} \cdot 2^{250} \approx 0.044$$</span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>This strong evidence against the coin being fair makes intuitive sense: observing 140 heads in 250 flips is notably different from 50-50 randomness.</span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a>::: {.example name="Sensitivity to prior width"}</span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a>Now suppose we use a wider prior for $H_1$: $\theta \sim \text{Beta}(\alpha, \alpha)$ for some $\alpha &gt; 1$. This concentrates the prior more around $\theta = 0.5$. The Occam factor shrinks, raising the Bayes factor. Conversely, using $\alpha &lt; 1$ (a U-shaped prior favoring extreme values) lowers it.</span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>This illustrates a key insight: the Bayes factor is not prior-independent. However, it responds *sensibly*: wider priors (more agnostic) increase the Occam penalty, favoring simpler models; narrower priors (more peaked) decrease the penalty. A practitioner should explore this sensitivity and report it alongside point estimates.</span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a><span class="fu">## Lindley's paradox</span></span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a>A famous puzzle arises when comparing a point null hypothesis (e.g., $\theta = 0$) to a broad alternative. As sample size increases, frequentist p-values eventually fall below any threshold (e.g., 0.05), calling for rejection of the null. Yet the Bayes factor may simultaneously favor the null, if the alternative prior is very diffuse.</span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a>::: {.example name="Lindley's paradox"}</span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a>Suppose we test $H_0: \mu = 0$ versus $H_1: \mu \sim N(0, \sigma_\mu^2)$ on data $x_1, \ldots, x_n \sim N(\mu, 1)$. With a very large sample and $\bar{x}$ only slightly away from zero, a frequentist test will reject $H_0$ (small p-value), but if $\sigma_\mu$ is very large (vague prior on $\mu$), the Occam penalty under $H_1$ keeps the Bayes factor favoring $H_0$.</span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a>The resolution is that the "paradox" reflects a real difference in how the two frameworks treat vague alternatives. Frequentist tests focus on the likelihood under $H_0$. Bayesian tests also account for where the alternative prior was placed. This is not an error but a feature: it discourages chasing phantom effects in vague parameter spaces.</span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sensitivity analysis and recommendations</span></span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a>Because the Bayes factor depends on prior specification under each model, responsible practice demands a sensitivity analysis:</span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Vary the prior width** under the complex model within a reasonable range.</span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Plot or tabulate** the Bayes factor as a function of prior width.</span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Report the range** of Bayes factors across plausible priors.</span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Use multiple Bayes factor values** (e.g., the median and bounds) rather than a single point estimate.</span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>If the Bayes factor remains in the same evidential category across a wide range of prior specifications, the conclusion is robust. If it changes materially, the inference is prior-sensitive and deserves careful discussion.</span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a>::: {.note}</span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>Some software implementations use automatic prior calibration rules (e.g., based on effect size or information content in the data) to reduce arbitrariness. While convenient, these methods still embed assumptions. Transparency about prior choice is always preferable to the illusion of objectivity.</span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a><span class="fu">## Brief comparison with frequentist hypothesis testing</span></span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a>The frequentist approach to hypothesis testing is conceptually different. It treats parameters as fixed but unknown and focuses on controlling error rates across repeated hypothetical samples:</span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Frequentist hypothesis test"}</span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a>A test statistic $T(D)$ is compared to a threshold derived from the null distribution $P(T | H_0)$. The p-value is $P(T(D) \geq t_{\text{obs}} | H_0)$, the probability of observing data as or more extreme than observed, if $H_0$ were true. A p-value below $\alpha$ (e.g., 0.05) triggers rejection of $H_0$.</span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a>Key differences:</span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Feature <span class="pp">|</span> Bayesian <span class="pp">|</span> Frequentist <span class="pp">|</span></span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|</span></span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Assigns probability to hypotheses <span class="pp">|</span> Yes <span class="pp">|</span> No; tests hypothesis rejection rates <span class="pp">|</span></span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Uses prior information <span class="pp">|</span> Yes; explicitly <span class="pp">|</span> No; aims for objectivity through error control <span class="pp">|</span></span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Penalizes complexity <span class="pp">|</span> Automatically via Occam factor <span class="pp">|</span> Only through significance level (weak link) <span class="pp">|</span></span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Interpretation of p-value <span class="pp">|</span> N/A <span class="pp">|</span> Probability of data under $H_0$, not probability $H_0$ is true <span class="pp">|</span></span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sample size effects <span class="pp">|</span> Accounted for naturally <span class="pp">|</span> Strong: small effects are rejected in large samples, regardless of effect size <span class="pp">|</span></span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Binary decision <span class="pp">|</span> Unnecessary; provides probabilities <span class="pp">|</span> Often yes/no; less flexible <span class="pp">|</span></span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>Both frameworks are useful and address different questions. Frequentist tests excel at controlling false-positive rates in exploratory settings. Bayesian methods excel when you want to rank competing theories and make decisions balancing evidence and consequences. Modern practice often combines both: use frequentist tests for initial screening, then Bayesian analysis for focused inference.</span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a><span class="fu">## Computational aspects</span></span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a>Computing the marginal likelihood $P(D | H)$ is often the bottleneck in Bayesian model comparison. For simple models (coin flips, Gaussian data), closed-form solutions exist. For complex likelihoods and high-dimensional parameter spaces, numerical methods are essential:</span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Laplace approximation**: Fast, requires only the posterior mode and Hessian matrix.</span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Markov Chain Monte Carlo**: Generates posterior samples; marginal likelihood can be estimated using harmonic mean or bridge sampling.</span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Nested sampling**: Efficient algorithm specifically designed for evidence computation.</span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Variational inference**: Approximate posterior, often with tractable marginal likelihood.</span>
+<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a>The choice depends on model complexity and available computational resources. For pedagogical purposes, we focus on settings where analytical solutions or Laplace approximation suffice.</span>
+<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a><span class="fu">## Examples and visualization</span></span>
+<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-bayes-factor-vs-prior-width</span></span>
+<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Bayes factor for coin fairness as a function of prior width on theta under H1."</span></span>
+<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "The Bayes factor changes with the width of the prior under H1. A narrower prior (concentrated near 0.5) increases the Occam penalty, lowering the BF. A very wide prior spreads mass over the entire [0,1] interval, also increasing the penalty. An intermediate width balances fit and complexity."</span></span>
+<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a><span class="co"># Coin fairness example: n = 250 flips, h = 140 heads</span></span>
+<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a><span class="co"># H0: theta = 0.5 (fair coin)</span></span>
+<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a><span class="co"># H1: theta ~ Beta(alpha, alpha) with varying alpha</span></span>
+<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">250</span></span>
+<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="dv">140</span></span>
+<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a><span class="co"># Likelihood under H0</span></span>
+<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a>log_likelihood_H0 <span class="ot">&lt;-</span> h <span class="sc">*</span> <span class="fu">log</span>(<span class="fl">0.5</span>) <span class="sc">+</span> (n <span class="sc">-</span> h) <span class="sc">*</span> <span class="fu">log</span>(<span class="fl">0.5</span>) <span class="sc">+</span> <span class="fu">lchoose</span>(n, h)</span>
+<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a><span class="co"># Marginal likelihood under H1 with Beta(alpha, alpha) prior</span></span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a><span class="co"># For Beta-Binomial model: P(D|H1) = C(n,h) * Beta(h+alpha, n-h+alpha) / Beta(alpha, alpha)</span></span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a>bayes_factor_beta_binomial <span class="ot">&lt;-</span> <span class="cf">function</span>(n, h, alpha) {</span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a>  log_ll_H1 <span class="ot">&lt;-</span> <span class="fu">lchoose</span>(n, h) <span class="sc">+</span></span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lbeta</span>(h <span class="sc">+</span> alpha, n <span class="sc">-</span> h <span class="sc">+</span> alpha) <span class="sc">-</span></span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a>    <span class="fu">lbeta</span>(alpha, alpha)</span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>  <span class="fu">exp</span>(log_ll_H1 <span class="sc">-</span> log_likelihood_H0)</span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a><span class="co"># Grid of prior concentrations</span></span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a>alpha_values <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.5</span>, <span class="dv">50</span>, <span class="at">by =</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>bf_values <span class="ot">&lt;-</span> <span class="fu">sapply</span>(alpha_values, <span class="cf">function</span>(a) <span class="fu">bayes_factor_beta_binomial</span>(n, h, a))</span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a><span class="co"># Three-tone palette</span></span>
+<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>col_bf <span class="ot">&lt;-</span> <span class="st">"#1f77b4"</span>      <span class="co"># Blue for BF curve</span></span>
+<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a>col_guide <span class="ot">&lt;-</span> <span class="st">"#ff7f0e"</span>   <span class="co"># Orange for prior-width guide</span></span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a>col_accent <span class="ot">&lt;-</span> <span class="st">"#2ca02c"</span>  <span class="co"># Green for annotations</span></span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(alpha_values, bf_values, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Prior concentration (alpha)"</span>,</span>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Bayes Factor (BF_10)"</span>,</span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> col_bf, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(bf_values) <span class="sc">*</span> <span class="fl">1.1</span>))</span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> col_guide, <span class="at">lwd =</span> <span class="fl">0.8</span>)</span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">30</span>, <span class="fl">1.05</span>, <span class="st">"BF = 1 (indifference)"</span>, <span class="at">col =</span> col_guide, <span class="at">cex =</span> <span class="fl">0.85</span>, <span class="at">adj =</span> <span class="dv">0</span>)</span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a><span class="co"># Highlight a specific prior width</span></span>
+<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a>alpha_focus <span class="ot">&lt;-</span> <span class="dv">5</span></span>
+<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a>bf_focus <span class="ot">&lt;-</span> <span class="fu">bayes_factor_beta_binomial</span>(n, h, alpha_focus)</span>
+<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(alpha_focus, bf_focus, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a><span class="fu">segments</span>(alpha_focus, <span class="dv">0</span>, alpha_focus, bf_focus, <span class="at">lty =</span> <span class="dv">3</span>, <span class="at">col =</span> col_accent, <span class="at">lwd =</span> <span class="fl">0.8</span>)</span>
+<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(alpha_focus <span class="sc">-</span> <span class="dv">8</span>, bf_focus <span class="sc">+</span> <span class="fl">0.15</span>, <span class="fu">sprintf</span>(<span class="st">"alpha=%.1f</span><span class="sc">\n</span><span class="st">BF=%.3f"</span>, alpha_focus, bf_focus),</span>
+<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="dv">1</span>)</span>
+<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-259"><a href="#cb4-259" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-posterior-odds-over-time</span></span>
+<span id="cb4-260"><a href="#cb4-260" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Growth of posterior odds as data accumulates."</span></span>
+<span id="cb4-261"><a href="#cb4-261" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Sequential Bayes factor as we collect more coin flips. With 140 heads per 250 flips, the evidence against fairness accumulates rapidly. After ~80 flips, the posterior odds strongly favor the biased model."</span></span>
+<span id="cb4-262"><a href="#cb4-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-263"><a href="#cb4-263" aria-hidden="true" tabindex="-1"></a><span class="co"># Sequential analysis: build up data gradually</span></span>
+<span id="cb4-264"><a href="#cb4-264" aria-hidden="true" tabindex="-1"></a>n_max <span class="ot">&lt;-</span> <span class="dv">250</span></span>
+<span id="cb4-265"><a href="#cb4-265" aria-hidden="true" tabindex="-1"></a>h_max <span class="ot">&lt;-</span> <span class="dv">140</span></span>
+<span id="cb4-266"><a href="#cb4-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-267"><a href="#cb4-267" aria-hidden="true" tabindex="-1"></a><span class="co"># Track data proportionally</span></span>
+<span id="cb4-268"><a href="#cb4-268" aria-hidden="true" tabindex="-1"></a>flips_seq <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">10</span>, n_max, <span class="at">by =</span> <span class="dv">10</span>)</span>
+<span id="cb4-269"><a href="#cb4-269" aria-hidden="true" tabindex="-1"></a>heads_seq <span class="ot">&lt;-</span> <span class="fu">round</span>(flips_seq <span class="sc">*</span> (h_max <span class="sc">/</span> n_max))</span>
+<span id="cb4-270"><a href="#cb4-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-271"><a href="#cb4-271" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Bayes factor at each stage</span></span>
+<span id="cb4-272"><a href="#cb4-272" aria-hidden="true" tabindex="-1"></a>bf_seq <span class="ot">&lt;-</span> <span class="fu">mapply</span>(<span class="cf">function</span>(n_i, h_i) {</span>
+<span id="cb4-273"><a href="#cb4-273" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bayes_factor_beta_binomial</span>(n_i, h_i, <span class="at">alpha =</span> <span class="dv">1</span>)</span>
+<span id="cb4-274"><a href="#cb4-274" aria-hidden="true" tabindex="-1"></a>}, flips_seq, heads_seq)</span>
+<span id="cb4-275"><a href="#cb4-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-276"><a href="#cb4-276" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior odds with uniform prior on H0 vs H1</span></span>
+<span id="cb4-277"><a href="#cb4-277" aria-hidden="true" tabindex="-1"></a>posterior_odds <span class="ot">&lt;-</span> bf_seq</span>
+<span id="cb4-278"><a href="#cb4-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-279"><a href="#cb4-279" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb4-280"><a href="#cb4-280" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(flips_seq, posterior_odds, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">1</span>,</span>
+<span id="cb4-281"><a href="#cb4-281" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Number of flips"</span>,</span>
+<span id="cb4-282"><a href="#cb4-282" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Posterior odds ratio (R = BF)"</span>,</span>
+<span id="cb4-283"><a href="#cb4-283" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> col_bf, <span class="at">log =</span> <span class="st">"y"</span>)</span>
+<span id="cb4-284"><a href="#cb4-284" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> col_guide, <span class="at">lwd =</span> <span class="fl">0.8</span>)</span>
+<span id="cb4-285"><a href="#cb4-285" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">10</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> col_guide, <span class="at">lwd =</span> <span class="fl">0.8</span>)</span>
+<span id="cb4-286"><a href="#cb4-286" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">20</span>, <span class="fl">0.8</span>, <span class="st">"R = 1 (equal)"</span>, <span class="at">col =</span> col_guide, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="dv">0</span>)</span>
+<span id="cb4-287"><a href="#cb4-287" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="dv">20</span>, <span class="dv">12</span>, <span class="st">"R = 10 (strong)"</span>, <span class="at">col =</span> col_guide, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="dv">0</span>)</span>
+<span id="cb4-288"><a href="#cb4-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-289"><a href="#cb4-289" aria-hidden="true" tabindex="-1"></a><span class="co"># Mark final observation</span></span>
+<span id="cb4-290"><a href="#cb4-290" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(n_max, posterior_odds[<span class="fu">length</span>(posterior_odds)], <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="fl">1.2</span>)</span>
+<span id="cb4-291"><a href="#cb4-291" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(n_max <span class="sc">-</span> <span class="dv">30</span>, posterior_odds[<span class="fu">length</span>(posterior_odds)] <span class="sc">*</span> <span class="fl">0.7</span>,</span>
+<span id="cb4-292"><a href="#cb4-292" aria-hidden="true" tabindex="-1"></a>     <span class="fu">sprintf</span>(<span class="st">"n=250</span><span class="sc">\n</span><span class="st">R=%.2e"</span>, posterior_odds[<span class="fu">length</span>(posterior_odds)]),</span>
+<span id="cb4-293"><a href="#cb4-293" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="dv">1</span>)</span>
+<span id="cb4-294"><a href="#cb4-294" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-295"><a href="#cb4-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-298"><a href="#cb4-298" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb4-299"><a href="#cb4-299" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: lst-occam-factor-complexity</span></span>
+<span id="cb4-300"><a href="#cb4-300" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: "Illustration of the Occam factor penalty for model complexity."</span></span>
+<span id="cb4-301"><a href="#cb4-301" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Two models fit data equally well at their best-fit values, but the complex model's prior is spread over a wider parameter space. The effective width of the likelihood peak (Delta_theta_eff) is the same for both, but the prior width differs. The Occam factor penalizes the complex model by the ratio of prior widths."</span></span>
+<span id="cb4-302"><a href="#cb4-302" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-303"><a href="#cb4-303" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="fl">4.4</span>, <span class="fl">4.4</span>, <span class="fl">2.2</span>, <span class="fl">1.2</span>))</span>
+<span id="cb4-304"><a href="#cb4-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-305"><a href="#cb4-305" aria-hidden="true" tabindex="-1"></a><span class="co"># Smooth likelihood function centered at theta_hat = 0.56</span></span>
+<span id="cb4-306"><a href="#cb4-306" aria-hidden="true" tabindex="-1"></a>theta <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">1000</span>)</span>
+<span id="cb4-307"><a href="#cb4-307" aria-hidden="true" tabindex="-1"></a>theta_hat <span class="ot">&lt;-</span> <span class="fl">0.56</span></span>
+<span id="cb4-308"><a href="#cb4-308" aria-hidden="true" tabindex="-1"></a>delta_theta_eff <span class="ot">&lt;-</span> <span class="fl">0.08</span></span>
+<span id="cb4-309"><a href="#cb4-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-310"><a href="#cb4-310" aria-hidden="true" tabindex="-1"></a><span class="co"># Likelihood (normalized for display)</span></span>
+<span id="cb4-311"><a href="#cb4-311" aria-hidden="true" tabindex="-1"></a>likelihood <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="sc">-</span>((theta <span class="sc">-</span> theta_hat)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="dv">2</span> <span class="sc">*</span> delta_theta_eff<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb4-312"><a href="#cb4-312" aria-hidden="true" tabindex="-1"></a>likelihood <span class="ot">&lt;-</span> likelihood <span class="sc">/</span> <span class="fu">max</span>(likelihood)</span>
+<span id="cb4-313"><a href="#cb4-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-314"><a href="#cb4-314" aria-hidden="true" tabindex="-1"></a><span class="co"># Prior widths</span></span>
+<span id="cb4-315"><a href="#cb4-315" aria-hidden="true" tabindex="-1"></a>prior_width_simple <span class="ot">&lt;-</span> <span class="fl">0.1</span>   <span class="co"># H0 narrow</span></span>
+<span id="cb4-316"><a href="#cb4-316" aria-hidden="true" tabindex="-1"></a>prior_width_complex <span class="ot">&lt;-</span> <span class="fl">0.8</span>  <span class="co"># H1 wide</span></span>
+<span id="cb4-317"><a href="#cb4-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-318"><a href="#cb4-318" aria-hidden="true" tabindex="-1"></a><span class="co"># Priors</span></span>
+<span id="cb4-319"><a href="#cb4-319" aria-hidden="true" tabindex="-1"></a>prior_simple <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(theta <span class="sc">&gt;=</span> <span class="fl">0.45</span> <span class="sc">&amp;</span> theta <span class="sc">&lt;=</span> <span class="fl">0.55</span>, <span class="dv">1</span> <span class="sc">/</span> prior_width_simple, <span class="dv">0</span>)</span>
+<span id="cb4-320"><a href="#cb4-320" aria-hidden="true" tabindex="-1"></a>prior_complex <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span> <span class="sc">/</span> <span class="dv">1</span>, <span class="fu">length</span>(theta))  <span class="co"># Uniform over [0,1]</span></span>
+<span id="cb4-321"><a href="#cb4-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-322"><a href="#cb4-322" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(theta, likelihood, <span class="at">type =</span> <span class="st">"l"</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> col_bf,</span>
+<span id="cb4-323"><a href="#cb4-323" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Parameter theta"</span>,</span>
+<span id="cb4-324"><a href="#cb4-324" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Density (normalized)"</span>,</span>
+<span id="cb4-325"><a href="#cb4-325" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">1.1</span>),</span>
+<span id="cb4-326"><a href="#cb4-326" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">""</span>)</span>
+<span id="cb4-327"><a href="#cb4-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-328"><a href="#cb4-328" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw prior widths</span></span>
+<span id="cb4-329"><a href="#cb4-329" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">c</span>(<span class="fl">0.45</span>, <span class="fl">0.55</span>), <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">1.0</span>), <span class="at">col =</span> col_accent, <span class="at">lwd =</span> <span class="dv">3</span>)</span>
+<span id="cb4-330"><a href="#cb4-330" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">c</span>(<span class="fl">0.45</span>, <span class="fl">0.55</span>), <span class="fu">c</span>(<span class="fl">1.0</span>, <span class="fl">1.0</span>), <span class="at">pch =</span> <span class="st">"|"</span>, <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="dv">2</span>)</span>
+<span id="cb4-331"><a href="#cb4-331" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">0.5</span>, <span class="fl">1.05</span>, <span class="st">"H0 prior width"</span>, <span class="at">col =</span> col_accent, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-332"><a href="#cb4-332" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-333"><a href="#cb4-333" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.85</span>), <span class="at">col =</span> col_guide, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb4-334"><a href="#cb4-334" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="fu">c</span>(<span class="fl">0.85</span>, <span class="fl">0.85</span>), <span class="at">pch =</span> <span class="st">"|"</span>, <span class="at">col =</span> col_guide, <span class="at">cex =</span> <span class="dv">2</span>)</span>
+<span id="cb4-335"><a href="#cb4-335" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(<span class="fl">0.5</span>, <span class="fl">0.90</span>, <span class="st">"H1 prior width"</span>, <span class="at">col =</span> col_guide, <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">adj =</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-336"><a href="#cb4-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-337"><a href="#cb4-337" aria-hidden="true" tabindex="-1"></a><span class="co"># Shade the effective width</span></span>
+<span id="cb4-338"><a href="#cb4-338" aria-hidden="true" tabindex="-1"></a><span class="fu">polygon</span>(<span class="fu">c</span>(theta_hat <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>delta_theta_eff, theta_hat <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>delta_theta_eff,</span>
+<span id="cb4-339"><a href="#cb4-339" aria-hidden="true" tabindex="-1"></a>          theta_hat <span class="sc">+</span> <span class="dv">2</span><span class="sc">*</span>delta_theta_eff, theta_hat <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>delta_theta_eff),</span>
+<span id="cb4-340"><a href="#cb4-340" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.02</span>, <span class="sc">-</span><span class="fl">0.02</span>, <span class="fl">0.2</span>, <span class="fl">0.2</span>), <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.5</span>, <span class="fl">0.2</span>), <span class="at">border =</span> <span class="cn">NA</span>)</span>
+<span id="cb4-341"><a href="#cb4-341" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(theta_hat, <span class="fl">0.12</span>, <span class="st">"Effective</span><span class="sc">\n</span><span class="st">likelihood</span><span class="sc">\n</span><span class="st">width"</span>, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">adj =</span> <span class="fl">0.5</span>)</span>
+<span id="cb4-342"><a href="#cb4-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-343"><a href="#cb4-343" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="fu">c</span>(<span class="st">"Likelihood"</span>, <span class="st">"H0 prior"</span>, <span class="st">"H1 prior"</span>),</span>
+<span id="cb4-344"><a href="#cb4-344" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(col_bf, col_accent, col_guide), <span class="at">lwd =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">2</span>),</span>
+<span id="cb4-345"><a href="#cb4-345" aria-hidden="true" tabindex="-1"></a>       <span class="at">cex =</span> <span class="fl">0.8</span>, <span class="at">bg =</span> <span class="st">"white"</span>)</span>
+<span id="cb4-346"><a href="#cb4-346" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb4-347"><a href="#cb4-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-348"><a href="#cb4-348" aria-hidden="true" tabindex="-1"></a><span class="fu">## Computing the marginal likelihood</span></span>
+<span id="cb4-349"><a href="#cb4-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-350"><a href="#cb4-350" aria-hidden="true" tabindex="-1"></a>Computing the marginal likelihood $p(D \mid M) = \int p(D \mid \theta, M)\, p(\theta \mid M)\, d\theta$ is often the primary computational bottleneck in Bayesian model comparison. For simple conjugate models—where the prior and likelihood are conjugate families—analytical solutions exist. In all other settings, we must resort to numerical approximation. This section surveys the four most practical methods, comparing their assumptions, computational costs, reliability, and pitfalls.</span>
+<span id="cb4-351"><a href="#cb4-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-352"><a href="#cb4-352" aria-hidden="true" tabindex="-1"></a><span class="fu">### Laplace approximation</span></span>
+<span id="cb4-353"><a href="#cb4-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-354"><a href="#cb4-354" aria-hidden="true" tabindex="-1"></a>The Laplace approximation provides a fast, analytic approximation to the marginal likelihood when the posterior is sharply peaked around its mode. Expanding the log-posterior around the maximum a posteriori (MAP) estimate $\hat{\theta}$ to second order and assuming the prior is smooth at the peak:</span>
+<span id="cb4-355"><a href="#cb4-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-356"><a href="#cb4-356" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Laplace approximation for marginal likelihood"}</span>
+<span id="cb4-357"><a href="#cb4-357" aria-hidden="true" tabindex="-1"></a>$$p(D \mid M) \approx p(D \mid \hat{\theta}, M)\, p(\hat{\theta} \mid M)\, (2\pi)^{d/2}\, |\mathcal{H}|^{-1/2}$$</span>
+<span id="cb4-358"><a href="#cb4-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-359"><a href="#cb4-359" aria-hidden="true" tabindex="-1"></a>where $d$ is the dimension of the parameter space and $\mathcal{H}$ is the Hessian of the negative log-posterior evaluated at $\hat{\theta}$.</span>
+<span id="cb4-360"><a href="#cb4-360" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-361"><a href="#cb4-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-362"><a href="#cb4-362" aria-hidden="true" tabindex="-1"></a>**Strengths:** Requires only the MAP and Hessian, making it computationally cheap; often accurate when the posterior is well-approximated by a high-dimensional Gaussian.</span>
+<span id="cb4-363"><a href="#cb4-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-364"><a href="#cb4-364" aria-hidden="true" tabindex="-1"></a>**Weaknesses:** Poor accuracy for multimodal posteriors, heavy-tailed posteriors, or when the likelihood is only weakly peaked. The approximation's quality degrades in high dimensions.</span>
+<span id="cb4-365"><a href="#cb4-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-366"><a href="#cb4-366" aria-hidden="true" tabindex="-1"></a>::: {.note}</span>
+<span id="cb4-367"><a href="#cb4-367" aria-hidden="true" tabindex="-1"></a>For many applied problems, the Laplace approximation is a good starting point. Use it as a baseline and compare with more robust methods if possible.</span>
+<span id="cb4-368"><a href="#cb4-368" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-369"><a href="#cb4-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-370"><a href="#cb4-370" aria-hidden="true" tabindex="-1"></a><span class="fu">### Harmonic mean estimator</span></span>
+<span id="cb4-371"><a href="#cb4-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-372"><a href="#cb4-372" aria-hidden="true" tabindex="-1"></a>If posterior samples $\theta^{(s)}, \, s = 1, \ldots, S$ are available from MCMC, the harmonic mean estimator offers a simple plug-in approximation:</span>
+<span id="cb4-373"><a href="#cb4-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-374"><a href="#cb4-374" aria-hidden="true" tabindex="-1"></a>$$\hat{Z}_{\mathrm{HM}} = \left[\frac{1}{S}\sum_{s=1}^S \frac{1}{p(D \mid \theta^{(s)}, M)}\right]^{-1}$$</span>
+<span id="cb4-375"><a href="#cb4-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-376"><a href="#cb4-376" aria-hidden="true" tabindex="-1"></a>This estimator arises naturally as an importance-sampling approximation with the prior $p(\theta \mid M)$ as the proposal distribution. The key idea is that the posterior samples are reweighted by the reciprocal of the likelihood, inverting the usual likelihood weighting.</span>
+<span id="cb4-377"><a href="#cb4-377" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-378"><a href="#cb4-378" aria-hidden="true" tabindex="-1"></a>::: {.remark}</span>
+<span id="cb4-379"><a href="#cb4-379" aria-hidden="true" tabindex="-1"></a>**Pitfall: catastrophic instability.** The harmonic mean estimator has infinite variance whenever the prior has lighter tails than the posterior, which occurs in nearly every realistic setting. A single posterior sample in a region of low prior density can dominate the sum, causing enormous variance and unreliable estimates. Newton &amp; Raftery (1994) and Wolpert &amp; Schmidler (2012) have thoroughly documented this pathology. **We strongly discourage the use of the harmonic mean estimator in production analyses.** Its tempting simplicity belies a fundamental flaw.</span>
+<span id="cb4-380"><a href="#cb4-380" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-381"><a href="#cb4-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-382"><a href="#cb4-382" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bridge sampling</span></span>
+<span id="cb4-383"><a href="#cb4-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-384"><a href="#cb4-384" aria-hidden="true" tabindex="-1"></a>Meng &amp; Wong (1996) introduced bridge sampling, a principled method that corrects the importance-sampling bias of the harmonic mean. The method is based on the identity:</span>
+<span id="cb4-385"><a href="#cb4-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-386"><a href="#cb4-386" aria-hidden="true" tabindex="-1"></a>$$\frac{Z_1}{Z_2} = \frac{\mathbb{E}_{q_2}[\alpha(\theta)\,q_1(\theta)]}{\mathbb{E}_{q_1}<span class="co">[</span><span class="ot">\alpha(\theta)\,q_2(\theta)</span><span class="co">]</span>},$$</span>
+<span id="cb4-387"><a href="#cb4-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-388"><a href="#cb4-388" aria-hidden="true" tabindex="-1"></a>where $q_1$ and $q_2$ are any two probability densities with known (or tractable) normalizing constants $Z_1$ and $Z_2$, and $\alpha$ is an arbitrary "bridge" function. The optimal choice of $\alpha$ (in the sense of minimizing asymptotic variance) is the geometric-mean form. By setting $q_1$ to the posterior and $q_2$ to the prior, we recover an estimate of the marginal likelihood.</span>
+<span id="cb4-389"><a href="#cb4-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-390"><a href="#cb4-390" aria-hidden="true" tabindex="-1"></a>**Strengths:** Much lower variance than the harmonic mean; scales well to moderate-to-high dimensions; widely implemented (e.g., in the R package <span class="in">`bridgesampling`</span> of Gronau et al. 2017).</span>
+<span id="cb4-391"><a href="#cb4-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-392"><a href="#cb4-392" aria-hidden="true" tabindex="-1"></a>**Weaknesses:** Requires posterior samples and careful selection of the bridge function. Sensitivity to the proposal and the effective sample size.</span>
+<span id="cb4-393"><a href="#cb4-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-394"><a href="#cb4-394" aria-hidden="true" tabindex="-1"></a>::: {.note}</span>
+<span id="cb4-395"><a href="#cb4-395" aria-hidden="true" tabindex="-1"></a>Bridge sampling is the recommended default when posterior samples are already in hand (e.g., from an MCMC run) and model comparison is a secondary goal. The <span class="in">`bridgesampling`</span> R package provides a robust, production-ready implementation.</span>
+<span id="cb4-396"><a href="#cb4-396" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-397"><a href="#cb4-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-398"><a href="#cb4-398" aria-hidden="true" tabindex="-1"></a><span class="fu">### Nested sampling</span></span>
+<span id="cb4-399"><a href="#cb4-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-400"><a href="#cb4-400" aria-hidden="true" tabindex="-1"></a>Skilling (2006) reformulated the marginal likelihood computation as an integration over the prior mass enclosed by likelihood contours. Define $X(\lambda) = \int_{<span class="sc">\{</span>L(\theta) &gt; \lambda<span class="sc">\}</span>} p(\theta \mid M)\, d\theta$ as the prior mass in regions where the likelihood exceeds $\lambda$. Then:</span>
+<span id="cb4-401"><a href="#cb4-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-402"><a href="#cb4-402" aria-hidden="true" tabindex="-1"></a>$$Z = \int p(D \mid \theta, M)\, p(\theta \mid M)\, d\theta = \int_0^1 L(X)\, dX,$$</span>
+<span id="cb4-403"><a href="#cb4-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-404"><a href="#cb4-404" aria-hidden="true" tabindex="-1"></a>where $L(X)$ is the likelihood as a function of enclosed prior mass $X$.</span>
+<span id="cb4-405"><a href="#cb4-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-406"><a href="#cb4-406" aria-hidden="true" tabindex="-1"></a>The nested sampling algorithm maintains a set of $K$ "live points" uniformly distributed under the prior. At each iteration, the point with the lowest likelihood is removed (added to the "dead points"), and a new point is drawn uniformly from the prior restricted to the region of higher likelihood. The marginal likelihood is accumulated as:</span>
+<span id="cb4-407"><a href="#cb4-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-408"><a href="#cb4-408" aria-hidden="true" tabindex="-1"></a>$$Z \approx \sum_{i} L_i \, \Delta X_i,$$</span>
+<span id="cb4-409"><a href="#cb4-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-410"><a href="#cb4-410" aria-hidden="true" tabindex="-1"></a>where $L_i$ and $\Delta X_i$ are the likelihoods and prior-mass increments of dead points.</span>
+<span id="cb4-411"><a href="#cb4-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-412"><a href="#cb4-412" aria-hidden="true" tabindex="-1"></a>**Strengths:** Handles multimodal posteriors naturally (each mode is explored independently); provides both marginal likelihood and posterior samples (via importance reweighting of dead points); increasingly popular in astrophysics and cosmology.</span>
+<span id="cb4-413"><a href="#cb4-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-414"><a href="#cb4-414" aria-hidden="true" tabindex="-1"></a>**Weaknesses:** More computationally expensive than Laplace (requires many likelihood evaluations); requires careful tuning of the number of live points and the constrained-prior sampler.</span>
+<span id="cb4-415"><a href="#cb4-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-416"><a href="#cb4-416" aria-hidden="true" tabindex="-1"></a>::: {.note}</span>
+<span id="cb4-417"><a href="#cb4-417" aria-hidden="true" tabindex="-1"></a>Nested sampling is implemented in <span class="in">`MultiNest`</span> (Feroz et al.), <span class="in">`dynesty`</span> (Speagle), and <span class="in">`PolyChord`</span> (Handley et al.). Choose nested sampling when the posterior is complex, multimodal, or when you need both evidence and posterior samples with high confidence.</span>
+<span id="cb4-418"><a href="#cb4-418" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-419"><a href="#cb4-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-420"><a href="#cb4-420" aria-hidden="true" tabindex="-1"></a><span class="fu">### Thermodynamic integration and annealed importance sampling</span></span>
+<span id="cb4-421"><a href="#cb4-421" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-422"><a href="#cb4-422" aria-hidden="true" tabindex="-1"></a>A fourth family of methods leverages a path of intermediate distributions. Define the tempered posterior:</span>
+<span id="cb4-423"><a href="#cb4-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-424"><a href="#cb4-424" aria-hidden="true" tabindex="-1"></a>$$\pi_\beta(\theta) \propto p(D \mid \theta, M)^\beta\, p(\theta \mid M), \quad \beta \in <span class="co">[</span><span class="ot">0, 1</span><span class="co">]</span>,$$</span>
+<span id="cb4-425"><a href="#cb4-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-426"><a href="#cb4-426" aria-hidden="true" tabindex="-1"></a>interpolating from the prior ($\beta = 0$) to the posterior ($\beta = 1$). The marginal likelihood satisfies:</span>
+<span id="cb4-427"><a href="#cb4-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-428"><a href="#cb4-428" aria-hidden="true" tabindex="-1"></a>$$\log Z = \int_0^1 \mathbb{E}_{\pi_\beta}<span class="sc">\!</span>\big<span class="co">[</span><span class="ot">\log p(D \mid \theta, M)\big</span><span class="co">]</span>\, d\beta.$$</span>
+<span id="cb4-429"><a href="#cb4-429" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-430"><a href="#cb4-430" aria-hidden="true" tabindex="-1"></a>This identity is the foundation of thermodynamic integration (Gelman &amp; Meng 1998) and annealed importance sampling (Neal 2001), which numerically integrate the expected log-likelihood along the temperature path.</span>
+<span id="cb4-431"><a href="#cb4-431" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-432"><a href="#cb4-432" aria-hidden="true" tabindex="-1"></a>**Strengths:** Robust, applicable to high-dimensional and multimodal problems; naturally embedded in parallel-tempering MCMC schemes (Chapter 10).</span>
+<span id="cb4-433"><a href="#cb4-433" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-434"><a href="#cb4-434" aria-hidden="true" tabindex="-1"></a>**Weaknesses:** Requires careful choice of the temperature schedule and numerical integration scheme.</span>
+<span id="cb4-435"><a href="#cb4-435" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-436"><a href="#cb4-436" aria-hidden="true" tabindex="-1"></a><span class="fu">### Comparison table</span></span>
+<span id="cb4-437"><a href="#cb4-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-438"><a href="#cb4-438" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Method <span class="pp">|</span> When to use <span class="pp">|</span> Strengths <span class="pp">|</span> Weaknesses <span class="pp">|</span> Cost <span class="pp">|</span></span>
+<span id="cb4-439"><a href="#cb4-439" aria-hidden="true" tabindex="-1"></a><span class="pp">|:---|:---|:---|:---|:---|</span></span>
+<span id="cb4-440"><a href="#cb4-440" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Laplace** <span class="pp">|</span> Quick baseline with smooth, unimodal posterior <span class="pp">|</span> Fast; only MAP and Hessian needed <span class="pp">|</span> Poor for multimodal or heavy-tailed posteriors <span class="pp">|</span> Very low <span class="pp">|</span></span>
+<span id="cb4-441"><a href="#cb4-441" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Harmonic mean** <span class="pp">|</span> *Avoid* <span class="pp">|</span> Simplicity; uses existing MCMC samples <span class="pp">|</span> Catastrophic instability; infinite variance <span class="pp">|</span> Very low (but unreliable) <span class="pp">|</span></span>
+<span id="cb4-442"><a href="#cb4-442" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Bridge sampling** <span class="pp">|</span> MCMC samples in hand; moderate-to-high dimensions <span class="pp">|</span> Low variance; theoretically principled; well-implemented <span class="pp">|</span> Requires tuning; sensitive to proposal <span class="pp">|</span> Low-to-moderate <span class="pp">|</span></span>
+<span id="cb4-443"><a href="#cb4-443" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Nested sampling** <span class="pp">|</span> Multimodal or complex posteriors; want both $Z$ and posterior <span class="pp">|</span> Handles multimodality naturally; provides full uncertainty; robust <span class="pp">|</span> Computationally expensive; requires tuning <span class="pp">|</span> Moderate-to-high <span class="pp">|</span></span>
+<span id="cb4-444"><a href="#cb4-444" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **Thermodynamic integration** <span class="pp">|</span> High-dimensional problems; parallel tempering available <span class="pp">|</span> Robust; scalable to high dimensions <span class="pp">|</span> Needs temperature schedule; numerical integration error <span class="pp">|</span> Moderate-to-high <span class="pp">|</span></span>
+<span id="cb4-445"><a href="#cb4-445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-446"><a href="#cb4-446" aria-hidden="true" tabindex="-1"></a><span class="fu">### Practical recommendations</span></span>
+<span id="cb4-447"><a href="#cb4-447" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-448"><a href="#cb4-448" aria-hidden="true" tabindex="-1"></a>For rapid Bayes factor assessment with a well-conditioned, unimodal posterior, compute the Laplace approximation and treat it as a baseline estimate, supplemented by uncertainty bounds. If you have posterior samples from MCMC and seek a robust point estimate, **use bridge sampling**—it is the practical sweet spot of accuracy, interpretability, and implementation maturity. For complex, multimodal posteriors or when maximum confidence in the evidence is essential, **employ nested sampling** despite its higher computational cost. **Never rely on the harmonic mean estimator** for production analyses.</span>
+<span id="cb4-449"><a href="#cb4-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-450"><a href="#cb4-450" aria-hidden="true" tabindex="-1"></a>In all cases, report not just a point estimate of the marginal likelihood but also an uncertainty band, and perform sensitivity analyses across prior specifications if feasible.</span>
+<span id="cb4-451"><a href="#cb4-451" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-452"><a href="#cb4-452" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb4-453"><a href="#cb4-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-454"><a href="#cb4-454" aria-hidden="true" tabindex="-1"></a>Sivia, D. S., &amp; Skilling, J. (2006). *Data Analysis: A Bayesian Tutorial* (2nd ed.). Oxford University Press.</span>
+<span id="cb4-455"><a href="#cb4-455" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Chapter 2 (coin-tossing) and Chapter 4 (Bayes factors, Occam's razor) provide pedagogical foundations and the classic fairness test.</span>
+<span id="cb4-456"><a href="#cb4-456" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-457"><a href="#cb4-457" aria-hidden="true" tabindex="-1"></a>van der Linde, A., &amp; Robert, C. P. (2014). *Bayesian Probability Theory*. Cambridge University Press.</span>
+<span id="cb4-458"><a href="#cb4-458" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Chapter 17 covers marginal likelihoods, model evidence, and computational aspects in depth.</span>
+<span id="cb4-459"><a href="#cb4-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-460"><a href="#cb4-460" aria-hidden="true" tabindex="-1"></a>Falasco, G. (2026). *Advanced Statistics for Physics Analysis* <span class="co">[</span><span class="ot">Course Notes</span><span class="co">]</span>. Università di Padova.</span>
+<span id="cb4-461"><a href="#cb4-461" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Section 4.1 synthesizes Bayes factors, the Occam factor, and sensitivity analysis in a concise framework.</span>
+<span id="cb4-462"><a href="#cb4-462" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-463"><a href="#cb4-463" aria-hidden="true" tabindex="-1"></a>Kass, R. E., &amp; Raftery, A. E. (1995). Bayes factors. *Journal of the American Statistical Association*, 90(430), 773–795.</span>
+<span id="cb4-464"><a href="#cb4-464" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Comprehensive review and interpretation scale; the standard reference for practitioners.</span>
+<span id="cb4-465"><a href="#cb4-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-466"><a href="#cb4-466" aria-hidden="true" tabindex="-1"></a>Jeffreys, H. (1961). *Theory of Probability* (3rd ed.). Oxford University Press.</span>
+<span id="cb4-467"><a href="#cb4-467" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Original proposal of the Bayes factor interpretation scale and philosophical foundations.</span>
+<span id="cb4-468"><a href="#cb4-468" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-469"><a href="#cb4-469" aria-hidden="true" tabindex="-1"></a>Newton, M. A., &amp; Raftery, A. E. (1994). Approximate Bayesian inference with the weighted likelihood bootstrap. *Journal of the Royal Statistical Society*, 56(1), 3–48.</span>
+<span id="cb4-470"><a href="#cb4-470" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Foundational paper documenting the pathological instability of the harmonic mean estimator.</span>
+<span id="cb4-471"><a href="#cb4-471" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-472"><a href="#cb4-472" aria-hidden="true" tabindex="-1"></a>Meng, X. L., &amp; Wong, W. H. (1996). Simulating ratios of normalizing constants via a simple identity. Technical Report 348, Department of Statistics, University of Chicago.</span>
+<span id="cb4-473"><a href="#cb4-473" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Introduction of bridge sampling and the importance-weighted identity for marginal likelihood estimation.</span>
+<span id="cb4-474"><a href="#cb4-474" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-475"><a href="#cb4-475" aria-hidden="true" tabindex="-1"></a>Gelman, A., &amp; Meng, X. L. (1998). Simulating normalizing constants: From importance sampling to bridge sampling to path sampling. *Statistical Science*, 13(2), 163–185.</span>
+<span id="cb4-476"><a href="#cb4-476" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Comprehensive review of path-based methods including thermodynamic integration; unifies importance sampling and bridge sampling perspectives.</span>
+<span id="cb4-477"><a href="#cb4-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-478"><a href="#cb4-478" aria-hidden="true" tabindex="-1"></a>Neal, R. M. (2001). Annealed importance sampling. *Journal of Machine Learning Research*, 6, 143–175.</span>
+<span id="cb4-479"><a href="#cb4-479" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Detailed treatment of annealed importance sampling (AIS) and connection to parallel tempering.</span>
+<span id="cb4-480"><a href="#cb4-480" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-481"><a href="#cb4-481" aria-hidden="true" tabindex="-1"></a>Skilling, J. (2006). Nested sampling for general Bayesian computation. *Bayesian Analysis*, 4(6), 833–860.</span>
+<span id="cb4-482"><a href="#cb4-482" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Introduction of nested sampling and its application to evidence computation and multimodal posterior exploration.</span>
+<span id="cb4-483"><a href="#cb4-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-484"><a href="#cb4-484" aria-hidden="true" tabindex="-1"></a>Wolpert, R. L., &amp; Schmidler, S. C. (2012). α-stable limit laws for harmonic mean estimators of marginal likelihoods. *Statistica Sinica*, 22(3), 1233–1251.</span>
+<span id="cb4-485"><a href="#cb4-485" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Rigorous analysis of the harmonic mean estimator's failure modes and theoretical variance properties.</span>
+<span id="cb4-486"><a href="#cb4-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-487"><a href="#cb4-487" aria-hidden="true" tabindex="-1"></a>Gronau, Q. F., Singmann, H., &amp; Wagenmakers, E. J. (2017). Bridgesampling: An R package for estimating normalizing constants. *Journal of Statistical Software*, 92(10), 1–29.</span>
+<span id="cb4-488"><a href="#cb4-488" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Implementation paper for the <span class="in">`bridgesampling`</span> R package; practical guide to bridge sampling in production analyses.</span>
+</code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>

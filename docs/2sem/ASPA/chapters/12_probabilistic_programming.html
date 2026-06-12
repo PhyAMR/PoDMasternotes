@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>13&nbsp; Probabilistic programming: JAGS, Stan, ADVI – Advanced Statistics for Physics Analysis</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/13_glms.html" rel="next">
+<link href="../chapters/11_bayesian_regression.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/11_bayesian_regression.html">PART IV: APPLIED BAYESIAN MODELLING</a></li><li class="breadcrumb-item"><a href="../chapters/12_probabilistic_programming.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Advanced Statistics for Physics Analysis</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01_R_introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction to R for Bayesian inference</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART I: PROBABILITY RECAP</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02_discrete_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Discrete probability</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03_continuous_probability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Continuous probability and limit theorems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART II: BAYESIAN INFERENCE</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04_model_comparison.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Model comparison and Bayes factors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05_parameter_estimation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bayesian parameter estimation, intervals and prediction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06_gaussian_inference.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bayesian inference for the Gaussian</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART III: MONTE CARLO METHODS</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07_monte_carlo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Monte Carlo methods</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08_independence_and_gibbs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Independence sampler and Gibbs sampling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09_hamiltonian_mc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Hamiltonian Monte Carlo</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10_parallel_tempering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Parallel tempering</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">PART IV: APPLIED BAYESIAN MODELLING</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11_bayesian_regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12_probabilistic_programming.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13_glms.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">APPENDIX</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/99_appendix_source_code.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Appendix: Source code</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-from-hand-coded-to-declarative-models" id="toc-introduction-from-hand-coded-to-declarative-models" class="nav-link active" data-scroll-target="#introduction-from-hand-coded-to-declarative-models"><span class="header-section-number">13.1</span> Introduction: from hand-coded to declarative models</a></li>
+  <li><a href="#the-classical-limitation-conjugacy" id="toc-the-classical-limitation-conjugacy" class="nav-link" data-scroll-target="#the-classical-limitation-conjugacy"><span class="header-section-number">13.2</span> The classical limitation: conjugacy</a></li>
+  <li><a href="#jags-gibbs-sampling-with-a-model-syntax" id="toc-jags-gibbs-sampling-with-a-model-syntax" class="nav-link" data-scroll-target="#jags-gibbs-sampling-with-a-model-syntax"><span class="header-section-number">13.3</span> JAGS: Gibbs sampling with a model syntax</a>
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">13.3.1</span> Overview</a></li>
+  <li><a href="#model-syntax" id="toc-model-syntax" class="nav-link" data-scroll-target="#model-syntax"><span class="header-section-number">13.3.2</span> Model syntax</a></li>
+  <li><a href="#workflow-in-r-with-rjags" id="toc-workflow-in-r-with-rjags" class="nav-link" data-scroll-target="#workflow-in-r-with-rjags"><span class="header-section-number">13.3.3</span> Workflow in R with <code>rjags</code></a></li>
+  </ul></li>
+  <li><a href="#stan-hamiltonian-monte-carlo-with-gradients" id="toc-stan-hamiltonian-monte-carlo-with-gradients" class="nav-link" data-scroll-target="#stan-hamiltonian-monte-carlo-with-gradients"><span class="header-section-number">13.4</span> Stan: Hamiltonian Monte Carlo with gradients</a>
+  <ul class="collapse">
+  <li><a href="#overview-1" id="toc-overview-1" class="nav-link" data-scroll-target="#overview-1"><span class="header-section-number">13.4.1</span> Overview</a></li>
+  <li><a href="#model-structure" id="toc-model-structure" class="nav-link" data-scroll-target="#model-structure"><span class="header-section-number">13.4.2</span> Model structure</a></li>
+  <li><a href="#example-centered-quadratic-regression" id="toc-example-centered-quadratic-regression" class="nav-link" data-scroll-target="#example-centered-quadratic-regression"><span class="header-section-number">13.4.3</span> Example: centered quadratic regression</a></li>
+  <li><a href="#workflow-in-r-with-cmdstanr" id="toc-workflow-in-r-with-cmdstanr" class="nav-link" data-scroll-target="#workflow-in-r-with-cmdstanr"><span class="header-section-number">13.4.4</span> Workflow in R with <code>cmdstanr</code></a></li>
+  <li><a href="#posterior-diagnostics-in-stan" id="toc-posterior-diagnostics-in-stan" class="nav-link" data-scroll-target="#posterior-diagnostics-in-stan"><span class="header-section-number">13.4.5</span> Posterior diagnostics in Stan</a></li>
+  </ul></li>
+  <li><a href="#comparison-hand-coded-mh-vs-jags-vs-stan" id="toc-comparison-hand-coded-mh-vs-jags-vs-stan" class="nav-link" data-scroll-target="#comparison-hand-coded-mh-vs-jags-vs-stan"><span class="header-section-number">13.5</span> Comparison: hand-coded MH vs JAGS vs Stan</a></li>
+  <li><a href="#variational-inference-approximate-posterior-via-optimisation" id="toc-variational-inference-approximate-posterior-via-optimisation" class="nav-link" data-scroll-target="#variational-inference-approximate-posterior-via-optimisation"><span class="header-section-number">13.6</span> Variational inference: approximate posterior via optimisation</a>
+  <ul class="collapse">
+  <li><a href="#the-kl-divergence-decomposition" id="toc-the-kl-divergence-decomposition" class="nav-link" data-scroll-target="#the-kl-divergence-decomposition"><span class="header-section-number">13.6.1</span> The KL divergence decomposition</a></li>
+  <li><a href="#mean-field-approximation" id="toc-mean-field-approximation" class="nav-link" data-scroll-target="#mean-field-approximation"><span class="header-section-number">13.6.2</span> Mean-field approximation</a></li>
+  <li><a href="#the-reparameterisation-trick" id="toc-the-reparameterisation-trick" class="nav-link" data-scroll-target="#the-reparameterisation-trick"><span class="header-section-number">13.6.3</span> The reparameterisation trick</a></li>
+  </ul></li>
+  <li><a href="#advi-automatic-differentiation-variational-inference" id="toc-advi-automatic-differentiation-variational-inference" class="nav-link" data-scroll-target="#advi-automatic-differentiation-variational-inference"><span class="header-section-number">13.7</span> ADVI: Automatic Differentiation Variational Inference</a>
+  <ul class="collapse">
+  <li><a href="#automatic-transformation-to-unconstrained-space" id="toc-automatic-transformation-to-unconstrained-space" class="nav-link" data-scroll-target="#automatic-transformation-to-unconstrained-space"><span class="header-section-number">13.7.1</span> Automatic transformation to unconstrained space</a></li>
+  <li><a href="#gaussian-variational-family" id="toc-gaussian-variational-family" class="nav-link" data-scroll-target="#gaussian-variational-family"><span class="header-section-number">13.7.2</span> Gaussian variational family</a></li>
+  <li><a href="#stans-vb-interface" id="toc-stans-vb-interface" class="nav-link" data-scroll-target="#stans-vb-interface"><span class="header-section-number">13.7.3</span> Stan’s <code>vb()</code> interface</a></li>
+  </ul></li>
+  <li><a href="#practical-workflow-from-hand-rolled-mcmc-to-ppls" id="toc-practical-workflow-from-hand-rolled-mcmc-to-ppls" class="nav-link" data-scroll-target="#practical-workflow-from-hand-rolled-mcmc-to-ppls"><span class="header-section-number">13.8</span> Practical workflow: from hand-rolled MCMC to PPLs</a></li>
+  <li><a href="#failure-modes-and-remedies" id="toc-failure-modes-and-remedies" class="nav-link" data-scroll-target="#failure-modes-and-remedies"><span class="header-section-number">13.9</span> Failure modes and remedies</a>
+  <ul class="collapse">
+  <li><a href="#multimodal-posteriors" id="toc-multimodal-posteriors" class="nav-link" data-scroll-target="#multimodal-posteriors"><span class="header-section-number">13.9.1</span> Multimodal posteriors</a></li>
+  <li><a href="#discrete-parameters" id="toc-discrete-parameters" class="nav-link" data-scroll-target="#discrete-parameters"><span class="header-section-number">13.9.2</span> Discrete parameters</a></li>
+  <li><a href="#heavy-tailed-posteriors" id="toc-heavy-tailed-posteriors" class="nav-link" data-scroll-target="#heavy-tailed-posteriors"><span class="header-section-number">13.9.3</span> Heavy-tailed posteriors</a></li>
+  <li><a href="#weak-identifiability" id="toc-weak-identifiability" class="nav-link" data-scroll-target="#weak-identifiability"><span class="header-section-number">13.9.4</span> Weak identifiability</a></li>
+  </ul></li>
+  <li><a href="#what-to-report" id="toc-what-to-report" class="nav-link" data-scroll-target="#what-to-report"><span class="header-section-number">13.10</span> What to report</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">13.11</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/11_bayesian_regression.html">PART IV: APPLIED BAYESIAN MODELLING</a></li><li class="breadcrumb-item"><a href="../chapters/12_probabilistic_programming.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Probabilistic programming: JAGS, Stan, ADVI</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="introduction-from-hand-coded-to-declarative-models" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="introduction-from-hand-coded-to-declarative-models"><span class="header-section-number">13.1</span> Introduction: from hand-coded to declarative models</h2>
+<p>In preceding chapters, we implemented Markov chain Monte Carlo by hand: we wrote log-likelihood and log-prior functions, tuned proposal covariance matrices, diagnosed convergence, and iterated. This approach is powerful pedagogically—it reveals exactly what is being sampled and how—but it is labour-intensive and error-prone for realistic models.</p>
+<p>Real-world inference often requires many hyperparameters, hierarchical structure, and thousands of latent variables. Writing the full log-posterior by hand for such models is impractical. We need a language in which to <em>declare</em> the model in terms of its statistical structure, and delegate the numerical sampling to software.</p>
+<p>Probabilistic programming languages (PPLs) solve this. They allow you to write: <span class="math display">\[\text{model + data} \to p(\theta \mid \mathbf{y}).\]</span></p>
+<p>Two mainstream PPLs in the applied Bayesian community are <strong>JAGS</strong> and <strong>Stan</strong>. We also cover <strong>variational inference</strong>, an alternative to MCMC that solves the posterior by optimisation, and its automation in <strong>ADVI</strong> (automatic differentiation variational inference).</p>
+</section>
+<section id="the-classical-limitation-conjugacy" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="the-classical-limitation-conjugacy"><span class="header-section-number">13.2</span> The classical limitation: conjugacy</h2>
+<p>In the first chapters of this course, we exploited conjugate priors: when the prior and likelihood share a specific functional form, the posterior is tractable analytically. For example, a Beta prior on a Bernoulli probability yields a Beta posterior; a Normal prior on a Gaussian mean (with known variance) yields a Normal posterior.</p>
+<p>Conjugacy is rare in practice. Most real models are <em>non-conjugate</em>: the posterior is not available in closed form. In such cases we have two paths:</p>
+<ol type="1">
+<li><strong>MCMC</strong>: Sample from the posterior.</li>
+<li><strong>Variational inference</strong>: Approximate the posterior with a tractable family.</li>
+</ol>
+<p>Both JAGS and Stan use MCMC. JAGS uses Gibbs sampling or Metropolis-within-Gibbs (no gradient information). Stan uses Hamiltonian Monte Carlo with automatic differentiation (gradient-based), which mixes much faster.</p>
+</section>
+<section id="jags-gibbs-sampling-with-a-model-syntax" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="jags-gibbs-sampling-with-a-model-syntax"><span class="header-section-number">13.3</span> JAGS: Gibbs sampling with a model syntax</h2>
+<section id="overview" class="level3" data-number="13.3.1">
+<h3 data-number="13.3.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">13.3.1</span> Overview</h3>
+<p>JAGS stands for <em>Just Another Gibbs Sampler</em>. It is a language and engine for specifying Bayesian hierarchical models and sampling from them using Gibbs updates or Metropolis-Hastings steps.</p>
+<p>The key idea: you write the model in a declarative syntax that lists the conditional distribution of each variable given its parents. JAGS parses this, determines which variables can be sampled by Gibbs and which need Metropolis-Hastings, and executes the sampler automatically.</p>
+</section>
+<section id="model-syntax" class="level3" data-number="13.3.2">
+<h3 data-number="13.3.2" class="anchored" data-anchor-id="model-syntax"><span class="header-section-number">13.3.2</span> Model syntax</h3>
+<p>A JAGS model comprises three optional blocks: <code>data</code>, <code>model</code>, and <code>inits</code>.</p>
+<p>The <strong>data block</strong> declares observed quantities (fixed).</p>
+<p>The <strong>model block</strong> specifies the generative structure: for each stochastic node (parameter, latent variable, observation), you write its conditional distribution.</p>
+<p>The <strong>inits block</strong> (usually separate in R) provides starting values.</p>
+<p>Example: centered quadratic regression.</p>
+<pre class="jags"><code>model {
+  # Likelihood
+  for (i in 1:N) {
+    y[i] ~ dnorm(mu[i], tau)
+    mu[i] &lt;- a0 + a1 * z[i] + a2 * pow(z[i], 2)
+  }
+
+  # Priors
+  a0 ~ dnorm(0, 1/100)
+  a1 ~ dnorm(0, 1/100)
+  a2 ~ dnorm(0, 1/100)
+
+  # Precision parameterization
+  tau &lt;- 1 / pow(sigma, 2)
+  sigma ~ dunif(0, 20)
+}</code></pre>
+<p><strong>Key syntax notes:</strong></p>
+<ul>
+<li>JAGS uses <em>precision</em> <span class="math inline">\(\tau = 1/\sigma^2\)</span>, not standard deviation.</li>
+<li>Deterministic transformations use <code>&lt;-</code>; stochastic nodes use <code>~</code>.</li>
+<li>Distributions are prefixed <code>d</code>: <code>dnorm</code>, <code>dunif</code>, <code>dbinom</code>, etc.</li>
+<li>The prior on <span class="math inline">\(\sigma\)</span> must be proper.</li>
+</ul>
+</section>
+<section id="workflow-in-r-with-rjags" class="level3" data-number="13.3.3">
+<h3 data-number="13.3.3" class="anchored" data-anchor-id="workflow-in-r-with-rjags"><span class="header-section-number">13.3.3</span> Workflow in R with <code>rjags</code></h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjags)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(coda)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>jags_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">nrow</span>(obsdata),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> obsdata<span class="sc">$</span>z,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> obsdata<span class="sc">$</span>y</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>inits <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">list</span>(<span class="at">a0=</span><span class="dv">0</span>, <span class="at">a1=</span><span class="dv">0</span>, <span class="at">a2=</span><span class="dv">0</span>, <span class="at">sigma=</span><span class="dv">1</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Compile</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>jm <span class="ot">&lt;-</span> <span class="fu">jags.model</span>(<span class="fu">textConnection</span>(model_string),</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data=</span>jags_data,</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>                 <span class="at">inits=</span>inits,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>                 <span class="at">n.chains=</span><span class="dv">4</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Adapt (burn-in)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="fu">update</span>(jm, <span class="dv">2000</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>samp <span class="ot">&lt;-</span> <span class="fu">coda.samples</span>(jm,</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>                     <span class="at">variable.names=</span><span class="fu">c</span>(<span class="st">"a0"</span>,<span class="st">"a1"</span>,<span class="st">"a2"</span>,<span class="st">"sigma"</span>),</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n.iter=</span><span class="dv">20000</span>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarize</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(samp)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="fu">effectiveSize</span>(samp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Advantages of JAGS:</p>
+<ul>
+<li>Simple declarative syntax.</li>
+<li>Automatic Gibbs / MH switching.</li>
+<li>Handles discrete and continuous parameters.</li>
+</ul>
+<p>Disadvantages:</p>
+<ul>
+<li>Gibbs sampling mixes slowly for correlated posteriors.</li>
+<li>No gradient information; cannot exploit manifold geometry.</li>
+<li>Precision parameterization less intuitive than standard deviation.</li>
+</ul>
+</section>
+</section>
+<section id="stan-hamiltonian-monte-carlo-with-gradients" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="stan-hamiltonian-monte-carlo-with-gradients"><span class="header-section-number">13.4</span> Stan: Hamiltonian Monte Carlo with gradients</h2>
+<section id="overview-1" class="level3" data-number="13.4.1">
+<h3 data-number="13.4.1" class="anchored" data-anchor-id="overview-1"><span class="header-section-number">13.4.1</span> Overview</h3>
+<p>Stan is a probabilistic programming language that uses <strong>Hamiltonian Monte Carlo</strong> with the <strong>No-U-Turn Sampler</strong> (NUTS) algorithm. By leveraging automatic differentiation to compute gradients of the log-posterior, Stan explores the posterior much more efficiently than Gibbs sampling, especially in high dimensions.</p>
+<p>Modern Stan workflows use <strong>cmdstanr</strong>, a lightweight R interface.</p>
+</section>
+<section id="model-structure" class="level3" data-number="13.4.2">
+<h3 data-number="13.4.2" class="anchored" data-anchor-id="model-structure"><span class="header-section-number">13.4.2</span> Model structure</h3>
+<p>A Stan program has five optional blocks, executed in order:</p>
+<ol type="1">
+<li><code>data</code>: Observed quantities, fixed.</li>
+<li><code>transformed data</code>: Derived quantities computed once.</li>
+<li><code>parameters</code>: The target of inference.</li>
+<li><code>transformed parameters</code>: Deterministic functions of parameters.</li>
+<li><code>model</code>: The log-posterior (likelihood + priors).</li>
+<li><code>generated quantities</code>: Posterior predictions.</li>
+</ol>
+</section>
+<section id="example-centered-quadratic-regression" class="level3" data-number="13.4.3">
+<h3 data-number="13.4.3" class="anchored" data-anchor-id="example-centered-quadratic-regression"><span class="header-section-number">13.4.3</span> Example: centered quadratic regression</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode stan code-with-copy"><code class="sourceCode stan"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">int</span>&lt;<span class="kw">lower</span>=<span class="dv">1</span>&gt; N;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] z;</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">vector</span>[N] y;</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">parameters</span> {</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> a0;</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> a1;</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span> a2;</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">real</span>&lt;<span class="kw">lower</span>=<span class="dv">0</span>&gt; sigma;</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="kw">model</span> {</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Likelihood</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  y ~ normal(a0 + a1 * z + a2 * square(z), sigma);</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Priors</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  a0 ~ normal(<span class="dv">0</span>, <span class="dv">20</span>);</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  a1 ~ normal(<span class="dv">0</span>, <span class="dv">20</span>);</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  a2 ~ normal(<span class="dv">0</span>, <span class="dv">20</span>);</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  sigma ~ normal(<span class="dv">0</span>, <span class="dv">10</span>);  <span class="co">// Half-normal (due to lower=0)</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Key syntax notes:</strong></p>
+<ul>
+<li>Type declarations: <code>real</code>, <code>vector[N]</code>, <code>int</code>.</li>
+<li>Constraints are declared inline: <code>&lt;lower=0&gt;</code>, <code>&lt;upper=1&gt;</code>.</li>
+<li>Stan samples unconstrained internally; constraints are handled via smooth transformations (e.g., log for positive parameters).</li>
+<li>Standard deviation is natural; no precision.</li>
+<li>Vectorized operations (<code>y ~ normal(...)</code> broadcasts over the vector) are encouraged.</li>
+</ul>
+</section>
+<section id="workflow-in-r-with-cmdstanr" class="level3" data-number="13.4.4">
+<h3 data-number="13.4.4" class="anchored" data-anchor-id="workflow-in-r-with-cmdstanr"><span class="header-section-number">13.4.4</span> Workflow in R with <code>cmdstanr</code></h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>stan_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">nrow</span>(obsdata),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> obsdata<span class="sc">$</span>z,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> obsdata<span class="sc">$</span>y</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Compile</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"quad_centered.stan"</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> mod<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_data,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_warmup =</span> <span class="dv">1000</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">2000</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"a0"</span>, <span class="st">"a1"</span>, <span class="st">"a2"</span>, <span class="st">"sigma"</span>))</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnostics</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span><span class="fu">cmdstan_diagnose</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="posterior-diagnostics-in-stan" class="level3" data-number="13.4.5">
+<h3 data-number="13.4.5" class="anchored" data-anchor-id="posterior-diagnostics-in-stan"><span class="header-section-number">13.4.5</span> Posterior diagnostics in Stan</h3>
+<p>Stan reports several convergence statistics:</p>
+<ul>
+<li><strong><span class="math inline">\(\hat{R}\)</span> (potential scale reduction factor)</strong>: Should be <span class="math inline">\(&lt; 1.01\)</span>. Values <span class="math inline">\(&gt; 1.05\)</span> indicate poor convergence.</li>
+<li><strong>ESS (effective sample size)</strong>: Bulk ESS and tail ESS. Rule of thumb: both <span class="math inline">\(\gtrsim 400\)</span> per chain. Low ESS indicates high autocorrelation.</li>
+<li><strong>Divergent transitions</strong>: Occur when the leapfrog integrator leaves the high-probability region. May indicate a multimodal or heavy-tailed target. Typical remedy: increase <code>adapt_delta</code> (default 0.8) to 0.9 or 0.95.</li>
+</ul>
+</section>
+</section>
+<section id="comparison-hand-coded-mh-vs-jags-vs-stan" class="level2" data-number="13.5">
+<h2 data-number="13.5" class="anchored" data-anchor-id="comparison-hand-coded-mh-vs-jags-vs-stan"><span class="header-section-number">13.5</span> Comparison: hand-coded MH vs JAGS vs Stan</h2>
+<div class="note">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 42%">
+<col style="width: 17%">
+<col style="width: 17%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspect</th>
+<th>Hand-coded MH</th>
+<th>JAGS</th>
+<th>Stan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Model coding</td>
+<td>Log-posterior by hand</td>
+<td>Declarative (BUGS)</td>
+<td>Declarative + blocks</td>
+</tr>
+<tr class="even">
+<td>Sampler</td>
+<td>Random-walk MH</td>
+<td>Gibbs + MH</td>
+<td>HMC (NUTS)</td>
+</tr>
+<tr class="odd">
+<td>Gradients</td>
+<td>No</td>
+<td>No</td>
+<td>Automatic (AD)</td>
+</tr>
+<tr class="even">
+<td>Tuning</td>
+<td>Manual proposal covariance</td>
+<td>Partly automatic</td>
+<td>Automatic warmup</td>
+</tr>
+<tr class="odd">
+<td>Discrete parameters</td>
+<td>OK</td>
+<td>OK</td>
+<td>Require marginalisation</td>
+</tr>
+<tr class="even">
+<td>Convergence speed</td>
+<td>Often slow</td>
+<td>Moderate</td>
+<td>Fast (high-dimensional)</td>
+</tr>
+<tr class="odd">
+<td>Best for</td>
+<td>Understanding, learning</td>
+<td>Hierarchical models</td>
+<td>Efficient inference</td>
+</tr>
+<tr class="even">
+<td>Diagnostic burden</td>
+<td>High</td>
+<td>Moderate</td>
+<td>Lower (but still essential)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="variational-inference-approximate-posterior-via-optimisation" class="level2" data-number="13.6">
+<h2 data-number="13.6" class="anchored" data-anchor-id="variational-inference-approximate-posterior-via-optimisation"><span class="header-section-number">13.6</span> Variational inference: approximate posterior via optimisation</h2>
+<section id="the-kl-divergence-decomposition" class="level3" data-number="13.6.1">
+<h3 data-number="13.6.1" class="anchored" data-anchor-id="the-kl-divergence-decomposition"><span class="header-section-number">13.6.1</span> The KL divergence decomposition</h3>
+<p>MCMC samples exactly (asymptotically) from the posterior <span class="math inline">\(p(\theta \mid \mathbf{y})\)</span>. Variational inference instead <em>optimises</em> over a family of tractable distributions <span class="math inline">\(\mathcal{Q}\)</span> to find the member <span class="math inline">\(q^*(\theta)\)</span> that best approximates the posterior.</p>
+<p>Define the Kullback–Leibler divergence: <span class="math display">\[\mathrm{KL}(q \parallel p) = \mathbb{E}_q \left[ \log \frac{q(\theta)}{p(\theta \mid \mathbf{y})} \right].\]</span></p>
+<p>By the law of total probability, <span class="math display">\[\log p(\mathbf{y}) = \mathbb{E}_q [ \log p(\mathbf{y}, \theta) - \log q(\theta) ] + \mathrm{KL}(q \parallel p),\]</span></p>
+<p>which rearranges to</p>
+<p><span class="math display">\[\boxed{\log p(\mathbf{y}) = \mathcal{L}(q) + \mathrm{KL}(q \parallel p)}.\]</span></p>
+<p>Here <span class="math inline">\(\mathcal{L}(q)\)</span> is the <strong>evidence lower bound (ELBO)</strong>: <span class="math display">\[\mathcal{L}(q) = \mathbb{E}_q [ \log p(\mathbf{y}, \theta) - \log q(\theta) ].\]</span></p>
+<p>Since <span class="math inline">\(\log p(\mathbf{y})\)</span> is fixed and <span class="math inline">\(\mathrm{KL}(q \parallel p) \geq 0\)</span> always, <em>maximising the ELBO minimises the KL divergence</em>. Thus the optimal approximation is</p>
+<p><span class="math display">\[q^*(\theta) = \arg\max_{q \in \mathcal{Q}} \mathcal{L}(q).\]</span></p>
+</section>
+<section id="mean-field-approximation" class="level3" data-number="13.6.2">
+<h3 data-number="13.6.2" class="anchored" data-anchor-id="mean-field-approximation"><span class="header-section-number">13.6.2</span> Mean-field approximation</h3>
+<p>To make the optimisation tractable, we restrict <span class="math inline">\(\mathcal{Q}\)</span> to a <em>mean-field family</em>: <span class="math display">\[q(\theta) = \prod_{i=1}^{d} q_i(\theta_i),\]</span></p>
+<p>i.e., a product of independent marginal distributions (one per parameter). This destroys posterior correlations but is far easier to optimise than a full covariance Gaussian.</p>
+<p>For each parameter, <span class="math inline">\(q_i\)</span> is typically a standard distribution (Gaussian, Beta, Gamma, etc.).</p>
+</section>
+<section id="the-reparameterisation-trick" class="level3" data-number="13.6.3">
+<h3 data-number="13.6.3" class="anchored" data-anchor-id="the-reparameterisation-trick"><span class="header-section-number">13.6.3</span> The reparameterisation trick</h3>
+<p>To optimise the ELBO by stochastic gradient descent, we need to differentiate through expectations. The <strong>reparameterisation trick</strong> rewrites an expectation: <span class="math display">\[\mathbb{E}_{q(\theta)} [f(\theta)] = \mathbb{E}_{\epsilon \sim N(0, I)} [f(\mu + \sigma \epsilon)],\]</span></p>
+<p>where <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> are the (optimisable) parameters of <span class="math inline">\(q\)</span>, and <span class="math inline">\(\epsilon\)</span> is auxiliary randomness. Now we can differentiate w.r.t. <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span> using the chain rule.</p>
+</section>
+</section>
+<section id="advi-automatic-differentiation-variational-inference" class="level2" data-number="13.7">
+<h2 data-number="13.7" class="anchored" data-anchor-id="advi-automatic-differentiation-variational-inference"><span class="header-section-number">13.7</span> ADVI: Automatic Differentiation Variational Inference</h2>
+<section id="automatic-transformation-to-unconstrained-space" class="level3" data-number="13.7.1">
+<h3 data-number="13.7.1" class="anchored" data-anchor-id="automatic-transformation-to-unconstrained-space"><span class="header-section-number">13.7.1</span> Automatic transformation to unconstrained space</h3>
+<p>Many parameters have constraints: <span class="math inline">\(\sigma &gt; 0\)</span>, <span class="math inline">\(p \in [0, 1]\)</span>, etc. ADVI automatically transforms such parameters to an unconstrained space, optimises a Gaussian approximation there, and back-transforms samples.</p>
+<p>For example, <span class="math inline">\(\sigma &gt; 0\)</span> is mapped to <span class="math inline">\(\eta = \log \sigma \in \mathbb{R}\)</span>. The variational family becomes <span class="math inline">\(q(\eta)\)</span> (a univariate Gaussian in <span class="math inline">\(\eta\)</span>), and we sample <span class="math inline">\(\eta \sim N(\mu, \sigma^2)\)</span>, then set <span class="math inline">\(\sigma = \exp(\eta)\)</span>.</p>
+</section>
+<section id="gaussian-variational-family" class="level3" data-number="13.7.2">
+<h3 data-number="13.7.2" class="anchored" data-anchor-id="gaussian-variational-family"><span class="header-section-number">13.7.2</span> Gaussian variational family</h3>
+<p>ADVI uses a multivariate Gaussian approximation: <span class="math display">\[q(\theta) = N(\theta \mid \mu, \Sigma),\]</span></p>
+<p>where <span class="math inline">\(\Sigma\)</span> is either diagonal (mean-field) or full-rank. The parameters <span class="math inline">\((\mu, \Sigma)\)</span> are optimised by stochastic gradient ascent on the ELBO.</p>
+</section>
+<section id="stans-vb-interface" class="level3" data-number="13.7.3">
+<h3 data-number="13.7.3" class="anchored" data-anchor-id="stans-vb-interface"><span class="header-section-number">13.7.3</span> Stan’s <code>vb()</code> interface</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Variational inference in Stan (instead of MCMC)</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fit_vb <span class="ot">&lt;-</span> mod<span class="sc">$</span><span class="fu">variational</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_data,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">"meanfield"</span>,  <span class="co"># or "fullrank"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">10000</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Approximately posterior samples</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>draws <span class="ot">&lt;-</span> fit_vb<span class="sc">$</span><span class="fu">draws</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Advantages of ADVI:</strong></p>
+<ul>
+<li>Much faster than MCMC for high-dimensional models.</li>
+<li>Deterministic; no convergence diagnostics needed.</li>
+<li>Useful for exploratory analysis.</li>
+</ul>
+<p><strong>Disadvantages:</strong></p>
+<ul>
+<li>Mean-field assumption often too restrictive; underestimates posterior variance.</li>
+<li>No automatic diagnostic (unlike MCMC diagnostics like <span class="math inline">\(\hat{R}\)</span>).</li>
+<li>For posterior inference, MCMC is often preferable.</li>
+</ul>
+</section>
+</section>
+<section id="practical-workflow-from-hand-rolled-mcmc-to-ppls" class="level2" data-number="13.8">
+<h2 data-number="13.8" class="anchored" data-anchor-id="practical-workflow-from-hand-rolled-mcmc-to-ppls"><span class="header-section-number">13.8</span> Practical workflow: from hand-rolled MCMC to PPLs</h2>
+<p>The progression we have traced reflects a real scientific workflow:</p>
+<ol type="1">
+<li><p><strong>Prototype with hand-coded MCMC</strong> (Chapter 11 onwards): Learn the model, understand the geometry of the posterior, diagnose what works and what doesn’t.</p></li>
+<li><p><strong>Apply parametrisation tricks</strong>: Center and scale predictors, use whitening transforms, exploit posterior covariance structure.</p></li>
+<li><p><strong>Upgrade to a gradient-based sampler</strong>: Use HMC or NUTS to exploit smoothness of the log-posterior.</p></li>
+<li><p><strong>Automate with Stan or JAGS</strong>: Declare the model once, let the software handle sampling, diagnostics, and adaptation.</p></li>
+<li><p><strong>Consider variational inference</strong> if:</p>
+<ul>
+<li>You need very fast approximate inference for exploration.</li>
+<li>Your model is too large for MCMC.</li>
+<li>You are happy accepting mean-field correlations.</li>
+</ul></li>
+</ol>
+</section>
+<section id="failure-modes-and-remedies" class="level2" data-number="13.9">
+<h2 data-number="13.9" class="anchored" data-anchor-id="failure-modes-and-remedies"><span class="header-section-number">13.9</span> Failure modes and remedies</h2>
+<section id="multimodal-posteriors" class="level3" data-number="13.9.1">
+<h3 data-number="13.9.1" class="anchored" data-anchor-id="multimodal-posteriors"><span class="header-section-number">13.9.1</span> Multimodal posteriors</h3>
+<p>If the target distribution has multiple distinct modes, MCMC may get stuck in one mode and miss others. JAGS and Stan both struggle with multimodality.</p>
+<p>Remedies:</p>
+<ul>
+<li>Use parallel tempering (Chapter 10).</li>
+<li>Run many short chains from dispersed starting values.</li>
+<li>Reparametrise to reduce multimodality (e.g., via identifiability constraints).</li>
+</ul>
+</section>
+<section id="discrete-parameters" class="level3" data-number="13.9.2">
+<h3 data-number="13.9.2" class="anchored" data-anchor-id="discrete-parameters"><span class="header-section-number">13.9.2</span> Discrete parameters</h3>
+<p>Stan requires all parameters to be continuous. If your model includes discrete latent variables (e.g., mixture component labels), you must marginalise them out analytically (integrate over all possible values) before passing the model to Stan.</p>
+<p>JAGS handles discrete nodes naturally.</p>
+</section>
+<section id="heavy-tailed-posteriors" class="level3" data-number="13.9.3">
+<h3 data-number="13.9.3" class="anchored" data-anchor-id="heavy-tailed-posteriors"><span class="header-section-number">13.9.3</span> Heavy-tailed posteriors</h3>
+<p>If the posterior has heavy tails (e.g., a mixture of normals with small weights), the leapfrog integrator in HMC can take very long steps and diverge. Divergent transitions are a warning.</p>
+<p>Remedies:</p>
+<ul>
+<li>Increase <code>adapt_delta</code> (0.8 → 0.95 or higher).</li>
+<li>Increase <code>max_treedepth</code>.</li>
+<li>Reparametrise to reduce tail heaviness (e.g., use a Student-<span class="math inline">\(t\)</span> prior to allow more dispersed posteriors).</li>
+</ul>
+</section>
+<section id="weak-identifiability" class="level3" data-number="13.9.4">
+<h3 data-number="13.9.4" class="anchored" data-anchor-id="weak-identifiability"><span class="header-section-number">13.9.4</span> Weak identifiability</h3>
+<p>If two parameters affect the likelihood in nearly the same way, the posterior is highly correlated or even degenerate. MCMC mixes slowly; variational inference underestimates uncertainty.</p>
+<p>Remedy:</p>
+<ul>
+<li>Include informative priors that break the symmetry.</li>
+<li>Reparametrise (e.g., use a sum-of-effects rather than separate effects).</li>
+</ul>
+</section>
+</section>
+<section id="what-to-report" class="level2" data-number="13.10">
+<h2 data-number="13.10" class="anchored" data-anchor-id="what-to-report"><span class="header-section-number">13.10</span> What to report</h2>
+<p>For any Bayesian analysis using JAGS or Stan, report:</p>
+<ol type="1">
+<li><strong>Model specification</strong>: Likelihood, priors, parametrisation.</li>
+<li><strong>Sampling method</strong>: Algorithm, number of chains, iterations, warmup.</li>
+<li><strong>Convergence diagnostics</strong>: Trace plots, <span class="math inline">\(\hat{R}\)</span>, ESS, acceptance rate, divergent transitions (Stan only).</li>
+<li><strong>Posterior summaries</strong>: Mean or median, 95% credible intervals.</li>
+<li><strong>Posterior predictions</strong>: Regression curves with credible intervals; posterior predictive intervals if relevant.</li>
+</ol>
+<p>Do not report precise posterior point estimates from a badly mixing chain—they are numerical artifacts, not inference.</p>
+</section>
+<section id="sources" class="level2" data-number="13.11">
+<h2 data-number="13.11" class="anchored" data-anchor-id="sources"><span class="header-section-number">13.11</span> Sources</h2>
+<p><strong>JAGS:</strong> - Martyn Plummer. JAGS: A program for analysis of Bayesian graphical models using Gibbs sampling. In <em>Proc. 3rd Int. Workshop on Distributed Statistical Computing</em>, 2003.</p>
+<p><strong>Stan:</strong> - Stan Development Team. Stan user’s guide and reference manual, version 2.33. https://mc-stan.org. - Gelman et al.&nbsp;Bayesian workflow. <em>ArXiv</em> preprint arXiv:2011.01808, 2020.</p>
+<p><strong>Variational inference:</strong> - David M. Blei, Alp Kucukelbir, and Jon D. McInman. Variational inference: A review for statisticians. <em>Journal of the American Statistical Association</em>, 112(518):859–877, 2017. - Alp Kucukelbir et al.&nbsp;Automatic differentiation variational inference. <em>Journal of Machine Learning Research</em>, 18(1):1–45, 2017.</p>
+<p><strong>References cited:</strong> - Gianmaria Falasco. Advanced statistics for physics analysis: Efficient MCMC for Bayesian regression: from hand tuning to JAGS and Stan. Lecture slides, May 19, 2026. - Sivia, D.S. &amp; Skilling, J. (2006). <em>Data Analysis: A Bayesian Tutorial</em>. Oxford University Press. - Falasco, G. (2026). Lecture on Hamiltonian Monte Carlo. ASPA course notes.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/11_bayesian_regression.html" class="pagination-link" aria-label="Bayesian regression">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian regression</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/13_glms.html" class="pagination-link" aria-label="Generalized linear models">
+        <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Generalized linear models</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb6" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Probabilistic programming: JAGS, Stan, ADVI"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction: from hand-coded to declarative models</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>In preceding chapters, we implemented Markov chain Monte Carlo by hand: we wrote log-likelihood and log-prior functions, tuned proposal covariance matrices, diagnosed convergence, and iterated. This approach is powerful pedagogically—it reveals exactly what is being sampled and how—but it is labour-intensive and error-prone for realistic models.</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>Real-world inference often requires many hyperparameters, hierarchical structure, and thousands of latent variables. Writing the full log-posterior by hand for such models is impractical. We need a language in which to *declare* the model in terms of its statistical structure, and delegate the numerical sampling to software.</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>Probabilistic programming languages (PPLs) solve this. They allow you to write:</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>$$\text{model + data} \to p(\theta \mid \mathbf{y}).$$</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>Two mainstream PPLs in the applied Bayesian community are **JAGS** and **Stan**. We also cover **variational inference**, an alternative to MCMC that solves the posterior by optimisation, and its automation in **ADVI** (automatic differentiation variational inference).</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="fu">## The classical limitation: conjugacy</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>In the first chapters of this course, we exploited conjugate priors: when the prior and likelihood share a specific functional form, the posterior is tractable analytically. For example, a Beta prior on a Bernoulli probability yields a Beta posterior; a Normal prior on a Gaussian mean (with known variance) yields a Normal posterior.</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>Conjugacy is rare in practice. Most real models are *non-conjugate*: the posterior is not available in closed form. In such cases we have two paths:</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**MCMC**: Sample from the posterior.</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Variational inference**: Approximate the posterior with a tractable family.</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>Both JAGS and Stan use MCMC. JAGS uses Gibbs sampling or Metropolis-within-Gibbs (no gradient information). Stan uses Hamiltonian Monte Carlo with automatic differentiation (gradient-based), which mixes much faster.</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## JAGS: Gibbs sampling with a model syntax</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="fu">### Overview</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>JAGS stands for *Just Another Gibbs Sampler*. It is a language and engine for specifying Bayesian hierarchical models and sampling from them using Gibbs updates or Metropolis-Hastings steps.</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>The key idea: you write the model in a declarative syntax that lists the conditional distribution of each variable given its parents. JAGS parses this, determines which variables can be sampled by Gibbs and which need Metropolis-Hastings, and executes the sampler automatically.</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="fu">### Model syntax</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>A JAGS model comprises three optional blocks: <span class="in">`data`</span>, <span class="in">`model`</span>, and <span class="in">`inits`</span>.</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>The **data block** declares observed quantities (fixed).</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>The **model block** specifies the generative structure: for each stochastic node (parameter, latent variable, observation), you write its conditional distribution.</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>The **inits block** (usually separate in R) provides starting values.</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>Example: centered quadratic regression.</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="in">```jags</span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a><span class="in">model {</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a><span class="in">  # Likelihood</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a><span class="in">  for (i in 1:N) {</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a><span class="in">    y[i] ~ dnorm(mu[i], tau)</span></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="in">    mu[i] &lt;- a0 + a1 * z[i] + a2 * pow(z[i], 2)</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="in">  }</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="in">  # Priors</span></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="in">  a0 ~ dnorm(0, 1/100)</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a><span class="in">  a1 ~ dnorm(0, 1/100)</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a><span class="in">  a2 ~ dnorm(0, 1/100)</span></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="in">  # Precision parameterization</span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="in">  tau &lt;- 1 / pow(sigma, 2)</span></span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a><span class="in">  sigma ~ dunif(0, 20)</span></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>**Key syntax notes:**</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>JAGS uses *precision* $\tau = 1/\sigma^2$, not standard deviation.</span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Deterministic transformations use <span class="in">`&lt;-`</span>; stochastic nodes use <span class="in">`~`</span>.</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Distributions are prefixed <span class="in">`d`</span>: <span class="in">`dnorm`</span>, <span class="in">`dunif`</span>, <span class="in">`dbinom`</span>, etc.</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The prior on $\sigma$ must be proper.</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a><span class="fu">### Workflow in R with `rjags`</span></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjags)</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(coda)</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data</span></span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>jags_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">nrow</span>(obsdata),</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> obsdata<span class="sc">$</span>z,</span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> obsdata<span class="sc">$</span>y</span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-86"><a href="#cb6-86" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize</span></span>
+<span id="cb6-87"><a href="#cb6-87" aria-hidden="true" tabindex="-1"></a>inits <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">list</span>(<span class="at">a0=</span><span class="dv">0</span>, <span class="at">a1=</span><span class="dv">0</span>, <span class="at">a2=</span><span class="dv">0</span>, <span class="at">sigma=</span><span class="dv">1</span>)</span>
+<span id="cb6-88"><a href="#cb6-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-89"><a href="#cb6-89" aria-hidden="true" tabindex="-1"></a><span class="co"># Compile</span></span>
+<span id="cb6-90"><a href="#cb6-90" aria-hidden="true" tabindex="-1"></a>jm <span class="ot">&lt;-</span> <span class="fu">jags.model</span>(<span class="fu">textConnection</span>(model_string),</span>
+<span id="cb6-91"><a href="#cb6-91" aria-hidden="true" tabindex="-1"></a>                 <span class="at">data=</span>jags_data,</span>
+<span id="cb6-92"><a href="#cb6-92" aria-hidden="true" tabindex="-1"></a>                 <span class="at">inits=</span>inits,</span>
+<span id="cb6-93"><a href="#cb6-93" aria-hidden="true" tabindex="-1"></a>                 <span class="at">n.chains=</span><span class="dv">4</span>)</span>
+<span id="cb6-94"><a href="#cb6-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-95"><a href="#cb6-95" aria-hidden="true" tabindex="-1"></a><span class="co"># Adapt (burn-in)</span></span>
+<span id="cb6-96"><a href="#cb6-96" aria-hidden="true" tabindex="-1"></a><span class="fu">update</span>(jm, <span class="dv">2000</span>)</span>
+<span id="cb6-97"><a href="#cb6-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-98"><a href="#cb6-98" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample</span></span>
+<span id="cb6-99"><a href="#cb6-99" aria-hidden="true" tabindex="-1"></a>samp <span class="ot">&lt;-</span> <span class="fu">coda.samples</span>(jm,</span>
+<span id="cb6-100"><a href="#cb6-100" aria-hidden="true" tabindex="-1"></a>                     <span class="at">variable.names=</span><span class="fu">c</span>(<span class="st">"a0"</span>,<span class="st">"a1"</span>,<span class="st">"a2"</span>,<span class="st">"sigma"</span>),</span>
+<span id="cb6-101"><a href="#cb6-101" aria-hidden="true" tabindex="-1"></a>                     <span class="at">n.iter=</span><span class="dv">20000</span>)</span>
+<span id="cb6-102"><a href="#cb6-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-103"><a href="#cb6-103" aria-hidden="true" tabindex="-1"></a><span class="co"># Summarize</span></span>
+<span id="cb6-104"><a href="#cb6-104" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(samp)</span>
+<span id="cb6-105"><a href="#cb6-105" aria-hidden="true" tabindex="-1"></a><span class="fu">effectiveSize</span>(samp)</span>
+<span id="cb6-106"><a href="#cb6-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-107"><a href="#cb6-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-108"><a href="#cb6-108" aria-hidden="true" tabindex="-1"></a>Advantages of JAGS:</span>
+<span id="cb6-109"><a href="#cb6-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-110"><a href="#cb6-110" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Simple declarative syntax.</span>
+<span id="cb6-111"><a href="#cb6-111" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Automatic Gibbs / MH switching.</span>
+<span id="cb6-112"><a href="#cb6-112" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Handles discrete and continuous parameters.</span>
+<span id="cb6-113"><a href="#cb6-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-114"><a href="#cb6-114" aria-hidden="true" tabindex="-1"></a>Disadvantages:</span>
+<span id="cb6-115"><a href="#cb6-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-116"><a href="#cb6-116" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Gibbs sampling mixes slowly for correlated posteriors.</span>
+<span id="cb6-117"><a href="#cb6-117" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No gradient information; cannot exploit manifold geometry.</span>
+<span id="cb6-118"><a href="#cb6-118" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Precision parameterization less intuitive than standard deviation.</span>
+<span id="cb6-119"><a href="#cb6-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-120"><a href="#cb6-120" aria-hidden="true" tabindex="-1"></a><span class="fu">## Stan: Hamiltonian Monte Carlo with gradients</span></span>
+<span id="cb6-121"><a href="#cb6-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-122"><a href="#cb6-122" aria-hidden="true" tabindex="-1"></a><span class="fu">### Overview</span></span>
+<span id="cb6-123"><a href="#cb6-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-124"><a href="#cb6-124" aria-hidden="true" tabindex="-1"></a>Stan is a probabilistic programming language that uses **Hamiltonian Monte Carlo** with the **No-U-Turn Sampler** (NUTS) algorithm. By leveraging automatic differentiation to compute gradients of the log-posterior, Stan explores the posterior much more efficiently than Gibbs sampling, especially in high dimensions.</span>
+<span id="cb6-125"><a href="#cb6-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-126"><a href="#cb6-126" aria-hidden="true" tabindex="-1"></a>Modern Stan workflows use **cmdstanr**, a lightweight R interface.</span>
+<span id="cb6-127"><a href="#cb6-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-128"><a href="#cb6-128" aria-hidden="true" tabindex="-1"></a><span class="fu">### Model structure</span></span>
+<span id="cb6-129"><a href="#cb6-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-130"><a href="#cb6-130" aria-hidden="true" tabindex="-1"></a>A Stan program has five optional blocks, executed in order:</span>
+<span id="cb6-131"><a href="#cb6-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-132"><a href="#cb6-132" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span><span class="in">`data`</span>: Observed quantities, fixed.</span>
+<span id="cb6-133"><a href="#cb6-133" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span><span class="in">`transformed data`</span>: Derived quantities computed once.</span>
+<span id="cb6-134"><a href="#cb6-134" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span><span class="in">`parameters`</span>: The target of inference.</span>
+<span id="cb6-135"><a href="#cb6-135" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span><span class="in">`transformed parameters`</span>: Deterministic functions of parameters.</span>
+<span id="cb6-136"><a href="#cb6-136" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span><span class="in">`model`</span>: The log-posterior (likelihood + priors).</span>
+<span id="cb6-137"><a href="#cb6-137" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span><span class="in">`generated quantities`</span>: Posterior predictions.</span>
+<span id="cb6-138"><a href="#cb6-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-139"><a href="#cb6-139" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example: centered quadratic regression</span></span>
+<span id="cb6-140"><a href="#cb6-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-141"><a href="#cb6-141" aria-hidden="true" tabindex="-1"></a><span class="in">```stan</span></span>
+<span id="cb6-142"><a href="#cb6-142" aria-hidden="true" tabindex="-1"></a><span class="in">data {</span></span>
+<span id="cb6-143"><a href="#cb6-143" aria-hidden="true" tabindex="-1"></a><span class="in">  int&lt;lower=1&gt; N;</span></span>
+<span id="cb6-144"><a href="#cb6-144" aria-hidden="true" tabindex="-1"></a><span class="in">  vector[N] z;</span></span>
+<span id="cb6-145"><a href="#cb6-145" aria-hidden="true" tabindex="-1"></a><span class="in">  vector[N] y;</span></span>
+<span id="cb6-146"><a href="#cb6-146" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb6-147"><a href="#cb6-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-148"><a href="#cb6-148" aria-hidden="true" tabindex="-1"></a><span class="in">parameters {</span></span>
+<span id="cb6-149"><a href="#cb6-149" aria-hidden="true" tabindex="-1"></a><span class="in">  real a0;</span></span>
+<span id="cb6-150"><a href="#cb6-150" aria-hidden="true" tabindex="-1"></a><span class="in">  real a1;</span></span>
+<span id="cb6-151"><a href="#cb6-151" aria-hidden="true" tabindex="-1"></a><span class="in">  real a2;</span></span>
+<span id="cb6-152"><a href="#cb6-152" aria-hidden="true" tabindex="-1"></a><span class="in">  real&lt;lower=0&gt; sigma;</span></span>
+<span id="cb6-153"><a href="#cb6-153" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb6-154"><a href="#cb6-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-155"><a href="#cb6-155" aria-hidden="true" tabindex="-1"></a><span class="in">model {</span></span>
+<span id="cb6-156"><a href="#cb6-156" aria-hidden="true" tabindex="-1"></a><span class="in">  // Likelihood</span></span>
+<span id="cb6-157"><a href="#cb6-157" aria-hidden="true" tabindex="-1"></a><span class="in">  y ~ normal(a0 + a1 * z + a2 * square(z), sigma);</span></span>
+<span id="cb6-158"><a href="#cb6-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-159"><a href="#cb6-159" aria-hidden="true" tabindex="-1"></a><span class="in">  // Priors</span></span>
+<span id="cb6-160"><a href="#cb6-160" aria-hidden="true" tabindex="-1"></a><span class="in">  a0 ~ normal(0, 20);</span></span>
+<span id="cb6-161"><a href="#cb6-161" aria-hidden="true" tabindex="-1"></a><span class="in">  a1 ~ normal(0, 20);</span></span>
+<span id="cb6-162"><a href="#cb6-162" aria-hidden="true" tabindex="-1"></a><span class="in">  a2 ~ normal(0, 20);</span></span>
+<span id="cb6-163"><a href="#cb6-163" aria-hidden="true" tabindex="-1"></a><span class="in">  sigma ~ normal(0, 10);  // Half-normal (due to lower=0)</span></span>
+<span id="cb6-164"><a href="#cb6-164" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb6-165"><a href="#cb6-165" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-166"><a href="#cb6-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-167"><a href="#cb6-167" aria-hidden="true" tabindex="-1"></a>**Key syntax notes:**</span>
+<span id="cb6-168"><a href="#cb6-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-169"><a href="#cb6-169" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Type declarations: <span class="in">`real`</span>, <span class="in">`vector[N]`</span>, <span class="in">`int`</span>.</span>
+<span id="cb6-170"><a href="#cb6-170" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Constraints are declared inline: <span class="in">`&lt;lower=0&gt;`</span>, <span class="in">`&lt;upper=1&gt;`</span>.</span>
+<span id="cb6-171"><a href="#cb6-171" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Stan samples unconstrained internally; constraints are handled via smooth transformations (e.g., log for positive parameters).</span>
+<span id="cb6-172"><a href="#cb6-172" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Standard deviation is natural; no precision.</span>
+<span id="cb6-173"><a href="#cb6-173" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Vectorized operations (<span class="in">`y ~ normal(...)`</span> broadcasts over the vector) are encouraged.</span>
+<span id="cb6-174"><a href="#cb6-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-175"><a href="#cb6-175" aria-hidden="true" tabindex="-1"></a><span class="fu">### Workflow in R with `cmdstanr`</span></span>
+<span id="cb6-176"><a href="#cb6-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-177"><a href="#cb6-177" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb6-178"><a href="#cb6-178" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr)</span>
+<span id="cb6-179"><a href="#cb6-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-180"><a href="#cb6-180" aria-hidden="true" tabindex="-1"></a><span class="co"># Prepare data</span></span>
+<span id="cb6-181"><a href="#cb6-181" aria-hidden="true" tabindex="-1"></a>stan_data <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb6-182"><a href="#cb6-182" aria-hidden="true" tabindex="-1"></a>  <span class="at">N =</span> <span class="fu">nrow</span>(obsdata),</span>
+<span id="cb6-183"><a href="#cb6-183" aria-hidden="true" tabindex="-1"></a>  <span class="at">z =</span> obsdata<span class="sc">$</span>z,</span>
+<span id="cb6-184"><a href="#cb6-184" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> obsdata<span class="sc">$</span>y</span>
+<span id="cb6-185"><a href="#cb6-185" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-186"><a href="#cb6-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-187"><a href="#cb6-187" aria-hidden="true" tabindex="-1"></a><span class="co"># Compile</span></span>
+<span id="cb6-188"><a href="#cb6-188" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">cmdstan_model</span>(<span class="st">"quad_centered.stan"</span>)</span>
+<span id="cb6-189"><a href="#cb6-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-190"><a href="#cb6-190" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample</span></span>
+<span id="cb6-191"><a href="#cb6-191" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> mod<span class="sc">$</span><span class="fu">sample</span>(</span>
+<span id="cb6-192"><a href="#cb6-192" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_data,</span>
+<span id="cb6-193"><a href="#cb6-193" aria-hidden="true" tabindex="-1"></a>  <span class="at">chains =</span> <span class="dv">4</span>,</span>
+<span id="cb6-194"><a href="#cb6-194" aria-hidden="true" tabindex="-1"></a>  <span class="at">parallel_chains =</span> <span class="dv">4</span>,</span>
+<span id="cb6-195"><a href="#cb6-195" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_warmup =</span> <span class="dv">1000</span>,</span>
+<span id="cb6-196"><a href="#cb6-196" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter_sampling =</span> <span class="dv">2000</span>,</span>
+<span id="cb6-197"><a href="#cb6-197" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb6-198"><a href="#cb6-198" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-199"><a href="#cb6-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-200"><a href="#cb6-200" aria-hidden="true" tabindex="-1"></a><span class="co"># Summary</span></span>
+<span id="cb6-201"><a href="#cb6-201" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span><span class="fu">summary</span>(<span class="fu">c</span>(<span class="st">"a0"</span>, <span class="st">"a1"</span>, <span class="st">"a2"</span>, <span class="st">"sigma"</span>))</span>
+<span id="cb6-202"><a href="#cb6-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-203"><a href="#cb6-203" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagnostics</span></span>
+<span id="cb6-204"><a href="#cb6-204" aria-hidden="true" tabindex="-1"></a>fit<span class="sc">$</span><span class="fu">cmdstan_diagnose</span>()</span>
+<span id="cb6-205"><a href="#cb6-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-206"><a href="#cb6-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-207"><a href="#cb6-207" aria-hidden="true" tabindex="-1"></a><span class="fu">### Posterior diagnostics in Stan</span></span>
+<span id="cb6-208"><a href="#cb6-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-209"><a href="#cb6-209" aria-hidden="true" tabindex="-1"></a>Stan reports several convergence statistics:</span>
+<span id="cb6-210"><a href="#cb6-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-211"><a href="#cb6-211" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**$\hat{R}$ (potential scale reduction factor)**: Should be $&lt; 1.01$. Values $&gt; 1.05$ indicate poor convergence.</span>
+<span id="cb6-212"><a href="#cb6-212" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**ESS (effective sample size)**: Bulk ESS and tail ESS. Rule of thumb: both $\gtrsim 400$ per chain. Low ESS indicates high autocorrelation.</span>
+<span id="cb6-213"><a href="#cb6-213" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Divergent transitions**: Occur when the leapfrog integrator leaves the high-probability region. May indicate a multimodal or heavy-tailed target. Typical remedy: increase <span class="in">`adapt_delta`</span> (default 0.8) to 0.9 or 0.95.</span>
+<span id="cb6-214"><a href="#cb6-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-215"><a href="#cb6-215" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparison: hand-coded MH vs JAGS vs Stan</span></span>
+<span id="cb6-216"><a href="#cb6-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-217"><a href="#cb6-217" aria-hidden="true" tabindex="-1"></a>:::{.note}</span>
+<span id="cb6-218"><a href="#cb6-218" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Aspect <span class="pp">|</span> Hand-coded MH <span class="pp">|</span> JAGS <span class="pp">|</span> Stan <span class="pp">|</span></span>
+<span id="cb6-219"><a href="#cb6-219" aria-hidden="true" tabindex="-1"></a><span class="pp">|--------|---------------|------|------|</span></span>
+<span id="cb6-220"><a href="#cb6-220" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Model coding <span class="pp">|</span> Log-posterior by hand <span class="pp">|</span> Declarative (BUGS) <span class="pp">|</span> Declarative + blocks <span class="pp">|</span></span>
+<span id="cb6-221"><a href="#cb6-221" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Sampler <span class="pp">|</span> Random-walk MH <span class="pp">|</span> Gibbs + MH <span class="pp">|</span> HMC (NUTS) <span class="pp">|</span></span>
+<span id="cb6-222"><a href="#cb6-222" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Gradients <span class="pp">|</span> No <span class="pp">|</span> No <span class="pp">|</span> Automatic (AD) <span class="pp">|</span></span>
+<span id="cb6-223"><a href="#cb6-223" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Tuning <span class="pp">|</span> Manual proposal covariance <span class="pp">|</span> Partly automatic <span class="pp">|</span> Automatic warmup <span class="pp">|</span></span>
+<span id="cb6-224"><a href="#cb6-224" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Discrete parameters <span class="pp">|</span> OK <span class="pp">|</span> OK <span class="pp">|</span> Require marginalisation <span class="pp">|</span></span>
+<span id="cb6-225"><a href="#cb6-225" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Convergence speed <span class="pp">|</span> Often slow <span class="pp">|</span> Moderate <span class="pp">|</span> Fast (high-dimensional) <span class="pp">|</span></span>
+<span id="cb6-226"><a href="#cb6-226" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Best for <span class="pp">|</span> Understanding, learning <span class="pp">|</span> Hierarchical models <span class="pp">|</span> Efficient inference <span class="pp">|</span></span>
+<span id="cb6-227"><a href="#cb6-227" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Diagnostic burden <span class="pp">|</span> High <span class="pp">|</span> Moderate <span class="pp">|</span> Lower (but still essential) <span class="pp">|</span></span>
+<span id="cb6-228"><a href="#cb6-228" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb6-229"><a href="#cb6-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-230"><a href="#cb6-230" aria-hidden="true" tabindex="-1"></a><span class="fu">## Variational inference: approximate posterior via optimisation</span></span>
+<span id="cb6-231"><a href="#cb6-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-232"><a href="#cb6-232" aria-hidden="true" tabindex="-1"></a><span class="fu">### The KL divergence decomposition</span></span>
+<span id="cb6-233"><a href="#cb6-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-234"><a href="#cb6-234" aria-hidden="true" tabindex="-1"></a>MCMC samples exactly (asymptotically) from the posterior $p(\theta \mid \mathbf{y})$. Variational inference instead *optimises* over a family of tractable distributions $\mathcal{Q}$ to find the member $q^*(\theta)$ that best approximates the posterior.</span>
+<span id="cb6-235"><a href="#cb6-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-236"><a href="#cb6-236" aria-hidden="true" tabindex="-1"></a>Define the Kullback–Leibler divergence:</span>
+<span id="cb6-237"><a href="#cb6-237" aria-hidden="true" tabindex="-1"></a>$$\mathrm{KL}(q \parallel p) = \mathbb{E}_q \left<span class="co">[</span><span class="ot"> \log \frac{q(\theta)}{p(\theta \mid \mathbf{y})} \right</span><span class="co">]</span>.$$</span>
+<span id="cb6-238"><a href="#cb6-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-239"><a href="#cb6-239" aria-hidden="true" tabindex="-1"></a>By the law of total probability,</span>
+<span id="cb6-240"><a href="#cb6-240" aria-hidden="true" tabindex="-1"></a>$$\log p(\mathbf{y}) = \mathbb{E}_q <span class="co">[</span><span class="ot"> \log p(\mathbf{y}, \theta) - \log q(\theta) </span><span class="co">]</span> + \mathrm{KL}(q \parallel p),$$</span>
+<span id="cb6-241"><a href="#cb6-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-242"><a href="#cb6-242" aria-hidden="true" tabindex="-1"></a>which rearranges to</span>
+<span id="cb6-243"><a href="#cb6-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-244"><a href="#cb6-244" aria-hidden="true" tabindex="-1"></a>$$\boxed{\log p(\mathbf{y}) = \mathcal{L}(q) + \mathrm{KL}(q \parallel p)}.$$</span>
+<span id="cb6-245"><a href="#cb6-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-246"><a href="#cb6-246" aria-hidden="true" tabindex="-1"></a>Here $\mathcal{L}(q)$ is the **evidence lower bound (ELBO)**:</span>
+<span id="cb6-247"><a href="#cb6-247" aria-hidden="true" tabindex="-1"></a>$$\mathcal{L}(q) = \mathbb{E}_q <span class="co">[</span><span class="ot"> \log p(\mathbf{y}, \theta) - \log q(\theta) </span><span class="co">]</span>.$$</span>
+<span id="cb6-248"><a href="#cb6-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-249"><a href="#cb6-249" aria-hidden="true" tabindex="-1"></a>Since $\log p(\mathbf{y})$ is fixed and $\mathrm{KL}(q \parallel p) \geq 0$ always, *maximising the ELBO minimises the KL divergence*. Thus the optimal approximation is</span>
+<span id="cb6-250"><a href="#cb6-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-251"><a href="#cb6-251" aria-hidden="true" tabindex="-1"></a>$$q^*(\theta) = \arg\max_{q \in \mathcal{Q}} \mathcal{L}(q).$$</span>
+<span id="cb6-252"><a href="#cb6-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-253"><a href="#cb6-253" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mean-field approximation</span></span>
+<span id="cb6-254"><a href="#cb6-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-255"><a href="#cb6-255" aria-hidden="true" tabindex="-1"></a>To make the optimisation tractable, we restrict $\mathcal{Q}$ to a *mean-field family*:</span>
+<span id="cb6-256"><a href="#cb6-256" aria-hidden="true" tabindex="-1"></a>$$q(\theta) = \prod_{i=1}^{d} q_i(\theta_i),$$</span>
+<span id="cb6-257"><a href="#cb6-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-258"><a href="#cb6-258" aria-hidden="true" tabindex="-1"></a>i.e., a product of independent marginal distributions (one per parameter). This destroys posterior correlations but is far easier to optimise than a full covariance Gaussian.</span>
+<span id="cb6-259"><a href="#cb6-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-260"><a href="#cb6-260" aria-hidden="true" tabindex="-1"></a>For each parameter, $q_i$ is typically a standard distribution (Gaussian, Beta, Gamma, etc.).</span>
+<span id="cb6-261"><a href="#cb6-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-262"><a href="#cb6-262" aria-hidden="true" tabindex="-1"></a><span class="fu">### The reparameterisation trick</span></span>
+<span id="cb6-263"><a href="#cb6-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-264"><a href="#cb6-264" aria-hidden="true" tabindex="-1"></a>To optimise the ELBO by stochastic gradient descent, we need to differentiate through expectations. The **reparameterisation trick** rewrites an expectation:</span>
+<span id="cb6-265"><a href="#cb6-265" aria-hidden="true" tabindex="-1"></a>$$\mathbb{E}_{q(\theta)} [f(\theta)] = \mathbb{E}_{\epsilon \sim N(0, I)} <span class="co">[</span><span class="ot">f(\mu + \sigma \epsilon)</span><span class="co">]</span>,$$</span>
+<span id="cb6-266"><a href="#cb6-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-267"><a href="#cb6-267" aria-hidden="true" tabindex="-1"></a>where $\mu$ and $\sigma$ are the (optimisable) parameters of $q$, and $\epsilon$ is auxiliary randomness. Now we can differentiate w.r.t. $\mu$ and $\sigma$ using the chain rule.</span>
+<span id="cb6-268"><a href="#cb6-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-269"><a href="#cb6-269" aria-hidden="true" tabindex="-1"></a><span class="fu">## ADVI: Automatic Differentiation Variational Inference</span></span>
+<span id="cb6-270"><a href="#cb6-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-271"><a href="#cb6-271" aria-hidden="true" tabindex="-1"></a><span class="fu">### Automatic transformation to unconstrained space</span></span>
+<span id="cb6-272"><a href="#cb6-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-273"><a href="#cb6-273" aria-hidden="true" tabindex="-1"></a>Many parameters have constraints: $\sigma &gt; 0$, $p \in <span class="co">[</span><span class="ot">0, 1</span><span class="co">]</span>$, etc. ADVI automatically transforms such parameters to an unconstrained space, optimises a Gaussian approximation there, and back-transforms samples.</span>
+<span id="cb6-274"><a href="#cb6-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-275"><a href="#cb6-275" aria-hidden="true" tabindex="-1"></a>For example, $\sigma &gt; 0$ is mapped to $\eta = \log \sigma \in \mathbb{R}$. The variational family becomes $q(\eta)$ (a univariate Gaussian in $\eta$), and we sample $\eta \sim N(\mu, \sigma^2)$, then set $\sigma = \exp(\eta)$.</span>
+<span id="cb6-276"><a href="#cb6-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-277"><a href="#cb6-277" aria-hidden="true" tabindex="-1"></a><span class="fu">### Gaussian variational family</span></span>
+<span id="cb6-278"><a href="#cb6-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-279"><a href="#cb6-279" aria-hidden="true" tabindex="-1"></a>ADVI uses a multivariate Gaussian approximation:</span>
+<span id="cb6-280"><a href="#cb6-280" aria-hidden="true" tabindex="-1"></a>$$q(\theta) = N(\theta \mid \mu, \Sigma),$$</span>
+<span id="cb6-281"><a href="#cb6-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-282"><a href="#cb6-282" aria-hidden="true" tabindex="-1"></a>where $\Sigma$ is either diagonal (mean-field) or full-rank. The parameters $(\mu, \Sigma)$ are optimised by stochastic gradient ascent on the ELBO.</span>
+<span id="cb6-283"><a href="#cb6-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-284"><a href="#cb6-284" aria-hidden="true" tabindex="-1"></a><span class="fu">### Stan's `vb()` interface</span></span>
+<span id="cb6-285"><a href="#cb6-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-286"><a href="#cb6-286" aria-hidden="true" tabindex="-1"></a><span class="in">```r</span></span>
+<span id="cb6-287"><a href="#cb6-287" aria-hidden="true" tabindex="-1"></a><span class="co"># Variational inference in Stan (instead of MCMC)</span></span>
+<span id="cb6-288"><a href="#cb6-288" aria-hidden="true" tabindex="-1"></a>fit_vb <span class="ot">&lt;-</span> mod<span class="sc">$</span><span class="fu">variational</span>(</span>
+<span id="cb6-289"><a href="#cb6-289" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> stan_data,</span>
+<span id="cb6-290"><a href="#cb6-290" aria-hidden="true" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">"meanfield"</span>,  <span class="co"># or "fullrank"</span></span>
+<span id="cb6-291"><a href="#cb6-291" aria-hidden="true" tabindex="-1"></a>  <span class="at">iter =</span> <span class="dv">10000</span>,</span>
+<span id="cb6-292"><a href="#cb6-292" aria-hidden="true" tabindex="-1"></a>  <span class="at">seed =</span> <span class="dv">123</span></span>
+<span id="cb6-293"><a href="#cb6-293" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-294"><a href="#cb6-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-295"><a href="#cb6-295" aria-hidden="true" tabindex="-1"></a><span class="co"># Approximately posterior samples</span></span>
+<span id="cb6-296"><a href="#cb6-296" aria-hidden="true" tabindex="-1"></a>draws <span class="ot">&lt;-</span> fit_vb<span class="sc">$</span><span class="fu">draws</span>()</span>
+<span id="cb6-297"><a href="#cb6-297" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb6-298"><a href="#cb6-298" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-299"><a href="#cb6-299" aria-hidden="true" tabindex="-1"></a>**Advantages of ADVI:**</span>
+<span id="cb6-300"><a href="#cb6-300" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-301"><a href="#cb6-301" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Much faster than MCMC for high-dimensional models.</span>
+<span id="cb6-302"><a href="#cb6-302" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Deterministic; no convergence diagnostics needed.</span>
+<span id="cb6-303"><a href="#cb6-303" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Useful for exploratory analysis.</span>
+<span id="cb6-304"><a href="#cb6-304" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-305"><a href="#cb6-305" aria-hidden="true" tabindex="-1"></a>**Disadvantages:**</span>
+<span id="cb6-306"><a href="#cb6-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-307"><a href="#cb6-307" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Mean-field assumption often too restrictive; underestimates posterior variance.</span>
+<span id="cb6-308"><a href="#cb6-308" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No automatic diagnostic (unlike MCMC diagnostics like $\hat{R}$).</span>
+<span id="cb6-309"><a href="#cb6-309" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>For posterior inference, MCMC is often preferable.</span>
+<span id="cb6-310"><a href="#cb6-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-311"><a href="#cb6-311" aria-hidden="true" tabindex="-1"></a><span class="fu">## Practical workflow: from hand-rolled MCMC to PPLs</span></span>
+<span id="cb6-312"><a href="#cb6-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-313"><a href="#cb6-313" aria-hidden="true" tabindex="-1"></a>The progression we have traced reflects a real scientific workflow:</span>
+<span id="cb6-314"><a href="#cb6-314" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-315"><a href="#cb6-315" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Prototype with hand-coded MCMC** (Chapter 11 onwards): Learn the model, understand the geometry of the posterior, diagnose what works and what doesn't.</span>
+<span id="cb6-316"><a href="#cb6-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-317"><a href="#cb6-317" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Apply parametrisation tricks**: Center and scale predictors, use whitening transforms, exploit posterior covariance structure.</span>
+<span id="cb6-318"><a href="#cb6-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-319"><a href="#cb6-319" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Upgrade to a gradient-based sampler**: Use HMC or NUTS to exploit smoothness of the log-posterior.</span>
+<span id="cb6-320"><a href="#cb6-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-321"><a href="#cb6-321" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Automate with Stan or JAGS**: Declare the model once, let the software handle sampling, diagnostics, and adaptation.</span>
+<span id="cb6-322"><a href="#cb6-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-323"><a href="#cb6-323" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Consider variational inference** if:</span>
+<span id="cb6-324"><a href="#cb6-324" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>You need very fast approximate inference for exploration.</span>
+<span id="cb6-325"><a href="#cb6-325" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>Your model is too large for MCMC.</span>
+<span id="cb6-326"><a href="#cb6-326" aria-hidden="true" tabindex="-1"></a><span class="ss">   - </span>You are happy accepting mean-field correlations.</span>
+<span id="cb6-327"><a href="#cb6-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-328"><a href="#cb6-328" aria-hidden="true" tabindex="-1"></a><span class="fu">## Failure modes and remedies</span></span>
+<span id="cb6-329"><a href="#cb6-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-330"><a href="#cb6-330" aria-hidden="true" tabindex="-1"></a><span class="fu">### Multimodal posteriors</span></span>
+<span id="cb6-331"><a href="#cb6-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-332"><a href="#cb6-332" aria-hidden="true" tabindex="-1"></a>If the target distribution has multiple distinct modes, MCMC may get stuck in one mode and miss others. JAGS and Stan both struggle with multimodality.</span>
+<span id="cb6-333"><a href="#cb6-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-334"><a href="#cb6-334" aria-hidden="true" tabindex="-1"></a>Remedies:</span>
+<span id="cb6-335"><a href="#cb6-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-336"><a href="#cb6-336" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use parallel tempering (Chapter 10).</span>
+<span id="cb6-337"><a href="#cb6-337" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Run many short chains from dispersed starting values.</span>
+<span id="cb6-338"><a href="#cb6-338" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reparametrise to reduce multimodality (e.g., via identifiability constraints).</span>
+<span id="cb6-339"><a href="#cb6-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-340"><a href="#cb6-340" aria-hidden="true" tabindex="-1"></a><span class="fu">### Discrete parameters</span></span>
+<span id="cb6-341"><a href="#cb6-341" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-342"><a href="#cb6-342" aria-hidden="true" tabindex="-1"></a>Stan requires all parameters to be continuous. If your model includes discrete latent variables (e.g., mixture component labels), you must marginalise them out analytically (integrate over all possible values) before passing the model to Stan.</span>
+<span id="cb6-343"><a href="#cb6-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-344"><a href="#cb6-344" aria-hidden="true" tabindex="-1"></a>JAGS handles discrete nodes naturally.</span>
+<span id="cb6-345"><a href="#cb6-345" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-346"><a href="#cb6-346" aria-hidden="true" tabindex="-1"></a><span class="fu">### Heavy-tailed posteriors</span></span>
+<span id="cb6-347"><a href="#cb6-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-348"><a href="#cb6-348" aria-hidden="true" tabindex="-1"></a>If the posterior has heavy tails (e.g., a mixture of normals with small weights), the leapfrog integrator in HMC can take very long steps and diverge. Divergent transitions are a warning.</span>
+<span id="cb6-349"><a href="#cb6-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-350"><a href="#cb6-350" aria-hidden="true" tabindex="-1"></a>Remedies:</span>
+<span id="cb6-351"><a href="#cb6-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-352"><a href="#cb6-352" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Increase <span class="in">`adapt_delta`</span> (0.8 → 0.95 or higher).</span>
+<span id="cb6-353"><a href="#cb6-353" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Increase <span class="in">`max_treedepth`</span>.</span>
+<span id="cb6-354"><a href="#cb6-354" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reparametrise to reduce tail heaviness (e.g., use a Student-$t$ prior to allow more dispersed posteriors).</span>
+<span id="cb6-355"><a href="#cb6-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-356"><a href="#cb6-356" aria-hidden="true" tabindex="-1"></a><span class="fu">### Weak identifiability</span></span>
+<span id="cb6-357"><a href="#cb6-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-358"><a href="#cb6-358" aria-hidden="true" tabindex="-1"></a>If two parameters affect the likelihood in nearly the same way, the posterior is highly correlated or even degenerate. MCMC mixes slowly; variational inference underestimates uncertainty.</span>
+<span id="cb6-359"><a href="#cb6-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-360"><a href="#cb6-360" aria-hidden="true" tabindex="-1"></a>Remedy:</span>
+<span id="cb6-361"><a href="#cb6-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-362"><a href="#cb6-362" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Include informative priors that break the symmetry.</span>
+<span id="cb6-363"><a href="#cb6-363" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reparametrise (e.g., use a sum-of-effects rather than separate effects).</span>
+<span id="cb6-364"><a href="#cb6-364" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-365"><a href="#cb6-365" aria-hidden="true" tabindex="-1"></a><span class="fu">## What to report</span></span>
+<span id="cb6-366"><a href="#cb6-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-367"><a href="#cb6-367" aria-hidden="true" tabindex="-1"></a>For any Bayesian analysis using JAGS or Stan, report:</span>
+<span id="cb6-368"><a href="#cb6-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-369"><a href="#cb6-369" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Model specification**: Likelihood, priors, parametrisation.</span>
+<span id="cb6-370"><a href="#cb6-370" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Sampling method**: Algorithm, number of chains, iterations, warmup.</span>
+<span id="cb6-371"><a href="#cb6-371" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Convergence diagnostics**: Trace plots, $\hat{R}$, ESS, acceptance rate, divergent transitions (Stan only).</span>
+<span id="cb6-372"><a href="#cb6-372" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Posterior summaries**: Mean or median, 95% credible intervals.</span>
+<span id="cb6-373"><a href="#cb6-373" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Posterior predictions**: Regression curves with credible intervals; posterior predictive intervals if relevant.</span>
+<span id="cb6-374"><a href="#cb6-374" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-375"><a href="#cb6-375" aria-hidden="true" tabindex="-1"></a>Do not report precise posterior point estimates from a badly mixing chain—they are numerical artifacts, not inference.</span>
+<span id="cb6-376"><a href="#cb6-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-377"><a href="#cb6-377" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb6-378"><a href="#cb6-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-379"><a href="#cb6-379" aria-hidden="true" tabindex="-1"></a>**JAGS:**</span>
+<span id="cb6-380"><a href="#cb6-380" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Martyn Plummer. JAGS: A program for analysis of Bayesian graphical models using Gibbs sampling. In *Proc. 3rd Int. Workshop on Distributed Statistical Computing*, 2003.</span>
+<span id="cb6-381"><a href="#cb6-381" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-382"><a href="#cb6-382" aria-hidden="true" tabindex="-1"></a>**Stan:**</span>
+<span id="cb6-383"><a href="#cb6-383" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Stan Development Team. Stan user's guide and reference manual, version 2.33. https://mc-stan.org.</span>
+<span id="cb6-384"><a href="#cb6-384" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Gelman et al. Bayesian workflow. *ArXiv* preprint arXiv:2011.01808, 2020.</span>
+<span id="cb6-385"><a href="#cb6-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-386"><a href="#cb6-386" aria-hidden="true" tabindex="-1"></a>**Variational inference:**</span>
+<span id="cb6-387"><a href="#cb6-387" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>David M. Blei, Alp Kucukelbir, and Jon D. McInman. Variational inference: A review for statisticians. *Journal of the American Statistical Association*, 112(518):859–877, 2017.</span>
+<span id="cb6-388"><a href="#cb6-388" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Alp Kucukelbir et al. Automatic differentiation variational inference. *Journal of Machine Learning Research*, 18(1):1–45, 2017.</span>
+<span id="cb6-389"><a href="#cb6-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-390"><a href="#cb6-390" aria-hidden="true" tabindex="-1"></a>**References cited:**</span>
+<span id="cb6-391"><a href="#cb6-391" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Gianmaria Falasco. Advanced statistics for physics analysis: Efficient MCMC for Bayesian regression: from hand tuning to JAGS and Stan. Lecture slides, May 19, 2026.</span>
+<span id="cb6-392"><a href="#cb6-392" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Sivia, D.S. &amp; Skilling, J. (2006). *Data Analysis: A Bayesian Tutorial*. Oxford University Press.</span>
+<span id="cb6-393"><a href="#cb6-393" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Falasco, G. (2026). Lecture on Hamiltonian Monte Carlo. ASPA course notes.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>
