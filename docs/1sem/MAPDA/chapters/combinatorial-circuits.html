@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Combinatorial circuits – Management and Analysis of Physics Datasets — Module A</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/sequential-circuits.html" rel="next">
+<link href="../chapters/from-algebra-to-circuits.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/combinatorial-circuits.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Combinatorial circuits</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Management and Analysis of Physics Datasets — Module A</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Welcome</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/number-systems.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Arithmetic in computers</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/fundamentals-of-boolean-algebra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Fundamentals of Boolean Algebra</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/from-algebra-to-circuits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">From algebra to circuits</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/combinatorial-circuits.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Combinatorial circuits</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/sequential-circuits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Sequential circuits</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/sap-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">SAP-1</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/sap-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">SAP-2</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/sap-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">SAP-3</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/exercises.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Exercises</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/appendix.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">ASCII Table</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#adder" id="toc-adder" class="nav-link active" data-scroll-target="#adder"><span class="header-section-number">5.1</span> Adder</a>
+  <ul class="collapse">
+  <li><a href="#half-adder" id="toc-half-adder" class="nav-link" data-scroll-target="#half-adder"><span class="header-section-number">5.1.1</span> Half-adder</a></li>
+  <li><a href="#full-adder" id="toc-full-adder" class="nav-link" data-scroll-target="#full-adder"><span class="header-section-number">5.1.2</span> Full-adder</a></li>
+  </ul></li>
+  <li><a href="#subtractor" id="toc-subtractor" class="nav-link" data-scroll-target="#subtractor"><span class="header-section-number">5.2</span> Subtractor</a>
+  <ul class="collapse">
+  <li><a href="#sec:complemento-a-due" id="toc-sec:complemento-a-due" class="nav-link" data-scroll-target="#sec\:complemento-a-due"><span class="header-section-number">5.2.1</span> Two’s complement</a></li>
+  <li><a href="#parallel-carry" id="toc-parallel-carry" class="nav-link" data-scroll-target="#parallel-carry"><span class="header-section-number">5.2.2</span> Parallel carry</a></li>
+  </ul></li>
+  <li><a href="#parity-generator" id="toc-parity-generator" class="nav-link" data-scroll-target="#parity-generator"><span class="header-section-number">5.3</span> Parity generator</a></li>
+  <li><a href="#comparison" id="toc-comparison" class="nav-link" data-scroll-target="#comparison"><span class="header-section-number">5.4</span> Comparison</a></li>
+  <li><a href="#multiplexer" id="toc-multiplexer" class="nav-link" data-scroll-target="#multiplexer"><span class="header-section-number">5.5</span> Multiplexer</a>
+  <ul class="collapse">
+  <li><a href="#demultiplexer" id="toc-demultiplexer" class="nav-link" data-scroll-target="#demultiplexer"><span class="header-section-number">5.5.1</span> Demultiplexer</a></li>
+  </ul></li>
+  <li><a href="#tristate" id="toc-tristate" class="nav-link" data-scroll-target="#tristate"><span class="header-section-number">5.6</span> Tristate</a></li>
+  <li><a href="#programmable-devices" id="toc-programmable-devices" class="nav-link" data-scroll-target="#programmable-devices"><span class="header-section-number">5.7</span> Programmable devices</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Combinatorial circuits</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>We will see below the main circuits called <em>combinatorial</em>, in the sense that their operation concerns only the relationship between the input and output of the signal from the circuits themselves described by logic functions.</p>
+<section id="adder" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="adder"><span class="header-section-number">5.1</span> Adder</h2>
+<section id="half-adder" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="half-adder"><span class="header-section-number">5.1.1</span> Half-adder</h3>
+<p>Our goal is to create a circuit capable of adding two numbers together. Since logic circuits work through <em>HIGH</em> and <em>LOW</em> signals, the first thing we can do is try to add two bits together, or - in other words - two single-digit binary numbers.</p>
+<p>If both bits are <span class="math inline">\(0\)</span> (<span class="math inline">\(A=B=0\)</span>) the result will obviously be zero, while if one is <span class="math inline">\(0\)</span> and the other is <span class="math inline">\(1\)</span> (<span class="math inline">\(A\oplus B=1\)</span>) the result will be <span class="math inline">\(1\)</span>; the last case is <span class="math inline">\(A=B=1\)</span>, where the result is <span class="math inline">\(10\)</span>: it therefore requires two bits in output, for which we will have to use in general two bits (that is, two variables containing the information) to perform this simple sum considering all cases.</p>
+<p>The truth table will be as follows:</p>
+<p>The variable <span class="math inline">\(S\)</span> contains what we indicate as the <em>sum</em>; the variable <span class="math inline">\(C\)</span>, instead, is called , and indicates what is the <em>carry</em> of an addition in column: in the first three cases the variable <span class="math inline">\(S\)</span> coincides with the actual sum of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, while in the last case the sum gives rise to a carry that is stored in the variable <span class="math inline">\(C\)</span>.</p>
+<p>From table <a href="#tab:circuiti-combinatori-half-adder" data-reference-type="ref" data-reference="tab:circuiti-combinatori-half-adder">[tab:circuiti-combinatori-half-adder]</a> we immediately understand which operations are needed to obtain the two output variables:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    &amp;S=A\oplus B\\
+    &amp;C=AB
+\end{aligned}
+\]</span></p>
+<p>Converting this into a circuit we get:</p>
+<p>This circuit alone does not allow us to add numbers with more than one bit; let’s try, for example, to perform the addition between <span class="math inline">\(111\)</span> and <span class="math inline">\(101\)</span>:</p>
+<p>The sum - as we know<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> - proceeds from right to left. We will first add <span class="math inline">\(1\)</span> with <span class="math inline">\(1\)</span> which we know gives <span class="math inline">\(10\)</span>, that is a <span class="math inline">\(0\)</span> with a carry of <span class="math inline">\(1\)</span>; now the problem is: how do we proceed with the addition? The next sum, in fact, would be <span class="math inline">\(1+0\)</span>, but we cannot ignore the carry, since otherwise we would erroneously write <span class="math inline">\(1\)</span> as the result according to the circuit just described. The solution, therefore, is to introduce a new circuit that takes into account not two bits, but <em>three</em> bits, that is the two bits to be added and the carry. For this reason we call the circuit just described , not being yet the version of what interests us.</p>
+</section>
+<section id="full-adder" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="full-adder"><span class="header-section-number">5.1.2</span> Full-adder</h3>
+<p>Let’s go back to the example just made: in that case the solution is obviously <span class="math inline">\(1\)</span> which, with the carry equal to <span class="math inline">\(1\)</span> to be added, becomes <span class="math inline">\(10\)</span>; since the sum continues further, we take <span class="math inline">\(0\)</span> as the result and the new carry will have a value of <span class="math inline">\(1\)</span>.</p>
+<p>With the same logic we can build a new truth table, where we indicate with <span class="math inline">\(C_i\)</span> the carry contemplated in the sum between <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> and with <span class="math inline">\(C_{i+1}\)</span> the carry of the next sum:</p>
+<p>Let’s calculate <span class="math inline">\(S\)</span> using minterms:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    S&amp;=A\bar{B}\overbar{C_i}+\bar{A}B\overbar{C_i}+\bar{A}\bar{B}C_i+ABC_i=\\
+    &amp;=\left(A\bar{B}+\bar{A}B\right)\overbar{C_i}+\left(\bar{A}\bar{B}+AB\right)C_i=(A\oplus B)\overbar{C_i}+(\overbar{A\oplus B})C_i=\\
+    &amp;=\left(A\oplus B\right)\oplus C
+\end{aligned}
+\]</span></p>
+<p>Similarly for <span class="math inline">\(C_{i+1}\)</span>:</p>
+<p><span class="math display">\[
+C_{i+1}=AB\overbar{C_i}+A\bar{B}C_i+\bar{A}BC_i+ABC_i
+\]</span></p>
+<p>For the property we can add <span class="math inline">\(ABC_i\)</span> twice:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    C_{i+1}&amp;=AB\overbar{C_i}+A\bar{B}C_i+\bar{A}BC_i+ABC_i+ABC_i+ABC_i=\\
+    &amp;=AB\left(\overbar{C_i}+C_i\right)+AC_i\left(\bar{B}+B\right)+BC_i\left(\bar{A}+A\right)=\\
+    &amp;=AB+AC_i+BC_i
+\end{aligned}
+\]</span></p>
+<p>Let’s convert everything into a circuit:</p>
+<p>This is the useful circuit for our purposes, that is for the sum of numbers with more than one bit: for this reason it is called .</p>
+<p>The sum between the numbers <span class="math inline">\(111\)</span> and <span class="math inline">\(101\)</span> will be performed as follows:</p>
+<p>and in fact <span class="math inline">\(111+101=1100\)</span>.</p>
+<p>The general scheme of the adder, therefore, is the following:<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a></p>
+</section>
+</section>
+<section id="subtractor" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="subtractor"><span class="header-section-number">5.2</span> Subtractor</h2>
+<p>To obtain the difference between two binary numbers we follow the same reasoning as for the adder. Let’s start by building the truth table for a subtraction between two bits: when both are equal to <span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span> the result will be <span class="math inline">\(0\)</span>, while when the minuend is <span class="math inline">\(1\)</span> and the subtrahend is <span class="math inline">\(0\)</span> the result will be <span class="math inline">\(1\)</span>; the remaining case is the minuend equal to <span class="math inline">\(0\)</span> and the subtrahend equal to <span class="math inline">\(1\)</span>, or in other words the subtraction <span class="math inline">\(0-1\)</span>: in the context of subtraction with more bits we need the result to be <span class="math inline">\(1\)</span> while at the same time recording a <em>borrow</em> (also equal to <span class="math inline">\(1\)</span>) that is subtracted from the next minuend along with its subtrahend.</p>
+<p>Indicating the borrow with <span class="math inline">\(R\)</span> and the difference with <span class="math inline">\(D\)</span> we will have:</p>
+<p>From which it follows:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    &amp;D=A\oplus B\\
+    &amp;R=\bar{A}B
+\end{aligned}
+\]</span></p>
+<p>Let’s now try to build the full-subtractor table, remembering that <span class="math inline">\(R_i\)</span> is simply another bit to be subtracted from <span class="math inline">\(A\)</span> in addition to <span class="math inline">\(B\)</span>:</p>
+<p>We note that the variable <span class="math inline">\(D\)</span> assumes the same values as <span class="math inline">\(S\)</span> in the full-adder table (table <a href="#tab:circuiti-combinatori-full-adder-tabella" data-reference-type="ref" data-reference="tab:circuiti-combinatori-full-adder-tabella">[tab:circuiti-combinatori-full-adder-tabella]</a>), so its algebraic expression will also be the same:</p>
+<p><span class="math display">\[
+D=(A\oplus B)\oplus R_i
+\]</span></p>
+<p>Finally, let’s calculate <span class="math inline">\(R_{i+1}\)</span>:</p>
+<p><span class="math display">\[
+R_{i+1}=\bar{A}B\overbar{R_i}+\bar{A}\bar{B}R_i+\bar{A}BR_i+ABR_i
+\]</span></p>
+<p>Let’s add <span class="math inline">\(\bar{A}BR_i\)</span> twice:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    R_{i+1}&amp;=\bar{A}B\overbar{R_i}+\bar{A}\bar{B}R_i+\bar{A}BR_i+ABR_i+\bar{A}BR_i+\bar{A}BR_i=\\
+    &amp;=\bar{A}B\left(R_i+\overbar{R_i}\right)+\bar{A}R_i\left(B+\bar{B}\right)+BR_i\left(A+\bar{A}\right)=\\
+    &amp;=\bar{A}B+\bar{A}R_i+BR_i
+\end{aligned}
+\]</span></p>
+<p>By putting a half-subtractor in a row and then the various full-subtractors it is possible to obtain a real multi-bit subtractor, exactly as in the case of the adder.</p>
+<section id="sec:complemento-a-due" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="sec:complemento-a-due"><span class="header-section-number">5.2.1</span> Two’s complement</h3>
+<p>Building two different circuits for sum and difference can be expensive and inefficient: is there a way to build a circuit capable of performing both operations?</p>
+<p>A first idea is to take the full-subtractor circuit seen in figure <a href="#fig:circuiti-combinatori-full-subtractor-circuito" data-reference-type="ref" data-reference="fig:circuiti-combinatori-full-subtractor-circuito">[fig:circuiti-combinatori-full-subtractor-circuito]</a> and replace the NAND that inverts the signal of <span class="math inline">\(A\)</span> with a XOR, which takes as input the signal of <span class="math inline">\(A\)</span> and another signal that we indicate with <span class="math inline">\(S/D\)</span>: if we want to perform the sum we set <span class="math inline">\(S/D\)</span> <em>LOW</em>, so that</p>
+<p><span class="math display">\[
+A\oplus0=A
+\]</span></p>
+<p>and therefore we get back figure <a href="#fig:circuiti-combinatori-full-adder-circuito" data-reference-type="ref" data-reference="fig:circuiti-combinatori-full-adder-circuito">[fig:circuiti-combinatori-full-adder-circuito]</a>; if our goal is the difference then we set <span class="math inline">\(S/D\)</span> <em>HIGH</em> obtaining</p>
+<p><span class="math display">\[
+A\oplus1=\bar{A}
+\]</span></p>
+<p>and therefore the full-subtractor circuit.</p>
+<p>Another idea is to use only full-adders using the , which is a representation of binary numbers useful for defining positive and negative numbers. The two’s complement of an <span class="math inline">\(n\)</span>-bit number is obtained by inverting all its bits (so the <span class="math inline">\(0\)</span>s into <span class="math inline">\(1\)</span>s and the <span class="math inline">\(1\)</span>s into <span class="math inline">\(0\)</span>s) and adding <span class="math inline">\(1\)</span> to the total; for example, the 2’s complement of <span class="math inline">\(A=1011\)</span> will be <span class="math inline">\(A'=0100+1=0101\)</span>. The reason why this representation is useful is that by performing the two’s complement of the same number twice we get the starting number, in fact:</p>
+<p><span class="math display">\[
+A''=1010+1=1011=A
+\]</span></p>
+<p>If performing an operation on a number twice returns the starting number then we can understand this operation as a change of sign, since by inverting the sign of a number twice you get the starting one.</p>
+<p>Let’s now imagine working with <span class="math inline">\(4\)</span>-bit numbers; starting from the number 0 (<span class="math inline">\(0000\)</span>) we add 1 obtaining <span class="math inline">\(0001\)</span> whose two’s complement is <span class="math inline">\(1111\)</span>, which will correspond to -1, and we continue like this until we get to <span class="math inline">\(0111\)</span>, which corresponds to 7, and to its two’s complement which is <span class="math inline">\(1001\)</span>: it is evident, therefore, that the first bit will represent the sign of the number, which is <span class="math inline">\(0\)</span> for positive numbers and <span class="math inline">\(1\)</span> for negative numbers; according to this reasoning, the last missing digit, that is <span class="math inline">\(1000\)</span>, is negative and represents, therefore, -8.</p>
+<p>In general, an <span class="math inline">\(n\)</span>-digit binary number can represent the numbers between <span class="math inline">\(-2^{n-1}\)</span> and <span class="math inline">\(2^{n-1}-1\)</span>.</p>
+<p>According to this representation we can think of the difference of two numbers as the sum of a positive number and a negative number. This means that we can use only adders in the following way:</p>
+<p>When you want to use the adder you set <em>SUB</em><span class="math inline">\(=0\)</span> so that the bits of <span class="math inline">\(B\)</span> are not inverted and the carry of the first full-adder is set to <span class="math inline">\(0\)</span>, making it in all respects a half-adder. When you want to switch to a subtractor you must set <em>SUB</em><span class="math inline">\(=1\)</span> so that each bit of <span class="math inline">\(B\)</span> is complemented and the carry on the first full-adder is set to <span class="math inline">\(1\)</span> by default: in this way we will go from <span class="math inline">\(B\)</span> to <span class="math inline">\(\bar{B}+1=B'\)</span> and we will get the difference between the numbers in binary.</p>
+<p>Keep in mind that for a circuit with four full-adders, which therefore considers four-bit numbers, the digits that represent the number in modulus are only the last three, since the first is relative only to the sign: this means that it is possible to operate only with numbers ranging from <span class="math inline">\(-8\)</span> to <span class="math inline">\(7\)</span>.</p>
+<p>Furthermore, depending on the sum (or difference) performed, the last carry can:<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a></p>
+<ul>
+<li><p>Have no meaning if the result <span class="math inline">\(x\)</span> is a number expressible within three bits (<span class="math inline">\(\abs{x}\leqslant7\)</span>)</p></li>
+<li><p>Indicate the sign of the resulting number <span class="math inline">\(x\)</span> if it is a number expressible with four bits (<span class="math inline">\(7\leqslant\abs{x}\leqslant15\)</span>)</p></li>
+<li><p>Indicate the first digit of the binary number in modulus if the numbers added or subtracted are both <span class="math inline">\(1000\)</span>, that is <span class="math inline">\(-8\)</span> (in both cases, in fact, the result will give <span class="math inline">\(10000\)</span>, that is <span class="math inline">\(16\)</span> in binary)</p></li>
+</ul>
+<p>Let’s see an example of the difference between <span class="math inline">\(3\)</span> and <span class="math inline">\(7\)</span>: we know that the number <span class="math inline">\(3\)</span> in binary with four bits is <span class="math inline">\(0011\)</span>, while <span class="math inline">\(7\)</span> is <span class="math inline">\(0111\)</span>, so we will have</p>
+<p>The number 1100, in two’s complement notation, represents exactly <span class="math inline">\(-4\)</span>.</p>
+</section>
+<section id="parallel-carry" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="parallel-carry"><span class="header-section-number">5.2.2</span> Parallel carry</h3>
+<p>One last consideration to make concerns the efficiency of the circuit: in an adder circuit, in fact, each full-adder simultaneously receives as input the two bits of the two numbers to be added, and all those after the first (we remember that according to the various schemes shown the signal proceeds from right to left) must wait for the generation of the carry from the previous full-adders. This means that the time taken by the circuit to perform the sum depends on the number of full-adders: the greater this is, the greater the time, also called <strong>propagation delay</strong>.</p>
+<p>In particular, the relationship between the propagation delay <span class="math inline">\(T_D\)</span> and the number of full-adders <span class="math inline">\(n\)</span> is shown to be <em>directly proportional</em>, from which it follows that<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
+<p><span class="math display">\[
+\label{eq:circuiti-combinatori-propagation-delay-carry-non-parallelo}
+    T_D=2T_P\cdot n=2nT_P
+\]</span></p>
+<p>A certainly more efficient and useful way when performing a sum with many bits is to generate and propagate the carry <em>in parallel</em>.</p>
+<p>Let’s refer to table <a href="#tab:circuiti-combinatori-full-adder-tabella" data-reference-type="ref" data-reference="tab:circuiti-combinatori-full-adder-tabella">[tab:circuiti-combinatori-full-adder-tabella]</a> and write the algebraic expression for which we have in output <span class="math inline">\(C_{i+1}=1\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    C_{i+1}&amp;=AB\overbar{C_i}+A\bar{B}C_i+\bar{A}BC_i+ABC_i=\\
+    &amp;=AB\left(C_i+\overbar{C_i}\right)+\left(A\bar{B}+\bar{A}B\right)C_i=AB+(A\oplus B)C_i
+\end{aligned}
+\]</span></p>
+<p>Following this scheme, each full-adder will not produce a carry <span class="math inline">\(C_{i+1}\)</span> but will output the signals <span class="math inline">\(AB\)</span> and <span class="math inline">\(A\oplus B\)</span>, which will arrive on a circuit associated with the algebraic expression written above; we remember that the initial carry <span class="math inline">\(C_0\)</span> is equal to <span class="math inline">\(0\)</span> if you intend to perform a sum and <span class="math inline">\(1\)</span> if you intend to perform a difference.</p>
+<p>In this case the propagation delay is shown to be<a href="#fn5" class="footnote-ref" id="fnref5" role="doc-noteref"><sup>5</sup></a></p>
+<p><span class="math display">\[
+\label{eq:circuiti-combinatori-propagation-delay-carry-parallelo}
+    T_D=3T_P
+\]</span></p>
+<p>and therefore independent of <span class="math inline">\(n\)</span>.</p>
+</section>
+</section>
+<section id="parity-generator" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="parity-generator"><span class="header-section-number">5.3</span> Parity generator</h2>
+<p>The is a circuit used to verify the correct information of the transmitted data. It adds a final bit <span class="math inline">\(P\)</span> to the bit string that represents the transferred information based on the number of <span class="math inline">\(1\)</span>s present in that string, and is divided into two types:</p>
+<ul>
+<li><p><strong>Even parity generator</strong>: finds <span class="math inline">\(P=0\)</span> if the number of <span class="math inline">\(1\)</span>s is already even and <span class="math inline">\(P=1\)</span> if the number is odd and must be made even</p></li>
+<li><p><strong>Odd parity generator</strong>: finds <span class="math inline">\(P=0\)</span> if the number of <span class="math inline">\(1\)</span>s is already odd and <span class="math inline">\(P=1\)</span> if the number is even and must be made odd</p></li>
+</ul>
+<p>In both cases, the construction proceeds by analyzing all the bits of the considered string individually; at each <span class="math inline">\(i\)</span>-th iteration, we will reason as follows:</p>
+<ul>
+<li><p>If <span class="math inline">\(P_i=0\)</span> and the input bit is <span class="math inline">\(0\)</span> then the parity is not changed and the added bit remains <span class="math inline">\(0\)</span></p></li>
+<li><p>If <span class="math inline">\(P_i=0\)</span> and the input bit is <span class="math inline">\(1\)</span> then the parity is changed, therefore - to - the added bit becomes <span class="math inline">\(1\)</span></p></li>
+<li><p>If <span class="math inline">\(P_i=1\)</span> and the input bit is <span class="math inline">\(0\)</span> then the parity is not changed and the added bit remains <span class="math inline">\(1\)</span></p></li>
+<li><p>If <span class="math inline">\(P_i=1\)</span> and the input bit is <span class="math inline">\(1\)</span> then the parity is changed, so the added bit must change accordingly becoming <span class="math inline">\(0\)</span></p></li>
+</ul>
+<p>Indicating the input bit with <span class="math inline">\(D_i\)</span> we can put everything in the truth table:</p>
+<p>It is evident that the algebraic form will be:</p>
+<p><span class="math display">\[
+P_{i+1}=D_i\oplus P_i
+\]</span></p>
+<p>The question at this point is: how do we distinguish an even parity generator from an odd parity generator? To understand this, let’s consider a single-bit information: if <span class="math inline">\(D_0=0\)</span> we must have <span class="math inline">\(P_1=0\)</span> in the case of an even parity generator and <span class="math inline">\(P_1=1\)</span> in the case of an odd parity generator, and from table <a href="#tab:circuiti-combinatori-parity-generator" data-reference-type="ref" data-reference="tab:circuiti-combinatori-parity-generator">[tab:circuiti-combinatori-parity-generator]</a> it is evident that these two conditions can be obtained, in order, with <span class="math inline">\(P_0=0\)</span> and <span class="math inline">\(P_0=1\)</span>; the same occurs assuming <span class="math inline">\(D_0=1\)</span>, so in general we can say that for the even parity generator we have <span class="math inline">\(P_0=0\)</span> and for the odd parity generator <span class="math inline">\(P_0=1\)</span>.</p>
+<p>Ultimately, the parity generator consists of a series of XORs that take as input a bit of the transmitted information and the output of the previous XOR:</p>
+<p>Another possibility is to consider all the input bits in pairs. Let’s look at table <a href="#tab:circuiti-combinatori-parity-generator" data-reference-type="ref" data-reference="tab:circuiti-combinatori-parity-generator">[tab:circuiti-combinatori-parity-generator]</a> and imagine that there are two information bits in input: the output will be <span class="math inline">\(1\)</span> only when one of the two is <span class="math inline">\(0\)</span> and the other is <span class="math inline">\(1\)</span>, or - in other words - when the input <span class="math inline">\(1\)</span> is present an odd number of times; the output will instead be <span class="math inline">\(0\)</span> when both inputs are <span class="math inline">\(0\)</span> or are <span class="math inline">\(1\)</span>, that is when <span class="math inline">\(1\)</span> is present an even number of times.</p>
+<p>Therefore, by placing all the input bits in the various XORs we will obtain an even parity generator, since we will always get as output <span class="math inline">\(0\)</span> when the number of <span class="math inline">\(1\)</span>s is even and <span class="math inline">\(1\)</span> when it is odd.</p>
+<p>In the case where you want to obtain an odd parity generator, it is sufficient to place an inverter at the end of the circuit that returns the opposite output with respect to the even parity generator.</p>
+</section>
+<section id="comparison" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="comparison"><span class="header-section-number">5.4</span> Comparison</h2>
+<p>The goal is to understand if a binary number is equal, greater or lesser than another.</p>
+<p>Since there are three cases, it is necessary to consider two bits in output, since with a single bit we could distinguish at most two cases. Let’s indicate these two bits with <span class="math inline">\(M\)</span> and <span class="math inline">\(N\)</span> and encode the information in the following way:</p>
+<p>Considering two <span class="math inline">\(n\)</span>-bit numbers, the comparison will be made starting from the digits with the highest weight, therefore from to : for this reason we will say that the iteration will proceed from the <span class="math inline">\(i+1\)</span>-th to the <span class="math inline">\(i\)</span>-th and so on, since we are gradually moving towards bits with a lower weight.</p>
+<p>Before starting the comparison, <span class="math inline">\(M=N=0\)</span> are initially set. From the first comparison, therefore, the truth table will be the following:</p>
+<p>where <span class="math inline">\(a_i\)</span> and <span class="math inline">\(b_i\)</span> represent the <span class="math inline">\(i\)</span>-th bits of the numbers <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>.</p>
+<p>When the central cases occur, that is <span class="math inline">\(a_i&gt;b_i\)</span> or <span class="math inline">\(a_i&lt;b_i\)</span>, regardless of the subsequent digits it will result respectively <span class="math inline">\(a&gt;b\)</span> or <span class="math inline">\(a&lt;b\)</span>, so the values of <span class="math inline">\(M\)</span> and <span class="math inline">\(N\)</span> will simply be whatever the subsequent combinations of the bits of <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>.<a href="#fn6" class="footnote-ref" id="fnref6" role="doc-noteref"><sup>6</sup></a></p>
+<p>The complete truth table, therefore, will be</p>
+<p>The last four cases analyzed are those in which <span class="math inline">\(M_{i+1}=N_{i+1}=1\)</span>, which in reality never occur since this combination of bits does not encode any information according to what was established at the beginning. For this reason, the combinations of bits in the last four rows of the table give rise to the so-called ,<a href="#fn7" class="footnote-ref" id="fnref7" role="doc-noteref"><sup>7</sup></a> useful only in the eventual simplification of the algebraic expression of the boolean functions.</p>
+<p>Let’s draw the Karnaugh maps for <span class="math inline">\(M_i\)</span> and <span class="math inline">\(N_i\)</span>:</p>
+<p>Redundant terms can be used to complete groupings or be ignored, since their contribution is irrelevant; in this case they are useful for completing an octet.</p>
+<p>The algebraic functions will therefore be:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    &amp;M_i=M_{i+1}+a_i\overbar{b_i}\overbar{N_{i+1}}\ \\
+    &amp;N_i=N_{i+1}+\overbar{a_i}b_i\overbar{M_{i+1}}
+\end{aligned}
+\]</span></p>
+<div class="example">
+<p><em>Create a circuit capable of comparing two numbers two bits at a time.</em></p>
+<p>Indicating the number <span class="math inline">\(a\)</span> with <span class="math inline">\(a_1a_0\)</span> and <span class="math inline">\(b\)</span> with <span class="math inline">\(b_1b_0\)</span> we will have the following truth table:</p>
+<p>To derive the expressions for <span class="math inline">\(M\)</span> and <span class="math inline">\(N\)</span> we use Karnaugh maps:</p>
+<p>From which we find:</p>
+<p><span class="math display">\[
+\begin{aligned}
+        &amp;M=a_1\overbar{b_1}+\overbar{b_1}a_0\overbar{b_0}+a_1a_0\overbar{b_0}\ \\
+        &amp;N=\overbar{a_1}b_1+\overbar{a_1}\overbar{a_0}b_0+b_1\overbar{a_0}b_0
+\end{aligned}
+\]</span></p>
+</div>
+</section>
+<section id="multiplexer" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="multiplexer"><span class="header-section-number">5.5</span> Multiplexer</h2>
+<p>The (also called <strong><em>MUX</em></strong>) is a device capable of selecting a single signal from several inputs.</p>
+<p>It consists of three parts:</p>
+<ol type="1">
+<li><p><span class="math inline">\(n\)</span> selectors (also called <em>addresses</em>) <span class="math inline">\(S_i\)</span> which have the task of identifying which of the signals to propagate</p></li>
+<li><p><span class="math inline">\(2^n\)</span> input signals <span class="math inline">\(D_j\)</span></p></li>
+<li><p>A single output <span class="math inline">\(Y\)</span></p></li>
+</ol>
+<p>It is no coincidence that <span class="math inline">\(n\)</span> selectors are needed for <span class="math inline">\(2^n\)</span> signals, since <span class="math inline">\(n\)</span> bits are sufficient to encode each of the <span class="math inline">\(2^n\)</span> inputs through a specific unique sequence. Let’s clarify with examples from <span class="math inline">\(n=1\)</span> to <span class="math inline">\(n=3\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+    &amp;n=1 \ \longrightarrow \ \text{2 inputs:} \ \{0,1\}\\
+    &amp;n=2 \ \longrightarrow \ \text{4 inputs:} \ \{00,10,01,11\}\\
+    &amp;n=3 \ \longrightarrow \ \text{8 inputs:} \ \{000,100,010,110,001,101,011,111\}
+\end{aligned}
+\]</span></p>
+<p>As usual, let’s start from the simplest case with <span class="math inline">\(n=1\)</span> and then extend to a circuit with a generic <span class="math inline">\(n\)</span>.</p>
+<p>The device is schematized as follows:</p>
+<p>Imagining to associate <span class="math inline">\(S=0\)</span> with the input <span class="math inline">\(D_0\)</span> and <span class="math inline">\(S=1\)</span> with the input <span class="math inline">\(D_1\)</span> we will have the following truth table:</p>
+<p>It is evident that the algebraic expression of <span class="math inline">\(Y\)</span> will be</p>
+<p><span class="math display">\[
+Y=D_0\bar{S}+D_1S
+\]</span></p>
+<p>which is easily achievable in a circuit using three NANDs and an inverter:</p>
+<p>At this point it is easy to extend the reasoning for larger <span class="math inline">\(n\)</span>. For <span class="math inline">\(n=3\)</span>, for example, the MUX is schematized as follows:</p>
+<p>The truth table useful to describe it is the following:</p>
+<section id="demultiplexer" class="level3" data-number="5.5.1">
+<h3 data-number="5.5.1" class="anchored" data-anchor-id="demultiplexer"><span class="header-section-number">5.5.1</span> Demultiplexer</h3>
+<p>The (also called <strong><em>DEMUX</em></strong>) is in a certain sense the of the multiplexer, having a single input and <span class="math inline">\(2^n\)</span> outputs. The objective of this device is to a single signal into one of the several available channels, defined through the selectors.</p>
+<p>What we must keep in mind is that all outputs will be <span class="math inline">\(0\)</span> except for the one selected through the addresses, which will propagate the input value: it is clear, therefore, that when the input is <span class="math inline">\(0\)</span> all outputs will be <span class="math inline">\(0\)</span> regardless of the value of the selectors.</p>
+<p>This time too it is useful to study the circuit element with <span class="math inline">\(n=1\)</span> starting from the truth table, so as to be able to easily guess what the general mechanism is.</p>
+<p>The demultiplexer can be considered a form of <strong>decoder</strong>, since the input provided through selectors can be interpreted as a that allows access to a single channel that is activated while all the others are left off.</p>
+</section>
+</section>
+<section id="tristate" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="tristate"><span class="header-section-number">5.6</span> Tristate</h2>
+<p>The - as the name itself says - is a device that has three possible output states: in addition to the usual <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>, in fact, there is also the possibility of <strong>high impedance</strong>, indicated with <span class="math inline">\(Z\)</span>, which causes the connection line to be isolated and does not allow the exchange of any information.</p>
+<p>The circuit is in all respects a buffer, with the only difference that there is another input - called <strong>control line</strong> or <strong>enable</strong> - which, when not active, makes the circuit in all respects an <em>open switch</em>.</p>
+<div class="wrapfigure">
+<p>R0.2 <img src="../Grafiche/Immagini/circuiti-combinatori-tristate-linea-bidirezionale.png" class="img-fluid" style="width:20.0%" alt="image"></p>
+</div>
+<p>Tristates are used in almost all bidirectional connections (called in electronics), present when devices connected to each other can both send and receive information, so to avoid electrical conflicts it is essential to interrupt the connection from one direction when the one from the other is active. Usually two tristates are placed in two different branches for the same connection in the two opposite directions, sending the signal <span class="math inline">\(C\)</span> in one and the negated <span class="math inline">\(\bar{C}\)</span> in the other, so that when one activates the high impedance the other allows conduction.</p>
+</section>
+<section id="programmable-devices" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="programmable-devices"><span class="header-section-number">5.7</span> Programmable devices</h2>
+<p>From boolean algebra we know that every boolean function can be expressed as a sum of products of variables. On this principle towards the end of the 70s the first programmable devices were commercialized, where by we mean that they can be configured in order to associate the specific combination of operations necessary to give rise to the desired function.</p>
+<div class="wrapfigure">
+<p>L0.45 <img src="../Grafiche/Immagini/programmable-logic-array.png" class="img-fluid" style="width:45.0%" alt="image"></p>
+</div>
+<p>The first device made for the general public was the , consisting of an input matrix of AND logic gates, called <strong>AND array</strong>, in which each combination of inputs is brought to another region, that of the ORs: in this sense we will say that the AND array is <em>fixed</em> while the OR array is <em>programmable</em>, since the desired combination will emerge from the latter in output.</p>
+<p>In figure <a href="#fig:circuiti-combinatori-programmable-logic-array" data-reference-type="ref" data-reference="fig:circuiti-combinatori-programmable-logic-array">[fig:circuiti-combinatori-programmable-logic-array]</a> we find an example with three inputs and, consequently, eight possible combinations of products. There are therefore eight AND gates connected to the OR array from which four different functions can emerge simultaneously based on the connections chosen by the manufacturer for the device.</p>
+<p>The main advantage of this device is that it has a <em>constant</em> propagation delay, while the disadvantage is that the two dimensions grow excessively as the number of inputs increases. To overcome this problem, Programmable Logic Arrays evolved into , consisting of fundamental blocks called <strong>Configurable Logic Blocks</strong> that perform boolean functions through <strong>Look-Up Tables</strong>, which are structures that associate a specific output to each combination of inputs: these are very useful since - often - performing operations through dedicated circuits can be slower and more laborious than inserting all the possible combinations associated with the desired result. The individual blocks are put in communication with each other through connections that are in turn programmable, called <em>programmable interconnector</em>, and the elaborate array that is formed is by input/output blocks that connect the device with the outside, managing the direction of the signal through tristates. The most important novelty for Field-Programmable Gate Arrays, moreover, is that they are programmable by the user and not by the manufacturing company: the term <em>field</em>, in fact, indicates that the programming takes place , that is, outside the factory.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../Grafiche/Immagini/field-programmable-gate-array.png" class="img-fluid figure-img" style="width:65.0%"></p>
+<figcaption>Field-Programmable Gate Array</figcaption>
+</figure>
+</div>
+
+
+<!-- -->
+
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>Or at least we hope so...<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>I specify that the professor, in reality, does not introduce any half-adder, and therefore in the general scheme shown in figure <a href="#fig:circuiti-combinatori-adder-circuito" data-reference-type="ref" data-reference="fig:circuiti-combinatori-adder-circuito">[fig:circuiti-combinatori-adder-circuito]</a> he introduces a carry <span class="math inline">\(C_0\)</span> which is not clear to me what it should correspond to: for it to make sense, I believe, one should always set <span class="math inline">\(C_0=0\)</span>, so I don’t understand why to indicate this value with a generic variable and not simply with <span class="math inline">\(0\)</span>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>I have deduced the following statements in the three points, but I am not sure they are correct; the book <em>Digital Computer Eletronics</em> simply reports that the last carry (page 86).<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p>For the explanation of that <span class="math inline">\(2\)</span> multiplying, please refer to the following note.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p>I believe that the presence of the factor <span class="math inline">\(2\)</span> in <a href="#eq:circuiti-combinatori-propagation-delay-carry-non-parallelo" data-reference-type="ref" data-reference="eq:circuiti-combinatori-propagation-delay-carry-non-parallelo">[eq:circuiti-combinatori-propagation-delay-carry-non-parallelo]</a> is due to that of the factor <span class="math inline">\(3\)</span> of <a href="#eq:circuiti-combinatori-propagation-delay-carry-parallelo" data-reference-type="ref" data-reference="eq:circuiti-combinatori-propagation-delay-carry-parallelo">[eq:circuiti-combinatori-propagation-delay-carry-parallelo]</a>: if there had not been the <span class="math inline">\(2\)</span>, in fact, we would have had to put a non-integer number (that is <span class="math inline">\(1.5\)</span>) in the latter. All this is valid to the extent that I have actually understood this explanation, a fact on which I do not assure anything since I have not found any source that quantitatively treated the propagation delay of adders with parallel carry and not.<a href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p>At this point I wonder: but isn’t there a system that stops the bit-by-bit comparison when <span class="math inline">\(M_i\oplus N_i=1\)</span> occurs, since from that point on it is already clear which number is greater than the other?<a href="#fnref6" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn7"><p>In English <em>redundant terms</em> or - if I understood correctly - also <em>don’t care conditions</em>.<a href="#fnref7" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/from-algebra-to-circuits.html" class="pagination-link" aria-label="From algebra to circuits">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">From algebra to circuits</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/sequential-circuits.html" class="pagination-link" aria-label="Sequential circuits">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Sequential circuits</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Combinatorial circuits</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>We will see below the main circuits called *combinatorial*, in the sense that their operation concerns only the relationship between the input and output of the signal from the circuits themselves described by logic functions.</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Adder</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">### Half-adder</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Our goal is to create a circuit capable of adding two numbers together. Since logic circuits work through *HIGH* and *LOW* signals, the first thing we can do is try to add two bits together, or - in other words - two single-digit binary numbers.</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>If both bits are $0$ ($A=B=0$) the result will obviously be zero, while if one is $0$ and the other is $1$ ($A\oplus B=1$) the result will be $1$; the last case is $A=B=1$, where the result is $10$: it therefore requires two bits in output, for which we will have to use in general two bits (that is, two variables containing the information) to perform this simple sum considering all cases.</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>The truth table will be as follows:</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>The variable $S$ contains what we indicate as the *sum*; the variable $C$, instead, is called , and indicates what is the *carry* of an addition in column: in the first three cases the variable $S$ coincides with the actual sum of $A$ and $B$, while in the last case the sum gives rise to a carry that is stored in the variable $C$.</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>From table <span class="co">[</span><span class="ot">\[tab:circuiti-combinatori-half-adder\]</span><span class="co">](#tab:circuiti-combinatori-half-adder)</span>{reference-type="ref" reference="tab:circuiti-combinatori-half-adder"} we immediately understand which operations are needed to obtain the two output variables:</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    &amp;S=A\oplus B<span class="sc">\\</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    &amp;C=AB</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>Converting this into a circuit we get:</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>This circuit alone does not allow us to add numbers with more than one bit; let's try, for example, to perform the addition between $111$ and $101$:</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>The sum - as we know<span class="ot">[^1]</span> - proceeds from right to left. We will first add $1$ with $1$ which we know gives $10$, that is a $0$ with a carry of $1$; now the problem is: how do we proceed with the addition? The next sum, in fact, would be $1+0$, but we cannot ignore the carry, since otherwise we would erroneously write $1$ as the result according to the circuit just described. The solution, therefore, is to introduce a new circuit that takes into account not two bits, but *three* bits, that is the two bits to be added and the carry. For this reason we call the circuit just described , not being yet the version of what interests us.</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">### Full-adder</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>Let's go back to the example just made: in that case the solution is obviously $1$ which, with the carry equal to $1$ to be added, becomes $10$; since the sum continues further, we take $0$ as the result and the new carry will have a value of $1$.</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>With the same logic we can build a new truth table, where we indicate with $C_i$ the carry contemplated in the sum between $A$ and $B$ and with $C_{i+1}$ the carry of the next sum:</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>Let's calculate $S$ using minterms:</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    S&amp;=A\bar{B}\overbar{C_i}+\bar{A}B\overbar{C_i}+\bar{A}\bar{B}C_i+ABC_i=<span class="sc">\\</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    &amp;=\left(A\bar{B}+\bar{A}B\right)\overbar{C_i}+\left(\bar{A}\bar{B}+AB\right)C_i=(A\oplus B)\overbar{C_i}+(\overbar{A\oplus B})C_i=<span class="sc">\\</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    &amp;=\left(A\oplus B\right)\oplus C</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>Similarly for $C_{i+1}$:</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>C_{i+1}=AB\overbar{C_i}+A\bar{B}C_i+\bar{A}BC_i+ABC_i</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>For the property we can add $ABC_i$ twice:</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    C_{i+1}&amp;=AB\overbar{C_i}+A\bar{B}C_i+\bar{A}BC_i+ABC_i+ABC_i+ABC_i=<span class="sc">\\</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    &amp;=AB\left(\overbar{C_i}+C_i\right)+AC_i\left(\bar{B}+B\right)+BC_i\left(\bar{A}+A\right)=<span class="sc">\\</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    &amp;=AB+AC_i+BC_i</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>Let's convert everything into a circuit:</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>This is the useful circuit for our purposes, that is for the sum of numbers with more than one bit: for this reason it is called .</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>The sum between the numbers $111$ and $101$ will be performed as follows:</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>and in fact $111+101=1100$.</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>The general scheme of the adder, therefore, is the following:<span class="ot">[^2]</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a><span class="fu">## Subtractor</span></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>To obtain the difference between two binary numbers we follow the same reasoning as for the adder. Let's start by building the truth table for a subtraction between two bits: when both are equal to $0$ or $1$ the result will be $0$, while when the minuend is $1$ and the subtrahend is $0$ the result will be $1$; the remaining case is the minuend equal to $0$ and the subtrahend equal to $1$, or in other words the subtraction $0-1$: in the context of subtraction with more bits we need the result to be $1$ while at the same time recording a *borrow* (also equal to $1$) that is subtracted from the next minuend along with its subtrahend.</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>Indicating the borrow with $R$ and the difference with $D$ we will have:</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>From which it follows:</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>    &amp;D=A\oplus B<span class="sc">\\</span></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>    &amp;R=\bar{A}B</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>Let's now try to build the full-subtractor table, remembering that $R_i$ is simply another bit to be subtracted from $A$ in addition to $B$:</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>We note that the variable $D$ assumes the same values as $S$ in the full-adder table (table <span class="co">[</span><span class="ot">\[tab:circuiti-combinatori-full-adder-tabella\]</span><span class="co">](#tab:circuiti-combinatori-full-adder-tabella)</span>{reference-type="ref" reference="tab:circuiti-combinatori-full-adder-tabella"}), so its algebraic expression will also be the same:</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>D=(A\oplus B)\oplus R_i</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>Finally, let's calculate $R_{i+1}$:</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>R_{i+1}=\bar{A}B\overbar{R_i}+\bar{A}\bar{B}R_i+\bar{A}BR_i+ABR_i</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>Let's add $\bar{A}BR_i$ twice:</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>    R_{i+1}&amp;=\bar{A}B\overbar{R_i}+\bar{A}\bar{B}R_i+\bar{A}BR_i+ABR_i+\bar{A}BR_i+\bar{A}BR_i=<span class="sc">\\</span></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>    &amp;=\bar{A}B\left(R_i+\overbar{R_i}\right)+\bar{A}R_i\left(B+\bar{B}\right)+BR_i\left(A+\bar{A}\right)=<span class="sc">\\</span></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>    &amp;=\bar{A}B+\bar{A}R_i+BR_i</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>By putting a half-subtractor in a row and then the various full-subtractors it is possible to obtain a real multi-bit subtractor, exactly as in the case of the adder.</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="fu">### Two's complement {#sec:complemento-a-due}</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>Building two different circuits for sum and difference can be expensive and inefficient: is there a way to build a circuit capable of performing both operations?</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>A first idea is to take the full-subtractor circuit seen in figure <span class="co">[</span><span class="ot">\[fig:circuiti-combinatori-full-subtractor-circuito\]</span><span class="co">](#fig:circuiti-combinatori-full-subtractor-circuito)</span>{reference-type="ref" reference="fig:circuiti-combinatori-full-subtractor-circuito"} and replace the NAND that inverts the signal of $A$ with a XOR, which takes as input the signal of $A$ and another signal that we indicate with $S/D$: if we want to perform the sum we set $S/D$ *LOW*, so that</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>A\oplus0=A</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>and therefore we get back figure <span class="co">[</span><span class="ot">\[fig:circuiti-combinatori-full-adder-circuito\]</span><span class="co">](#fig:circuiti-combinatori-full-adder-circuito)</span>{reference-type="ref" reference="fig:circuiti-combinatori-full-adder-circuito"}; if our goal is the difference then we set $S/D$ *HIGH* obtaining</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>A\oplus1=\bar{A}</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>and therefore the full-subtractor circuit.</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>Another idea is to use only full-adders using the , which is a representation of binary numbers useful for defining positive and negative numbers. The two's complement of an $n$-bit number is obtained by inverting all its bits (so the $0$s into $1$s and the $1$s into $0$s) and adding $1$ to the total; for example, the 2's complement of $A=1011$ will be $A'=0100+1=0101$. The reason why this representation is useful is that by performing the two's complement of the same number twice we get the starting number, in fact:</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>A''=1010+1=1011=A</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>If performing an operation on a number twice returns the starting number then we can understand this operation as a change of sign, since by inverting the sign of a number twice you get the starting one.</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>Let's now imagine working with $4$-bit numbers; starting from the number 0 ($0000$) we add 1 obtaining $0001$ whose two's complement is $1111$, which will correspond to -1, and we continue like this until we get to $0111$, which corresponds to 7, and to its two's complement which is $1001$: it is evident, therefore, that the first bit will represent the sign of the number, which is $0$ for positive numbers and $1$ for negative numbers; according to this reasoning, the last missing digit, that is $1000$, is negative and represents, therefore, -8.</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>In general, an $n$-digit binary number can represent the numbers between $-2^{n-1}$ and $2^{n-1}-1$.</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>According to this representation we can think of the difference of two numbers as the sum of a positive number and a negative number. This means that we can use only adders in the following way:</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>When you want to use the adder you set *SUB*$=0$ so that the bits of $B$ are not inverted and the carry of the first full-adder is set to $0$, making it in all respects a half-adder. When you want to switch to a subtractor you must set *SUB*$=1$ so that each bit of $B$ is complemented and the carry on the first full-adder is set to $1$ by default: in this way we will go from $B$ to $\bar{B}+1=B'$ and we will get the difference between the numbers in binary.</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>Keep in mind that for a circuit with four full-adders, which therefore considers four-bit numbers, the digits that represent the number in modulus are only the last three, since the first is relative only to the sign: this means that it is possible to operate only with numbers ranging from $-8$ to $7$.</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>Furthermore, depending on the sum (or difference) performed, the last carry can:<span class="ot">[^3]</span></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Have no meaning if the result $x$ is a number expressible within three bits ($\abs{x}\leqslant7$)</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Indicate the sign of the resulting number $x$ if it is a number expressible with four bits ($7\leqslant\abs{x}\leqslant15$)</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Indicate the first digit of the binary number in modulus if the numbers added or subtracted are both $1000$, that is $-8$ (in both cases, in fact, the result will give $10000$, that is $16$ in binary)</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>Let's see an example of the difference between $3$ and $7$: we know that the number $3$ in binary with four bits is $0011$, while $7$ is $0111$, so we will have</span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>The number 1100, in two's complement notation, represents exactly $-4$.</span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a><span class="fu">### Parallel carry</span></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>One last consideration to make concerns the efficiency of the circuit: in an adder circuit, in fact, each full-adder simultaneously receives as input the two bits of the two numbers to be added, and all those after the first (we remember that according to the various schemes shown the signal proceeds from right to left) must wait for the generation of the carry from the previous full-adders. This means that the time taken by the circuit to perform the sum depends on the number of full-adders: the greater this is, the greater the time, also called **propagation delay**.</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>In particular, the relationship between the propagation delay $T_D$ and the number of full-adders $n$ is shown to be *directly proportional*, from which it follows that<span class="ot">[^4]</span></span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>\label{eq:circuiti-combinatori-propagation-delay-carry-non-parallelo}</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>    T_D=2T_P\cdot n=2nT_P</span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>A certainly more efficient and useful way when performing a sum with many bits is to generate and propagate the carry *in parallel*.</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>Let's refer to table <span class="co">[</span><span class="ot">\[tab:circuiti-combinatori-full-adder-tabella\]</span><span class="co">](#tab:circuiti-combinatori-full-adder-tabella)</span>{reference-type="ref" reference="tab:circuiti-combinatori-full-adder-tabella"} and write the algebraic expression for which we have in output $C_{i+1}=1$:</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>    C_{i+1}&amp;=AB\overbar{C_i}+A\bar{B}C_i+\bar{A}BC_i+ABC_i=<span class="sc">\\</span></span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>    &amp;=AB\left(C_i+\overbar{C_i}\right)+\left(A\bar{B}+\bar{A}B\right)C_i=AB+(A\oplus B)C_i</span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>Following this scheme, each full-adder will not produce a carry $C_{i+1}$ but will output the signals $AB$ and $A\oplus B$, which will arrive on a circuit associated with the algebraic expression written above; we remember that the initial carry $C_0$ is equal to $0$ if you intend to perform a sum and $1$ if you intend to perform a difference.</span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>In this case the propagation delay is shown to be<span class="ot">[^5]</span></span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>\label{eq:circuiti-combinatori-propagation-delay-carry-parallelo}</span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>    T_D=3T_P</span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>and therefore independent of $n$.</span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a><span class="fu">## Parity generator</span></span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>The is a circuit used to verify the correct information of the transmitted data. It adds a final bit $P$ to the bit string that represents the transferred information based on the number of $1$s present in that string, and is divided into two types:</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Even parity generator**: finds $P=0$ if the number of $1$s is already even and $P=1$ if the number is odd and must be made even</span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>**Odd parity generator**: finds $P=0$ if the number of $1$s is already odd and $P=1$ if the number is even and must be made odd</span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>In both cases, the construction proceeds by analyzing all the bits of the considered string individually; at each $i$-th iteration, we will reason as follows:</span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>If $P_i=0$ and the input bit is $0$ then the parity is not changed and the added bit remains $0$</span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>If $P_i=0$ and the input bit is $1$ then the parity is changed, therefore - to - the added bit becomes $1$</span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>If $P_i=1$ and the input bit is $0$ then the parity is not changed and the added bit remains $1$</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>If $P_i=1$ and the input bit is $1$ then the parity is changed, so the added bit must change accordingly becoming $0$</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>Indicating the input bit with $D_i$ we can put everything in the truth table:</span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>It is evident that the algebraic form will be:</span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>P_{i+1}=D_i\oplus P_i</span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a>The question at this point is: how do we distinguish an even parity generator from an odd parity generator? To understand this, let's consider a single-bit information: if $D_0=0$ we must have $P_1=0$ in the case of an even parity generator and $P_1=1$ in the case of an odd parity generator, and from table <span class="co">[</span><span class="ot">\[tab:circuiti-combinatori-parity-generator\]</span><span class="co">](#tab:circuiti-combinatori-parity-generator)</span>{reference-type="ref" reference="tab:circuiti-combinatori-parity-generator"} it is evident that these two conditions can be obtained, in order, with $P_0=0$ and $P_0=1$; the same occurs assuming $D_0=1$, so in general we can say that for the even parity generator we have $P_0=0$ and for the odd parity generator $P_0=1$.</span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>Ultimately, the parity generator consists of a series of XORs that take as input a bit of the transmitted information and the output of the previous XOR:</span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>Another possibility is to consider all the input bits in pairs. Let's look at table <span class="co">[</span><span class="ot">\[tab:circuiti-combinatori-parity-generator\]</span><span class="co">](#tab:circuiti-combinatori-parity-generator)</span>{reference-type="ref" reference="tab:circuiti-combinatori-parity-generator"} and imagine that there are two information bits in input: the output will be $1$ only when one of the two is $0$ and the other is $1$, or - in other words - when the input $1$ is present an odd number of times; the output will instead be $0$ when both inputs are $0$ or are $1$, that is when $1$ is present an even number of times.</span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>Therefore, by placing all the input bits in the various XORs we will obtain an even parity generator, since we will always get as output $0$ when the number of $1$s is even and $1$ when it is odd.</span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>In the case where you want to obtain an odd parity generator, it is sufficient to place an inverter at the end of the circuit that returns the opposite output with respect to the even parity generator.</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a><span class="fu">## Comparison</span></span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>The goal is to understand if a binary number is equal, greater or lesser than another.</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>Since there are three cases, it is necessary to consider two bits in output, since with a single bit we could distinguish at most two cases. Let's indicate these two bits with $M$ and $N$ and encode the information in the following way:</span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>Considering two $n$-bit numbers, the comparison will be made starting from the digits with the highest weight, therefore from to : for this reason we will say that the iteration will proceed from the $i+1$-th to the $i$-th and so on, since we are gradually moving towards bits with a lower weight.</span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a>Before starting the comparison, $M=N=0$ are initially set. From the first comparison, therefore, the truth table will be the following:</span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>where $a_i$ and $b_i$ represent the $i$-th bits of the numbers $a$ and $b$.</span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>When the central cases occur, that is $a_i&gt;b_i$ or $a_i&lt;b_i$, regardless of the subsequent digits it will result respectively $a&gt;b$ or $a&lt;b$, so the values of $M$ and $N$ will simply be whatever the subsequent combinations of the bits of $a$ and $b$.<span class="ot">[^6]</span></span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>The complete truth table, therefore, will be</span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>The last four cases analyzed are those in which $M_{i+1}=N_{i+1}=1$, which in reality never occur since this combination of bits does not encode any information according to what was established at the beginning. For this reason, the combinations of bits in the last four rows of the table give rise to the so-called ,<span class="ot">[^7]</span> useful only in the eventual simplification of the algebraic expression of the boolean functions.</span>
+<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>Let's draw the Karnaugh maps for $M_i$ and $N_i$:</span>
+<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>Redundant terms can be used to complete groupings or be ignored, since their contribution is irrelevant; in this case they are useful for completing an octet.</span>
+<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>The algebraic functions will therefore be:</span>
+<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>    &amp;M_i=M_{i+1}+a_i\overbar{b_i}\overbar{N_{i+1}}\ <span class="sc">\\</span></span>
+<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>    &amp;N_i=N_{i+1}+\overbar{a_i}b_i\overbar{M_{i+1}}</span>
+<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a>::: {.example}</span>
+<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>*Create a circuit capable of comparing two numbers two bits at a time.*</span>
+<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a>Indicating the number $a$ with $a_1a_0$ and $b$ with $b_1b_0$ we will have the following truth table:</span>
+<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a>To derive the expressions for $M$ and $N$ we use Karnaugh maps:</span>
+<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a>From which we find:</span>
+<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a>        &amp;M=a_1\overbar{b_1}+\overbar{b_1}a_0\overbar{b_0}+a_1a_0\overbar{b_0}\ <span class="sc">\\</span></span>
+<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a>        &amp;N=\overbar{a_1}b_1+\overbar{a_1}\overbar{a_0}b_0+b_1\overbar{a_0}b_0</span>
+<span id="cb1-276"><a href="#cb1-276" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb1-277"><a href="#cb1-277" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-278"><a href="#cb1-278" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-279"><a href="#cb1-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-280"><a href="#cb1-280" aria-hidden="true" tabindex="-1"></a><span class="fu">## Multiplexer</span></span>
+<span id="cb1-281"><a href="#cb1-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-282"><a href="#cb1-282" aria-hidden="true" tabindex="-1"></a>The (also called ***MUX***) is a device capable of selecting a single signal from several inputs.</span>
+<span id="cb1-283"><a href="#cb1-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-284"><a href="#cb1-284" aria-hidden="true" tabindex="-1"></a>It consists of three parts:</span>
+<span id="cb1-285"><a href="#cb1-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-286"><a href="#cb1-286" aria-hidden="true" tabindex="-1"></a><span class="ss">1.  </span>$n$ selectors (also called *addresses*) $S_i$ which have the task of identifying which of the signals to propagate</span>
+<span id="cb1-287"><a href="#cb1-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-288"><a href="#cb1-288" aria-hidden="true" tabindex="-1"></a><span class="ss">2.  </span>$2^n$ input signals $D_j$</span>
+<span id="cb1-289"><a href="#cb1-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-290"><a href="#cb1-290" aria-hidden="true" tabindex="-1"></a><span class="ss">3.  </span>A single output $Y$</span>
+<span id="cb1-291"><a href="#cb1-291" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-292"><a href="#cb1-292" aria-hidden="true" tabindex="-1"></a>It is no coincidence that $n$ selectors are needed for $2^n$ signals, since $n$ bits are sufficient to encode each of the $2^n$ inputs through a specific unique sequence. Let's clarify with examples from $n=1$ to $n=3$:</span>
+<span id="cb1-293"><a href="#cb1-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-294"><a href="#cb1-294" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-295"><a href="#cb1-295" aria-hidden="true" tabindex="-1"></a>\begin{aligned}</span>
+<span id="cb1-296"><a href="#cb1-296" aria-hidden="true" tabindex="-1"></a>    &amp;n=1 \ \longrightarrow \ \text{2 inputs:} \ <span class="sc">\{</span>0,1<span class="sc">\}\\</span></span>
+<span id="cb1-297"><a href="#cb1-297" aria-hidden="true" tabindex="-1"></a>    &amp;n=2 \ \longrightarrow \ \text{4 inputs:} \ <span class="sc">\{</span>00,10,01,11<span class="sc">\}\\</span></span>
+<span id="cb1-298"><a href="#cb1-298" aria-hidden="true" tabindex="-1"></a>    &amp;n=3 \ \longrightarrow \ \text{8 inputs:} \ <span class="sc">\{</span>000,100,010,110,001,101,011,111<span class="sc">\}</span></span>
+<span id="cb1-299"><a href="#cb1-299" aria-hidden="true" tabindex="-1"></a>\end{aligned}</span>
+<span id="cb1-300"><a href="#cb1-300" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-301"><a href="#cb1-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-302"><a href="#cb1-302" aria-hidden="true" tabindex="-1"></a>As usual, let's start from the simplest case with $n=1$ and then extend to a circuit with a generic $n$.</span>
+<span id="cb1-303"><a href="#cb1-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-304"><a href="#cb1-304" aria-hidden="true" tabindex="-1"></a>The device is schematized as follows:</span>
+<span id="cb1-305"><a href="#cb1-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-306"><a href="#cb1-306" aria-hidden="true" tabindex="-1"></a>Imagining to associate $S=0$ with the input $D_0$ and $S=1$ with the input $D_1$ we will have the following truth table:</span>
+<span id="cb1-307"><a href="#cb1-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-308"><a href="#cb1-308" aria-hidden="true" tabindex="-1"></a>It is evident that the algebraic expression of $Y$ will be</span>
+<span id="cb1-309"><a href="#cb1-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-310"><a href="#cb1-310" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-311"><a href="#cb1-311" aria-hidden="true" tabindex="-1"></a>Y=D_0\bar{S}+D_1S</span>
+<span id="cb1-312"><a href="#cb1-312" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-313"><a href="#cb1-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-314"><a href="#cb1-314" aria-hidden="true" tabindex="-1"></a>which is easily achievable in a circuit using three NANDs and an inverter:</span>
+<span id="cb1-315"><a href="#cb1-315" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-316"><a href="#cb1-316" aria-hidden="true" tabindex="-1"></a>At this point it is easy to extend the reasoning for larger $n$. For $n=3$, for example, the MUX is schematized as follows:</span>
+<span id="cb1-317"><a href="#cb1-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-318"><a href="#cb1-318" aria-hidden="true" tabindex="-1"></a>The truth table useful to describe it is the following:</span>
+<span id="cb1-319"><a href="#cb1-319" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-320"><a href="#cb1-320" aria-hidden="true" tabindex="-1"></a><span class="fu">### Demultiplexer</span></span>
+<span id="cb1-321"><a href="#cb1-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-322"><a href="#cb1-322" aria-hidden="true" tabindex="-1"></a>The (also called ***DEMUX***) is in a certain sense the of the multiplexer, having a single input and $2^n$ outputs. The objective of this device is to a single signal into one of the several available channels, defined through the selectors.</span>
+<span id="cb1-323"><a href="#cb1-323" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-324"><a href="#cb1-324" aria-hidden="true" tabindex="-1"></a>What we must keep in mind is that all outputs will be $0$ except for the one selected through the addresses, which will propagate the input value: it is clear, therefore, that when the input is $0$ all outputs will be $0$ regardless of the value of the selectors.</span>
+<span id="cb1-325"><a href="#cb1-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-326"><a href="#cb1-326" aria-hidden="true" tabindex="-1"></a>This time too it is useful to study the circuit element with $n=1$ starting from the truth table, so as to be able to easily guess what the general mechanism is.</span>
+<span id="cb1-327"><a href="#cb1-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-328"><a href="#cb1-328" aria-hidden="true" tabindex="-1"></a>The demultiplexer can be considered a form of **decoder**, since the input provided through selectors can be interpreted as a that allows access to a single channel that is activated while all the others are left off.</span>
+<span id="cb1-329"><a href="#cb1-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-330"><a href="#cb1-330" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tristate</span></span>
+<span id="cb1-331"><a href="#cb1-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-332"><a href="#cb1-332" aria-hidden="true" tabindex="-1"></a>The - as the name itself says - is a device that has three possible output states: in addition to the usual $0$ and $1$, in fact, there is also the possibility of **high impedance**, indicated with $Z$, which causes the connection line to be isolated and does not allow the exchange of any information.</span>
+<span id="cb1-333"><a href="#cb1-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-334"><a href="#cb1-334" aria-hidden="true" tabindex="-1"></a>The circuit is in all respects a buffer, with the only difference that there is another input - called **control line** or **enable** - which, when not active, makes the circuit in all respects an *open switch*.</span>
+<span id="cb1-335"><a href="#cb1-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-336"><a href="#cb1-336" aria-hidden="true" tabindex="-1"></a>::: wrapfigure</span>
+<span id="cb1-337"><a href="#cb1-337" aria-hidden="true" tabindex="-1"></a>R0.2</span>
+<span id="cb1-338"><a href="#cb1-338" aria-hidden="true" tabindex="-1"></a><span class="al">![image](../Grafiche/Immagini/circuiti-combinatori-tristate-linea-bidirezionale.png)</span>{width="20%"}</span>
+<span id="cb1-339"><a href="#cb1-339" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-340"><a href="#cb1-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-341"><a href="#cb1-341" aria-hidden="true" tabindex="-1"></a>Tristates are used in almost all bidirectional connections (called in electronics), present when devices connected to each other can both send and receive information, so to avoid electrical conflicts it is essential to interrupt the connection from one direction when the one from the other is active. Usually two tristates are placed in two different branches for the same connection in the two opposite directions, sending the signal $C$ in one and the negated $\bar{C}$ in the other, so that when one activates the high impedance the other allows conduction.</span>
+<span id="cb1-342"><a href="#cb1-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-343"><a href="#cb1-343" aria-hidden="true" tabindex="-1"></a><span class="fu">## Programmable devices</span></span>
+<span id="cb1-344"><a href="#cb1-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-345"><a href="#cb1-345" aria-hidden="true" tabindex="-1"></a>From boolean algebra we know that every boolean function can be expressed as a sum of products of variables. On this principle towards the end of the 70s the first programmable devices were commercialized, where by we mean that they can be configured in order to associate the specific combination of operations necessary to give rise to the desired function.</span>
+<span id="cb1-346"><a href="#cb1-346" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-347"><a href="#cb1-347" aria-hidden="true" tabindex="-1"></a>::: wrapfigure</span>
+<span id="cb1-348"><a href="#cb1-348" aria-hidden="true" tabindex="-1"></a>L0.45</span>
+<span id="cb1-349"><a href="#cb1-349" aria-hidden="true" tabindex="-1"></a><span class="al">![image](../Grafiche/Immagini/programmable-logic-array.png)</span>{width="45%"}</span>
+<span id="cb1-350"><a href="#cb1-350" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-351"><a href="#cb1-351" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-352"><a href="#cb1-352" aria-hidden="true" tabindex="-1"></a>The first device made for the general public was the , consisting of an input matrix of AND logic gates, called **AND array**, in which each combination of inputs is brought to another region, that of the ORs: in this sense we will say that the AND array is *fixed* while the OR array is *programmable*, since the desired combination will emerge from the latter in output.</span>
+<span id="cb1-353"><a href="#cb1-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-354"><a href="#cb1-354" aria-hidden="true" tabindex="-1"></a>In figure <span class="co">[</span><span class="ot">\[fig:circuiti-combinatori-programmable-logic-array\]</span><span class="co">](#fig:circuiti-combinatori-programmable-logic-array)</span>{reference-type="ref" reference="fig:circuiti-combinatori-programmable-logic-array"} we find an example with three inputs and, consequently, eight possible combinations of products. There are therefore eight AND gates connected to the OR array from which four different functions can emerge simultaneously based on the connections chosen by the manufacturer for the device.</span>
+<span id="cb1-355"><a href="#cb1-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-356"><a href="#cb1-356" aria-hidden="true" tabindex="-1"></a>The main advantage of this device is that it has a *constant* propagation delay, while the disadvantage is that the two dimensions grow excessively as the number of inputs increases. To overcome this problem, Programmable Logic Arrays evolved into , consisting of fundamental blocks called **Configurable Logic Blocks** that perform boolean functions through **Look-Up Tables**, which are structures that associate a specific output to each combination of inputs: these are very useful since - often - performing operations through dedicated circuits can be slower and more laborious than inserting all the possible combinations associated with the desired result. The individual blocks are put in communication with each other through connections that are in turn programmable, called *programmable interconnector*, and the elaborate array that is formed is by input/output blocks that connect the device with the outside, managing the direction of the signal through tristates. The most important novelty for Field-Programmable Gate Arrays, moreover, is that they are programmable by the user and not by the manufacturing company: the term *field*, in fact, indicates that the programming takes place , that is, outside the factory.</span>
+<span id="cb1-357"><a href="#cb1-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-358"><a href="#cb1-358" aria-hidden="true" tabindex="-1"></a><span class="al">![Field-Programmable Gate Array](../Grafiche/Immagini/field-programmable-gate-array.png)</span>{width="65%"}</span>
+<span id="cb1-359"><a href="#cb1-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-360"><a href="#cb1-360" aria-hidden="true" tabindex="-1"></a><span class="ot">[^1]: </span>Or at least we hope so<span class="sc">\.</span>..</span>
+<span id="cb1-361"><a href="#cb1-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-362"><a href="#cb1-362" aria-hidden="true" tabindex="-1"></a><span class="ot">[^2]: </span>I specify that the professor, in reality, does not introduce any half-adder, and therefore in the general scheme shown in figure <span class="co">[</span><span class="ot">\[fig:circuiti-combinatori-adder-circuito\]</span><span class="co">](#fig:circuiti-combinatori-adder-circuito)</span>{reference-type="ref" reference="fig:circuiti-combinatori-adder-circuito"} he introduces a carry $C_0$ which is not clear to me what it should correspond to: for it to make sense, I believe, one should always set $C_0=0$, so I don't understand why to indicate this value with a generic variable and not simply with $0$.</span>
+<span id="cb1-363"><a href="#cb1-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-364"><a href="#cb1-364" aria-hidden="true" tabindex="-1"></a><span class="ot">[^3]: </span>I have deduced the following statements in the three points, but I am not sure they are correct; the book *Digital Computer Eletronics* simply reports that the last carry (page 86).</span>
+<span id="cb1-365"><a href="#cb1-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-366"><a href="#cb1-366" aria-hidden="true" tabindex="-1"></a><span class="ot">[^4]: </span>For the explanation of that $2$ multiplying, please refer to the following note.</span>
+<span id="cb1-367"><a href="#cb1-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-368"><a href="#cb1-368" aria-hidden="true" tabindex="-1"></a><span class="ot">[^5]: </span>I believe that the presence of the factor $2$ in <span class="co">[</span><span class="ot">\[eq:circuiti-combinatori-propagation-delay-carry-non-parallelo\]</span><span class="co">](#eq:circuiti-combinatori-propagation-delay-carry-non-parallelo)</span>{reference-type="ref" reference="eq:circuiti-combinatori-propagation-delay-carry-non-parallelo"} is due to that of the factor $3$ of <span class="co">[</span><span class="ot">\[eq:circuiti-combinatori-propagation-delay-carry-parallelo\]</span><span class="co">](#eq:circuiti-combinatori-propagation-delay-carry-parallelo)</span>{reference-type="ref" reference="eq:circuiti-combinatori-propagation-delay-carry-parallelo"}: if there had not been the $2$, in fact, we would have had to put a non-integer number (that is $1.5$) in the latter. All this is valid to the extent that I have actually understood this explanation, a fact on which I do not assure anything since I have not found any source that quantitatively treated the propagation delay of adders with parallel carry and not.</span>
+<span id="cb1-369"><a href="#cb1-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-370"><a href="#cb1-370" aria-hidden="true" tabindex="-1"></a><span class="ot">[^6]: </span>At this point I wonder: but isn't there a system that stops the bit-by-bit comparison when $M_i\oplus N_i=1$ occurs, since from that point on it is already clear which number is greater than the other?</span>
+<span id="cb1-371"><a href="#cb1-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-372"><a href="#cb1-372" aria-hidden="true" tabindex="-1"></a><span class="ot">[^7]: </span>In English *redundant terms* or - if I understood correctly - also *don't care conditions*.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>
