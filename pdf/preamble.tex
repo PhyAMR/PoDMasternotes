@@ -1,0 +1,337 @@
+% =====================================================================
+%  Notes PDF preamble — shared by every Quarto book in this repository.
+%
+%  Aesthetic: clean, minimalist, low-chrome. A single accent colour and a
+%  thin left rule are the only ornamental elements. No boxes, no shading,
+%  no headers/footers louder than the body.
+%
+%  Provides:
+%   * Geometry, fonts, microtypography.
+%   * Theorem-like environments (theorem, proposition, lemma, corollary,
+%     definition, example, exercise, solution, remark, note) with a
+%     unified left-rule style via thmtools + mdframed.
+%   * `codeoutput` environment for runtime output (left rule, small mono).
+%   * Math display tweaks for matrices / vectors / aligned blocks
+%     (cleaner spacing — material for the next iteration).
+% =====================================================================
+
+% --- packages ---------------------------------------------------------
+% NOTE: geometry, hyperref and xcolor are loaded by Quarto itself via the
+% YAML front matter; reloading them here triggers "Option clash" errors.
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{siunitx}   % \num{…}, \SI{…}{…}, \si{…} — physics/data notes use these
+\usepackage{cancel}    % \cancel{…} for striking through algebraic terms
+% `physics` was here but conflicts with \mathcal{X}(y) inside \(...\).
+% Provide the macros we actually use with plain LaTeX equivalents.
+\providecommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\providecommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\providecommand{\vb}[1]{\boldsymbol{#1}}
+\providecommand{\vec}[1]{\boldsymbol{#1}}
+\providecommand{\dv}[2]{\frac{d#1}{d#2}}
+\providecommand{\pdv}[2]{\frac{\partial #1}{\partial #2}}
+\usepackage{dsfont}    % \mathds{1} indicator function used in ML notes
+\usepackage{algorithm} % algorithm float used in ML notes
+\usepackage{algpseudocode}
+
+% ── TikZ + CircuitiKZ for diagrams (logic gates, FSMs, K-maps, etc.) ──
+\usepackage{tikz}
+\usepackage{circuitikz}
+\usetikzlibrary{calc, arrows.meta, positioning, shapes.geometric,
+                shapes.misc, fit, decorations.pathreplacing,
+                decorations.pathmorphing, automata, matrix, chains}
+\ctikzset{logic ports=ieee, logic ports/scale=0.85}
+
+% ── Reusable TikZ styles for boolean / circuit / FSM diagrams ────────
+\tikzset{
+  > = stealth,
+  thick wire/.style   = {thick, line cap=rect},
+  state/.style        = {draw, circle, minimum size=8mm, font=\small},
+  initial/.style      = {state, double},
+  accepting/.style    = {state, fill=ink!8},
+  kmap cell/.style    = {draw=rule, minimum size=8mm, font=\small},
+  kmap label/.style   = {font=\scriptsize, inner sep=2pt},
+  endpoint/.style     = {-{Circle},shorten >=-2pt},
+}
+
+% Karnaugh map skeleton (2 vars):  \kmapTwo{a}{b}{c}{d}
+\providecommand{\kmapTwo}[4]{%
+  \begin{tikzpicture}[baseline=(c.base)]
+    \node[kmap cell] (c00) at (0,1) {#1};
+    \node[kmap cell] (c01) at (1,1) {#2};
+    \node[kmap cell] (c10) at (0,0) {#3};
+    \node[kmap cell] (c11) at (1,0) {#4};
+    \node[kmap label, above=1pt of c01] {$B$};
+    \node[kmap label, left =1pt of c00] {$A$};
+    \node (c) at (0.5,0.5) {};
+  \end{tikzpicture}}
+
+% Author-defined colour macros found in MAPDA / MTP source: \red{…},
+% \green{…}, \orange{…}, \blue{…}. Map them onto xcolor.
+\providecommand{\red}   [1]{\textcolor{red}{#1}}
+\providecommand{\green} [1]{\textcolor{green!60!black}{#1}}
+\providecommand{\orange}[1]{\textcolor{orange}{#1}}
+\providecommand{\blue}  [1]{\textcolor{blue!70!black}{#1}}
+\providecommand{\purple}[1]{\textcolor{purple}{#1}}
+\providecommand{\boldred}   [1]{\textcolor{red}    {\boldsymbol{#1}}}
+\providecommand{\boldgreen} [1]{\textcolor{green!60!black}{\boldsymbol{#1}}}
+\providecommand{\boldorange}[1]{\textcolor{orange} {\boldsymbol{#1}}}
+\providecommand{\boldblue}  [1]{\textcolor{blue!70!black}{\boldsymbol{#1}}}
+\providecommand{\boldpurple}[1]{\textcolor{purple} {\boldsymbol{#1}}}
+
+% ── Other helpers from MAPDA/MAPDB's commands.tex ────────────────────
+% The originals use a few tiny conveniences that we recreate in plain
+% LaTeX so chapters compile without pulling in their custom package set.
+\providecommand{\q}[1]{``#1''}                  % quoted text
+\providecommand{\sprod}[2]{\left\langle \boldsymbol{#1},\boldsymbol{#2}\right\rangle}
+\providecommand{\mean}[1]{\left\langle #1 \right\rangle}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\mslim}{ms\text{-}lim}
+
+% Table helpers used here and there in the originals.
+\providecommand{\STAB}[1]{\begin{tabular}{@{}c@{}}#1\end{tabular}}
+\providecommand{\thickhline}{\noalign{\hrule height1.2pt}}
+
+% The originals embedded the solution into an `ebox` and used \exrule
+% as a horizontal divider between the exercise statement and the
+% solution. Our new format moves the solution into a separate
+% `.solution` div, so the divider should now collapse to nothing —
+% defining \exrule as a no-op keeps any stray reference compilable.
+\providecommand{\exrule}{\par}
+
+% xcolor brings the dvipsnames palette (BrickRed, BurntOrange,
+% ForestGreen, CadetBlue, RoyalPurple) the originals reach for.
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+
+% MAPDA uses \overbar{…} for binary negation. Define it as a thin
+% over-line wrapper (cleaner than \overline for boolean variables).
+\providecommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{breakable, skins}
+\usepackage{etoolbox}
+\usepackage{fancyvrb}
+\usepackage{fvextra}   % adds the breaklines/breakanywhere keys to \fvset
+\usepackage{enumitem}
+\setlist{itemsep=2pt, topsep=4pt, parsep=0pt}
+
+% --- colour palette (matches the website's UniPD accent) --------------
+\definecolor{unipdRed} {HTML}{9b0014}
+\definecolor{ink}      {HTML}{1a1a1a}
+\definecolor{inkSoft}  {HTML}{3d3d3d}
+\definecolor{inkFaint} {HTML}{6b6b6b}
+\definecolor{rule}     {HTML}{c8c8c8}
+\definecolor{surface}  {HTML}{f5f5f5}
+
+\color{ink}
+
+% --- KOMA heading typography (slim, restrained) -----------------------
+\addtokomafont{disposition}{\normalfont}
+\setkomafont{section}      {\normalfont\Large\bfseries}
+\setkomafont{subsection}   {\normalfont\large\bfseries}
+\setkomafont{subsubsection}{\normalfont\normalsize\bfseries}
+\setkomafont{paragraph}    {\normalfont\normalsize\itshape}
+
+% --- mdframed styles (the only "decoration") --------------------------
+% Left rule, no box. Two tints: accent (theorems) and ink (definitions).
+\mdfdefinestyle{leftRuleAccent}{
+  linewidth=1.2pt, linecolor=unipdRed,
+  topline=false, bottomline=false, rightline=false,
+  innertopmargin=2pt, innerbottommargin=4pt,
+  innerleftmargin=12pt, innerrightmargin=0pt,
+  skipabove=8pt, skipbelow=8pt,
+  backgroundcolor=white,
+}
+\mdfdefinestyle{leftRuleInk}{
+  style=leftRuleAccent, linecolor=ink,
+}
+\mdfdefinestyle{leftRuleFaint}{
+  style=leftRuleAccent, linecolor=rule, linewidth=0.9pt,
+}
+
+% --- theorem environments --------------------------------------------
+% The companion Lua filter (Notes/pdf/code-output.lua) converts every
+% Div with one of these classes (.theorem, .proposition, .lemma,
+% .corollary, .definition, .example, .exercise, .solution, .remark,
+% .note) into raw  \begin{<env>}[<optional name>] ... \end{<env>}
+% blocks AND strips the class so Pandoc no longer auto-defines anything.
+% So this preamble owns the env definitions outright.
+
+\makeatletter
+\@ifundefined{c@chapter}{%
+  \newcommand{\notesNumberWithin}{section}%
+}{%
+  \newcommand{\notesNumberWithin}{chapter}%
+}
+\makeatother
+
+% amsthm styles: plain (italic body, bold head), definition (upright body,
+% bold head), remark (upright body, italic head) — the standard look.
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[\notesNumberWithin]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[\notesNumberWithin]
+% example, exercise, solution are tcolorbox-based — defined further below.
+% `solution` and `remark` are auto-defined by Pandoc's LaTeX template
+% (always emitted, regardless of usage); we override `solution` via
+% \AtBeginDocument so our tcolorbox version wins.
+% `note` is not auto-defined — keep ours.
+\theoremstyle{remark}
+\newtheorem*{note}{Note}
+
+% ── tcolorbox-based exercise / example / solution ────────────────────
+% Common look: small coloured title bar attached at top-left ("Exercise
+% N.M" or "Exercise N.M (optional name)"), thin matching border, white
+% body, breakable across pages. Different colour tones distinguish them:
+%   * exercise → accent (UniPD red)   — for problems to solve
+%   * example  → ink (near-black)     — for worked illustrations
+%   * solution → faint (light grey)   — for solutions to exercises
+
+\newcommand{\notesTcbTitle}[3]{%
+  % #1 = label ("Exercise"), #2 = counter text, #3 = optional name
+  #1~#2\if\relax\detokenize{#3}\relax\else\ \normalfont\itshape(#3)\fi%
+}
+
+\newtcolorbox[auto counter, number within=\notesNumberWithin]{exercise}[1][]{%
+  enhanced, breakable,
+  colback=white,
+  colframe=unipdRed,
+  boxrule=0.5pt, arc=2pt, outer arc=2pt,
+  fonttitle=\bfseries, coltitle=white,
+  attach boxed title to top left={xshift=10pt, yshift=-8pt},
+  boxed title style={
+    colback=unipdRed, colframe=unipdRed,
+    boxrule=0pt, arc=2pt,
+    boxsep=3pt, left=8pt, right=8pt,
+  },
+  title={\notesTcbTitle{Exercise}{\thetcbcounter}{#1}},
+  top=12pt, bottom=8pt, left=12pt, right=10pt,
+  before skip=10pt, after skip=10pt,
+}
+
+\newtcolorbox[auto counter, number within=\notesNumberWithin]{example}[1][]{%
+  enhanced, breakable,
+  colback=white,
+  colframe=ink,
+  boxrule=0.5pt, arc=2pt, outer arc=2pt,
+  fonttitle=\bfseries, coltitle=white,
+  attach boxed title to top left={xshift=10pt, yshift=-8pt},
+  boxed title style={
+    colback=ink, colframe=ink,
+    boxrule=0pt, arc=2pt,
+    boxsep=3pt, left=8pt, right=8pt,
+  },
+  title={\notesTcbTitle{Example}{\thetcbcounter}{#1}},
+  top=12pt, bottom=8pt, left=12pt, right=10pt,
+  before skip=10pt, after skip=10pt,
+}
+
+% Pandoc auto-emits `\newtheorem*{solution}`. We replace it after the
+% fact with our tcolorbox version so it carries the same visual identity.
+\AtBeginDocument{%
+  \let\solution\relax\let\endsolution\relax%
+  \newtcolorbox{solution}[1][]{%
+    enhanced, breakable,
+    colback=surface,
+    colframe=rule,
+    boxrule=0.4pt, arc=2pt, outer arc=2pt,
+    fonttitle=\bfseries, coltitle=ink,
+    attach boxed title to top left={xshift=10pt, yshift=-8pt},
+    boxed title style={
+      colback=surface, colframe=rule,
+      boxrule=0.4pt, arc=2pt,
+      boxsep=3pt, left=8pt, right=8pt,
+    },
+    title={Solution\if\relax\detokenize{#1}\relax\else\ \normalfont\itshape(#1)\fi},
+    top=10pt, bottom=6pt, left=10pt, right=10pt,
+    before skip=8pt, after skip=10pt,
+  }%
+}
+
+% Wrap each env with the left-rule mdframed style.
+\newcommand{\notesWrapAccent}[1]{%
+  \BeforeBeginEnvironment{#1}{\begin{mdframed}[style=leftRuleAccent]}%
+  \AfterEndEnvironment{#1}{\end{mdframed}}}
+
+\newcommand{\notesWrapInk}[1]{%
+  \BeforeBeginEnvironment{#1}{\begin{mdframed}[style=leftRuleInk]}%
+  \AfterEndEnvironment{#1}{\end{mdframed}}}
+
+\newcommand{\notesWrapFaint}[1]{%
+  \BeforeBeginEnvironment{#1}{\begin{mdframed}[style=leftRuleFaint]}%
+  \AfterEndEnvironment{#1}{\end{mdframed}}}
+
+\notesWrapAccent{theorem}
+\notesWrapAccent{proposition}
+\notesWrapAccent{lemma}
+\notesWrapAccent{corollary}
+
+\notesWrapInk{definition}
+% example, exercise and solution are tcolorbox-based — no mdframed wrap.
+
+\notesWrapFaint{remark}
+\notesWrapFaint{note}
+
+% --- proof environment: italic header, square QED ---------------------
+\renewcommand{\qedsymbol}{$\square$}
+
+% --- code OUTPUT environment ------------------------------------------
+% Used by the code-output.lua filter to wrap each `cell-output-*` Div.
+% Visual: thin grey left rule, no box, 90% body size, slim mono font.
+\definecolor{codeBg}{HTML}{f3f3f3}
+
+\mdfdefinestyle{codeOutput}{
+  linewidth=1.4pt, linecolor=inkFaint,
+  topline=false, bottomline=false, rightline=false,
+  innertopmargin=2pt, innerbottommargin=4pt,
+  innerleftmargin=10pt, innerrightmargin=0pt,
+  skipabove=2pt, skipbelow=8pt,
+  backgroundcolor=codeBg,
+}
+\newenvironment{codeoutput}
+  {\begin{mdframed}[style=codeOutput]\footnotesize\ttfamily\linespread{1.05}\selectfont}
+  {\end{mdframed}}
+
+% Auto-wrap long lines so code and output never overflow the right
+% margin. fvextra is loaded above so the keys are defined now.
+\fvset{
+  breaklines=true,
+  breakanywhere=true,
+  breakautoindent=true,
+  breaksymbolleft={\hbox{\scriptsize\textcolor{inkFaint}{\ensuremath{\hookrightarrow}}\,}},
+  breaksymbolsepleft=2pt,
+}
+
+% --- math display: tighter matrix / vector spacing --------------------
+% A future iteration will hook these into the lua filter for ASCII →
+% LaTeX matrix conversion. For now we just nudge the defaults so manual
+% \begin{pmatrix}…\end{pmatrix} blocks look tidier.
+\setlength{\arraycolsep}{4pt}
+\renewcommand{\arraystretch}{1.1}
+
+% --- spacing & list defaults ------------------------------------------
+\setlength{\parskip}{0.4em plus 0.1em minus 0.05em}
+\setlength{\parindent}{0pt}
+
+% Quarto handles hyperref + link colours from the YAML (colorlinks,
+% linkcolor, urlcolor, citecolor). No extra \hypersetup needed here.
+
+% --- baked-in watermark for downloadable PDFs -------------------------
+% draftwatermark stamps a diagonal "site copy" string onto every page as
+% part of the page content (not as a separate annotation), so removal
+% requires re-rendering from source rather than a tooling pass. The
+% NOTES_NO_WATERMARK environment variable lets the user temporarily
+% disable it during local previews:  NOTES_NO_WATERMARK=1 quarto render
+\IfFileExists{draftwatermark.sty}{%
+  \usepackage{draftwatermark}%
+  \SetWatermarkText{\textcopyright\ alvaromendezrt@gmail.com -- site copy}%
+  \SetWatermarkScale{0.55}%
+  \SetWatermarkLightness{0.88}%
+  \SetWatermarkAngle{45}%
+}{}
