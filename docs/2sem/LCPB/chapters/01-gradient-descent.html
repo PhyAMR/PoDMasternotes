@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>2&nbsp; Lesson 1 — Gradient descent – Laboratory of Computational Physics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/02-clustering.html" rel="next">
+<link href="../intro.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-gradient-descent.html">Part I: Lessons</a></li><li class="breadcrumb-item"><a href="../chapters/01-gradient-descent.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lesson 1 — Gradient descent</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Laboratory of Computational Physics</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Lessons</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-gradient-descent.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lesson 1 — Gradient descent</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-clustering.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lesson 2 — Clustering (DBSCAN)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-dnn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Lesson 3 — Deep neural networks</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-cnn.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Lesson 4 — Convolutional neural networks on time series</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-xgboost.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Lesson 5 — Gradient boosting (XGBoost)</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Labs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/labs/group2606_exercise2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Exercise 2</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/labs/group2606_exercise3_cat.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">LCPB 25-26 Exercise 3, XGBoost (XGB)</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/labs/group2606_exercise3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Grid search for different parameters</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/labs/group2606_exercise4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">manifold.TSNE</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../summary.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Summary</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#code" id="toc-code" class="nav-link active" data-scroll-target="#code"><span class="header-section-number">2.1</span> Code</a>
+  <ul class="collapse">
+  <li><a href="#theory" id="toc-theory" class="nav-link" data-scroll-target="#theory"><span class="header-section-number">2.1.1</span> Theory</a></li>
+  </ul></li>
+  <li><a href="#gradient-descent-and-its-generalizations" id="toc-gradient-descent-and-its-generalizations" class="nav-link" data-scroll-target="#gradient-descent-and-its-generalizations"><span class="header-section-number">2.2</span> 4. Gradient descent and its generalizations</a>
+  <ul class="collapse">
+  <li><a href="#gradient-descent-and-newtons-method" id="toc-gradient-descent-and-newtons-method" class="nav-link" data-scroll-target="#gradient-descent-and-newtons-method"><span class="header-section-number">2.2.1</span> 4.1 Gradient descent and Newton’s method</a></li>
+  </ul></li>
+  <li><a href="#algorithm-gradient-descent-in-pseudocode" id="toc-algorithm-gradient-descent-in-pseudocode" class="nav-link" data-scroll-target="#algorithm-gradient-descent-in-pseudocode">Algorithm: gradient descent in pseudocode</a></li>
+  <li><a href="#algorithm-newtons-method-in-pseudocode" id="toc-algorithm-newtons-method-in-pseudocode" class="nav-link" data-scroll-target="#algorithm-newtons-method-in-pseudocode">Algorithm: Newton’s method in pseudocode</a>
+  <ul class="collapse">
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation"><span class="header-section-number">2.2.2</span> Implementation</a></li>
+  </ul></li>
+  <li><a href="#learning-goal" id="toc-learning-goal" class="nav-link" data-scroll-target="#learning-goal"><span class="header-section-number">2.3</span> Learning Goal</a></li>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview"><span class="header-section-number">2.4</span> Overview</a></li>
+  <li><a href="#surfaces" id="toc-surfaces" class="nav-link" data-scroll-target="#surfaces"><span class="header-section-number">2.5</span> Surfaces</a></li>
+  <li><a href="#gradient-descent-with-and-without-momentum" id="toc-gradient-descent-with-and-without-momentum" class="nav-link" data-scroll-target="#gradient-descent-with-and-without-momentum"><span class="header-section-number">2.6</span> Gradient descent with and without momentum</a></li>
+  <li><a href="#experiments-with-gd-cm-and-nag" id="toc-experiments-with-gd-cm-and-nag" class="nav-link" data-scroll-target="#experiments-with-gd-cm-and-nag"><span class="header-section-number">2.7</span> Experiments with GD, CM, and NAG</a></li>
+  <li><a href="#gradient-descents-that-utilize-the-second-moment" id="toc-gradient-descents-that-utilize-the-second-moment" class="nav-link" data-scroll-target="#gradient-descents-that-utilize-the-second-moment"><span class="header-section-number">2.8</span> Gradient Descents that utilize the second moment</a></li>
+  <li><a href="#experiments-with-adam-and-rmsprop" id="toc-experiments-with-adam-and-rmsprop" class="nav-link" data-scroll-target="#experiments-with-adam-and-rmsprop"><span class="header-section-number">2.9</span> Experiments with ADAM and RMSprop</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-gradient-descent.html">Part I: Lessons</a></li><li class="breadcrumb-item"><a href="../chapters/01-gradient-descent.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lesson 1 — Gradient descent</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Lesson 1 — Gradient descent</span></h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="code" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="code"><span class="header-section-number">2.1</span> Code</h2>
+<section id="theory" class="level3" data-number="2.1.1">
+<h3 data-number="2.1.1" class="anchored" data-anchor-id="theory"><span class="header-section-number">2.1.1</span> Theory</h3>
+<p>The following is extracted from Mehta <em>et al.</em> — <em>A high-bias, low-variance introduction to Machine Learning for physicists</em> (Physics Reports 810, 2019), §4. The full review lives under <code>2sem/LCPB/source/</code> in the repository.</p>
+</section>
+</section>
+<section id="gradient-descent-and-its-generalizations" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="gradient-descent-and-its-generalizations"><span class="header-section-number">2.2</span> 4. Gradient descent and its generalizations</h2>
+<p>Almost every problem in ML and data science starts with the same ingredients:a data set X,a model g(θ),which is a function of the parametersθ,and a cost function C(X,g(θ))that allows us to judge how well the model g(θ)explains the observations X.The model is fit by finding the values ofθ that minimize the cost function. In this section, we discuss one of the most powerful and widely used classes of methods for performing this minimization — gradient descent and its generalizations. The basic idea behind these methods is straightforward: iterative ly adjust the parametersθ in the direction where the gradient of the cost function is large and negative.In this way, the training procedure ensures the parameters flow towards a local minimum of the cost function. However, in practice gradient descent is full of surprises and a series of ingenious tricks have been developed by the optimization and machine learning communities to improve the performance of these algorithms. The underlying reason why training a machine learning algorithm is difficult is that the cost functions we wish to optimize are usually complicated, rugged, non-convex functions in a high-dimensional space with many local minima. To make things even more difficult,we almost never have access to the true function we wish to minimize:instead,we must estimate this function directly from data. In modern applications, both the size of the data set and the number of</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Fig. 7
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Gradient descent exhibits three qualitatively different regimes as a function of the learning rate. Result of gradient descent on surface z=x2+y2−1for learning rate ofη=0.1,0.5,1.01.Notice that the trajectory converges to the global minima in multiple steps for small learning rates (η =0.1). Increasing the learning rate further (η =0.5) causes the trajectory to oscillate around the global minima before converging. For even larger learning rates(η=1.01)the trajectory diverges from the minima.See corresponding notebook for details. parameters we wish to fit is often enormous(millions of parameters and examples).The goal of this chapter is to explain how gradient descent methods can be used to train machine learning algorithms even in these difficult settings. This chapter seeks to both introduce commonly used methods and give intuition for why they work.We also include some practical tips for improving the performance of stochastic gradient descent(Bot to u,2012;LeC une tal.,1998b).To help the reader gain more intuition about gradient descent and its variants,we have developed a J up y ter notebook that allows the reader to visualize how these algorithms perform on two dimensional surfaces. The reader is encouraged to experiment with the accompanying notebook whenever a new method is introduced (especially to explore how changing hyper-parameters can affect performance).The reader may also wish to consult useful reviews that cover these topics(Ruder,2016)and this blog http://ruder.io/optimizing-gradient-descent/.</p>
+</div>
+</div>
+</div>
+<section id="gradient-descent-and-newtons-method" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="gradient-descent-and-newtons-method"><span class="header-section-number">2.2.1</span> 4.1 Gradient descent and Newton’s method</h3>
+<p>We begin by introducing a simple first-order gradient descent method and comparing and contrasting it with another algorithm, Newton’s method. Newton’s method is intimately related to many algorithms (conjugate gradient, quasi- Newton methods) commonly used in physics for optimization problems. Denote the function we wish to minimize by E(θ). In the context of machine learning,E(θ)is just the cost function E(θ)=C(X,g(θ)).As we shall see for linear and logistic regression in Sections6,7,this energy function can almost always be written as a sum over n data points, n ∑ E(θ)= e(x,θ). (10) i i i=1 For example, for linear regression e is just the mean square-error for data point i; for logistic regression, it is the i cross-entropy.To make analogy with physical systems,we will often refer to this function as the‘‘energy’’. In the simplest gradient descent (GD) algorithm, we update the parameters as follows. Initialize the parameters to some valueθ and iterative ly update the parameters according to the equation 0 v t = η t ∇ θE(θ t ), θ t+1 = θ t −v t (11) where∇ θE(θ)is the gradient of E(θ)w.r.t.θ and we have introduced a learning rate,η t ,that control show big a step we should take in the direction of the gradient at time step t.It is clear that for sufficiently small choice of the learning rateη t this methods will converge to a local minimum(in all directions)of the cost function.However,choosing a smallη comes t at a huge computational cost.The smallerη ,the more steps we have to take to reach the local minimum.In contrast,if t η is too large, we can overshoot the minimum and the algorithm becomes unstable (it either oscillates or even moves t away from the minimum).This is shown in Fig.7.In practice,one usually specifies a‘‘schedule’’that decreasesη at long t times.Common schedules include power law and exponential decay in time. To better understand this behavior and highlight some of the shortcomings of GD, it is useful to contrast GD with Newton’s method which is the inspiration for many widely employed optimization methods. In Newton’s method, we choose the step v for the parameters in such away as to minimize a second-order Taylor expansion to the energy function 1 E(θ+v)≈E(θ)+∇ θE(θ)v+ v TH(θ)v, 2 where H(θ)is the Hessian matrix of second derivatives.Differentiating this equation respect to vand noting that for the optimal valuev opt we expect∇ θE(θ+v opt )=0,yields the following equation 0=∇ θE(θ)+H(θ)v opt . (12)</p>
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Fig. 8
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<p>Effect of learning rate on convergence.For a one dimensional quadratic potential,one can show that there exists four different qualitative behaviors for gradient descent (GD) as a function of the learning rate η depending on the relationship between η and η =[∂ θ 2E(θ)]−1. (a) For η&lt;η opt,GD converges to the minimum.(b)Forη=η opt,GD converges in a single step.(c)Forη &lt;η&lt;2η opt opt opt,GD oscillates around the minima | and eventually converges.(d)Forη&gt;2η | | opt,GD moves away from the minima. | | | ——————————— | — | —————————– | — | Rearranging this expression results in the desired update rules for Newton’s method −1(θ | v =H | )∇ θE(θ ) | | (13) | | —– | ——— | — | —- | | t | t t | | | | θ =θ | −v . | | | | t+1 t | t | | (14) | Since we have no guarantee that the Hessian is well conditioned, in almost all applications of Newton’s method, one</p>
+<p><em>Source:This figure is adapted from(LeC une tal.,1998b).</em></p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="algorithm-gradient-descent-in-pseudocode" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="algorithm-gradient-descent-in-pseudocode">Algorithm: gradient descent in pseudocode</h2>
+<div class="sourceCode" id="annotated-cell-1"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-1-1" class="code-annotation-target"><a href="#annotated-cell-1-1" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> theta_0</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-1-2" class="code-annotation-target"><a href="#annotated-cell-1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(max_iter):</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="annotated-cell-1-3" class="code-annotation-target"><a href="#annotated-cell-1-3" aria-hidden="true" tabindex="-1"></a>    grad <span class="op">=</span> compute_gradient(E, theta)</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="annotated-cell-1-4" class="code-annotation-target"><a href="#annotated-cell-1-4" aria-hidden="true" tabindex="-1"></a>    v    <span class="op">=</span> eta_t <span class="op">*</span> grad</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="5" onclick="event.preventDefault();">5</a><span id="annotated-cell-1-5" class="code-annotation-target"><a href="#annotated-cell-1-5" aria-hidden="true" tabindex="-1"></a>    theta <span class="op">=</span> theta <span class="op">-</span> v</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-1" data-target-annotation="6" onclick="event.preventDefault();">6</a><span id="annotated-cell-1-6" class="code-annotation-target"><a href="#annotated-cell-1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> converged(theta): <span class="cf">break</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-1" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="1" data-code-annotation="1">Start from an initial guess for the parameters <span class="math inline">\(\theta_0\)</span>.</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="2" data-code-annotation="2">Outer optimisation loop — terminate either at a fixed iteration budget or by a convergence test (step 6).</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="3" data-code-annotation="3">Evaluate <span class="math inline">\(\nabla_\theta E(\theta_t)\)</span> at the current parameter vector.</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="4" data-code-annotation="4">Scale the gradient by the learning rate <span class="math inline">\(\eta_t\)</span>. The schedule for <span class="math inline">\(\eta_t\)</span> (constant, power-law decay, exponential decay) is the main practical knob.</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="5" data-code-annotation="5">Take a step opposite to the gradient direction: <span class="math inline">\(\theta_{t+1}=\theta_t - v_t\)</span> — eq. (11) in the source.</span>
+</dd>
+<dt data-target-cell="annotated-cell-1" data-target-annotation="6">6</dt>
+<dd>
+<span data-code-cell="annotated-cell-1" data-code-lines="6" data-code-annotation="6">Stopping criterion — typically a norm-of-gradient threshold or a relative change in loss.</span>
+</dd>
+</dl>
+</section>
+<section id="algorithm-newtons-method-in-pseudocode" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="algorithm-newtons-method-in-pseudocode">Algorithm: Newton’s method in pseudocode</h2>
+<div class="sourceCode" id="annotated-cell-2"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><a class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-2-1" class="code-annotation-target"><a href="#annotated-cell-2-1" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> theta_0</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-2-2" class="code-annotation-target"><a href="#annotated-cell-2-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(max_iter):</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="annotated-cell-2-3" class="code-annotation-target"><a href="#annotated-cell-2-3" aria-hidden="true" tabindex="-1"></a>    grad <span class="op">=</span> compute_gradient(E, theta)</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="annotated-cell-2-4" class="code-annotation-target"><a href="#annotated-cell-2-4" aria-hidden="true" tabindex="-1"></a>    H    <span class="op">=</span> compute_hessian(E, theta)</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="5" onclick="event.preventDefault();">5</a><span id="annotated-cell-2-5" class="code-annotation-target"><a href="#annotated-cell-2-5" aria-hidden="true" tabindex="-1"></a>    v    <span class="op">=</span> solve(H, grad)</span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-2" data-target-annotation="6" onclick="event.preventDefault();">6</a><span id="annotated-cell-2-6" class="code-annotation-target"><a href="#annotated-cell-2-6" aria-hidden="true" tabindex="-1"></a>    theta <span class="op">=</span> theta <span class="op">-</span> v</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-2" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="1" data-code-annotation="1">Same initialisation as plain GD.</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="2" data-code-annotation="2">Outer loop.</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="3" data-code-annotation="3">First-order term: <span class="math inline">\(\nabla_\theta E(\theta_t)\)</span>.</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="4" data-code-annotation="4">Second-order term: the Hessian matrix <span class="math inline">\(H(\theta_t)\)</span> of second derivatives.</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="5" data-code-annotation="5">Solve the linear system <span class="math inline">\(H\,v = \nabla_\theta E\)</span> — eq. (13). In practice the Hessian is regularised, since it is rarely well-conditioned for ML loss landscapes.</span>
+</dd>
+<dt data-target-cell="annotated-cell-2" data-target-annotation="6">6</dt>
+<dd>
+<span data-code-cell="annotated-cell-2" data-code-lines="6" data-code-annotation="6">Same parameter update as GD — eq. (14). Newton converges in one step on quadratic energies; on real losses it is corrected by line search.</span>
+</dd>
+</dl>
+<section id="implementation" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="implementation"><span class="header-section-number">2.2.2</span> Implementation</h3>
+<p>[from Mehta’s review, Notebook 2: Gradient Descent]</p>
+</section>
+</section>
+<section id="learning-goal" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="learning-goal"><span class="header-section-number">2.3</span> Learning Goal</h2>
+<p>The goal of this notebook is to gain intuition for various gradient descent methods by visualizing and applying these methods to some simple two-dimensional surfaces. Methods studied include ordinary gradient descent, gradient descent with momentum, NAG, ADAM, and RMSProp.</p>
+</section>
+<section id="overview" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="overview"><span class="header-section-number">2.4</span> Overview</h2>
+<p>In this notebook, we will visualize what different gradient descent methods are doing using some simple surfaces. From the onset, we emphasize that doing gradient descent on the surfaces is different from performing gradient descent on a loss function in Machine Learning (ML). The reason is that in ML not only do we want to find good minima, we want to find good minima that generalize well to new data. Despite this crucial difference, we can still build intuition about gradient descent methods by applying them to simple surfaces (see related blog posts <a href="http://ruder.io/optimizing-gradient-descent/">here</a> and <a href="http://tiao.io/notes/visualizing-and-animating-optimization-algorithms-with-matplotlib/">here</a>).</p>
+</section>
+<section id="surfaces" class="level2" data-number="2.5">
+<h2 data-number="2.5" class="anchored" data-anchor-id="surfaces"><span class="header-section-number">2.5</span> Surfaces</h2>
+<p>We will consider three simple surfaces: a quadratic minimum of the form <span class="math display">\[z=ax^2+by^2,\]</span> a saddle-point of the form <span class="math display">\[z=ax^2-by^2,\]</span> and <a href="https://en.wikipedia.org/wiki/Test_functions_for_optimization">Beale’s Function</a>, a convex function often used to test optimization problems of the form: <span class="math display">\[z(x,y) = (1.5-x+xy)^2+(2.25-x+xy^2)^2+(2.625-x+xy^3)^2\]</span></p>
+<p>These surfaces can be plotted using the cells below.</p>
+<div id="eae20789" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plotting functions to visualize gradient descent routines</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Make plots interactive</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#%matplotlib notebook</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Make plots static</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#Make 3D plots</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> cm</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#from matplotlib import animation</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> HTML</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.colors <span class="im">import</span> LogNorm</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#from itertools import zip_longest</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Python</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.font_manager <span class="im">as</span> fm</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Use DejaVu for text and math</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>mpl.rcParams[<span class="st">'font.family'</span>] <span class="op">=</span> <span class="st">'DejaVu Sans'</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>mpl.rcParams[<span class="st">'mathtext.fontset'</span>] <span class="op">=</span> <span class="st">'dejavusans'</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Rebuild matplotlib's font cache (safe)</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#Import Numpy</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co">#Define function for plotting </span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_surface(x, y, z, azim<span class="op">=-</span><span class="dv">20</span>, elev<span class="op">=</span><span class="dv">40</span>, dist<span class="op">=</span><span class="dv">10</span>, cmap<span class="op">=</span><span class="st">"RdYlBu_r"</span>):</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> plt.figure()</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    plot_args <span class="op">=</span> {<span class="st">'rstride'</span>: <span class="dv">1</span>, <span class="st">'cstride'</span>: <span class="dv">1</span>, <span class="st">'cmap'</span>:cmap,</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>             <span class="st">'linewidth'</span>: <span class="dv">20</span>, <span class="st">'antialiased'</span>: <span class="va">True</span>,</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>             <span class="st">'vmin'</span>: <span class="op">-</span><span class="dv">2</span>, <span class="st">'vmax'</span>: <span class="dv">2</span>}</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    ax.plot_surface(x, y, z, <span class="op">**</span>plot_args)</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    ax.view_init(azim<span class="op">=</span>azim, elev<span class="op">=</span>elev)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    ax.dist<span class="op">=</span>dist</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    ax.set_zlim(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    plt.xticks([<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">1</span>], [<span class="st">"-1"</span>, <span class="st">"-1/2"</span>, <span class="st">"0"</span>, <span class="st">"1/2"</span>, <span class="st">"1"</span>])</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    plt.yticks([<span class="op">-</span><span class="dv">1</span>, <span class="op">-</span><span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">1</span>], [<span class="st">"-1"</span>, <span class="st">"-1/2"</span>, <span class="st">"0"</span>, <span class="st">"1/2"</span>, <span class="st">"1"</span>])</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    ax.set_zticks([<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>])</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    ax.set_zticklabels([<span class="st">"-2"</span>, <span class="st">"-1"</span>, <span class="st">"0"</span>, <span class="st">"1"</span>, <span class="st">"2"</span>])</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"x"</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"y"</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    ax.set_zlabel(<span class="st">"z"</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fig, ax<span class="op">;</span></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> overlay_trajectory_quiver(ax,obj_func,trajectory, color<span class="op">=</span><span class="st">'k'</span>):</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Overlay the trajectory of the optimization in gradient descent steps using quiver arrows</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    xs<span class="op">=</span>trajectory[:,<span class="dv">0</span>]</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    ys<span class="op">=</span>trajectory[:,<span class="dv">1</span>]</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    zs<span class="op">=</span>obj_func(xs,ys)</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    <span class="co"># arrow starting points, \delta(x), \delta(y)</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>    ax.quiver(xs[:<span class="op">-</span><span class="dv">1</span>], ys[:<span class="op">-</span><span class="dv">1</span>], zs[:<span class="op">-</span><span class="dv">1</span>], xs[<span class="dv">1</span>:]<span class="op">-</span>xs[:<span class="op">-</span><span class="dv">1</span>], ys[<span class="dv">1</span>:]<span class="op">-</span>ys[:<span class="op">-</span><span class="dv">1</span>],zs[<span class="dv">1</span>:]<span class="op">-</span>zs[:<span class="op">-</span><span class="dv">1</span>],color<span class="op">=</span>color,arrow_length_ratio<span class="op">=</span><span class="fl">0.3</span>)</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax<span class="op">;</span></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> overlay_trajectory(ax,obj_func,trajectory,label,color<span class="op">=</span><span class="st">'k'</span>):</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Overlay the trajectory of the optimization process with a line</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>    xs<span class="op">=</span>trajectory[:,<span class="dv">0</span>]</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    ys<span class="op">=</span>trajectory[:,<span class="dv">1</span>]</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>    zs<span class="op">=</span>obj_func(xs,ys)</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>    ax.plot(xs,ys,zs, color, label<span class="op">=</span>label)</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax<span class="op">;</span></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> overlay_trajectory_contour_M(ax,trajectory, label,color<span class="op">=</span><span class="st">'k'</span>,lw<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Overlay the trajectory of the optimization process on a contour plot with a marker at the end</span></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    xs<span class="op">=</span>trajectory[:,<span class="dv">0</span>]</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>    ys<span class="op">=</span>trajectory[:,<span class="dv">1</span>]</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>    ax.plot(xs,ys, color, label<span class="op">=</span>label,lw<span class="op">=</span>lw)</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>    ax.plot(xs[<span class="op">-</span><span class="dv">1</span>],ys[<span class="op">-</span><span class="dv">1</span>],color<span class="op">+</span><span class="st">'&gt;'</span>, markersize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax<span class="op">;</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> overlay_trajectory_contour(ax,trajectory, label,color<span class="op">=</span><span class="st">'k'</span>,lw<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Overlay the trajectory of the optimization process on a contour plot without a marker at the end</span></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>    xs<span class="op">=</span>trajectory[:,<span class="dv">0</span>]</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>    ys<span class="op">=</span>trajectory[:,<span class="dv">1</span>]</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>    ax.plot(xs,ys, color, label<span class="op">=</span>label,lw<span class="op">=</span>lw)</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ax<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="d7a95b9a" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#DEFINE SURFACES WE WILL WORK WITH</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Define monkey saddle and gradient</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> monkey_saddle(x,y):</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x<span class="op">**</span><span class="dv">3</span> <span class="op">-</span> <span class="dv">3</span><span class="op">*</span>x<span class="op">*</span>y<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grad_monkey_saddle(params):</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>params[<span class="dv">0</span>]</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>params[<span class="dv">1</span>]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    grad_x<span class="op">=</span> <span class="dv">3</span><span class="op">*</span>x<span class="op">**</span><span class="dv">2</span><span class="op">-</span><span class="dv">3</span><span class="op">*</span>y<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    grad_y<span class="op">=</span> <span class="op">-</span><span class="dv">6</span><span class="op">*</span>x<span class="op">*</span>y</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [grad_x,grad_y]</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Define saddle surface</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> saddle_surface(x,y,a<span class="op">=</span><span class="dv">1</span>,b<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">*</span>x<span class="op">**</span><span class="dv">2</span><span class="op">-</span>b<span class="op">*</span>y<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grad_saddle_surface(params,a<span class="op">=</span><span class="dv">1</span>,b<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>params[<span class="dv">0</span>]</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>params[<span class="dv">1</span>]</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    grad_x<span class="op">=</span> <span class="dv">2</span><span class="op">*</span>a<span class="op">*</span>x</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    grad_y<span class="op">=</span> <span class="op">-</span><span class="dv">2</span><span class="op">*</span>b<span class="op">*</span>y</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [grad_x,grad_y]</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Define minima_surface</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> minima_surface(x,y,a<span class="op">=</span><span class="dv">1</span>,b<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">*</span>x<span class="op">**</span><span class="dv">2</span><span class="op">+</span>b<span class="op">*</span>y<span class="op">**</span><span class="dv">2</span><span class="op">-</span><span class="dv">1</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grad_minima_surface(params,a<span class="op">=</span><span class="dv">1</span>,b<span class="op">=</span><span class="dv">1</span>):</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>params[<span class="dv">0</span>]</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>params[<span class="dv">1</span>]</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    grad_x<span class="op">=</span> <span class="dv">2</span><span class="op">*</span>a<span class="op">*</span>x</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    grad_y<span class="op">=</span> <span class="dv">2</span><span class="op">*</span>b<span class="op">*</span>y</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [grad_x,grad_y]</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> beales_function(x,y):</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.square(<span class="fl">1.5</span><span class="op">-</span>x<span class="op">+</span>x<span class="op">*</span>y)<span class="op">+</span>np.square(<span class="fl">2.25</span><span class="op">-</span>x<span class="op">+</span>x<span class="op">*</span>y<span class="op">*</span>y)<span class="op">+</span>np.square(<span class="fl">2.625</span><span class="op">-</span>x<span class="op">+</span>x<span class="op">*</span>y<span class="op">**</span><span class="dv">3</span>)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> grad_beales_function(params):</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>params[<span class="dv">0</span>]</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>params[<span class="dv">1</span>]</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    grad_x<span class="op">=</span><span class="dv">2</span><span class="op">*</span>(<span class="fl">1.5</span><span class="op">-</span>x<span class="op">+</span>x<span class="op">*</span>y)<span class="op">*</span>(<span class="op">-</span><span class="dv">1</span><span class="op">+</span>y)<span class="op">+</span><span class="dv">2</span><span class="op">*</span>(<span class="fl">2.25</span><span class="op">-</span>x<span class="op">+</span>x<span class="op">*</span>y<span class="op">**</span><span class="dv">2</span>)<span class="op">*</span>(<span class="op">-</span><span class="dv">1</span><span class="op">+</span>y<span class="op">**</span><span class="dv">2</span>)<span class="op">+</span><span class="dv">2</span><span class="op">*</span>(<span class="fl">2.625</span><span class="op">-</span>x<span class="op">+</span>x<span class="op">*</span>y<span class="op">**</span><span class="dv">3</span>)<span class="op">*</span>(<span class="op">-</span><span class="dv">1</span><span class="op">+</span>y<span class="op">**</span><span class="dv">3</span>)</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    grad_y<span class="op">=</span><span class="dv">2</span><span class="op">*</span>(<span class="fl">1.5</span><span class="op">-</span>x<span class="op">+</span>x<span class="op">*</span>y)<span class="op">*</span>x<span class="op">+</span><span class="dv">4</span><span class="op">*</span>(<span class="fl">2.25</span><span class="op">-</span>x<span class="op">+</span>x<span class="op">*</span>y<span class="op">**</span><span class="dv">2</span>)<span class="op">*</span>x<span class="op">*</span>y<span class="op">+</span><span class="dv">6</span><span class="op">*</span>(<span class="fl">2.625</span><span class="op">-</span>x<span class="op">+</span>x<span class="op">*</span>y<span class="op">**</span><span class="dv">3</span>)<span class="op">*</span>x<span class="op">*</span>y<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> [grad_x,grad_y]</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> contour_beales_function():</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="co">#plot beales function</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    x, y <span class="op">=</span> np.meshgrid(np.arange(<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">0.2</span>), np.arange(<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">0.2</span>))</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    z<span class="op">=</span>beales_function(x,y)</span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    cax <span class="op">=</span> ax.contour(x, y, z, levels<span class="op">=</span>np.logspace(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">35</span>), norm<span class="op">=</span>LogNorm(), cmap<span class="op">=</span><span class="st">"RdYlBu_r"</span>)</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    ax.plot(<span class="dv">3</span>,<span class="fl">0.5</span>, <span class="st">'r*'</span>, markersize<span class="op">=</span><span class="dv">18</span>)</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">'$x$'</span>)</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">'$y$'</span>)</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim((<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>))</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim((<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>))</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> fig,ax</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a><span class="co">#Make plots of surfaces</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>plt.close() <span class="co"># closes previous plots</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>x, y <span class="op">=</span> np.mgrid[<span class="op">-</span><span class="dv">1</span>:<span class="dv">1</span>:<span class="ot">31j</span>, <span class="op">-</span><span class="dv">1</span>:<span class="dv">1</span>:<span class="ot">31j</span>]  <span class="co"># create a 2d grid </span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>fig1,ax1<span class="op">=</span>plot_surface(x,y,monkey_saddle(x,y))</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>fig2,ax2<span class="op">=</span>plot_surface(x,y,saddle_surface(x,y))</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>fig3,ax3<span class="op">=</span>plot_surface(x,y,minima_surface(x,y,a<span class="op">=</span><span class="dv">5</span>,b<span class="op">=</span><span class="dv">1</span>))</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a><span class="co">#Contour plot of Beale's Function</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>fig4,ax4 <span class="op">=</span>contour_beales_function()</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="gradient-descent-with-and-without-momentum" class="level2" data-number="2.6">
+<h2 data-number="2.6" class="anchored" data-anchor-id="gradient-descent-with-and-without-momentum"><span class="header-section-number">2.6</span> Gradient descent with and without momentum</h2>
+<p>In this notebook, we will visualize various gradient descent algorithms used in machine learning. We will be especially interested in trying to understand how various hyperparameters – especially the learning rate – affect our performance. Here, we confine ourselves primarily to looking at the performance in the absence of noise. However, we encourage the reader to experiment with playing with the noise strength below and seeing what differences introducing stochasticity makes.</p>
+<p>Throughout, we denote the parameters by <span class="math inline">\(\theta\)</span> and the energy function we are trying to minimize by <span class="math inline">\(E(\theta)\)</span>.</p>
+<p><b>Gradient Descent</b></p>
+<p>We start by considering a simple gradient descent method. In this method, we will take steps in the direction of the local gradient. Given some parameters <span class="math inline">\(\theta\)</span>, we adjust the parameters at each iteration so that</p>
+<p><span class="math display">\[\theta_{t+1}= \theta_t - \eta_t \nabla_\theta E(\theta),\]</span></p>
+<p>where we have introduced the learning rate <span class="math inline">\(\eta_t\)</span> that controls how large a step we take. In general, the algorithm is extremely sensitive to the choice of <span class="math inline">\(\eta_t\)</span>. If <span class="math inline">\(\eta_t\)</span> is too large, then one can wildly oscillate around minima and miss important structure at small scales. This problem is amplified if our gradient computations are noisy and inexact (as is often the case in machine learning applications). If <span class="math inline">\(\eta_t\)</span> is too small, then the learning/minimization procedure becomes extremely slow. This raises the natural question: <i> What sets the natural scale for the learning rate and how can we adaptively choose it?</i> We discuss this extensively in Section IV of the review.</p>
+<p><b>Gradient Descent with Momentum</b> One problem with gradient descent is that it has no memory of where the “ball rolling down the hill” comes from. This can be an issue when there are many shallow minima in our landscape. If we make an analogy with a ball rolling down a hill, the lack of memory is equivalent to having no inertia or momentum (i.e.&nbsp;completely overdamped dynamics). Without momentum, the ball has no kinetic energy and cannot climb out of shallow minima.</p>
+<p>Momentum becomes especially important when we start thinking about stochastic gradient descent with noisy, stochastic estimates of the gradient. In this case, we should remember where we were coming from and not react drastically to each new update.</p>
+<p>Inspired by this, we can add a memory or momentum term to the stochastic gradient descent term above:</p>
+<p><span class="math display">\[
+v_{t}=\gamma v_{t-1}+\eta_{t}\nabla_\theta E(\theta_t),\\
+\theta_{t+1}= \theta_t -v_{t},
+\]</span></p>
+<p>with <span class="math inline">\(0\le \gamma &lt; 1\)</span> called the momentum parameter. When <span class="math inline">\(\gamma=0\)</span>, this reduces to ordinary gradient descent, and increasing <span class="math inline">\(\gamma\)</span> increases the inertial contribution to the gradient. From the equations above, we can see that typical memory lifetimes of the gradient is given by <span class="math inline">\((1-\gamma)^{-1}\)</span>. For <span class="math inline">\(\gamma=0\)</span> as in gradient descent, the lifetime is just one step. For <span class="math inline">\(\gamma=0.9\)</span>, we typically remember a gradient for ten steps. We will call this gradient descent with classical momentum or CM for short.</p>
+<p>A final widely used variant of gradient descent with momentum is called the Nesterov accelerated gradient (NAG). In NAG, rather than calculating the gradient at the current position, one calculates the gradient at the position momentum will carry us to at time <span class="math inline">\(t+1\)</span>, namely, <span class="math inline">\(\theta_t -\gamma v_{t-1}\)</span>. Thus, the update becomes <span class="math display">\[
+v_{t}=\gamma v_{t-1}+\eta_{t}\nabla_\theta E(\theta_t-\gamma v_{t-1})\\
+\theta_{t+1}= \theta_t -v_{t}
+\]</span></p>
+<div id="2a5a9328" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#This writes a simple gradient descent, gradient descent+ momentum,</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#nesterov. </span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#Mean-gradient based methods</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gd(grad, init, n_epochs<span class="op">=</span><span class="dv">1000</span>, eta<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">4</span>, noise_strength<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">#This is a simple optimizer</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    params<span class="op">=</span>np.array(init) <span class="co"># initial condition</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    param_traj<span class="op">=</span>np.zeros([n_epochs<span class="op">+</span><span class="dv">1</span>,<span class="dv">2</span>]) <span class="co"># save each step</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    param_traj[<span class="dv">0</span>,]<span class="op">=</span>init</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    v<span class="op">=</span><span class="dv">0</span><span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n_epochs):</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        noise<span class="op">=</span>noise_strength<span class="op">*</span>np.random.randn(params.size)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        v<span class="op">=</span>eta<span class="op">*</span>(np.array(grad(params))<span class="op">+</span>noise) <span class="co"># gradient step + noise</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        params<span class="op">=</span>params<span class="op">-</span>v </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        param_traj[j<span class="op">+</span><span class="dv">1</span>,]<span class="op">=</span>params</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> param_traj</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gd_with_mom(grad, init, n_epochs<span class="op">=</span><span class="dv">5000</span>, eta<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">4</span>, gamma<span class="op">=</span><span class="fl">0.9</span>,noise_strength<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    params<span class="op">=</span>np.array(init)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    param_traj<span class="op">=</span>np.zeros([n_epochs<span class="op">+</span><span class="dv">1</span>,<span class="dv">2</span>])</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    param_traj[<span class="dv">0</span>,]<span class="op">=</span>init</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    v<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n_epochs):</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        noise<span class="op">=</span>noise_strength<span class="op">*</span>np.random.randn(params.size)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        v<span class="op">=</span>gamma<span class="op">*</span>v<span class="op">+</span>eta<span class="op">*</span>(np.array(grad(params))<span class="op">+</span>noise)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        params<span class="op">=</span>params<span class="op">-</span>v</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        param_traj[j<span class="op">+</span><span class="dv">1</span>,]<span class="op">=</span>params</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> param_traj</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> NAG(grad, init, n_epochs<span class="op">=</span><span class="dv">5000</span>, eta<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">4</span>, gamma<span class="op">=</span><span class="fl">0.9</span>,noise_strength<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    params<span class="op">=</span>np.array(init)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    param_traj<span class="op">=</span>np.zeros([n_epochs<span class="op">+</span><span class="dv">1</span>,<span class="dv">2</span>])</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    param_traj[<span class="dv">0</span>,]<span class="op">=</span>init</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    v<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n_epochs):</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>        noise<span class="op">=</span>noise_strength<span class="op">*</span>np.random.randn(params.size)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>        params_nesterov<span class="op">=</span>params<span class="op">-</span>gamma<span class="op">*</span>v</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>        v<span class="op">=</span>gamma<span class="op">*</span>v<span class="op">+</span>eta<span class="op">*</span>(np.array(grad(params_nesterov))<span class="op">+</span>noise)</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>        params<span class="op">=</span>params<span class="op">-</span>v</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        param_traj[j<span class="op">+</span><span class="dv">1</span>,]<span class="op">=</span>params</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> param_traj</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="experiments-with-gd-cm-and-nag" class="level2" data-number="2.7">
+<h2 data-number="2.7" class="anchored" data-anchor-id="experiments-with-gd-cm-and-nag"><span class="header-section-number">2.7</span> Experiments with GD, CM, and NAG</h2>
+<p>Before introducing more complicated situations, let us experiment with these methods to gain some intuition.</p>
+Let us look at the dependence of GD on learning rate in a simple quadratic minima of the form <span class="math inline">\(z=ax^2+by^2-1\)</span>. Make plots below for <span class="math inline">\(\eta=0.1,0.5,1,1.01\)</span> and <span class="math inline">\(a=1\)</span> and <span class="math inline">\(b=1\)</span>. (to do this, you would have to add additional arguments to the function <code>gd</code> above in order to pass the new values of <code>a</code> and <code>b</code>; otherwise the default values <code>a=1</code> and <code>b=1</code> will be used by the gradient)
+<ul>
+<li>
+What are the qualitatively different behaviors that arise as <span class="math inline">\(\eta\)</span> is increased?
+</li><li>
+What does this tell us about the importance of choosing learning parameters? How do these change if we change <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> above? In particular how does anisotropy change the learning behavior?
+</li><li>
+Make similar plots for CM and NAG? How do the learning rates for these procedures compare with those for GD?
+</li></ul>
+<div id="db6407fd" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Investigate effect of learning rate in gradient descent with classical momentum </span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plt.close()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>a,b <span class="op">=</span> <span class="fl">1.0</span>,<span class="fl">1.0</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>x, y <span class="op">=</span> np.meshgrid(np.arange(<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">0.2</span>), np.arange(<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">0.2</span>))</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>z<span class="op">=</span>np.<span class="bu">abs</span>(minima_surface(x,y,a,b))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>ax.contour(x, y, z, levels<span class="op">=</span>np.logspace(<span class="fl">0.0</span>, <span class="dv">5</span>, <span class="dv">35</span>), norm<span class="op">=</span>LogNorm(), cmap<span class="op">=</span><span class="st">"RdYlBu_r"</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>ax.plot(<span class="dv">0</span>,<span class="dv">0</span>, <span class="st">'r*'</span>, markersize<span class="op">=</span><span class="dv">18</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#initial point</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>init1<span class="op">=</span>[<span class="op">-</span><span class="dv">2</span>,<span class="dv">4</span>]</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>init2<span class="op">=</span>[<span class="op">-</span><span class="fl">1.7</span>,<span class="dv">4</span>]</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>init3<span class="op">=</span>[<span class="op">-</span><span class="fl">1.5</span>,<span class="dv">4</span>]</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>init4<span class="op">=</span>[<span class="op">-</span><span class="dv">3</span>,<span class="fl">4.5</span>]</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>init5<span class="op">=</span>[<span class="dv">3</span>,<span class="fl">4.5</span>]</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>eta1<span class="op">=</span><span class="fl">0.1</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>eta2<span class="op">=</span><span class="fl">0.5</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>eta3<span class="op">=</span><span class="dv">1</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>eta4<span class="op">=</span><span class="fl">1.01</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>gd_1<span class="op">=</span>gd(grad_minima_surface,init1, n_epochs<span class="op">=</span><span class="dv">100</span>, eta<span class="op">=</span>eta1)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>gd_2<span class="op">=</span>gd(grad_minima_surface,init2, n_epochs<span class="op">=</span><span class="dv">50</span>, eta<span class="op">=</span>eta2)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>gd_3<span class="op">=</span>gd(grad_minima_surface,init3, n_epochs<span class="op">=</span><span class="dv">50</span>, eta<span class="op">=</span>eta3)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>gd_4<span class="op">=</span>gd(grad_minima_surface,init4, n_epochs<span class="op">=</span><span class="dv">10</span>, eta<span class="op">=</span>eta4)</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#print(gd_1)</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax,gd_1,<span class="st">'$</span><span class="er">\</span><span class="st">eta=$</span><span class="sc">%s</span><span class="st">'</span><span class="op">%</span> eta1,<span class="st">'g--*'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax,gd_2,<span class="st">'$</span><span class="er">\</span><span class="st">eta=$</span><span class="sc">%s</span><span class="st">'</span><span class="op">%</span> eta2,<span class="st">'b-&lt;'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax,gd_3,<span class="st">'$</span><span class="er">\</span><span class="st">eta=$</span><span class="sc">%s</span><span class="st">'</span><span class="op">%</span> eta3,<span class="st">'y-&gt;'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax,gd_4,<span class="st">'$</span><span class="er">\</span><span class="st">eta=$</span><span class="sc">%s</span><span class="st">'</span><span class="op">%</span> eta4,<span class="st">'c-o'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>fig.savefig(<span class="st">"GD3regimes.pdf"</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="d5dfbbcc" class="cell" data-execution_count="5">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plt.close()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>a,b <span class="op">=</span> <span class="fl">1.0</span>,<span class="fl">1.0</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>x, y <span class="op">=</span> np.meshgrid(np.arange(<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">0.2</span>), np.arange(<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">0.2</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>,<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>z<span class="op">=</span>np.<span class="bu">abs</span>(minima_surface(x,y,a,b))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#ax.contour(x, y, z, levels=np.logspace(0.0, 5, 35), norm=LogNorm(), cmap="RdYlBu_r")</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#ax.plot(0,0, 'r*', markersize=18)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax <span class="kw">in</span> (ax1, ax2):</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    ax.contour(x, y, z, levels<span class="op">=</span>np.logspace(<span class="fl">0.0</span>, <span class="dv">5</span>, <span class="dv">35</span>), norm<span class="op">=</span>LogNorm(), cmap<span class="op">=</span><span class="st">"RdYlBu_r"</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    ax.plot(<span class="dv">0</span>,<span class="dv">0</span>, <span class="st">'r*'</span>, markersize<span class="op">=</span><span class="dv">18</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim((<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim((<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>))</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#initial point</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>init1<span class="op">=</span>[<span class="op">-</span><span class="dv">2</span>,<span class="dv">4</span>]</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>init2<span class="op">=</span>[<span class="op">-</span><span class="fl">1.7</span>,<span class="dv">4</span>]</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>init3<span class="op">=</span>[<span class="op">-</span><span class="fl">1.5</span>,<span class="dv">4</span>]</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>init4<span class="op">=</span>[<span class="op">-</span><span class="dv">3</span>,<span class="fl">4.5</span>]</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>init5<span class="op">=</span>[<span class="dv">3</span>,<span class="fl">4.5</span>]</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#initial learning rates</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>eta1<span class="op">=</span><span class="fl">0.1</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>eta2<span class="op">=</span><span class="fl">0.5</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>eta3<span class="op">=</span><span class="fl">1.0</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>eta4<span class="op">=</span><span class="fl">1.01</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>gdwm_1<span class="op">=</span>gd_with_mom(grad_minima_surface,init1, n_epochs<span class="op">=</span><span class="dv">70</span>, eta<span class="op">=</span>eta1,gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>gdwm_2<span class="op">=</span>gd_with_mom(grad_minima_surface,init2, n_epochs<span class="op">=</span><span class="dv">70</span>, eta<span class="op">=</span>eta2,gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>gdwm_3<span class="op">=</span>gd_with_mom(grad_minima_surface,init3, n_epochs<span class="op">=</span><span class="dv">70</span>, eta<span class="op">=</span>eta3,gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>gdwm_4<span class="op">=</span>gd_with_mom(grad_minima_surface,init4, n_epochs<span class="op">=</span><span class="dv">70</span>, eta<span class="op">=</span>eta4,gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>nag_1<span class="op">=</span>NAG(grad_minima_surface,init1, n_epochs<span class="op">=</span><span class="dv">70</span>, eta<span class="op">=</span>eta1, gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>nag_2<span class="op">=</span>NAG(grad_minima_surface,init2, n_epochs<span class="op">=</span><span class="dv">70</span>, eta<span class="op">=</span>eta2, gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>nag_3<span class="op">=</span>NAG(grad_minima_surface,init3, n_epochs<span class="op">=</span><span class="dv">70</span>, eta<span class="op">=</span>eta3, gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>nag_4<span class="op">=</span>NAG(grad_minima_surface,init4, n_epochs<span class="op">=</span><span class="dv">70</span>, eta<span class="op">=</span>eta4, gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="co">#print(gd_1)</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax1,gdwm_1,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta1,<span class="st">'g--*'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax1,gdwm_2,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta2,<span class="st">'b-&lt;'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax1,gdwm_3,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta3,<span class="st">'y-&gt;'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax1,gdwm_4,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta4,<span class="st">'c-o'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax2,nag_1,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta1,<span class="st">'g--*'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax2,nag_2,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta2,<span class="st">'b-&lt;'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax2,nag_3,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta3,<span class="st">'y-&gt;'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax2,nag_4,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta4,<span class="st">'c-o'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>fig.savefig(<span class="st">"gdwm_and_nag.pdf"</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="d88fc7f5" class="cell" data-execution_count="6">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the role of anisotropy $$a\neq b$$</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.close()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>aa,bb <span class="op">=</span> <span class="fl">1.0</span>,<span class="fl">5.0</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>x, y <span class="op">=</span> np.meshgrid(np.arange(<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">0.2</span>), np.arange(<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>, <span class="fl">0.2</span>))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">2</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>z<span class="op">=</span>np.<span class="bu">abs</span>(minima_surface(x,y,aa,bb))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ax <span class="kw">in</span> (ax1, ax2):</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    ax.contour(x, y, z, levels<span class="op">=</span>np.logspace(<span class="fl">0.0</span>, <span class="dv">5</span>, <span class="dv">35</span>), norm<span class="op">=</span>LogNorm(), cmap<span class="op">=</span><span class="st">"RdYlBu_r"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    ax.plot(<span class="dv">0</span>,<span class="dv">0</span>, <span class="st">'r*'</span>, markersize<span class="op">=</span><span class="dv">18</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim((<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim((<span class="op">-</span><span class="fl">4.5</span>, <span class="fl">4.5</span>))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#initial point</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>init1<span class="op">=</span>[<span class="op">-</span><span class="dv">2</span>,<span class="dv">4</span>]</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>init2<span class="op">=</span>[<span class="op">-</span><span class="fl">1.7</span>,<span class="dv">4</span>]</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>init3<span class="op">=</span>[<span class="op">-</span><span class="fl">1.5</span>,<span class="dv">4</span>]</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>init4<span class="op">=</span>[<span class="op">-</span><span class="dv">3</span>,<span class="fl">4.5</span>]</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>init5<span class="op">=</span>[<span class="dv">3</span>,<span class="fl">4.5</span>]</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#initial learning rates</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co">#eta1=0.1</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co">#eta2=0.5</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#eta3=1.0</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co">#eta4=1.01</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co">#test smaller choice for anisotropic case</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gd_asym(grad, init, n_epochs<span class="op">=</span><span class="dv">1000</span>, eta<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">4</span>, noise_strength<span class="op">=</span><span class="dv">0</span>, aa<span class="op">=</span><span class="dv">1</span>, bb<span class="op">=</span><span class="dv">5</span>):</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co">#define a new gd function for the anisotropic case</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    params<span class="op">=</span>np.array(init) <span class="co"># initial condition</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    param_traj<span class="op">=</span>np.zeros([n_epochs<span class="op">+</span><span class="dv">1</span>,<span class="dv">2</span>]) <span class="co"># save each step</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    param_traj[<span class="dv">0</span>,]<span class="op">=</span>init</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    v<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n_epochs):</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        noise<span class="op">=</span>noise_strength<span class="op">*</span>np.random.randn(params.size)</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        v<span class="op">=</span>eta<span class="op">*</span>(np.array(grad(params,aa,bb))<span class="op">+</span>noise) <span class="co"># gradient step + noise</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>        params<span class="op">=</span>params<span class="op">-</span>v </span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>        param_traj[j<span class="op">+</span><span class="dv">1</span>,]<span class="op">=</span>params</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> param_traj</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gd_with_mom_asym(grad, init, n_epochs<span class="op">=</span><span class="dv">5000</span>, eta<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">4</span>,noise_strength<span class="op">=</span><span class="dv">0</span>, aa<span class="op">=</span><span class="dv">1</span>, bb<span class="op">=</span><span class="dv">5</span>, gamma<span class="op">=</span><span class="fl">0.9</span>):</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    params<span class="op">=</span>np.array(init)</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    param_traj<span class="op">=</span>np.zeros([n_epochs<span class="op">+</span><span class="dv">1</span>,<span class="dv">2</span>])</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    param_traj[<span class="dv">0</span>,]<span class="op">=</span>init</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    v<span class="op">=</span><span class="dv">0</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n_epochs):</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>        noise<span class="op">=</span>noise_strength<span class="op">*</span>np.random.randn(params.size)</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>        v<span class="op">=</span>gamma<span class="op">*</span>v<span class="op">+</span>eta<span class="op">*</span>(np.array(grad(params,aa,bb))<span class="op">+</span>noise)</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>        params<span class="op">=</span>params<span class="op">-</span>v</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>        param_traj[j<span class="op">+</span><span class="dv">1</span>,]<span class="op">=</span>params</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> param_traj</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>gd_1_asym<span class="op">=</span>gd_asym(grad_minima_surface,init1, n_epochs<span class="op">=</span><span class="dv">100</span>, eta<span class="op">=</span>eta1,aa<span class="op">=</span><span class="dv">3</span>, bb<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>gd_2_asym<span class="op">=</span>gd_asym(grad_minima_surface,init2, n_epochs<span class="op">=</span><span class="dv">100</span>, eta<span class="op">=</span>eta2,aa<span class="op">=</span><span class="dv">3</span>, bb<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>gd_3_asym<span class="op">=</span>gd_asym(grad_minima_surface,init3, n_epochs<span class="op">=</span><span class="dv">100</span>, eta<span class="op">=</span>eta3,aa<span class="op">=</span><span class="dv">3</span>, bb<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>gd_4_asym<span class="op">=</span>gd_asym(grad_minima_surface,init4, n_epochs<span class="op">=</span><span class="dv">100</span>, eta<span class="op">=</span>eta4,aa<span class="op">=</span><span class="dv">3</span>, bb<span class="op">=</span><span class="dv">5</span>)</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>gdwm_1_asym<span class="op">=</span>gd_with_mom_asym(grad_minima_surface,init1, n_epochs<span class="op">=</span><span class="dv">100</span>, eta<span class="op">=</span>eta1,aa<span class="op">=</span><span class="dv">3</span>, bb<span class="op">=</span><span class="dv">5</span>, gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>gdwm_2_asym<span class="op">=</span>gd_with_mom_asym(grad_minima_surface,init2, n_epochs<span class="op">=</span><span class="dv">100</span>, eta<span class="op">=</span>eta2,aa<span class="op">=</span><span class="dv">3</span>, bb<span class="op">=</span><span class="dv">5</span>, gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>gdwm_3_asym<span class="op">=</span>gd_with_mom_asym(grad_minima_surface,init3, n_epochs<span class="op">=</span><span class="dv">100</span>, eta<span class="op">=</span>eta3,aa<span class="op">=</span><span class="dv">3</span>, bb<span class="op">=</span><span class="dv">5</span>, gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>gdwm_4_asym<span class="op">=</span>gd_with_mom_asym(grad_minima_surface,init4, n_epochs<span class="op">=</span><span class="dv">100</span>, eta<span class="op">=</span>eta4,aa<span class="op">=</span><span class="dv">3</span>, bb<span class="op">=</span><span class="dv">5</span>, gamma<span class="op">=</span><span class="fl">0.9</span>)</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a><span class="co">#print(gd_1)</span></span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax1,gd_1_asym,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta1,<span class="st">'g--*'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax1,gd_2_asym,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta2,<span class="st">'b-&lt;'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax1,gd_3_asym,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta3,<span class="st">'y-&gt;'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax1,gd_4_asym,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta4,<span class="st">'c-o'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax2,gdwm_1_asym,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta1,<span class="st">'g--*'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax2,gdwm_2_asym,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta2,<span class="st">'b-&lt;'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax2,gdwm_3_asym,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta3,<span class="st">'y-&gt;'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour(ax2,gdwm_4_asym,<span class="vs">r'</span><span class="dv">$</span><span class="er">\</span><span class="vs">eta=</span><span class="dv">$</span><span class="vs">%s'</span><span class="op">%</span> eta4,<span class="st">'c-o'</span>, lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-83"><a href="#cb6-83" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb6-84"><a href="#cb6-84" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb6-85"><a href="#cb6-85" aria-hidden="true" tabindex="-1"></a>fig.savefig(<span class="st">"GD_GDWM_asym.pdf"</span>, bbox_inches<span class="op">=</span><span class="st">'tight'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="gradient-descents-that-utilize-the-second-moment" class="level2" data-number="2.8">
+<h2 data-number="2.8" class="anchored" data-anchor-id="gradient-descents-that-utilize-the-second-moment"><span class="header-section-number">2.8</span> Gradient Descents that utilize the second moment</h2>
+<p>In stochastic gradient descent, with and without momentum, we still have to specify a schedule for tuning the learning rates <span class="math inline">\(\eta_t\)</span> as a function of time. As discussed in Sec. IV in the context of Newton’s method, this presents a number of dilemmas. The learning rate is limited by the steepest direction which can change depending on where in the landscape we are. To circumvent this problem, ideally our algorithm would take large steps in shallow, flat directions and small steps in steep, narrow directions. Second-order methods accomplish this by calculating or approximating the Hessian and normalizing the learning rate by the curvature. However, this is very computationally expensive for extremely large models. Ideally, we would like to be able to adaptively change our step size to match the landscape without paying the steep computational price of calculating or approximating Hessians.</p>
+<p>Recently, a number of methods have been introduced that accomplish this by tracking not only the gradient but also the second moment of the gradient. These methods include AdaGrad, AdaDelta, RMS-Prop, and ADAM. Here, we discuss the latter of these two as representatives of this class of algorithms.</p>
+<p>In RMS prop (Root-Mean-Square propagation), in addition to keeping a running average of the first moment of the gradient, we also keep track of the second moment through a moving average. The update rule for RMS prop is given by <span class="math display">\[
+\mathbf{g}_t = \nabla_\theta E(\boldsymbol{\theta}) \\
+\mathbf{s}_t =\beta \mathbf{s}_{t-1} +(1-\beta)\mathbf{g}_t^2 \nonumber \\
+\boldsymbol{\theta}_{t+1}=\boldsymbol{\theta}_t + \eta_t { \mathbf{g}_t \over \sqrt{\mathbf{s}_t +\epsilon}}, \nonumber \\
+\]</span> where <span class="math inline">\(\beta\)</span> controls the averaging time of the second moment and is typically taken to be about <span class="math inline">\(\beta=0.9\)</span>, <span class="math inline">\(\eta_t\)</span> is a learning rate typically chosen to be <span class="math inline">\(10^{-3}\)</span>, and <span class="math inline">\(\epsilon\sim 10^{-8}\)</span> is a small regularization constant to prevent divergences. It is clear from this formula that the learning rate is reduced in directions where the norm of the gradient is consistently large. This greatly speeds up the convergence by allowing us to use a larger learning rate for flat directions.</p>
+<p>A related algorithm is the ADAM optimizer. In ADAM, we keep a running average of both the first and second moment of the gradient and use this information to adaptively change the learning rate for different parameters. In addition to keeping a running average of the first and second moments of the gradient, ADAM performs an additional bias correction to account for the fact that we are estimating the first two moments of the gradient using a running average (denoted by the hats in the update rule below). The update rule for ADAM is given by (where multiplication and division are understood to be element wise operations) <span class="math display">\[
+\mathbf{g}_t = \nabla_\theta E(\boldsymbol{\theta}) \\
+\mathbf{m}_t = \beta_1 \mathbf{m}_{t-1} + (1-\beta_1) \mathbf{g}_t \nonumber \\
+\mathbf{s}_t =\beta_2 \mathbf{s}_{t-1} +(1-\beta_2)\mathbf{g}_t^2 \nonumber \\
+\hat{\mathbf{m}}_t={\mathbf{m}_t \over 1-\beta_1} \nonumber \\
+\hat{\mathbf{s}}_t ={\mathbf{s}_t \over1-\beta_2} \nonumber \\
+\boldsymbol{\theta}_{t+1}=\boldsymbol{\theta}_t + \eta_t { \hat{\mathbf{m}}_t \over \sqrt{\hat{\mathbf{s}}_t +\epsilon}}, \nonumber
+\]</span> where <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\beta_2\)</span> set the memory lifetime of the first and second moment and are typically take to be <span class="math inline">\(0.9\)</span> and <span class="math inline">\(0.99\)</span> respectively, and <span class="math inline">\(\eta\)</span> and <span class="math inline">\(\epsilon\)</span> are identical to RMSprop.</p>
+<div id="cf4b3ff9" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">################################################################################</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Methods that exploit first and second moments of gradient: RMS-PROP and ADAMS</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">################################################################################</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> rms_prop(grad, init, n_epochs<span class="op">=</span><span class="dv">5000</span>, eta<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">3</span>, beta<span class="op">=</span><span class="fl">0.9</span>,epsilon<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">8</span>,noise_strength<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    params<span class="op">=</span>np.array(init)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    param_traj<span class="op">=</span>np.zeros([n_epochs<span class="op">+</span><span class="dv">1</span>,<span class="dv">2</span>])</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    param_traj[<span class="dv">0</span>,]<span class="op">=</span>init<span class="co">#Import relevant packages</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    grad_sq<span class="op">=</span><span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n_epochs):</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        noise<span class="op">=</span>noise_strength<span class="op">*</span>np.random.randn(params.size)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        g<span class="op">=</span>np.array(grad(params))<span class="op">+</span>noise</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        grad_sq<span class="op">=</span>beta<span class="op">*</span>grad_sq<span class="op">+</span>(<span class="dv">1</span><span class="op">-</span>beta)<span class="op">*</span>g<span class="op">*</span>g</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        v<span class="op">=</span>eta<span class="op">*</span>np.divide(g,np.sqrt(grad_sq<span class="op">+</span>epsilon))</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        params<span class="op">=</span> params<span class="op">-</span>v</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        param_traj[j<span class="op">+</span><span class="dv">1</span>,]<span class="op">=</span>params</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> param_traj</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>                        </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> adams(grad, init, n_epochs<span class="op">=</span><span class="dv">5000</span>, eta<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">4</span>, gamma<span class="op">=</span><span class="fl">0.9</span>, beta<span class="op">=</span><span class="fl">0.99</span>,epsilon<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">8</span>,noise_strength<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    params<span class="op">=</span>np.array(init)</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    param_traj<span class="op">=</span>np.zeros([n_epochs<span class="op">+</span><span class="dv">1</span>,<span class="dv">2</span>])</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    param_traj[<span class="dv">0</span>,]<span class="op">=</span>init</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    v<span class="op">=</span><span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    grad_sq<span class="op">=</span><span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n_epochs):</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        noise<span class="op">=</span>noise_strength<span class="op">*</span>np.random.randn(params.size)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        g<span class="op">=</span>np.array(grad(params))<span class="op">+</span>noise</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        v<span class="op">=</span>gamma<span class="op">*</span>v<span class="op">+</span>(<span class="dv">1</span><span class="op">-</span>gamma)<span class="op">*</span>g</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        grad_sq<span class="op">=</span>beta<span class="op">*</span>grad_sq<span class="op">+</span>(<span class="dv">1</span><span class="op">-</span>beta)<span class="op">*</span>g<span class="op">*</span>g</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        v_hat<span class="op">=</span>v<span class="op">/</span>(<span class="dv">1</span><span class="op">-</span>gamma)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        grad_sq_hat<span class="op">=</span>grad_sq<span class="op">/</span>(<span class="dv">1</span><span class="op">-</span>beta)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        params<span class="op">=</span>params<span class="op">-</span>eta<span class="op">*</span>np.divide(v_hat,np.sqrt(grad_sq_hat<span class="op">+</span>epsilon))</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        param_traj[j<span class="op">+</span><span class="dv">1</span>,]<span class="op">=</span>params</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> param_traj</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="experiments-with-adam-and-rmsprop" class="level2" data-number="2.9">
+<h2 data-number="2.9" class="anchored" data-anchor-id="experiments-with-adam-and-rmsprop"><span class="header-section-number">2.9</span> Experiments with ADAM and RMSprop</h2>
+<p>In this section, we will experiment with ADAM and RMSprop. To do so, we will use a function commonly used in optimization protocols:</p>
+<p><span class="math display">\[
+f(x,y)=(1.5-x+xy)^2+(2.25-x+xy^2)^2+(2.625-x+xy^3)^2.
+\]</span></p>
+<p>This function has a global minimum at <span class="math inline">\((x,y)=(3,0.5)\)</span>. We will use GD, GD with classical momentum, NAG, RMSprop, and ADAM to find minima starting at different initial conditions.</p>
+One of the things you should experiment with is the learning rate and the number of steps, <span class="math inline">\(N_{\mathrm{steps}}\)</span> we take. Initially, we have set <span class="math inline">\(N_{\mathrm{steps}}=10^4\)</span> and the learning rate for ADAM/RMSprop to <span class="math inline">\(\eta=10^{-3}\)</span> and the learning rate for the remaining methods to <span class="math inline">\(10^{-6}\)</span>.
+<ul>
+<li>
+Examine the plot for these default values. What do you see?
+</li><li>
+Make a plot when the learning rate of all methods is <span class="math inline">\(\eta=10^{-6}\)</span>? How does your plot change?
+</li><li>
+Now set the learning rate for all algorithms to <span class="math inline">\(\eta=10^{-3}\)</span>? What goes wrong? Why?
+</li></ul>
+<div id="f041a092" class="cell" data-execution_count="8">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plt.close()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Make static plot of the results</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Nsteps<span class="op">=</span><span class="dv">10</span><span class="op">**</span><span class="dv">4</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>lr_l<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">3</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>lr_s<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">6</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>init1<span class="op">=</span>np.array([<span class="dv">4</span>,<span class="dv">3</span>])</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>fig1, ax1<span class="op">=</span>contour_beales_function()</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>gd_trajectory1<span class="op">=</span>gd(grad_beales_function,init1,Nsteps, eta<span class="op">=</span>lr_s, noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>gdm_trajectory1<span class="op">=</span>gd_with_mom(grad_beales_function,init1,Nsteps,eta<span class="op">=</span>lr_s, gamma<span class="op">=</span><span class="fl">0.9</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>NAG_trajectory1<span class="op">=</span>NAG(grad_beales_function,init1,Nsteps,eta<span class="op">=</span>lr_s, gamma<span class="op">=</span><span class="fl">0.9</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>rms_prop_trajectory1<span class="op">=</span>rms_prop(grad_beales_function,init1,Nsteps,eta<span class="op">=</span>lr_l, beta<span class="op">=</span><span class="fl">0.9</span>,epsilon<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">8</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>adam_trajectory1<span class="op">=</span>adams(grad_beales_function,init1,Nsteps,eta<span class="op">=</span>lr_l, gamma<span class="op">=</span><span class="fl">0.9</span>, beta<span class="op">=</span><span class="fl">0.99</span>,epsilon<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">8</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,gd_trajectory1, <span class="st">'GD'</span>,<span class="st">'k'</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,gdm_trajectory1, <span class="st">'GDM'</span>,<span class="st">'m'</span>)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,NAG_trajectory1, <span class="st">'NAG'</span>,<span class="st">'c--'</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,rms_prop_trajectory1,<span class="st">'RMS'</span>, <span class="st">'b-.'</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,adam_trajectory1,<span class="st">'ADAMS'</span>, <span class="st">'r'</span>)</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>plt.legend(loc<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>init2<span class="op">=</span>np.array([<span class="fl">1.5</span>,<span class="fl">1.5</span>])</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>gd_trajectory2<span class="op">=</span>gd(grad_beales_function,init2,Nsteps, eta<span class="op">=</span>lr_s, noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>gdm_trajectory2<span class="op">=</span>gd_with_mom(grad_beales_function,init2,Nsteps,eta<span class="op">=</span>lr_s, gamma<span class="op">=</span><span class="fl">0.9</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>NAG_trajectory2<span class="op">=</span>NAG(grad_beales_function,init2,Nsteps,eta<span class="op">=</span>lr_s, gamma<span class="op">=</span><span class="fl">0.9</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>rms_prop_trajectory2<span class="op">=</span>rms_prop(grad_beales_function,init2,Nsteps,eta<span class="op">=</span>lr_l, beta<span class="op">=</span><span class="fl">0.9</span>,epsilon<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">8</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>adam_trajectory2<span class="op">=</span>adams(grad_beales_function,init2,Nsteps,eta<span class="op">=</span>lr_l, gamma<span class="op">=</span><span class="fl">0.9</span>, beta<span class="op">=</span><span class="fl">0.99</span>,epsilon<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">8</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,gdm_trajectory2, <span class="st">'GDM'</span>,<span class="st">'m'</span>)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,NAG_trajectory2, <span class="st">'NAG'</span>,<span class="st">'c--'</span>)</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,rms_prop_trajectory2,<span class="st">'RMS'</span>, <span class="st">'b-.'</span>)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,adam_trajectory2,<span class="st">'ADAMS'</span>, <span class="st">'r'</span>)</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>init3<span class="op">=</span>np.array([<span class="op">-</span><span class="dv">1</span>,<span class="dv">4</span>])</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>gd_trajectory3<span class="op">=</span>gd(grad_beales_function,init3,Nsteps, eta<span class="op">=</span>lr_s, noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>gdm_trajectory3<span class="op">=</span>gd_with_mom(grad_beales_function,init3,Nsteps,eta<span class="op">=</span>lr_s, gamma<span class="op">=</span><span class="fl">0.9</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>NAG_trajectory3<span class="op">=</span>NAG(grad_beales_function,init3,Nsteps,eta<span class="op">=</span>lr_s, gamma<span class="op">=</span><span class="fl">0.9</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>rms_prop_trajectory3<span class="op">=</span>rms_prop(grad_beales_function,init3,Nsteps,eta<span class="op">=</span>lr_l, beta<span class="op">=</span><span class="fl">0.9</span>,epsilon<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">8</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>adam_trajectory3<span class="op">=</span>adams(grad_beales_function,init3,Nsteps,eta<span class="op">=</span>lr_l, gamma<span class="op">=</span><span class="fl">0.9</span>, beta<span class="op">=</span><span class="fl">0.99</span>,epsilon<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">8</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,gd_trajectory3, <span class="st">'GD'</span>,<span class="st">'k'</span>)</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,gdm_trajectory3, <span class="st">'GDM'</span>,<span class="st">'m'</span>)</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,NAG_trajectory3, <span class="st">'NAG'</span>,<span class="st">'c--'</span>)</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,rms_prop_trajectory3,<span class="st">'RMS'</span>, <span class="st">'b-.'</span>)</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,adam_trajectory3,<span class="st">'ADAMS'</span>, <span class="st">'r'</span>)</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>init4<span class="op">=</span>np.array([<span class="op">-</span><span class="dv">2</span>,<span class="op">-</span><span class="dv">4</span>])</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>gd_trajectory4<span class="op">=</span>gd(grad_beales_function,init4,Nsteps, eta<span class="op">=</span>lr_s, noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>gdm_trajectory4<span class="op">=</span>gd_with_mom(grad_beales_function,init4,Nsteps,eta<span class="op">=</span>lr_s, gamma<span class="op">=</span><span class="fl">0.9</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>NAG_trajectory4<span class="op">=</span>NAG(grad_beales_function,init4,Nsteps,eta<span class="op">=</span>lr_s, gamma<span class="op">=</span><span class="fl">0.9</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>rms_prop_trajectory4<span class="op">=</span>rms_prop(grad_beales_function,init4,Nsteps,eta<span class="op">=</span>lr_l, beta<span class="op">=</span><span class="fl">0.9</span>,epsilon<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">8</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>adam_trajectory4<span class="op">=</span>adams(grad_beales_function,init4,Nsteps,eta<span class="op">=</span>lr_l, gamma<span class="op">=</span><span class="fl">0.9</span>, beta<span class="op">=</span><span class="fl">0.99</span>,epsilon<span class="op">=</span><span class="dv">10</span><span class="op">**-</span><span class="dv">8</span>,noise_strength<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,gd_trajectory4, <span class="st">'GD'</span>,<span class="st">'k'</span>)</span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,gdm_trajectory4, <span class="st">'GDM'</span>,<span class="st">'m'</span>)</span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,NAG_trajectory4, <span class="st">'NAG'</span>,<span class="st">'c--'</span>)</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,rms_prop_trajectory4,<span class="st">'RMS'</span>, <span class="st">'b-.'</span>)</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>overlay_trajectory_contour_M(ax1,adam_trajectory4,<span class="st">'ADAMS'</span>, <span class="st">'r'</span>)</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../intro.html" class="pagination-link" aria-label="Introduction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/02-clustering.html" class="pagination-link" aria-label="Lesson 2 — Clustering (DBSCAN)">
+        <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Lesson 2 — Clustering (DBSCAN)</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb9" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Lesson 1 — Gradient descent"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Code</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">### Theory</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>The following is extracted from Mehta *et al.* — *A high-bias, low-variance</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>introduction to Machine Learning for physicists* (Physics Reports 810,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>2019), §4. The full review lives under <span class="in">`2sem/LCPB/source/`</span> in the</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>repository.</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_theory-gradient-descent.qmd &gt;}}</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="fu">### Implementation</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_gradient_descent.qmd &gt;}}</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+
+
+
+
+</body></html>
