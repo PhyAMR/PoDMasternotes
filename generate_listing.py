@@ -49,6 +49,7 @@ always returns the reader to the portal homepage.
 """
 
 import os
+import re
 import yaml
 
 
@@ -294,6 +295,79 @@ def _scan_projects(proj_dir: str) -> list[dict]:
     return items
 
 
+_README_NAMES = {"readme.md", "readme"}
+
+
+def _demote_headings(md: str, by: int = 1) -> str:
+    """Demote ATX markdown headings (``# Title`` → ``## Title``) by *by* levels.
+
+    Caps at H6. Skips lines inside fenced code blocks so ``# comment`` lines
+    in Python / Bash code samples are left intact.
+    """
+    out: list[str] = []
+    in_fence = False
+    fence_marker = ""
+    for line in md.splitlines():
+        stripped = line.lstrip()
+        if stripped.startswith("```") or stripped.startswith("~~~"):
+            marker = stripped[:3]
+            if not in_fence:
+                in_fence, fence_marker = True, marker
+            elif marker == fence_marker:
+                in_fence, fence_marker = False, ""
+            out.append(line)
+            continue
+        if in_fence:
+            out.append(line)
+            continue
+        m = re.match(r"^(#{1,6})(\s|$)", line)
+        if m:
+            level = len(m.group(1))
+            new_level = min(level + by, 6)
+            line = "#" * new_level + line[level:]
+        out.append(line)
+    return "\n".join(out)
+
+
+def _find_project_readmes(proj_dir: str,
+                          max_depth: int = 2) -> list[tuple[str, str]]:
+    """Walk *proj_dir* and collect every README.md found.
+
+    Returns a list of ``(relative_path, content)`` tuples, sorted by path so
+    the page output is deterministic. ``relative_path`` is the README's
+    path relative to *proj_dir* (e.g. ``""`` for a top-level README,
+    ``"Grassi/README.md"`` for a nested one).
+
+    Only READMEs at most *max_depth* directory levels below ``projects/``
+    are considered. Deeper READMEs almost always belong to vendored
+    sub-tools (e.g. ``projects/.../data_tools/revosim/README.md``), not to
+    the student's own project — the depth cap keeps third-party docs off
+    the course's Projects page.
+    """
+    if not os.path.isdir(proj_dir):
+        return []
+    base_depth = proj_dir.count(os.sep)
+    found: list[tuple[str, str]] = []
+    for root, dirs, files in os.walk(proj_dir):
+        dirs[:] = [d for d in dirs
+                   if d not in _SKIP_DIRS and not d.startswith(".")]
+        if root.count(os.sep) - base_depth > max_depth:
+            dirs[:] = []  # stop descending past the depth cap
+            continue
+        for f in files:
+            if f.lower() in _README_NAMES:
+                full = os.path.join(root, f)
+                rel = os.path.relpath(full, proj_dir).replace(os.sep, "/")
+                try:
+                    with open(full, "r", encoding="utf-8") as fh:
+                        found.append((rel, fh.read()))
+                except OSError as exc:
+                    print(f"  ⚠  could not read {full}: {exc}")
+                break  # at most one README per folder
+    found.sort(key=lambda x: x[0])
+    return found
+
+
 def _load_github_urls(notes_dir: str) -> dict:
     """Read Notes/_projects_github.yml and return a {sem: {course: url}} map.
 
@@ -313,12 +387,14 @@ def _load_github_urls(notes_dir: str) -> dict:
         return {}
 
 
-def _projects_qmd(course: str, has_theory: bool, github_url: str) -> str:
+def _projects_qmd(course: str, has_theory: bool, github_url: str,
+                  readmes: list[tuple[str, str]] | None = None) -> str:
     """Render the markdown body of a course's projects landing page.
 
-    GitHub-only mode: the page is a short pointer to an external
-    repository. Project deliverables are NOT mirrored, NOT rendered
-    locally, and NOT linked from this page.
+    GitHub-only mode: the page consists of (1) a pointer to the external
+    GitHub repository and (2) the inlined content of every README.md
+    discovered under the course's ``projects/`` directory. No notebooks,
+    PDFs, or HTML reports are surfaced — those live in the repo.
     """
     lines: list[str] = [
         "---",
@@ -350,6 +426,41 @@ def _projects_qmd(course: str, has_theory: bool, github_url: str) -> str:
             f" on GitHub]({github_url}){{.btn .btn-outline-dark .btn-lg role=\"button\"}}",
             "",
             f"<{github_url}>",
+            "",
+        ]
+
+    # ── Inlined README content ──────────────────────────────────────────────
+    # Each README is dropped in verbatim with its ATX headings demoted by one
+    # level so the course's page ``title:`` remains the document's H1, the
+    # README's own H1 becomes H2, and so on.
+    readmes = readmes or []
+    if readmes:
+        lines.append("")
+        lines.append("---")
+        lines.append("")
+        if len(readmes) == 1 and readmes[0][0].lower() == "readme.md":
+            # Single, top-level README — no section banner needed.
+            _, content = readmes[0]
+            lines.append(_demote_headings(content.rstrip(), by=1))
+            lines.append("")
+        else:
+            for rel, content in readmes:
+                project_path = os.path.dirname(rel) or course
+                lines.append(f"## `{project_path}/`")
+                lines.append("")
+                lines.append(_demote_headings(content.rstrip(), by=2))
+                lines.append("")
+                lines.append("---")
+                lines.append("")
+            # Drop the trailing separator (visual noise after the last one).
+            while lines and lines[-1] in ("", "---"):
+                lines.pop()
+            lines.append("")
+    else:
+        lines += [
+            "*(No project README was found under this course's `projects/`"
+            " directory. Add a `README.md` there and re-run"
+            " `Notes/generate_listing.py`.)*",
             "",
         ]
 
@@ -498,6 +609,55 @@ def generate_site_structure() -> None:
         "      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();\n"
         "    }\n"
         "  });\n"
+        "</script>\n"
+        # ── Collapsible solution callouts ─────────────────────────────────
+        # Every `::: {.solution}` div renders as a styled box in the PDF
+        # (via the tcolorbox `solution` environment defined in the shared
+        # preamble) but in the HTML build we want each one collapsed by
+        # default with a click-to-reveal "Solution" summary. The script
+        # below rewrites each `<div class="solution">` into a
+        # `<details><summary>Solution</summary>…</details>` wrapper so the
+        # browser handles open / closed state natively.
+        "<style>\n"
+        "  details.solution-collapsible {\n"
+        "    border-left: 3px solid #b8123e;\n"
+        "    padding: 0.4em 0.75em;\n"
+        "    margin: 1em 0;\n"
+        "    background: #fbf3f5;\n"
+        "    border-radius: 0 4px 4px 0;\n"
+        "  }\n"
+        "  details.solution-collapsible > summary {\n"
+        "    cursor: pointer; font-weight: 600; color: #b8123e;\n"
+        "    list-style: none; user-select: none;\n"
+        "  }\n"
+        "  details.solution-collapsible > summary::-webkit-details-marker {\n"
+        "    display: none;\n"
+        "  }\n"
+        "  details.solution-collapsible > summary::before {\n"
+        "    content: '\\25B6';\n"
+        "    display: inline-block; margin-right: 0.5em;\n"
+        "    transition: transform 0.15s ease;\n"
+        "  }\n"
+        "  details.solution-collapsible[open] > summary::before {\n"
+        "    transform: rotate(90deg);\n"
+        "  }\n"
+        "  details.solution-collapsible > div.solution {\n"
+        "    margin-top: 0.5em; border-left: none; padding-left: 0;\n"
+        "  }\n"
+        "</style>\n"
+        "<script>\n"
+        "  document.addEventListener('DOMContentLoaded', function() {\n"
+        "    document.querySelectorAll('div.solution').forEach(function(el) {\n"
+        "      if (el.closest('details.solution-collapsible')) return;\n"
+        "      var d = document.createElement('details');\n"
+        "      d.className = 'solution-collapsible';\n"
+        "      var s = document.createElement('summary');\n"
+        "      s.textContent = 'Solution';\n"
+        "      d.appendChild(s);\n"
+        "      el.parentNode.insertBefore(d, el);\n"
+        "      d.appendChild(el);\n"
+        "    });\n"
+        "  });\n"
         "</script>"
     )
 
@@ -545,6 +705,13 @@ def generate_site_structure() -> None:
                 "code-tools":              True,
                 "code-summary":            "Show code",
                 "highlight-style":         "tango",
+                # Force chunk-generated figures to PNG in the HTML build.
+                # Without this, knitr falls back to whatever device was
+                # selected for the PDF target (often the .pdf device),
+                # which then sits in figure-html/ and silently fails to
+                # render in the browser. PNG is the safe universal choice.
+                "fig-format":              "png",
+                "fig-dpi":                 150,
                 # Keep HTML lightweight: figures and JS libs stay as sibling
                 # files so chapters are ~100 KB instead of ~150 MB each.
                 "embed-resources":         False,
@@ -627,8 +794,11 @@ def generate_site_structure() -> None:
                 continue
             qmd_path = os.path.join(site_dir, sem, c["text"], "projects.qmd")
             url = github_urls.get(sem, {}).get(c["text"], "")
+            proj_dir = os.path.join(root_dir, sem, c["text"], "projects")
+            readmes  = _find_project_readmes(proj_dir)
             _write_text(qmd_path,
-                        _projects_qmd(c["text"], c["has_theory"], url))
+                        _projects_qmd(c["text"], c["has_theory"], url,
+                                      readmes))
 
     # ── 7b. Write empty project build manifest ───────────────────────────────
     # GitHub-only mode: no project sub-books are rendered locally. The

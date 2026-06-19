@@ -1,0 +1,174 @@
+---
+title: "Callout tour"
+---
+
+This chapter is a reference: it demonstrates every styled environment
+defined in `Notes/pdf/preamble.tex` plus the Quarto built-in callouts.
+Use it as a copy-paste source when you write a new chapter.
+
+## Theorem-like environments
+
+These are the ten environments the project preamble styles with a thin
+left-rule frame in print and a coloured callout strip in HTML. The
+optional `name="…"` field shows up after the auto-counter (e.g.
+*Definition 2.1 (Probability space)*).
+
+### Definition
+
+::: {.definition name="Probability space"}
+A **probability space** is a triple $(\Omega, \mathcal{F}, P)$ where
+$\Omega$ is the sample space, $\mathcal{F}$ a $\sigma$-algebra of events,
+and $P : \mathcal{F} \to [0, 1]$ a probability measure satisfying the
+Kolmogorov axioms.
+:::
+
+### Theorem, proposition, lemma, corollary
+
+::: {.theorem name="Central limit theorem"}
+Let $X_1, X_2, \ldots$ be i.i.d.\ with mean $\mu$ and finite variance
+$\sigma^2 > 0$. Then
+$$\frac{\bar X_n - \mu}{\sigma / \sqrt n} \xrightarrow{d} \mathcal{N}(0, 1).$$
+:::
+
+::: {.proposition name="MGF of sums"}
+If $X_1, \ldots, X_n$ are independent with MGFs $M_i(t)$, then the MGF of
+$S_n = \sum_i X_i$ is $M_{S_n}(t) = \prod_i M_i(t)$.
+:::
+
+::: {.lemma name="Markov's inequality"}
+For a non-negative random variable $X$ and $a > 0$,
+$$P(X \geq a) \leq \frac{E[X]}{a}.$$
+:::
+
+::: {.corollary name="Chebyshev's inequality"}
+For any random variable $X$ with finite variance $\sigma^2$,
+$$P\bigl(|X - E[X]| \geq k\sigma\bigr) \leq \frac{1}{k^2}.$$
+:::
+
+### Example
+
+::: {.example name="Coin tossing"}
+Let $X \sim \text{Binomial}(10, 1/2)$. Then $E[X] = 5$ and
+$\text{Var}(X) = 5/2$. By Chebyshev's inequality,
+$P(|X - 5| \geq 3) \leq 5/18 \approx 0.28$. The exact value is much
+smaller — a typical illustration of how loose Chebyshev's bound is.
+:::
+
+### Remark and note
+
+::: {.remark}
+The variance bound in Chebyshev's inequality requires only that
+$\text{Var}(X)$ be finite. The CLT additionally requires
+$E[|X|^{2 + \delta}] < \infty$ for some $\delta > 0$ in its strongest
+forms (Lyapunov condition).
+:::
+
+::: {.note}
+A **note** callout is for content the reader can skip on first reading
+but that is useful as a footnote-style aside.
+:::
+
+## Exercises and solutions
+
+The exercise / solution pattern is the same one used throughout the
+ASPA notes:
+
+::: {.exercise}
+
+Compute the variance of $X \sim \text{Poisson}(\lambda)$ using the
+moment generating function $M_X(t) = \exp[\lambda(e^t - 1)]$.
+:::
+
+::: {.solution}
+
+Differentiate $M_X(t)$ twice and evaluate at $t = 0$:
+$M'_X(0) = \lambda$ and $M''_X(0) = \lambda + \lambda^2$. Hence
+$\text{Var}(X) = M''_X(0) - M'_X(0)^2 = \lambda$.
+:::
+
+In the HTML build, every `::: {.solution}` block is **collapsed by
+default**. A "Solution" disclosure appears, and the reader clicks to
+expand it — the JavaScript that handles this is injected globally by
+`Notes/generate_listing.py`.
+
+## Quarto built-in callouts
+
+Quarto ships five appearance-aware callouts that are useful for
+in-prose asides, warnings, and tips. They are entirely separate from
+the theorem-like environments above.
+
+::: {.callout-note}
+A **note** is for general information. By default it is expanded.
+:::
+
+::: {.callout-tip}
+A **tip** is for a piece of advice that's nice-to-know but not
+load-bearing.
+:::
+
+::: {.callout-warning}
+A **warning** flags a subtle pitfall that students often miss.
+:::
+
+::: {.callout-important}
+An **important** callout is for something the reader must internalise
+to follow the rest of the chapter.
+:::
+
+::: {.callout-caution}
+A **caution** is the strongest visual; reserve it for things that go
+catastrophically wrong (e.g.\ a model that's silently mis-specified).
+:::
+
+Built-in callouts accept titles and a `collapse` option:
+
+::: {.callout-note collapse="true" title="A collapsible note"}
+This block is hidden by default and expands on click. Use it for long
+asides that would otherwise dominate the page.
+:::
+
+## Cross-references
+
+Quarto auto-numbers any block with a label that has the right prefix:
+
+- `@eq-mass` for `$$ … $$ {#eq-mass}`
+- `@fig-gaussian` for `#| label: fig-gaussian` on a code chunk
+- `@tbl-stats` for tables with `: caption {#tbl-stats}`
+- `@thm-clt` for `::: {.theorem #thm-clt name="CLT"}`
+
+For example, Theorem @thm-clt-example below is referenced by its label:
+
+::: {.theorem #thm-clt-example name="CLT (referenced)"}
+This theorem is referenced from the prose above.
+:::
+
+## Code chunks
+
+Both R and Python chunks render correctly. The shared metadata folds
+code blocks by default so chapter pages stay short.
+
+```{python}
+#| label: lst-python-demo
+#| eval: false
+
+import numpy as np
+rng = np.random.default_rng(0)
+x = rng.normal(size=10_000)
+print(f"mean = {x.mean():.3f},  var = {x.var():.3f}")
+```
+
+```{r}
+#| label: lst-r-demo
+#| eval: false
+
+set.seed(0)
+x <- rnorm(10000)
+cat("mean =", mean(x), "  var =", var(x), "\n")
+```
+
+## Sources
+
+This chapter is a project-specific reference and has no external
+sources. The original list of supported environments lives in
+`Notes/pdf/preamble.tex`, alongside their tcolorbox / mdframed
+definitions for the print build.

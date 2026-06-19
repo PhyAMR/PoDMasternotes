@@ -281,19 +281,11 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#data-generation" id="toc-data-generation" class="nav-link active" data-scroll-target="#data-generation"><span class="header-section-number">4.1</span> Data generation</a></li>
-  <li><a href="#code" id="toc-code" class="nav-link" data-scroll-target="#code"><span class="header-section-number">4.2</span> Code</a>
+  <li><a href="#an-introduction-to-feed-forward-deep-neural-networksdn-ns" id="toc-an-introduction-to-feed-forward-deep-neural-networksdn-ns" class="nav-link active" data-scroll-target="#an-introduction-to-feed-forward-deep-neural-networksdn-ns"><span class="header-section-number">4.1</span> 9. An introduction to feed-forward deep neural networks(DN Ns)</a>
   <ul class="collapse">
-  <li><a href="#theory" id="toc-theory" class="nav-link" data-scroll-target="#theory"><span class="header-section-number">4.2.1</span> Theory</a></li>
+  <li><a href="#neural-network-basics" id="toc-neural-network-basics" class="nav-link" data-scroll-target="#neural-network-basics"><span class="header-section-number">4.1.1</span> 9.1 Neural network basics</a></li>
   </ul></li>
-  <li><a href="#an-introduction-to-feed-forward-deep-neural-networksdn-ns" id="toc-an-introduction-to-feed-forward-deep-neural-networksdn-ns" class="nav-link" data-scroll-target="#an-introduction-to-feed-forward-deep-neural-networksdn-ns"><span class="header-section-number">4.3</span> 9. An introduction to feed-forward deep neural networks(DN Ns)</a>
-  <ul class="collapse">
-  <li><a href="#neural-network-basics" id="toc-neural-network-basics" class="nav-link" data-scroll-target="#neural-network-basics"><span class="header-section-number">4.3.1</span> 9.1 Neural network basics</a></li>
-  </ul></li>
-  <li><a href="#algorithm-forward-backward-pass-in-pseudocode" id="toc-algorithm-forward-backward-pass-in-pseudocode" class="nav-link" data-scroll-target="#algorithm-forward-backward-pass-in-pseudocode">Algorithm: forward + backward pass in pseudocode</a>
-  <ul class="collapse">
-  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation"><span class="header-section-number">4.3.2</span> Implementation</a></li>
-  </ul></li>
+  <li><a href="#algorithm-forward-backward-pass-in-pseudocode" id="toc-algorithm-forward-backward-pass-in-pseudocode" class="nav-link" data-scroll-target="#algorithm-forward-backward-pass-in-pseudocode">Algorithm: forward + backward pass in pseudocode</a></li>
   <li><a href="#keras-tuner" id="toc-keras-tuner" class="nav-link" data-scroll-target="#keras-tuner"><span class="header-section-number">5</span> Keras Tuner</a>
   <ul class="collapse">
   <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data"><span class="header-section-number">5.1</span> Read data</a></li>
@@ -331,74 +323,16 @@ window.Quarto = {
 </header>
 
 
-<section id="data-generation" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="data-generation"><span class="header-section-number">4.1</span> Data generation</h2>
-<div id="ad0b392a" class="cell" data-execution_count="1">
-<details class="code-fold">
-<summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.cm <span class="im">as</span> cm</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># default font</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'font.size'</span>] <span class="op">=</span> <span class="dv">13</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># number of data points (samples)</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span><span class="dv">12000</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># size of each sample, number of features per sample</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>L<span class="op">=</span><span class="dv">8</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># box size</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>B<span class="op">=</span><span class="dv">10</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>mkdir DATA</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>run useful.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div id="29cdbb6e" class="cell" data-tags="[]" data-execution_count="2">
-<details class="code-fold">
-<summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>TYPE<span class="op">=</span><span class="dv">4</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># set random seed for reproducibility</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">12345</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>),np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>),np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>))</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># generate random 2D data points rescaled by B and initialize label to zero</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>x,y <span class="op">=</span> (np.random.random((N,L)))<span class="op">*</span>B, np.zeros(N)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N):</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># label data according to a nonlinear function NF defined in useful.py</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    y[i] <span class="op">=</span> NF(x[i],B,TYPE)</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>plot_data(x,y)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>fn<span class="op">=</span>filename(<span class="st">"data"</span>,L,TYPE)</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>np.savetxt(fn,x)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fn)</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>fn<span class="op">=</span>filename(<span class="st">"labels"</span>,L,TYPE)</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>np.savetxt(fn,y,fmt<span class="op">=</span><span class="st">"</span><span class="sc">%d</span><span class="st">"</span>)</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-</section>
-<section id="code" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="code"><span class="header-section-number">4.2</span> Code</h2>
-<section id="theory" class="level3" data-number="4.2.1">
-<h3 data-number="4.2.1" class="anchored" data-anchor-id="theory"><span class="header-section-number">4.2.1</span> Theory</h3>
-<p>Extracted from Mehta <em>et al.</em> (Physics Reports 810, 2019), §9 on feed-forward DNNs. The full review lives under <code>2sem/LCPB/source/</code>.</p>
-</section>
-</section>
-<section id="an-introduction-to-feed-forward-deep-neural-networksdn-ns" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="an-introduction-to-feed-forward-deep-neural-networksdn-ns"><span class="header-section-number">4.3</span> 9. An introduction to feed-forward deep neural networks(DN Ns)</h2>
+<p>The theory in this chapter is extracted from Mehta <em>et al.</em> (Physics Reports 810, 2019), §9 on feed-forward DNNs. The full review lives under <code>2sem/LCPB/source/</code>.</p>
+<blockquote class="blockquote">
+<p><strong>Theory →</strong> Neural-network basics and the feed-forward architecture.</p>
+</blockquote>
+<section id="an-introduction-to-feed-forward-deep-neural-networksdn-ns" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="an-introduction-to-feed-forward-deep-neural-networksdn-ns"><span class="header-section-number">4.1</span> 9. An introduction to feed-forward deep neural networks(DN Ns)</h2>
 <p>Over the last decade,neural networks have emerged as the one of most powerful and widely-used supervised learning techniques. Deep Neural Networks (DN Ns) have a long history (Bishop, 1995a; Schmid huber, 2015), but re-emerged to prominence after a rebranding as‘‘Deep Learning’’in the mid2000s(Hint one tal.,2006;Hinton and Salak hut dino v,2006). DN Ns truly caught the attention of the wider machine learning community and industry in2012when Alex Kri zhe v sky, Ilya Su tsk ever,and Geoff Hinton used a GPU-based D NN model(Alex Net)to lower the error rate on the Image Net Large Scale Visual Recognition Challenge (IL SV RC) by an incredible twelve percent from 28% to 16% (Kri zhe v sky et al., 2012). Just three years later, a machine learning group from Microsoft achieved an error of 3.57% using an ultra-deep residual neural network(Res Net)with152layers(Hee tal.,2016)!Since then,DN Ns have become the workhorse technique for many image and speech recognition based machine learning tasks. The large-scale industrial deployment of DN Ns has given rise to a number of high-level libraries and packages(Caff e,Ker as,Py torch,Tensor Flow,etc.)that make it easy to quickly code and deploy DN Ns. Conceptually, it is helpful to divide neural networks into four categories: (i) general purpose neural networks for supervised learning,(ii)neural networks designed specifically for image processing,the most prominent example of this class being Convolutional Neural Networks (CNN s), (iii) neural networks for sequential data such as Recurrent Neural Networks (RN Ns), and (iv) neural networks for unsupervised learning such as Deep Bolt z mann Machines. Here, we will limit our discussions to the first two categories (unsupervised learning is discussed later in the review). Though increasingly important for many applications such as audio and speech recognition, for the sake of brevity, we omit a discussion of sequential data and RN Ns from this review. For an introduction to RN Ns and L STM networks see Chris Olah’s blog,https://cola h.g it hub.io/posts/2015-08-Understanding-LS TMs/,and Chapter13of(Bishop,2006)as well as the introduction toRN Ns in Chapter10of(Goodfellow et al.,2016)for sequential data. Due to the number of recent books on deep learning (see for example Michael Nielsen’s introductory online book (Nielsen, 2015) and the more advanced (Goodfellow et al., 2016)), the goal of this section is to give a high-level introduction to the basic ideas behind DN Ns, and provide some practical knowledge for coding simple neural nets for supervised learning tasks(see the accompanying Notebooks).This section assumes the reader is familiar with the basic concepts introduced in earlier sections on logistic and linear regression.Throughout,we strive to provide intuition behind the inner workings of DN Ns,as well as highlight limitations of present-day algorithms. The influx of corporate and industrial interests has rapidly transformed the field in the last few years. This massive influx of money and researchers has given rise to new dogmas and best practices that change rapidly. As with most intellectual fields experiencing rapid expansion,many commonly accepted heuristics many turnout not to be as powerful as thought(Wilson et al.,2017),and widely held beliefs not as universal as once imagined(Lee et al.,2017;Zhang et al., 2016). This is especially true in modern neural networks where results are largely empirical and heuristic and lack the firm footing of many earlier machine learning methods.For this reason,in this review we have chosen to emphasize tried</p>
 <p>and true fundamentals,while pointing out what,from our current vantage point,seem like promising new techniques.The field is rapidly evolving and readers are urged to read papers and to implement these algorithms themselves in order to gain a deep appreciation for the incredible power of modern neural networks,especially in the context of image,speech, and natural language processing,as well as limitations of the current methods. In physics,DN Ns and CNN s have already found numerous applications.In statistical physics,they have been applied to detect phase transitions in 2D Ising (Tanaka and To miya, 2017a) and Potts (Li et al., 2017) models, lattice gauge theories (Wetzel and Scherzer, 2017), and different phases of polymers (Wei et al., 2017). It has also been shown that deep neural networks can be used to learn free-energy landscapes(Sid ky and Whit mer,2017).At the sametime,methods from statistical physics have been applied to the field of deep learning to study the thermodynamic efficiency of learning rules(Gold t and Sei fert,2017),to explore the hypothesis space that DN Ns span,make analogies between training DN Ns and spin glasses(Bait y-Jes iet al.,2018;Bald as sie tal.,2017),and to characterize phase transitions with respect to network topology in terms of errors(Li and S aad,2017).In relativistic hydrodynamics,deep learning has been shown to capture features of non-linear evolution and has the potential to accelerate numerical simulations(Huan get al.,2018),while in mechanics CNN s have been used to predict eigenvalues of photon ic crystals(Fin ole tal.,2018).Deep CNN s were employed in lensing reconstruction of the cosmic microwave background(Cal dei rae tal.,2018).Recently,DN Ns have been used to improve the efficiency of Monte-Carlo algorithms(She net al.,2018). Deep learning has also found interesting applications in quantum physics. Various quantum phase transitions (Arai et al.,2017;Broeck ere tal.,2017;I a kov le ve tal.,2018;Such s land and Wessel,2018;van Nieuw enburg et al.,2017b)can be detected and studied using DN Ns and CNN s, including the transverse-field Ising model (Oh tsuki and Oh tsuki, 2017), topological phases(Yoshio ka et al.,2017;Zhang et al.,2017a,b)and non-invasive topological quality control(Ca ioe tal., 2019).DN Ns found applications even in non-equilibrium many-body localization(Schindler et al.,2017;van Nieuw enburg et al., 2017a,b; Vender ley et al., 2017), and the characterization of photo excited quantum states (Shin jo et al., 2019). Experimentally, DN Ns were recently employed in cold atoms to identify critical points (Rem et al., 2018). Representing quantum states as DN Ns(Gao and Duan,2017;Gao et al.,2017;Levine et al.,2017;Saito and Kato,2017)and quantum state tomography (Tor lai et al., 2018) are among some of the impressive achievements to reveal the potential of deep learning to facilitate the study of quantum systems. Machine learning techniques involving neural networks were also used to study quantum and fault-tolerant error correction(Baire u there tal.,2017;Bre uck mann and Ni,2017;Chamber land and Ron a gh,2018;Dav a a sure net al.,2018;K rasta nov and Jiang,2017;Mask a rae tal.,2018),estimate rates of coherent and incoherent quantum processes(G rep lov a et al.,2017),to obtain spectra of1/f-noise in spin-qu bit devices(Zhang and Wang, 2018), and the recognition of state and charge configurations and auto-tuning in quantum dots (Kalan tre et al., 2017). In quantum information theory, it has been shown that one can perform gate decomposition s with the help of neural nets(Swaddle et al.,2017).In lattice quantum chromodynamics,DN Ns have been used to learn action parameters in regions of parameter space where principal component analysis fails (Shanahan et al., 2018). CNN s were applied to data from a high-energy experiment to identify particle interactions in sampling calorimeters used commonly in neutrino physics (Aur is a no et al., 2016). Last but not least, DN Ns also found place in the study of quantum control (Yang et al., 2017),and in scattering theory to learn the s-wave scattering length(Wu et al.,2018)of potentials.</p>
-<section id="neural-network-basics" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="neural-network-basics"><span class="header-section-number">4.3.1</span> 9.1 Neural network basics</h3>
+<section id="neural-network-basics" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="neural-network-basics"><span class="header-section-number">4.1.1</span> 9.1 Neural network basics</h3>
 <p>Neural networks(also called neural nets)are neural-inspired nonlinear models for supervised learning.As we will see, neural nets can be viewed as natural,more powerful extensions of supervised learning methods such as linear and logistic regression and soft-max methods. 9.1.1. The basic building block:neurons The basic unit of a neural net is a stylized ‘‘neuron’’ i that takes a vector of d input features x = (x ,x ,…,x ) and 1 2 d produces a scalar output a(x). A neural network consists of many such neurons stacked into layers, with the output of i one layer serving as the input for the next (see Fig. 35). The first layer in the neural net is called the input layer, the middle layers are often called‘‘hidden layers’’,and the final layer is called the output layer. The exact function a varies depending on the type of non-linearity used in the neural network.However,in essentially i all cases a can be decomposed into a linear operation that weights the relative importance of the various inputs,and a i non-linear transformationσ(z)which is usually the same for all neurons.The linear transformation in almost all neural i networks takes the form of a dot product with a set of neuron-specific weights w(i) = (w(i),w(i),…,w(i)) followed by 1 2 d re-centering with a neuron-specific bias b(i): z(i) =w(i)·x+b(i) =xT ·w(i), (117) where x=(1,x)and w(i) =(b(i),w(i)).In terms of z(i)and the non-linear functionσ(z),we can write the full input–output i function as a(x)=σ(z(i)), (118) i i see Fig.35.</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
@@ -432,6 +366,64 @@ Fig. 36
 </div>
 </div>
 </div>
+<blockquote class="blockquote">
+<p><strong>Practice →</strong> Generate the synthetic dataset the network will be trained on.</p>
+</blockquote>
+<div id="d71d2d67" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.cm <span class="im">as</span> cm</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># default font</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'font.size'</span>] <span class="op">=</span> <span class="dv">13</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># number of data points (samples)</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span><span class="dv">12000</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># size of each sample, number of features per sample</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>L<span class="op">=</span><span class="dv">8</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># box size</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>B<span class="op">=</span><span class="dv">10</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>mkdir DATA</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>run useful.py</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="4280f4e8" class="cell" data-tags="[]" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>TYPE<span class="op">=</span><span class="dv">4</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># set random seed for reproducibility</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">12345</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>),np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>),np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>))</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># generate random 2D data points rescaled by B and initialize label to zero</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>x,y <span class="op">=</span> (np.random.random((N,L)))<span class="op">*</span>B, np.zeros(N)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N):</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># label data according to a nonlinear function NF defined in useful.py</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    y[i] <span class="op">=</span> NF(x[i],B,TYPE)</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>plot_data(x,y)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>fn<span class="op">=</span>filename(<span class="st">"data"</span>,L,TYPE)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>np.savetxt(fn,x)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fn)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>fn<span class="op">=</span>filename(<span class="st">"labels"</span>,L,TYPE)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>np.savetxt(fn,y,fmt<span class="op">=</span><span class="st">"</span><span class="sc">%d</span><span class="st">"</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<blockquote class="blockquote">
+<p><strong>Theory →</strong> Forward and backward pass in pseudocode.</p>
+</blockquote>
 </section>
 </section>
 <section id="algorithm-forward-backward-pass-in-pseudocode" class="level2 unnumbered">
@@ -478,15 +470,15 @@ Fig. 36
 <span data-code-cell="annotated-cell-3" data-code-lines="12" data-code-annotation="7">Backpropagate the error one layer down — eq. (123) — by left-multiplying by <span class="math inline">\(W^l{}^{\top}\)</span> and modulating with <span class="math inline">\(\sigma'(z^{l-1})\)</span>.</span>
 </dd>
 </dl>
-<section id="implementation" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="implementation"><span class="header-section-number">4.3.2</span> Implementation</h3>
-</section>
+<blockquote class="blockquote">
+<p><strong>Practice →</strong> Keras model definition, training, evaluation and prediction grid.</p>
+</blockquote>
 </section>
 <section id="keras-tuner" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Keras Tuner</h1>
 <p>check https://keras.io/keras_tuner/getting_started/ or just pip install keras-tuner -q</p>
 <p>install tensorflow</p>
-<div id="e4d3cf9b" class="cell" data-execution_count="3">
+<div id="aa119e50" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -513,7 +505,7 @@ Fig. 36
 </div>
 <section id="read-data" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="read-data"><span class="header-section-number">5.1</span> Read data</h2>
-<div id="33103c0b" class="cell" data-execution_count="4">
+<div id="6ac05cbd" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Keras works with numpy arrays: just use them from the start</span></span>
@@ -577,7 +569,7 @@ Fig. 36
 </section>
 <section id="split-data-and-standardize-fit-on-train-only" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="split-data-and-standardize-fit-on-train-only"><span class="header-section-number">5.2</span> Split data and standardize (fit on train only)</h2>
-<div id="18e5d215" class="cell" data-execution_count="5">
+<div id="2d2a37e7" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> Standardize(x,m,s):</span>
@@ -621,7 +613,7 @@ Fig. 36
 </section>
 <section id="define-the-model-with-keras-tensorflow" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="define-the-model-with-keras-tensorflow"><span class="header-section-number">5.3</span> Define the model with Keras / Tensorflow</h2>
-<div id="23fb5e72" class="cell" data-execution_count="6">
+<div id="1add89a8" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reproducibility (?)</span></span>
@@ -673,7 +665,7 @@ Fig. 36
 </section>
 <section id="optimization-method-and-cost-function" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="optimization-method-and-cost-function"><span class="header-section-number">5.4</span> Optimization method and cost function</h2>
-<div id="078b1d49" class="cell" data-execution_count="7">
+<div id="57aee512" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model.<span class="bu">compile</span>(loss<span class="op">=</span><span class="st">'binary_crossentropy'</span>,</span>
@@ -682,7 +674,7 @@ Fig. 36
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>              metrics<span class="op">=</span>[<span class="st">'accuracy'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="ba77a4e2" class="cell" data-execution_count="8">
+<div id="024b48a6" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> visualkeras</span>
@@ -692,7 +684,7 @@ Fig. 36
 </section>
 <section id="training" class="level2" data-number="5.5">
 <h2 data-number="5.5" class="anchored" data-anchor-id="training"><span class="header-section-number">5.5</span> Training</h2>
-<div id="55bcebe1" class="cell" data-tags="[]" data-execution_count="9">
+<div id="7a5aa1e8" class="cell" data-tags="[]" data-execution_count="9">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fit <span class="op">=</span> model.fit(x_train, y_train,</span>
@@ -701,7 +693,7 @@ Fig. 36
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>               verbose<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="c7b6ffdb" class="cell" data-execution_count="10">
+<div id="7350f0a6" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig,AX<span class="op">=</span>plt.subplots(<span class="dv">1</span>,<span class="dv">2</span>,figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="fl">5.</span>))</span>
@@ -723,7 +715,7 @@ Fig. 36
 </section>
 <section id="evaluation-on-the-test-set" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Evaluation on the test set</h1>
-<div id="fd345079" class="cell" data-execution_count="11">
+<div id="300a2410" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>test_loss, test_acc <span class="op">=</span> model.evaluate(x_test, y_test, verbose<span class="op">=</span><span class="dv">0</span>)</span>
@@ -733,7 +725,7 @@ Fig. 36
 </div>
 <section id="grid-to-show-preditions" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="grid-to-show-preditions"><span class="header-section-number">6.1</span> Grid to show preditions</h2>
-<div id="e4586ac8" class="cell" data-execution_count="12">
+<div id="2f1770b6" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dX <span class="op">=</span> <span class="fl">.1</span></span>
@@ -768,7 +760,7 @@ Fig. 36
 <span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"remember: these are 2 out of L=</span><span class="sc">{</span>L<span class="sc">}</span><span class="ss"> dimensions, of which L-2 contain random noise"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="8f92ddeb" class="cell" data-execution_count="13">
+<div id="9fce4e34" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># displays the plot</span></span>
@@ -1257,22 +1249,25 @@ Fig. 36
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data generation</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_generate_data_DNN_2026.qmd &gt;}}</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>The theory in this chapter is extracted from Mehta *et al.* (Physics</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>Reports 810, 2019), §9 on feed-forward DNNs. The full review lives</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>under <span class="in">`2sem/LCPB/source/`</span>.</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Code</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Theory →** Neural-network basics and the feed-forward architecture.</span></span>
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="fu">### Theory</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_theory-dnn-intro.qmd &gt;}}</span>
 <span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>Extracted from Mehta *et al.* (Physics Reports 810, 2019), §9 on</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>feed-forward DNNs. The full review lives under <span class="in">`2sem/LCPB/source/`</span>.</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_theory-dnn.qmd &gt;}}</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="fu">### Implementation</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_analise_data_DNN_2026.qmd &gt;}}</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Practice →** Generate the synthetic dataset the network will be trained on.</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_generate_data_DNN_2026.qmd &gt;}}</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Theory →** Forward and backward pass in pseudocode.</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_theory-dnn-algos.qmd &gt;}}</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Practice →** Keras model definition, training, evaluation and prediction grid.</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_analise_data_DNN_2026.qmd &gt;}}</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <style>
@@ -1312,6 +1307,47 @@ Fig. 36
     if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
       if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
     }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
   });
 </script>
 

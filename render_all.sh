@@ -3,10 +3,14 @@
 # pages + the umbrella website.
 #
 # Usage:
-#   ./render_all.sh                 # full rebuild
-#   ./render_all.sh --no-gen        # skip generate_listing.py
-#   ./render_all.sh --no-projects   # skip rendering project HTML pages
-#   ./render_all.sh --only-projects # only render the projects (and mirror)
+#   ./render_all.sh                       # full rebuild
+#   ./render_all.sh --no-gen              # skip generate_listing.py
+#   ./render_all.sh --no-projects         # skip rendering project HTML pages
+#   ./render_all.sh --only-projects       # only render the projects (and mirror)
+#   ./render_all.sh --no-books            # skip every theory book
+#   ./render_all.sh --no-site             # skip the umbrella website
+#   ./render_all.sh --skip-course PCN     # skip one course (repeatable)
+#   ./render_all.sh --skip-course PCN,IQH # skip multiple (comma-separated)
 #
 # Render order:
 #   1. generate_listing.py    — writes _metadata.yml, site/_quarto.yml,
@@ -31,16 +35,51 @@ DO_GEN=1
 DO_BOOKS=1
 DO_PROJECTS=1
 DO_SITE=1
-for arg in "$@"; do
-    case "$arg" in
+SKIP_COURSES=()  # list of course codes to exclude from the render pipeline
+
+# A small helper: is "$1" in the SKIP_COURSES array?
+is_skipped() {
+    local needle="$1"
+    local item
+    for item in "${SKIP_COURSES[@]}"; do
+        [[ "$item" == "$needle" ]] && return 0
+    done
+    return 1
+}
+
+# Parse arguments; --skip-course accepts a comma-separated value as its argument
+# (next positional argument). It is repeatable so passing the flag twice is fine.
+while (( "$#" )); do
+    case "$1" in
         --no-gen)         DO_GEN=0 ;;
         --no-projects)    DO_PROJECTS=0 ;;
         --only-projects)  DO_GEN=0; DO_BOOKS=0; DO_SITE=0 ;;
         --no-books)       DO_BOOKS=0 ;;
         --no-site)        DO_SITE=0 ;;
-        *) echo "unknown flag: $arg" ; exit 2 ;;
+        --skip-course)
+            shift
+            [[ -z "${1-}" ]] && { echo "--skip-course needs a value"; exit 2; }
+            IFS=',' read -ra _tmp <<< "$1"
+            for c in "${_tmp[@]}"; do
+                c="${c// /}"          # strip stray whitespace
+                [[ -n "$c" ]] && SKIP_COURSES+=("$c")
+            done
+            ;;
+        --skip-course=*)
+            IFS=',' read -ra _tmp <<< "${1#*=}"
+            for c in "${_tmp[@]}"; do
+                c="${c// /}"
+                [[ -n "$c" ]] && SKIP_COURSES+=("$c")
+            done
+            ;;
+        *) echo "unknown flag: $1" ; exit 2 ;;
     esac
+    shift
 done
+
+if (( ${#SKIP_COURSES[@]} )); then
+    echo "▶ Skipping courses: ${SKIP_COURSES[*]}"
+fi
 
 # ── Resolve paths ────────────────────────────────────────────────────────────
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"  # <root>/Notes
@@ -112,6 +151,37 @@ if (( DO_BOOKS )); then
             [[ -f "$notes_dir/_quarto.yml" ]] || continue
 
             course_name="$(basename "$course_path")"
+            if is_skipped "$course_name"; then
+                echo "──────────────────────────────────────────────────"
+                echo "  ⤼   $sem / $course_name  (skipped)"
+                echo "──────────────────────────────────────────────────"
+                echo ""
+                continue
+            fi
+
+            # ── Per-course pre-render hooks ───────────────────────────
+            # MAPDA appends the standalone landscape cheatsheet at the end
+            # of the downloadable PDF (see notes/chapters/cheatsheet.qmd,
+            # which \includepdf's it). The cheatsheet must therefore be
+            # compiled *before* the book render fires off.
+            if [[ "$sem/$course_name" == "1sem/MAPDA" ]]; then
+                cheat_tex="$course_path/projects/cheatsheet.tex"
+                if [[ -f "$cheat_tex" ]]; then
+                    echo "  📄  pre-compiling MAPDA cheatsheet"
+                    pushd "$course_path/projects" > /dev/null
+                    if command -v latexmk &>/dev/null; then
+                        latexmk -pdf -interaction=nonstopmode -halt-on-error \
+                            cheatsheet.tex >/dev/null 2>&1 \
+                            || echo "  ⚠   cheatsheet build failed (continuing without it)"
+                    else
+                        pdflatex -interaction=nonstopmode -halt-on-error \
+                            cheatsheet.tex >/dev/null 2>&1 \
+                            || echo "  ⚠   cheatsheet build failed (continuing without it)"
+                    fi
+                    popd > /dev/null
+                fi
+            fi
+
             echo "──────────────────────────────────────────────────"
             echo "  📖  $sem / $course_name  (theory)"
             echo "──────────────────────────────────────────────────"

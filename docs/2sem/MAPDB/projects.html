@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -114,6 +149,10 @@ ul.task-list li input[type="checkbox"] {
  <span class="dropdown-text"> MAPDA · Theory</span></a>
   </li>  
         <li>
+    <a class="dropdown-item" href="../../1sem/MAPDA/projects.html">
+ <span class="dropdown-text"> MAPDA · Projects</span></a>
+  </li>  
+        <li>
     <a class="dropdown-item" href="../../1sem/ML/index.html">
  <span class="dropdown-text"> ML · Theory</span></a>
   </li>  
@@ -200,11 +239,17 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#quax-streaming-data-processing-pipeline" id="toc-quax-streaming-data-processing-pipeline" class="nav-link active" data-scroll-target="#quax-streaming-data-processing-pipeline">QUAX Streaming Data Processing Pipeline</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content column-page-left" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -213,7 +258,7 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<div class="quarto-title-meta column-page">
+<div class="quarto-title-meta column-page-left">
 
     
   
@@ -227,9 +272,271 @@ ul.task-list li input[type="checkbox"] {
 
 <p><a href="index.html">← MAPDB notes</a> · <a href="../../index.html">← Back to portal</a></p>
 <p>The project work for <strong>MAPDB</strong> lives in its own repository.</p>
-<p><a href="https://github.com/USERNAME/REPO" class="uri">https://github.com/USERNAME/REPO</a> <em>(update this URL in <code>Notes/_projects_github.yml</code>)</em></p>
+<p><a href="https://github.com/PhyAMR/MAPDB-projects" class="btn btn-outline-dark btn-lg" role="button"><i class="bi bi-github"></i>&nbsp; Open the MAPDB projects on GitHub</a></p>
+<p><a href="https://github.com/PhyAMR/MAPDB-projects" class="uri">https://github.com/PhyAMR/MAPDB-projects</a></p>
+<hr>
+<section id="quax-streaming-data-processing-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="quax-streaming-data-processing-pipeline">QUAX Streaming Data Processing Pipeline</h2>
+<section id="overview" class="level3">
+<h3 class="anchored" data-anchor-id="overview">Overview</h3>
+<p>This project implements a <strong>quasi real-time streaming pipeline</strong> for processing data from the QUAX experiment. The main goal is to build a system capable of:</p>
+<ul>
+<li>Processing detector data in near real-time</li>
+<li>Monitoring detector performance live</li>
+<li>Handling large-scale continuous data streams efficiently</li>
+</ul>
+<p>The system is designed as a <strong>streaming ETL pipeline</strong> using Kafka + distributed processing (Dask or PySpark) + live visualization tools.</p>
+<hr>
+</section>
+<section id="scientific-context" class="level3">
+<h3 class="anchored" data-anchor-id="scientific-context">Scientific Context</h3>
+<p>The QUAX experiment searches for <strong>axions</strong>, hypothetical particles proposed to solve the strong CP problem in Quantum Chromodynamics (QCD). Axions are also a potential dark matter candidate.</p>
+<p>Astrophysical constraints suggest an axion mass range:</p>
+<ul>
+<li>( 1 ,eV &lt; m &lt; 10 , meV )</li>
+</ul>
+<section id="detection-principle" class="level4">
+<h4 class="anchored" data-anchor-id="detection-principle">Detection Principle</h4>
+<p>QUAX uses:</p>
+<ul>
+<li>A <strong>copper cavity</strong></li>
+<li>A <strong>static magnetic field (8.1 T)</strong></li>
+<li>Cryogenic temperatures (~150 mK)</li>
+</ul>
+<p>Axions may couple to photons and produce a weak <strong>radio-frequency signal</strong>, amplified using a <strong>Josephson parametric amplifier</strong>.</p>
+<hr>
+</section>
+</section>
+<section id="data-acquisition" class="level3">
+<h3 class="anchored" data-anchor-id="data-acquisition">Data Acquisition</h3>
+<p>The experiment generates two synchronized data streams:</p>
+<ul>
+<li><code>duck_i</code> → In-phase component (I)</li>
+<li><code>duck_q</code> → Quadrature component (Q)</li>
+</ul>
+<p>Each sample:</p>
+<ul>
+<li>32-bit float (little-endian)</li>
+<li>ADC sampling rate: <strong>2 MS/s</strong></li>
+<li>Data throughput: <strong>128 Mbps (~16 MB/s)</strong></li>
+</ul>
+<p>Each file contains:</p>
+<ul>
+<li>( 2^{23} ) samples</li>
+<li>Duration per file pair: ~4.2 seconds</li>
+</ul>
+<p>A full run produces thousands of scans over long periods (hours to weeks).</p>
+<hr>
+</section>
+<section id="data-structure" class="level3">
+<h3 class="anchored" data-anchor-id="data-structure">Data Structure</h3>
+<p>Files are stored in a CloudVeneto S3 bucket:</p>
+<ul>
+<li>Bucket: <code>quax</code></li>
+<li>Access: Cloud object storage (Swift-compatible)</li>
+</ul>
+<p>Each dataset consists of:</p>
+<ul>
+<li><code>duck_i.dat</code></li>
+<li><code>duck_q.dat</code></li>
+</ul>
+<p>Each pair represents a continuous acquisition segment.</p>
+<hr>
+</section>
+<section id="data-processing-pipeline" class="level3">
+<h3 class="anchored" data-anchor-id="data-processing-pipeline">Data Processing Pipeline</h3>
+<p>The processing consists of two main steps:</p>
+<section id="fft-per-scan" class="level4">
+<h4 class="anchored" data-anchor-id="fft-per-scan">1. FFT per Scan</h4>
+<p>Each scan is transformed from time domain to frequency domain using:</p>
+<ul>
+<li>FFT size: ( n_{bins} = 2^{11} = 2048 )</li>
+<li>Full bandwidth: <strong>-1 MHz to 1 MHz</strong></li>
+</ul>
+<p>Each file produces:</p>
+<ul>
+<li>~4096 FFTs per batch</li>
+</ul>
+</section>
+<section id="averaging" class="level4">
+<h4 class="anchored" data-anchor-id="averaging">2. Averaging</h4>
+<p>For each batch:</p>
+<ul>
+<li>Compute FFT for each scan</li>
+<li>Average all FFTs</li>
+<li>Compute standard deviation per frequency bin</li>
+</ul>
+<p>Output:</p>
+<ul>
+<li>Averaged power spectrum</li>
+<li>Error estimates per bin</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="streaming-architecture" class="level3">
+<h3 class="anchored" data-anchor-id="streaming-architecture">Streaming Architecture</h3>
+<p>The system is built as a <strong>Kafka-based pipeline</strong>:</p>
+<pre><code>Kafka Producer → Kafka Topic (raw data) → Dask/PySpark → Kafka Topic (processed data) → Consumer Dashboard</code></pre>
+<section id="components" class="level4">
+<h4 class="anchored" data-anchor-id="components">Components</h4>
+<section id="data-emulator-producer" class="level5">
+<h5 class="anchored" data-anchor-id="data-emulator-producer">1. Data Emulator (Producer)</h5>
+<ul>
+<li>Reads stored <code>.dat</code> files</li>
+<li>Simulates real-time acquisition</li>
+<li>Emits file pairs every ~5 seconds (configurable)</li>
+</ul>
+</section>
+<section id="stream-processing-layer" class="level5">
+<h5 class="anchored" data-anchor-id="stream-processing-layer">2. Stream Processing Layer</h5>
+<p>Implemented with:</p>
+<ul>
+<li>Dask (preferred) or PySpark</li>
+</ul>
+<p>Responsibilities:</p>
+<ul>
+<li>Decode binary files</li>
+<li>Split into scans</li>
+<li>Perform FFT in parallel</li>
+<li>Compute averaged spectrum</li>
+<li>Generate summary statistics</li>
+</ul>
+<p>Output format (example):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"average"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"frequency"</span><span class="fu">:</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"value"</span><span class="fu">:</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"rms"</span><span class="fu">:</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Send results to Kafka topic</li>
+</ul>
+<hr>
+</section>
+<section id="live-monitoring-dashboard" class="level5">
+<h5 class="anchored" data-anchor-id="live-monitoring-dashboard">3. Live Monitoring Dashboard</h5>
+<p>A consumer application:</p>
+<ul>
+<li><p>Reads processed Kafka topic</p></li>
+<li><p>Updates plots every ~5 seconds</p></li>
+<li><p>Displays:</p>
+<ul>
+<li>Current batch spectrum</li>
+<li>Error bars (RMS)</li>
+<li>Optional cumulative spectrum</li>
+</ul></li>
+</ul>
+<p>Recommended tools:</p>
+<ul>
+<li>matplotlib / pyplot</li>
+<li>Bokeh (for interactive dashboard)</li>
+</ul>
+<hr>
+</section>
+</section>
+</section>
+<section id="system-goals" class="level3">
+<h3 class="anchored" data-anchor-id="system-goals">System Goals</h3>
+<section id="scientific-goals" class="level4">
+<h4 class="anchored" data-anchor-id="scientific-goals">Scientific Goals</h4>
+<ul>
+<li>Detect potential axion-induced spectral excess</li>
+<li>Monitor detector stability in real time</li>
+<li>Identify anomalies during long acquisition runs</li>
+</ul>
+</section>
+<section id="engineering-goals" class="level4">
+<h4 class="anchored" data-anchor-id="engineering-goals">Engineering Goals</h4>
+<ul>
+<li>Build a scalable streaming ETL system</li>
+<li>Ensure near real-time processing</li>
+<li>Handle high-throughput scientific data</li>
+</ul>
+<hr>
+</section>
+</section>
+<section id="why-streaming" class="level3">
+<h3 class="anchored" data-anchor-id="why-streaming">Why Streaming?</h3>
+<p>This approach is necessary because:</p>
+<ul>
+<li>Data is produced continuously at high rate</li>
+<li>Storage on DAQ servers is limited</li>
+<li>Long runs require live validation</li>
+<li>Early anomaly detection is critical</li>
+</ul>
+<hr>
+</section>
+<section id="development-strategy" class="level3">
+<h3 class="anchored" data-anchor-id="development-strategy">Development Strategy</h3>
+<p>Recommended workflow:</p>
+<ol type="1">
+<li>Implement processing for a <strong>single batch (static)</strong></li>
+<li>Extend to <strong>batch processing with Dask/PySpark</strong></li>
+<li>Add <strong>Kafka streaming layer</strong></li>
+<li>Build <strong>live dashboard consumer</strong></li>
+<li>Optimize throughput and latency</li>
+</ol>
+<hr>
+</section>
+<section id="hints" class="level3">
+<h3 class="anchored" data-anchor-id="hints">Hints</h3>
+<ul>
+<li>Start simple before scaling to streaming</li>
+<li>Use low-level APIs (Dask Bags / RDDs) initially if needed</li>
+<li>Ensure efficient binary parsing (<code>struct.unpack</code>)</li>
+<li>Design Kafka messages carefully (avoid oversized payloads)</li>
+<li>Keep pipeline modular for debugging</li>
+</ul>
+<hr>
+</section>
+<section id="final-architecture-summary" class="level3">
+<h3 class="anchored" data-anchor-id="final-architecture-summary">Final Architecture Summary</h3>
+<ul>
+<li><strong>Producer</strong> → simulates DAQ stream</li>
+<li><strong>Kafka topic (raw)</strong> → buffers file pairs</li>
+<li><strong>Distributed processing layer</strong> → FFT + averaging</li>
+<li><strong>Kafka topic (processed)</strong> → results stream</li>
+<li><strong>Consumer dashboard</strong> → real-time visualization</li>
+</ul>
+<pre class="mermaid"><code>flowchart LR
+
+%% =====================
+%% DATA GENERATION
+%% =====================
+A[QUAX DAQ Archive\n(.dat files: duck_i / duck_q)] --&gt; B[Stream Emulator Producer]
+
+B --&gt;|Kafka topic: raw_stream| C[(Kafka Broker\nraw data topic)]
+
+%% =====================
+%% PROCESSING LAYER
+%% =====================
+C --&gt; D[Dask / PySpark Cluster]
+
+D --&gt; D1[Binary Parser\n(struct unpack)]
+D1 --&gt; D2[Scan Segmentation]
+D2 --&gt; D3[FFT per scan\n(2048 bins)]
+D3 --&gt; D4[Batch Averaging\n+ RMS computation]
+
+D4 --&gt;|processed spectra| E[(Kafka Broker\nresults topic)]
+
+%% =====================
+%% CONSUMPTION LAYER
+%% =====================
+E --&gt; F[Live Consumer Service]
+
+F --&gt; F1[Real-time Plotter\nMatplotlib / Bokeh]
+F1 --&gt; G[Live Dashboard\nDetector Monitoring]
+
+%% =====================
+%% OPTIONAL STORAGE
+%% =====================
+E --&gt; H[(Optional Storage\nHDFS / S3 / Filesystem)]</code></pre>
 
 
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

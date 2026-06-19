@@ -281,21 +281,15 @@ window.Quarto = {
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#data-generation" id="toc-data-generation" class="nav-link active" data-scroll-target="#data-generation"><span class="header-section-number">6.1</span> Data generation</a></li>
-  <li><a href="#code" id="toc-code" class="nav-link" data-scroll-target="#code"><span class="header-section-number">6.2</span> Code</a>
-  <ul class="collapse">
-  <li><a href="#theory" id="toc-theory" class="nav-link" data-scroll-target="#theory"><span class="header-section-number">6.2.1</span> Theory</a></li>
-  <li><a href="#bagging" id="toc-bagging" class="nav-link" data-scroll-target="#bagging"><span class="header-section-number">6.2.2</span> 8.2 Bagging</a></li>
-  </ul></li>
+  <li><a href="#bagging" id="toc-bagging" class="nav-link active" data-scroll-target="#bagging"><span class="header-section-number">6.0.1</span> 8.2 Bagging</a></li>
   <li><a href="#algorithm-gradient-boosting-in-pseudocode" id="toc-algorithm-gradient-boosting-in-pseudocode" class="nav-link" data-scroll-target="#algorithm-gradient-boosting-in-pseudocode">Algorithm: gradient boosting in pseudocode</a>
   <ul class="collapse">
-  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation"><span class="header-section-number">6.2.3</span> Implementation</a></li>
-  <li><a href="#scatter-plot-on-ij-feature-plane" id="toc-scatter-plot-on-ij-feature-plane" class="nav-link" data-scroll-target="#scatter-plot-on-ij-feature-plane"><span class="header-section-number">6.2.4</span> Scatter plot on [i,j] feature plane</a></li>
-  <li><a href="#classify" id="toc-classify" class="nav-link" data-scroll-target="#classify"><span class="header-section-number">6.2.5</span> Classify</a></li>
+  <li><a href="#scatter-plot-on-ij-feature-plane" id="toc-scatter-plot-on-ij-feature-plane" class="nav-link" data-scroll-target="#scatter-plot-on-ij-feature-plane"><span class="header-section-number">6.0.2</span> Scatter plot on [i,j] feature plane</a></li>
+  <li><a href="#classify" id="toc-classify" class="nav-link" data-scroll-target="#classify"><span class="header-section-number">6.0.3</span> Classify</a></li>
   </ul></li>
-  <li><a href="#xgboost" id="toc-xgboost" class="nav-link" data-scroll-target="#xgboost"><span class="header-section-number">6.3</span> XGBoost</a></li>
-  <li><a href="#gradient-boosting-from-scikit-learn" id="toc-gradient-boosting-from-scikit-learn" class="nav-link" data-scroll-target="#gradient-boosting-from-scikit-learn"><span class="header-section-number">6.4</span> Gradient Boosting from Scikit-learn</a></li>
-  <li><a href="#adaboost" id="toc-adaboost" class="nav-link" data-scroll-target="#adaboost"><span class="header-section-number">6.5</span> AdaBoost</a></li>
+  <li><a href="#xgboost" id="toc-xgboost" class="nav-link" data-scroll-target="#xgboost"><span class="header-section-number">6.1</span> XGBoost</a></li>
+  <li><a href="#gradient-boosting-from-scikit-learn" id="toc-gradient-boosting-from-scikit-learn" class="nav-link" data-scroll-target="#gradient-boosting-from-scikit-learn"><span class="header-section-number">6.2</span> Gradient Boosting from Scikit-learn</a></li>
+  <li><a href="#adaboost" id="toc-adaboost" class="nav-link" data-scroll-target="#adaboost"><span class="header-section-number">6.3</span> AdaBoost</a></li>
   </ul>
 </nav>
     </div>
@@ -321,64 +315,10 @@ window.Quarto = {
 </header>
 
 
-<section id="data-generation" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="data-generation"><span class="header-section-number">6.1</span> Data generation</h2>
-<div id="623f649d" class="cell" data-execution_count="1">
-<details class="code-fold">
-<summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.cm <span class="im">as</span> cm</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># number of data</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span><span class="dv">5000</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># size of each sample</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>L<span class="op">=</span><span class="dv">4</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># box size</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>B<span class="op">=</span><span class="dv">100</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>mkdir DATA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div id="b6abb2c0" class="cell" data-tags="[]" data-execution_count="2">
-<details class="code-fold">
-<summary>Show code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f(x):</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    Q<span class="op">=</span>np.heaviside(np.sin(np.pi<span class="op">*</span>(x[<span class="dv">1</span>]<span class="op">+</span><span class="dv">2</span><span class="op">*</span>x[<span class="dv">0</span>])<span class="op">*</span>(<span class="dv">2</span><span class="op">*</span>x[<span class="dv">1</span>]<span class="op">-</span>x[<span class="dv">0</span>])<span class="op">/</span><span class="dv">2000</span>),<span class="dv">0</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Q</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> filename(s):</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">"DATA/"</span><span class="op">+</span>s<span class="op">+</span><span class="st">".dat"</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># random seed for reproducibility</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">12345</span>)</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>),np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>),np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>))</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>x,y <span class="op">=</span> (np.random.random((N,L))<span class="op">-</span><span class="fl">0.5</span>)<span class="op">*</span>B, np.zeros(N).astype(<span class="bu">int</span>)</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N):</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># label data according to a nonlinear function "f" using only the first two features</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    y[i] <span class="op">=</span> f(x[i,:<span class="dv">2</span>])</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">5</span>,<span class="dv">5</span>))</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>plt.scatter(x[:,<span class="dv">0</span>],x[:,<span class="dv">1</span>],c<span class="op">=</span>y,s<span class="op">=</span><span class="dv">4</span>,cmap<span class="op">=</span><span class="st">"winter"</span>)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>plt.show</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>fn<span class="op">=</span>filename(<span class="st">"x_XGB_26"</span>)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fn)</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>np.savetxt(fn,x,fmt<span class="op">=</span><span class="st">"</span><span class="sc">%.3f</span><span class="st">"</span>)</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>fn<span class="op">=</span>filename(<span class="st">"y_XGB_26"</span>)</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>np.savetxt(fn,y,fmt<span class="op">=</span><span class="st">"</span><span class="sc">%d</span><span class="st">"</span>)</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-</section>
-<section id="code" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="code"><span class="header-section-number">6.2</span> Code</h2>
-<section id="theory" class="level3" data-number="6.2.1">
-<h3 data-number="6.2.1" class="anchored" data-anchor-id="theory"><span class="header-section-number">6.2.1</span> Theory</h3>
-<p>Extracted from Mehta <em>et al.</em> (Physics Reports 810, 2019), §8 on combining models — boosting and gradient boosting. The full review lives under <code>2sem/LCPB/source/</code>.</p>
+<p>The theory in this chapter is extracted from Mehta <em>et al.</em> (Physics Reports 810, 2019), §8 on combining models — boosting and gradient boosting. The full review lives under <code>2sem/LCPB/source/</code>.</p>
+<blockquote class="blockquote">
+<p><strong>Theory →</strong> Bias–variance decomposition for ensembles and bagging.</p>
+</blockquote>
 <p>[gˆ L A(x i ,{θ})]−gˆ L A(x i ,{θ}))2] + 2E L,θ [(E L,θ [gˆ L A(x i ,{θ})]−gˆ L A(x i ,{θ}))(f(x i )−E L,θ [gˆ L A(x i ,{θ})])] = (f(x i )−E L,θ [gˆ L A(x i ,{θ})])2+E L,θ [(gˆ L A(x i ,{θ})−E L,θ [gˆ L A(x i ,{θ})])2] ≡ Bias2(x)+Var(x), (92) i i where we have defined the bias of an aggregate predictor as Bias2(x)≡(f(x)−E L,θ [gˆ L A(x,{θ})])2 (93) and the variance as Var(x)≡E L,θ [(gˆ L A(x,{θ})−E L,θ [gˆ L A(x,{θ})])2]. (94) So far the calculation for ensembles is almost identical to that of a single estimator. However, since the aggregate estimator is a sum of estimators,its variance implicitly depends on the correlations between the individual estimators in the ensemble.Using the definition of the aggregate estimator Eq.(88)and the definitions in Eq.(89),we see that Var(x) = E L,θ [(gˆ L A(x,{θ})−E L,θ [gˆ L A(x,{θ})])2] ⎡ ⎤ 1 ∑ ∑ = M2 ⎣ E L,θ [gˆ L (x,θ m )gˆ L (x,θ m′)]−M2 [µ L,θ(x)]2⎦ m,m′ i 1−ρ(x) = ρ(x)σ L 2 ,θ + M σ L 2 ,θ . (95)</p>
 <div class="callout callout-style-simple callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="true" aria-label="Toggle callout">
@@ -414,11 +354,65 @@ Fig. 29
 </div>
 </div>
 <p>Finally, we note that although the discussion above was derived in the context of continuous predictors such as regression, the basic intuition behind using ensembles applies equally well to classification tasks. Using an ensemble allows one to reduce the variance by averaging the result of many independent class if i ers. As with regression, this procedure works best for unstable predictors for which errors are dominated by variance due to finite sampling rather than bias.</p>
-</section>
-<section id="bagging" class="level3" data-number="6.2.2">
-<h3 data-number="6.2.2" class="anchored" data-anchor-id="bagging"><span class="header-section-number">6.2.2</span> 8.2 Bagging</h3>
+<section id="bagging" class="level3" data-number="6.0.1">
+<h3 data-number="6.0.1" class="anchored" data-anchor-id="bagging"><span class="header-section-number">6.0.1</span> 8.2 Bagging</h3>
 <p>BAGGing,or Bootstrap AGGregation,first introduced by Leo Bre iman,is one of the most widely employed and simplest ensemble-inspired methods (Bre iman, 1996). Imagine we have a very large data set L that we could partition into M smaller datasets which we label{L ,…,L }.If each partition is sufficiently large to learn a predictor,we can create an 1 M ensemble aggregate predictor composed of predictors trained on each subset of the data.For continuous predictors like regression,this is just the average of all the individual predictors: M 1 ∑ gˆA(x)= g (x). (98) L M Li i=1 For classification tasks where each predictor predicts a class label j ∈ {1,…,J}, this is just a majority vote of all the predictors, M ∑ gˆA(x)=arg max I[g (x)=j], (99) L Li</p>
-</section>
+<blockquote class="blockquote">
+<p><strong>Practice →</strong> Generate the synthetic classification dataset and visualise it.</p>
+</blockquote>
+<div id="442406e8" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.cm <span class="im">as</span> cm</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># number of data</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>N<span class="op">=</span><span class="dv">5000</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># size of each sample</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>L<span class="op">=</span><span class="dv">4</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># box size</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>B<span class="op">=</span><span class="dv">100</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>mkdir DATA</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="35875af2" class="cell" data-tags="[]" data-execution_count="2">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f(x):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    Q<span class="op">=</span>np.heaviside(np.sin(np.pi<span class="op">*</span>(x[<span class="dv">1</span>]<span class="op">+</span><span class="dv">2</span><span class="op">*</span>x[<span class="dv">0</span>])<span class="op">*</span>(<span class="dv">2</span><span class="op">*</span>x[<span class="dv">1</span>]<span class="op">-</span>x[<span class="dv">0</span>])<span class="op">/</span><span class="dv">2000</span>),<span class="dv">0</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Q</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> filename(s):</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">"DATA/"</span><span class="op">+</span>s<span class="op">+</span><span class="st">".dat"</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># random seed for reproducibility</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">12345</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>),np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>),np.random.randint(<span class="dv">0</span>,<span class="dv">10</span>))</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>x,y <span class="op">=</span> (np.random.random((N,L))<span class="op">-</span><span class="fl">0.5</span>)<span class="op">*</span>B, np.zeros(N).astype(<span class="bu">int</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N):</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># label data according to a nonlinear function "f" using only the first two features</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    y[i] <span class="op">=</span> f(x[i,:<span class="dv">2</span>])</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize <span class="op">=</span> (<span class="dv">5</span>,<span class="dv">5</span>))</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>plt.scatter(x[:,<span class="dv">0</span>],x[:,<span class="dv">1</span>],c<span class="op">=</span>y,s<span class="op">=</span><span class="dv">4</span>,cmap<span class="op">=</span><span class="st">"winter"</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>plt.show</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>fn<span class="op">=</span>filename(<span class="st">"x_XGB_26"</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fn)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>np.savetxt(fn,x,fmt<span class="op">=</span><span class="st">"</span><span class="sc">%.3f</span><span class="st">"</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>fn<span class="op">=</span>filename(<span class="st">"y_XGB_26"</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>np.savetxt(fn,y,fmt<span class="op">=</span><span class="st">"</span><span class="sc">%d</span><span class="st">"</span>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(fn)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<blockquote class="blockquote">
+<p><strong>Theory →</strong> Gradient boosting in pseudocode.</p>
+</blockquote>
 </section>
 <section id="algorithm-gradient-boosting-in-pseudocode" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="algorithm-gradient-boosting-in-pseudocode">Algorithm: gradient boosting in pseudocode</h2>
@@ -455,9 +449,10 @@ Fig. 29
 <span data-code-cell="annotated-cell-3" data-code-lines="7" data-code-annotation="6">After <span class="math inline">\(M\)</span> rounds return the additive ensemble <span class="math inline">\(F_M(x)=\sum_m \eta\gamma_m h_m(x)\)</span>.</span>
 </dd>
 </dl>
-<section id="implementation" class="level3" data-number="6.2.3">
-<h3 data-number="6.2.3" class="anchored" data-anchor-id="implementation"><span class="header-section-number">6.2.3</span> Implementation</h3>
-<div id="7449d725" class="cell" data-execution_count="3">
+<blockquote class="blockquote">
+<p><strong>Practice →</strong> Train and compare XGBoost, scikit-learn gradient boosting, and AdaBoost.</p>
+</blockquote>
+<div id="f3cc90c0" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -478,7 +473,7 @@ Fig. 29
 <span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'font.size'</span>] <span class="op">=</span> <span class="dv">13</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="d8c6f938" class="cell" data-execution_count="4">
+<div id="138b8940" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">12345</span>)</span>
@@ -498,10 +493,9 @@ Fig. 29
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"N=</span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">, N_train=</span><span class="sc">{</span>N_train<span class="sc">}</span><span class="ss">, L=</span><span class="sc">{</span>L<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-</section>
-<section id="scatter-plot-on-ij-feature-plane" class="level3" data-number="6.2.4">
-<h3 data-number="6.2.4" class="anchored" data-anchor-id="scatter-plot-on-ij-feature-plane"><span class="header-section-number">6.2.4</span> Scatter plot on [i,j] feature plane</h3>
-<div id="705cef3c" class="cell" data-execution_count="5">
+<section id="scatter-plot-on-ij-feature-plane" class="level3" data-number="6.0.2">
+<h3 data-number="6.0.2" class="anchored" data-anchor-id="scatter-plot-on-ij-feature-plane"><span class="header-section-number">6.0.2</span> Scatter plot on [i,j] feature plane</h3>
+<div id="03d337ba" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> scat(ax,x,y,i<span class="op">=</span><span class="dv">0</span>,j<span class="op">=</span><span class="dv">1</span>,s<span class="op">=</span><span class="dv">4</span>,title<span class="op">=</span><span class="st">""</span>):</span>
@@ -525,7 +519,7 @@ Fig. 29
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="bce70e79" class="cell" data-execution_count="6">
+<div id="344f7808" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> classify(clf<span class="op">=</span>GradientBoostingClassifier(),show<span class="op">=</span><span class="va">False</span>):</span>
@@ -573,15 +567,15 @@ Fig. 29
 </details>
 </div>
 </section>
-<section id="classify" class="level3" data-number="6.2.5">
-<h3 data-number="6.2.5" class="anchored" data-anchor-id="classify"><span class="header-section-number">6.2.5</span> Classify</h3>
+<section id="classify" class="level3" data-number="6.0.3">
+<h3 data-number="6.0.3" class="anchored" data-anchor-id="classify"><span class="header-section-number">6.0.3</span> Classify</h3>
 <p>If the “objective” hyperparameter is left unspecified, XGBClassifier looks at the data and chooses automatically the loss functions and the evaluation metrics (–&gt; WARNING)</p>
 </section>
 </section>
-<section id="xgboost" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="xgboost"><span class="header-section-number">6.3</span> XGBoost</h2>
+<section id="xgboost" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="xgboost"><span class="header-section-number">6.1</span> XGBoost</h2>
 <p>https://xgboost.readthedocs.io/en/stable/python/python_api.html</p>
-<div id="0e60bc68" class="cell" data-execution_count="7">
+<div id="88123f72" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> XGBClassifier(seed<span class="op">=</span><span class="dv">1</span>,</span>
@@ -594,7 +588,7 @@ Fig. 29
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>classify(model, show<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="96e99703" class="cell" data-execution_count="8">
+<div id="3deab43d" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># https://machinelearningmastery.com/feature-importance-and-feature-selection-with-xgboost-in-python/</span></span>
@@ -629,7 +623,7 @@ Fig. 29
 ‘total_gain’: the total gain across all splits the feature is used in.
 
 ‘total_cover’: the total coverage across all splits the feature is used in.</code></pre>
-<div id="8263ffe8" class="cell" data-execution_count="9">
+<div id="8f5cfbed" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># if the importance type is “total_gain”, then the score is sum of loss change for each split from all trees.</span></span>
@@ -651,9 +645,9 @@ Fig. 29
 </details>
 </div>
 </section>
-<section id="gradient-boosting-from-scikit-learn" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="gradient-boosting-from-scikit-learn"><span class="header-section-number">6.4</span> Gradient Boosting from Scikit-learn</h2>
-<div id="e6be2235" class="cell" data-execution_count="10">
+<section id="gradient-boosting-from-scikit-learn" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="gradient-boosting-from-scikit-learn"><span class="header-section-number">6.2</span> Gradient Boosting from Scikit-learn</h2>
+<div id="68f100b4" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># GradientBoostingClassifier(), use the deafault parameters</span></span>
@@ -661,9 +655,9 @@ Fig. 29
 </details>
 </div>
 </section>
-<section id="adaboost" class="level2" data-number="6.5">
-<h2 data-number="6.5" class="anchored" data-anchor-id="adaboost"><span class="header-section-number">6.5</span> AdaBoost</h2>
-<div id="59f72398" class="cell" data-execution_count="11">
+<section id="adaboost" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="adaboost"><span class="header-section-number">6.3</span> AdaBoost</h2>
+<div id="bba3050f" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>classify(clf<span class="op">=</span>AdaBoostClassifier(learning_rate<span class="op">=</span><span class="fl">0.8</span>,n_estimators<span class="op">=</span><span class="dv">150</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1150,23 +1144,25 @@ Fig. 29
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="an">jupyter:</span><span class="co"> python3</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data generation</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_gen-XGB-26.qmd &gt;}}</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>The theory in this chapter is extracted from Mehta *et al.* (Physics</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>Reports 810, 2019), §8 on combining models — boosting and gradient</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>boosting. The full review lives under <span class="in">`2sem/LCPB/source/`</span>.</span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">## Code</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Theory →** Bias–variance decomposition for ensembles and bagging.</span></span>
 <span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="fu">### Theory</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_theory-xgb-intro.qmd &gt;}}</span>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>Extracted from Mehta *et al.* (Physics Reports 810, 2019), §8 on</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>combining models — boosting and gradient boosting. The full review</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>lives under <span class="in">`2sem/LCPB/source/`</span>.</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Practice →** Generate the synthetic classification dataset and visualise it.</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_gen-XGB-26.qmd &gt;}}</span>
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_theory-xgboost.qmd &gt;}}</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Theory →** Gradient boosting in pseudocode.</span></span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="fu">### Implementation</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_theory-xgb-algos.qmd &gt;}}</span>
 <span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_xgb_class_26.qmd &gt;}}</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="at">&gt; **Practice →** Train and compare XGBoost, scikit-learn gradient boosting, and AdaBoost.</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>{{&lt; include _partials/_xgb_class_26.qmd &gt;}}</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <style>
@@ -1206,6 +1202,47 @@ Fig. 29
     if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
       if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
     }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
   });
 </script>
 
