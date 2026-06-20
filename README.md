@@ -6,7 +6,7 @@ The web can be accessed here: <https://phyamr.github.io/PoDMasternotes/>
 
 ## Contributing
 
-The repository is meant to be a shared resource. There are two paths. The only available PDF is the one of MAPDA, as is the only course where you can bring your notes to the exam. The rest are intentonally left as html-only books
+The repository is meant to be a shared resource. There are two paths. The only available PDF is the one of MAPDA, as is the only course where you can bring your notes to the exam. The rest are intentonally left as html-only books. If you contribute to the repository, your notes will be added to the collection, but make sure that you have the right to distribute them.
 
 ### Adding or editing a course
 
