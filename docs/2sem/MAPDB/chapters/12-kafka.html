@@ -564,7 +564,7 @@ window.Quarto = {
 <p>There are various Python modules available to interact with Kafka programmatically, including: - <code>kafka-python</code> - <code>confluent-kafka</code> - <code>pyKafka</code></p>
 <p>The differences between these modules are relatively minor. As always, take your time to review the documentation of all alternatives before starting a project.</p>
 <p>For now, we’ll use <code>kafka-python</code> to handle topics and producers.</p>
-<div id="6b7905d4" class="cell">
+<div id="3d90dba4" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> pip install kafka<span class="op">-</span>python <span class="co"># confluent-kafka</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -585,14 +585,14 @@ window.Quarto = {
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We’ll work with the vanilla version of the producer, which does not require any certificates or specific serialization in this example.</p>
 <p>Here’s an example of a simple producer instantiated by pointing it to the Kafka brokers:</p>
-<div id="6bfc2667" class="cell">
+<div id="2e09226c" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the list of brokers in the cluster</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>KAFKA_BOOTSTRAP_SERVERS <span class="op">=</span> [<span class="st">'kafka-broker:9092'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="a4998cba" class="cell">
+<div id="1aed8c1a" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaProducer</span>
@@ -602,7 +602,7 @@ window.Quarto = {
 </details>
 </div>
 <p>Let’s publish a message to the topic we previously created <em>without specifying any key</em>.</p>
-<div id="0435aa91" class="cell" data-scrolled="true">
+<div id="a7788159" class="cell" data-scrolled="true">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># publish a message to a topic without a key</span></span>
@@ -617,7 +617,7 @@ window.Quarto = {
 <p>It’s important to be aware that messages won’t necessarily be sent immediately. If a high message rate is sent and the <code>exit()</code> command is issued right after a <code>producer.send()</code> call, it’s possible that no messages are actually sent because the maximum buffering time or the number of messages has not been reached before the program exits.</p>
 <p>To send messages synchronously, you can use the <code>flush()</code> method of the producer. It ensures that all outstanding messages are sent before proceeding.</p>
 <p>For more information on the tunable parameters and additional functionalities, you can refer to the KafkaProducer API documentation: <a href="https://kafka-python.readthedocs.io/en/master/apidoc/KafkaProducer.html">link to KafkaProducer API</a>.</p>
-<div id="122b669b" class="cell">
+<div id="bbada6b7" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># publish a message and flush the queue right away</span></span>
@@ -631,14 +631,14 @@ window.Quarto = {
 <p>This decoupling of producers and consumers in Kafka is a key architectural feature that enables scalability, fault tolerance, and flexibility in building distributed systems.</p>
 <p>It’s worth noting that while consumers are not directly impacted by the state of the producer, they may experience delays in receiving messages if there are any disruptions, such as network issues or producer errors, affecting the producer’s ability to send messages. However, once the producer resumes normal operation, the consumers can continue consuming messages from where they left off.</p>
 <p>This decoupled nature of Kafka makes it well-suited for building robust and scalable distributed systems where producers and consumers can operate independently and asynchronously.</p>
-<div id="d85a5bbc" class="cell">
+<div id="fc21f472" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stop the producer</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>producer.close()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="18967498" class="cell">
+<div id="6c9683a6" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new Kafka producer and send a new message to the same topic</span></span>
@@ -654,7 +654,7 @@ window.Quarto = {
 <p>When a producer sends a message with a key, Kafka uses the key to determine the partition to which the message should be assigned. By default, Kafka uses a <em>hashing algorithm</em> to evenly distribute messages across partitions based on their keys. This ensures that messages with the same key are always assigned to the same partition, providing a form of message ordering within a partition.</p>
 <p>Adding a key to messages can be useful in scenarios where you want to ensure ordering or group related messages together based on a common key. It enables consumers to process messages in a consistent and predictable manner.</p>
 <p>To include a key when producing messages, you can modify the previous code example as follows:</p>
-<div id="dea8f3f4" class="cell">
+<div id="27c71986" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># send messages to Kafka using a specific key</span></span>
@@ -668,7 +668,7 @@ window.Quarto = {
 <section id="create-a-topic-from-kafka-python" class="level2" data-number="13.8">
 <h2 data-number="13.8" class="anchored" data-anchor-id="create-a-topic-from-kafka-python"><span class="header-section-number">13.8</span> Create a topic from kafka-python</h2>
 <p>Using the kafka-python library, you can administer a Kafka cluster and create new topics with specific configuration parameters, such as the replication factor.</p>
-<div id="752d6dd3" class="cell">
+<div id="a2499927" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import the necessary packages to administer the Kafka cluster</span></span>
@@ -682,7 +682,7 @@ window.Quarto = {
 </div>
 <p>It is possible to retrieve the list of topics, equivalent of issuing the following using the Kafka binaries from shell:</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--list</span> <span class="at">--bootstrap-server</span> kafka-broker:9092</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div id="e462e69b" class="cell">
+<div id="eae4aca4" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list the available topics</span></span>
@@ -695,7 +695,7 @@ window.Quarto = {
 <p>The leader partition handles all read and write operations for the partition, while the follower replicas replicate the log from the leader to ensure fault tolerance and high availability. If the leader partition fails, one of the follower replicas will be elected as the new leader to continue processing messages for that partition.</p>
 <p>The use of partitions provides several benefits in Kafka including scalability and parallelism.</p>
 <p>It’s important to note that the distribution and replication of messages across partitions are managed internally by Kafka and are transparent to the producer and consumer applications. The producer only needs to specify the topic and optionally the key for a message, and Kafka takes care of routing the message to the appropriate partition.</p>
-<div id="095c3895" class="cell">
+<div id="4c9ec750" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new topic with the following parameters:</span></span>
@@ -708,7 +708,7 @@ window.Quarto = {
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>kafka_admin.create_topics(new_topics<span class="op">=</span>[a_new_topic])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="6dd06be4" class="cell">
+<div id="cb887fb7" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list the available topics</span></span>
@@ -721,7 +721,7 @@ window.Quarto = {
 <h2 data-number="13.9" class="anchored" data-anchor-id="publish-messages-for-the-spark-structured-streaming-example"><span class="header-section-number">13.9</span> Publish messages for the Spark Structured Streaming example</h2>
 <p>Kafka can be used as a source for incoming messages in Spark Streaming and Structured Streaming.</p>
 <p>We’ll use the pySpark <code>Structured Streaming</code> API to implement the example previously seen in the Spark hands-on sessions.</p>
-<div id="f0816367" class="cell">
+<div id="116e30a5" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
@@ -748,7 +748,7 @@ window.Quarto = {
 </details>
 </div>
 <p>Let’s create a new topic to store the <code>results</code> of the Spark processing of the Kafka stream.</p>
-<div id="bf9049ef" class="cell">
+<div id="94f197b2" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new topic</span></span>
@@ -781,14 +781,14 @@ window.Quarto = {
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    group_id<span class="op">=</span><span class="st">"group_A"</span>,                      <span class="co"># identify this consumer as part of group_A</span></span>
 <span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Once more, we’ll use a simple implementation of the consumer, with no specific configurations used in this example.</p>
-<div id="af1ff1a0" class="cell">
+<div id="7ae02aee" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the list of brokers in the cluster</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>KAFKA_BOOTSTRAP_SERVERS <span class="op">=</span> [<span class="st">'kafka-broker:9092'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="e4c8c87b" class="cell">
+<div id="346cfe26" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaConsumer</span>
@@ -802,7 +802,7 @@ window.Quarto = {
 </details>
 </div>
 <p>Inspect the available topics on the brokers:</p>
-<div id="58133c2f" class="cell">
+<div id="94791ddc" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># list all available topics on the kafka brokers</span></span>
@@ -813,7 +813,7 @@ window.Quarto = {
 <p>It’s important to note that subscribing to a topic doesn’t immediately consume any messages.</p>
 <p>Instead, it establishes a connection between the consumer and the partitions of the subscribed topic hosted on the Kafka brokers. This connection allows the consumer to start polling for messages from those partitions.</p>
 <p>Once you have subscribed to the topic, the consumer can start polling for messages, fetching messages from the subscribed partitions and return them to the consumer for further processing.</p>
-<div id="8f30c101" class="cell">
+<div id="982d07c3" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># subscribe to a topic</span></span>
@@ -825,7 +825,7 @@ window.Quarto = {
 </div>
 <p>The <code>KafkaConsumer</code> class also offers the possibility to inspect topics (for instance, in terms of the number of partitions), but <strong>not</strong> to modify them.</p>
 <p>We can inspect how many partitions the specific topic is made of:</p>
-<div id="6a82dc32" class="cell">
+<div id="f4ad1f53" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># print the list of partition IDs </span></span>
@@ -835,7 +835,7 @@ window.Quarto = {
 </div>
 <p>We can instruct the consumer to <code>poll</code> (i.e., ask for all new messages stored in the topic) with a given cadence or logic.</p>
 <p>For instance, we can set the consumer to read only 10 messages at a time, with a timeout between subsequent readouts of a given <span class="math inline">\(\Delta t\)</span>.</p>
-<div id="5c771847" class="cell">
+<div id="95a80405" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set up the polling strategy for the consumer</span></span>
@@ -847,7 +847,7 @@ window.Quarto = {
 </div>
 <p>Now the consumer is ready to poll messages (until it is stopped or it reaches a timeout).</p>
 <p>Let’s look for all messages in the consumer:</p>
-<div id="f411f203" class="cell">
+<div id="a38124cf" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this consumer will keep polling for messages </span></span>
@@ -858,7 +858,7 @@ window.Quarto = {
 </details>
 </div>
 <p>The reading offset can also be reset to the beginning of the topic, allowing for re-reading the entire topic:</p>
-<div id="6bd4e3f1" class="cell" data-scrolled="true">
+<div id="69852a0c" class="cell" data-scrolled="true">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># go back to the beginning of the topic</span></span>
@@ -870,7 +870,7 @@ window.Quarto = {
 </details>
 </div>
 <p>The message content (<code>ConsumerRecord</code>) can be quite messy, but it can be easily inspected by parsing only the relevant information.</p>
-<div id="6315a1e1" class="cell">
+<div id="7ea05749" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import packages to interpret dates</span></span>
@@ -889,7 +889,7 @@ window.Quarto = {
 </details>
 </div>
 <p>Let’s change the topic to which the consumer is subscribed and make it a partitioned one:</p>
-<div id="cf31afd0" class="cell">
+<div id="2d374d79" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># subscribe to a partitioned topic</span></span>
@@ -898,7 +898,7 @@ window.Quarto = {
 </details>
 </div>
 <p>By inspecting the number of partitions for this topic, we can now see that there are 2 partitions: partition #0 and partition #1.</p>
-<div id="8330968e" class="cell">
+<div id="8dde6e8f" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the partitions in the partitioned topic</span></span>
@@ -906,7 +906,7 @@ window.Quarto = {
 </details>
 </div>
 <p>When reading from a partitioned topic, it’s easy to observe that the messages are sent to the two partitions in a seemingly arbitrary way.</p>
-<div id="47043f43" class="cell">
+<div id="c2332aab" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import json to unpack json strings</span></span>
@@ -929,7 +929,7 @@ window.Quarto = {
 <p>The same applies to a generic consumer. As we have just seen, data is consumed from all partitions within the topic.</p>
 <p>In some cases, however, it may be more suitable to instantiate multiple consumers, with each one reading from a specific partition of a topic.</p>
 <p>Let’s create a consumer specifically designed to access the data from partition #0 of the previous partitioned topic.</p>
-<div id="da49c39e" class="cell">
+<div id="614341e9" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import TopicPartition to be able to assign a partition to a consumer</span></span>
@@ -947,7 +947,7 @@ window.Quarto = {
 <span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>                      ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="04649ab5" class="cell">
+<div id="0ab67c8d" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># go back to the beginning of the topic (for this specific partition)</span></span>
@@ -966,7 +966,7 @@ window.Quarto = {
 <p>In Kafka, every consumer is part of a consumer group (even a single consumer is part of its own consumer group).</p>
 <p>A consumer group consists of one or more cooperating consumers that gather data from the same topic. The consumer group dynamically balances the load across its members and redistributes the consume calls.</p>
 <p>If a consumer within a consumer group fails, the remaining consumers in the same group will continue to read the entire data from the subscribed topic.</p>
-<div id="052979af" class="cell">
+<div id="e4e6985a" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create `consumer_one` to read from a specific partition</span></span>
@@ -978,7 +978,7 @@ window.Quarto = {
 <span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>                             consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="8be0a05a" class="cell">
+<div id="6e296e37" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># subscribe `consumer_one` to the partitioned topic</span></span>
@@ -990,7 +990,7 @@ window.Quarto = {
 <h3 data-number="13.11.1" class="anchored" data-anchor-id="consuming-messages-as-a-group"><span class="header-section-number">13.11.1</span> Consuming messages as a group</h3>
 <p>Use the <code>ConsumerGroup</code> notebook to: 1. create a second consumer <code>consumer_two</code> 2. assign it to the same consumer group <code>my_group</code> 3. subscribe to the same topic <code>a_partitioned_topic</code></p>
 <p>Each consumer within a group is going to be an independent process (should be run in parallel from the others) and will provide access to a fraction of the incoming data</p>
-<div id="075b470e" class="cell">
+<div id="03bec7d6" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the partitions assigned to `consumer_one`</span></span>
@@ -999,7 +999,7 @@ window.Quarto = {
 </div>
 <p>Start the two consumers and process data in parallel from the two partitions.</p>
 <p>Typically, one would achieve this by running the two consumers in separate threads, processes, or executors, depending on the desired computing architecture.</p>
-<div id="d0810eaf" class="cell">
+<div id="200687cc" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use multiple consumers in parallel (`consumer_one` in this notebook)</span></span>
@@ -1007,7 +1007,7 @@ window.Quarto = {
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>message<span class="sc">.</span>partition<span class="sc">}</span><span class="ss">[</span><span class="sc">{</span>message<span class="sc">.</span>offset<span class="sc">}</span><span class="ss">]</span><span class="ch">\t</span><span class="ss"> </span><span class="sc">{</span>json<span class="sc">.</span>loads(message.value)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="579405d3" class="cell">
+<div id="c66d2d60" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the partitions assigned to `consumer_one`</span></span>
@@ -1020,7 +1020,7 @@ window.Quarto = {
 <section id="reading-from-the-kafkaspark-results-topic" class="level2" data-number="13.12">
 <h2 data-number="13.12" class="anchored" data-anchor-id="reading-from-the-kafkaspark-results-topic"><span class="header-section-number">13.12</span> Reading from the Kafka+Spark results topic</h2>
 <p>Let’s subscribe to the <code>results</code> topic and monitor the frauds</p>
-<div id="c5e2f7c0" class="cell">
+<div id="778f43d1" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>consumer.subscribe([<span class="st">'results'</span>])</span>
@@ -1036,14 +1036,14 @@ window.Quarto = {
 <hr>
 <section id="consumer-groups" class="level3" data-number="13.12.1">
 <h3 data-number="13.12.1" class="anchored" data-anchor-id="consumer-groups"><span class="header-section-number">13.12.1</span> Consumer Groups</h3>
-<div id="a0e33f84" class="cell">
+<div id="49e979d5" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the list of brokers in the cluster</span></span>
 <span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>KAFKA_BOOTSTRAP_SERVERS <span class="op">=</span> [<span class="st">'kafka-broker:9092'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="dee4a0d1" class="cell">
+<div id="db608acd" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaConsumer</span>
@@ -1057,7 +1057,7 @@ window.Quarto = {
 <span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>                             consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="1fc681a9" class="cell">
+<div id="e41ab94d" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
@@ -1066,14 +1066,14 @@ window.Quarto = {
 <span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>consumer_two.subscribe([<span class="st">'a_partitioned_topic'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="e87c5672" class="cell" data-scrolled="true">
+<div id="348cfba9" class="cell" data-scrolled="true">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the partitions assigned to `consumer_two`</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>consumer_two.assignment()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="e8881a5b" class="cell">
+<div id="ed214597" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use multiple consumers in parallel (`consumer_two` in this notebook)</span></span>
@@ -1081,7 +1081,7 @@ window.Quarto = {
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>message<span class="sc">.</span>partition<span class="sc">}</span><span class="ss">[</span><span class="sc">{</span>message<span class="sc">.</span>offset<span class="sc">}</span><span class="ss">]</span><span class="ch">\t</span><span class="ss"> </span><span class="sc">{</span>json<span class="sc">.</span>loads(message.value)<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="eb7e1374" class="cell">
+<div id="7f355509" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check the partitions assigned to `consumer_two`</span></span>
@@ -1105,14 +1105,14 @@ window.Quarto = {
      Drop the original screenshot into this folder under that name and
      restore the reference if needed. -->
 <p>We’ll reproduce the PySpark example we discussed when testing the <code>Structured Streaming</code>, now interfacing both the <code>source</code> and the <code>sink</code> of Spark with Kafka topics.</p>
-<div id="4c5471ca" class="cell">
+<div id="af9d69a1" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the list of brokers in the cluster</span></span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>KAFKA_BOOTSTRAP_SERVERS <span class="op">=</span> <span class="st">'kafka-broker:9092'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="80847470" class="cell">
+<div id="a5b5edd0" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
@@ -1130,7 +1130,7 @@ window.Quarto = {
 <span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>    .getOrCreate()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="a5218212" class="cell">
+<div id="fd855bba" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>sc <span class="op">=</span> spark.sparkContext</span>
@@ -1143,7 +1143,7 @@ window.Quarto = {
 <h2 data-number="13.13" class="anchored" data-anchor-id="read-data-from-kafka"><span class="header-section-number">13.13</span> Read data from Kafka</h2>
 <p>First, we create a DataFrame representing the stream of input lines from Kafka by connecting to the appropriate servers and topic.</p>
 <p><code>readStream</code> and <code>format("kafka")</code> are the key components for connecting to the data source.</p>
-<div id="16ef24e2" class="cell">
+<div id="46339b6f" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>rawMessagesDf <span class="op">=</span> spark<span class="op">\</span></span>
@@ -1159,14 +1159,14 @@ window.Quarto = {
 </div>
 <p>At this stage, nothing happens because the streaming has not started yet. We have only defined the source of the streaming application.</p>
 <p>The <code>rawMessagesDf</code> can be treated as if it were a static DataFrame in Spark, <strong>but</strong> it is a streaming DataFrame that continuously grows.</p>
-<div id="b61b01a0" class="cell">
+<div id="c3bd9ddc" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>rawMessagesDf.isStreaming</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Currently, <code>rawMessagesDf</code> contains the messages from Kafka, which are further composed of a <code>&lt;key, value&gt;</code> pair, a timestamp, and other information.</p>
-<div id="f0eb3051" class="cell">
+<div id="f81c7b2e" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>rawMessagesDf.printSchema()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1174,7 +1174,7 @@ window.Quarto = {
 </div>
 <p>We are clearly interested in the <code>value</code> of the message, which is in JSON format.</p>
 <p>We can utilize the <code>pyspark.sql</code> functions to define a schema for our structured data and interpret the data accordingly.</p>
-<div id="4ae74e77" class="cell">
+<div id="75e7849a" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql.functions <span class="im">import</span> from_json, col</span>
@@ -1202,7 +1202,7 @@ window.Quarto = {
 <span id="cb59-23"><a href="#cb59-23" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="28bfeb1f" class="cell">
+<div id="fab9e535" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>parsedDf.printSchema()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1210,7 +1210,7 @@ window.Quarto = {
 </div>
 <p>It’s possible to inspect the data actually reaching the <code>parsedDf</code> by starting a stream with a <code>console</code> sink. The output of the streaming processing in this case will be displayed in the shell running the Jupyter Notebook.</p>
 <p>We should expect a DataFrame with a single column, containing a JSON-like object per message.</p>
-<div id="c3327891" class="cell">
+<div id="7bc7a972" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> (</span>
@@ -1221,7 +1221,7 @@ window.Quarto = {
 <span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="e7e5ddcc" class="cell">
+<div id="435ff50f" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb62"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>query.stop()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1233,7 +1233,7 @@ window.Quarto = {
 <p>Let’s integrate the same simplistic “fraud detection” logic we previously used in our Spark Streaming example.</p>
 <p>We might be interested in having Spark perform the heavy lifting and then allowing other consumers to access the results of these operations. For example, we can display the results on a dashboard or trigger some action.</p>
 <p>We can use Kafka as a sink for the resulting data.</p>
-<div id="dda38a68" class="cell">
+<div id="4cc548c3" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql.functions <span class="im">import</span> concat, col, lit, countDistinct</span>
@@ -1255,20 +1255,20 @@ window.Quarto = {
 </div>
 <p>At this point, it may seem that these newly derived DataFrames are not connected in any way or form to the input streaming Kafka source.</p>
 <p>However, we can verify this by using the <code>isStreaming</code> method on a DataFrame.</p>
-<div id="e6f6e8f6" class="cell">
+<div id="4f3ab3f0" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a>sus_transactions.isStreaming</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="ab09b30b" class="cell">
+<div id="29d35126" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>sus_transactions.printSchema()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>The <code>sus_transactions</code> DataFrame is still a streaming DataFrame. It can be seen as the result of the transformations applied to the original <code>inputDF</code> derived from the streaming source.</p>
-<div id="fcc76201" class="cell" data-scrolled="true">
+<div id="c98ae75f" class="cell" data-scrolled="true">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> (</span>
@@ -1279,14 +1279,14 @@ window.Quarto = {
 <span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="47e8127b" class="cell">
+<div id="541ecf50" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>query.stop()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Finally, let’s wrap up the message and write it to a <code>results</code> topic back to Kafka, so that other consumers can make use of its data.</p>
-<div id="5b1271c5" class="cell">
+<div id="fde4a66b" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> (</span>
@@ -1301,7 +1301,7 @@ window.Quarto = {
 <span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="cd6b904e" class="cell">
+<div id="28a38bac" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>query.stop()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1310,7 +1310,7 @@ window.Quarto = {
 </section>
 <section id="stop-worker-and-master" class="level2" data-number="13.15">
 <h2 data-number="13.15" class="anchored" data-anchor-id="stop-worker-and-master"><span class="header-section-number">13.15</span> Stop worker and master</h2>
-<div id="433b9f5c" class="cell">
+<div id="a7dbafc9" class="cell">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stop the running Spark context and Spark session</span></span>
