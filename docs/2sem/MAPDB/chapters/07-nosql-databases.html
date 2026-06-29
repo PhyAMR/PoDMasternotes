@@ -601,25 +601,44 @@ user_001      | Alice  | 30  | alice@example.com  |             |</code></pre>
 <p>List at least four examples of non-relational (NoSQL) database management systems. For each, identify the NoSQL category it belongs to (Key-Value, Document, Wide-Column, Graph, etc.).</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ul>
+<li><strong>Key-Value</strong> — Redis, DynamoDB, Riak. Fast lookups by opaque key; values are blobs.</li>
+<li><strong>Document</strong> — MongoDB, CouchDB, Elasticsearch. Self-describing JSON / BSON records, queryable by field.</li>
+<li><strong>Wide-Column</strong> — Cassandra, HBase, ScyllaDB. Sparse rows with very many columns, column families grouped on disk.</li>
+<li><strong>Graph</strong> — Neo4j, Amazon Neptune, ArangoDB. First-class nodes + edges with traversal queries (Cypher, Gremlin).</li>
+</ul>
+<p>Some systems (Elasticsearch, Solr) are sometimes split off as <strong>full-text search engines</strong>, and time-series stores (InfluxDB, TimescaleDB) as a category of their own.</p>
 </div>
 <div class="exercise" name="ACID vs BASE">
 <p>Describe the differences between the ACID and BASE consistency models. In what scenarios is each model preferable?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ul>
+<li><strong>ACID</strong> = <strong>A</strong>tomicity, <strong>C</strong>onsistency, <strong>I</strong>solation, <strong>D</strong>urability. Strict, transactional guarantees. Every committed write is immediately visible to all subsequent reads and survives crashes. Cost: latency and limited write throughput under contention.</li>
+<li><strong>BASE</strong> = <strong>B</strong>asically <strong>A</strong>vailable, <strong>S</strong>oft state, <strong>E</strong>ventually consistent. Relaxed guarantees in exchange for availability and horizontal scale. Reads may return stale data; replicas converge in the background.</li>
+</ul>
+<p><strong>ACID</strong> is preferable when correctness is non-negotiable: banking and accounting, inventory, order management, anything with money or audit constraints. <strong>BASE</strong> wins in high-throughput, eventually consistent workloads: social media feeds, CDNs, IoT telemetry, large-scale caches and analytics ingestion.</p>
 </div>
 <div class="exercise" name="Horizontal vs Vertical Scaling">
 <p>What are horizontal and vertical scaling (partitioning)? Discuss their pros and cons, and argue which one is generally preferable for large-scale data systems and why.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ul>
+<li><strong>Vertical scaling (scale-up).</strong> Bigger single machine: more CPU, RAM, faster disks. Pros: simple — software is unchanged, no distributed-systems complexity, no consistency trade-offs. Cons: hard ceiling on hardware, exponential price per unit performance at the top end, single point of failure.</li>
+<li><strong>Horizontal scaling (scale-out).</strong> More machines, data sharded and replicated across them. Pros: near-unlimited growth, commodity hardware, built-in fault tolerance via replication. Cons: needs partitioning, replication, distributed transactions or eventual consistency; operational complexity is much higher.</li>
+</ul>
+<p>For <strong>large-scale data systems</strong>, horizontal scaling is generally preferred. Vertical scaling cannot keep up with terabyte- or petabyte-scale workloads at any reasonable cost, and a single super-server is a single point of failure. NoSQL and modern distributed RDBMS were designed precisely to make horizontal scaling tractable.</p>
 </div>
 <div class="exercise" name="Consistent Hashing for Sharding">
 <p>What are the advantages of using consistent hashing for sharding distributed databases compared to a “standard” partitioning technique (e.g.&nbsp;via modulo-operations)? What problem does consistent hashing solve when nodes are added or removed?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>With <strong>plain hash-mod sharding</strong> (shard <span class="math inline">\(= \mathrm{hash}(\text{key}) \bmod N\)</span>), changing the number of nodes from <span class="math inline">\(N\)</span> to <span class="math inline">\(N\pm 1\)</span> changes the modulus and therefore <strong>reshuffles almost every key</strong> — i.e.&nbsp;roughly <span class="math inline">\(\mathcal{O}(K)\)</span> key movements for <span class="math inline">\(K\)</span> keys. That stalls the cluster during any resize.</p>
+<p><strong>Consistent hashing</strong> places nodes and keys on a virtual ring; each key is owned by the next node clockwise. Adding or removing a node only changes ownership of the keys in its <strong>immediate neighbourhood</strong> on the ring, so on average only <span class="math inline">\(\mathcal{O}(K/N)\)</span> keys move. Combined with <strong>virtual nodes</strong> (each physical node owns many ring positions), the load stays balanced.</p>
+<p>The problem it solves: <strong>graceful, low-impact rebalancing</strong> when nodes join or leave a dynamic cluster — exactly the day-to-day reality of large NoSQL and CDN deployments (DynamoDB, Cassandra, Riak, memcached).</p>
 </div>
 
 
@@ -1314,32 +1333,47 @@ user_001      | Alice  | 30  | alice@example.com  |             |</code></pre>
 <span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="ACID vs BASE"}</span>
-<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a>Describe the differences between the ACID and BASE consistency models. In what scenarios is each model preferable?</span>
-<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Horizontal vs Vertical Scaling"}</span>
-<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a>What are horizontal and vertical scaling (partitioning)? Discuss their pros and cons, and argue which one is generally preferable for large-scale data systems and why.</span>
-<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Key-Value** — Redis, DynamoDB, Riak. Fast lookups by opaque key; values are blobs.</span>
+<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Document** — MongoDB, CouchDB, Elasticsearch. Self-describing JSON / BSON records, queryable by field.</span>
+<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Wide-Column** — Cassandra, HBase, ScyllaDB. Sparse rows with very many columns, column families grouped on disk.</span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Graph** — Neo4j, Amazon Neptune, ArangoDB. First-class nodes + edges with traversal queries (Cypher, Gremlin).</span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a>Some systems (Elasticsearch, Solr) are sometimes split off as **full-text search engines**, and time-series stores (InfluxDB, TimescaleDB) as a category of their own.</span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="ACID vs BASE"}</span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>Describe the differences between the ACID and BASE consistency models. In what scenarios is each model preferable?</span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**ACID** = **A**tomicity, **C**onsistency, **I**solation, **D**urability. Strict, transactional guarantees. Every committed write is immediately visible to all subsequent reads and survives crashes. Cost: latency and limited write throughput under contention.</span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**BASE** = **B**asically **A**vailable, **S**oft state, **E**ventually consistent. Relaxed guarantees in exchange for availability and horizontal scale. Reads may return stale data; replicas converge in the background.</span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>**ACID** is preferable when correctness is non-negotiable: banking and accounting, inventory, order management, anything with money or audit constraints. **BASE** wins in high-throughput, eventually consistent workloads: social media feeds, CDNs, IoT telemetry, large-scale caches and analytics ingestion.</span>
 <span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Consistent Hashing for Sharding"}</span>
-<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>What are the advantages of using consistent hashing for sharding distributed databases compared to a "standard" partitioning technique (e.g. via modulo-operations)? What problem does consistent hashing solve when nodes are added or removed?</span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Horizontal vs Vertical Scaling"}</span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>What are horizontal and vertical scaling (partitioning)? Discuss their pros and cons, and argue which one is generally preferable for large-scale data systems and why.</span>
 <span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Vertical scaling (scale-up).** Bigger single machine: more CPU, RAM, faster disks. Pros: simple — software is unchanged, no distributed-systems complexity, no consistency trade-offs. Cons: hard ceiling on hardware, exponential price per unit performance at the top end, single point of failure.</span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Horizontal scaling (scale-out).** More machines, data sharded and replicated across them. Pros: near-unlimited growth, commodity hardware, built-in fault tolerance via replication. Cons: needs partitioning, replication, distributed transactions or eventual consistency; operational complexity is much higher.</span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a>For **large-scale data systems**, horizontal scaling is generally preferred. Vertical scaling cannot keep up with terabyte- or petabyte-scale workloads at any reasonable cost, and a single super-server is a single point of failure. NoSQL and modern distributed RDBMS were designed precisely to make horizontal scaling tractable.</span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Consistent Hashing for Sharding"}</span>
+<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a>What are the advantages of using consistent hashing for sharding distributed databases compared to a "standard" partitioning technique (e.g. via modulo-operations)? What problem does consistent hashing solve when nodes are added or removed?</span>
+<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb4-251"><a href="#cb4-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-252"><a href="#cb4-252" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb4-253"><a href="#cb4-253" aria-hidden="true" tabindex="-1"></a>With **plain hash-mod sharding** (shard $= \mathrm{hash}(\text{key}) \bmod N$), changing the number of nodes from $N$ to $N\pm 1$ changes the modulus and therefore **reshuffles almost every key** — i.e. roughly $\mathcal{O}(K)$ key movements for $K$ keys. That stalls the cluster during any resize.</span>
+<span id="cb4-254"><a href="#cb4-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-255"><a href="#cb4-255" aria-hidden="true" tabindex="-1"></a>**Consistent hashing** places nodes and keys on a virtual ring; each key is owned by the next node clockwise. Adding or removing a node only changes ownership of the keys in its **immediate neighbourhood** on the ring, so on average only $\mathcal{O}(K/N)$ keys move. Combined with **virtual nodes** (each physical node owns many ring positions), the load stays balanced.</span>
+<span id="cb4-256"><a href="#cb4-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-257"><a href="#cb4-257" aria-hidden="true" tabindex="-1"></a>The problem it solves: **graceful, low-impact rebalancing** when nodes join or leave a dynamic cluster — exactly the day-to-day reality of large NoSQL and CDN deployments (DynamoDB, Cassandra, Riak, memcached).</span>
+<span id="cb4-258"><a href="#cb4-258" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <style>

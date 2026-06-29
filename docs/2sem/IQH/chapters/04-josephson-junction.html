@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; The Josephson junction – Introduction to Quantum Hardware</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/05-superconducting-qubits.html" rel="next">
+<link href="../chapters/03-superconducting-circuits.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/04-josephson-junction.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Josephson junction</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Introduction to Quantum Hardware</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-ginzburg-landau-cooper-pairs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ginzburg–Landau theory and Cooper pairs</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-dc-squid.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The DC SQUID</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-superconducting-circuits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Superconducting circuits: from the LC oscillator to qubits</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-josephson-junction.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Josephson junction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-superconducting-qubits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Superconducting qubits: from the Cooper pair box to the transmon</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-cavity-to-circuit-qed.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">From cavity QED to circuit QED</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">5.1</span> Overview</a></li>
+  <li><a href="#coupled-schrödinger-equations" id="toc-coupled-schrödinger-equations" class="nav-link" data-scroll-target="#coupled-schrödinger-equations"><span class="header-section-number">5.2</span> Coupled Schrödinger equations</a></li>
+  <li><a href="#phaseamplitude-decomposition" id="toc-phaseamplitude-decomposition" class="nav-link" data-scroll-target="#phaseamplitude-decomposition"><span class="header-section-number">5.3</span> Phase–amplitude decomposition</a>
+  <ul class="collapse">
+  <li><a href="#josephsons-first-dc-equation-currentphase-relation" id="toc-josephsons-first-dc-equation-currentphase-relation" class="nav-link" data-scroll-target="#josephsons-first-dc-equation-currentphase-relation"><span class="header-section-number">5.3.1</span> Josephson’s first (DC) equation: current–phase relation</a></li>
+  <li><a href="#josephsons-second-ac-equation-voltagephase-relation" id="toc-josephsons-second-ac-equation-voltagephase-relation" class="nav-link" data-scroll-target="#josephsons-second-ac-equation-voltagephase-relation"><span class="header-section-number">5.3.2</span> Josephson’s second (AC) equation: voltage–phase relation</a></li>
+  </ul></li>
+  <li><a href="#josephson-inductance" id="toc-josephson-inductance" class="nav-link" data-scroll-target="#josephson-inductance"><span class="header-section-number">5.4</span> Josephson inductance</a>
+  <ul class="collapse">
+  <li><a href="#properties-of-l_j" id="toc-properties-of-l_j" class="nav-link" data-scroll-target="#properties-of-l_j"><span class="header-section-number">5.4.1</span> Properties of <span class="math inline">\(L_J\)</span></a></li>
+  <li><a href="#where-does-the-non-linearity-come-from" id="toc-where-does-the-non-linearity-come-from" class="nav-link" data-scroll-target="#where-does-the-non-linearity-come-from"><span class="header-section-number">5.4.2</span> Where does the non-linearity come from?</a></li>
+  </ul></li>
+  <li><a href="#connection-to-the-rest-of-the-course" id="toc-connection-to-the-rest-of-the-course" class="nav-link" data-scroll-target="#connection-to-the-rest-of-the-course"><span class="header-section-number">5.5</span> Connection to the rest of the course</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">5.6</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Josephson junction</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="overview" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="overview"><span class="header-section-number">5.1</span> Overview</h2>
+<p>In Chapter 3 we promised a <strong>non-linear, dissipationless</strong> circuit element that could turn the harmonic LC oscillator into an anharmonic qubit. In Chapter 2 we wrote down the supercurrent in a SQUID loop in terms of a phase difference <span class="math inline">\(\delta\)</span> across each weak link, but we never derived where that phase difference came from. Both promises are paid off here.</p>
+<p>The <strong>Josephson junction</strong> (JJ) is two superconducting electrodes separated by a thin (typically <span class="math inline">\(\sim 1\)</span>–<span class="math inline">\(2\)</span> nm) insulating barrier, written as <span class="math inline">\(\mathrm{SIS}\)</span> (Superconductor–Insulator–Superconductor). Classically the barrier is impenetrable; quantum mechanically, Cooper pairs tunnel coherently. Brian Josephson’s 1962 insight was that the <em>macroscopic phase coherence</em> of the two BCS condensates survives the tunnelling, so that a supercurrent can flow without any voltage drop, governed entirely by the <strong>phase difference</strong> between the two sides.</p>
+<p>In this chapter we follow the phenomenological derivation of <em>The Feynman Lectures on Physics</em>, Vol. 3, §21-9. Starting from two coupled Schrödinger equations for the macroscopic wavefunctions <span class="math inline">\(\Psi_1,\Psi_2\)</span>, we obtain Josephson’s two constitutive relations:</p>
+<ul>
+<li><strong>First (DC) Josephson equation</strong>: <span class="math inline">\(\;I = I_c \sin\delta\)</span> — a finite supercurrent flows at zero voltage, set by the phase difference.</li>
+<li><strong>Second (AC) Josephson equation</strong>: <span class="math inline">\(\;\hbar\,\dot\delta = 2eV\)</span> — a finite voltage makes the phase wind in time at the rate <span class="math inline">\(2eV/\hbar\)</span>.</li>
+</ul>
+<p>From the current–phase relation we read off the <strong>Josephson inductance</strong> <span class="math inline">\(L_J = \Phi_0/(2\pi I_c\cos\delta)\)</span>: a <em>phase-dependent</em>, <em>non-linear</em>, <em>dissipationless</em> inductance. That is the missing element of Chapter 3.</p>
+<p><img src="../Grafiche/Figure/04-fig1.svg" class="tikz-figure img-fluid" alt=""></p>
+</section>
+<section id="coupled-schrödinger-equations" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="coupled-schrödinger-equations"><span class="header-section-number">5.2</span> Coupled Schrödinger equations</h2>
+<p>Inside each electrode the superconducting state is described by a single complex order parameter — the BCS macroscopic wavefunction inherited from Chapter 1: <span class="math display">\[
+\Psi_j(t) = \sqrt{n_j(t)}\, e^{i\varphi_j(t)}, \qquad j = 1,2,
+\]</span> where <span class="math inline">\(n_j = |\Psi_j|^2\)</span> is the local Cooper-pair density and <span class="math inline">\(\varphi_j\)</span> the macroscopic phase. If the two electrodes were isolated, each <span class="math inline">\(\Psi_j\)</span> would simply evolve as <span class="math inline">\(i\hbar\,\partial_t\Psi_j = E_j\Psi_j\)</span>, where <span class="math inline">\(E_j\)</span> is the chemical potential (Fermi energy) of side <span class="math inline">\(j\)</span>.</p>
+<p>A thin barrier opens a small amplitude for Cooper pairs to tunnel from one side to the other. To leading order in the barrier transparency, the dynamics of the two condensates is captured by the <strong>coupled Schrödinger equations</strong></p>
+<p><span class="math display">\[
+i\hbar\,\frac{\partial \Psi_1}{\partial t} = E_1\,\Psi_1 + K\,\Psi_2,
+\qquad
+i\hbar\,\frac{\partial \Psi_2}{\partial t} = E_2\,\Psi_2 + K\,\Psi_1.
+\tag{4.1}
+\]</span></p>
+<p>The off-diagonal term is the heart of the model.</p>
+<div class="callout callout-style-simple callout-note callout-titled" title="Definition: tunnel matrix element">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: tunnel matrix element
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The real constant <span class="math inline">\(K\)</span> is the <strong>tunnel matrix element</strong> (also: tunnelling amplitude, coupling constant). It has units of energy, is exponentially small in the barrier thickness and height, and quantifies the rate at which Cooper-pair amplitude leaks from one electrode into the other. The microscopic Bardeen tunnelling Hamiltonian gives an explicit expression for <span class="math inline">\(K\)</span> in terms of the normal-state transparency of the barrier; phenomenologically, <span class="math inline">\(K\)</span> is the only adjustable parameter of the model.</p>
+</div>
+</div>
+<p>A few remarks on (4.1) before we solve it:</p>
+<ul>
+<li><strong>Sign / symmetry.</strong> The same <span class="math inline">\(K\)</span> appears in both equations because the barrier is reciprocal: the amplitude to tunnel from <span class="math inline">\(1\to 2\)</span> equals the amplitude <span class="math inline">\(2\to 1\)</span> (Hermiticity of the tunnelling Hamiltonian).</li>
+<li><strong>Voltage bias.</strong> If we bias the junction with a DC voltage <span class="math inline">\(V\)</span>, the chemical potentials shift so that Cooper pairs (charge <span class="math inline">\(2e\)</span>) feel an energy difference <span class="math display">\[
+E_1 - E_2 = 2eV.
+\tag{4.2}
+\]</span> This is the only place where the external voltage enters the model.</li>
+<li><strong>What is left out.</strong> The model neglects quasiparticle tunnelling, the internal dynamics of the order-parameter magnitude <span class="math inline">\(|\Psi_j|\)</span> on the scale of the BCS gap <span class="math inline">\(\Delta\)</span>, and any inelastic processes; all of these are subsumed into a single number <span class="math inline">\(K\)</span>. Despite the simplifications, (4.1) reproduces <em>all</em> of Josephson’s predictions.</li>
+</ul>
+</section>
+<section id="phaseamplitude-decomposition" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="phaseamplitude-decomposition"><span class="header-section-number">5.3</span> Phase–amplitude decomposition</h2>
+<p>We now insert the polar form <span class="math inline">\(\Psi_j = \sqrt{n_j}\,e^{i\varphi_j}\)</span> into (4.1) and separate real and imaginary parts. The time derivative is <span class="math display">\[
+\partial_t \Psi_j = \Big(\tfrac{\dot n_j}{2\sqrt{n_j}} + i\sqrt{n_j}\,\dot\varphi_j\Big)e^{i\varphi_j}.
+\]</span></p>
+<p>Multiplying (4.1) by <span class="math inline">\(e^{-i\varphi_j}\)</span> and using <span class="math inline">\(\Psi_k\, e^{-i\varphi_j} = \sqrt{n_k}\,e^{i(\varphi_k-\varphi_j)}\)</span> gives, for <span class="math inline">\(j=1\)</span> with <span class="math inline">\(k=2\)</span>, <span class="math display">\[
+i\hbar\Big(\tfrac{\dot n_1}{2\sqrt{n_1}} + i\sqrt{n_1}\,\dot\varphi_1\Big)
+= E_1\sqrt{n_1} + K\sqrt{n_2}\,e^{i(\varphi_2-\varphi_1)},
+\]</span> and similarly for <span class="math inline">\(j=2\)</span> with <span class="math inline">\(k=1\)</span>. Writing <span class="math inline">\(e^{i(\varphi_2-\varphi_1)} = \cos\delta + i\sin\delta\)</span> with <span class="math display">\[
+\boxed{\;\delta \equiv \varphi_2 - \varphi_1\;}
+\]</span> the <strong>phase difference</strong> across the junction, and matching real and imaginary parts on both sides, we obtain four real equations:</p>
+<p><strong>Imaginary parts</strong> (population dynamics): <span class="math display">\[
+\dot n_1 = \frac{2K}{\hbar}\sqrt{n_1 n_2}\,\sin\delta,
+\qquad
+\dot n_2 = -\frac{2K}{\hbar}\sqrt{n_1 n_2}\,\sin\delta.
+\tag{4.3}
+\]</span></p>
+<p><strong>Real parts</strong> (phase dynamics): <span class="math display">\[
+\dot\varphi_1 = -\frac{K}{\hbar}\sqrt{\frac{n_2}{n_1}}\cos\delta - \frac{E_1}{\hbar},
+\qquad
+\dot\varphi_2 = -\frac{K}{\hbar}\sqrt{\frac{n_1}{n_2}}\cos\delta - \frac{E_2}{\hbar}.
+\tag{4.4}
+\]</span></p>
+<p>Two observations:</p>
+<ul>
+<li><strong>Charge conservation.</strong> Equation (4.3) gives <span class="math inline">\(\dot n_1 = -\dot n_2\)</span>, as it should: every Cooper pair that disappears from electrode 1 reappears in electrode 2.</li>
+<li><strong>Reservoir limit.</strong> Each electrode is a macroscopic superconductor connected to an external circuit that replenishes any leaked pairs. On the time-scale of the junction dynamics we can therefore set <span class="math display">\[
+n_1 \simeq n_2 \equiv n_0 = \text{const},
+\]</span> even though pairs are still tunnelling: the <em>current</em> through the junction is finite, but the populations are pinned by the external circuit.</li>
+</ul>
+<section id="josephsons-first-dc-equation-currentphase-relation" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="josephsons-first-dc-equation-currentphase-relation"><span class="header-section-number">5.3.1</span> Josephson’s first (DC) equation: current–phase relation</h3>
+<p>From population dynamics to current is now a one-line argument. The rate at which Cooper pairs leave electrode 1 is <span class="math inline">\(\dot n_1\)</span>; each carries charge <span class="math inline">\(q^* = 2e\)</span>, so the <strong>supercurrent</strong> through the junction is <span class="math display">\[
+I = 2e\,\dot n_1 = \frac{4eK}{\hbar}\sqrt{n_1 n_2}\,\sin\delta.
+\]</span> Defining the <strong>critical current</strong> <span class="math display">\[
+I_c \equiv \frac{4eK}{\hbar}\sqrt{n_1 n_2} \;\xrightarrow{n_1\simeq n_2=n_0}\; \frac{4eK\,n_0}{\hbar},
+\tag{4.5}
+\]</span> we obtain Josephson’s first equation,</p>
+<p><span class="math display">\[
+\boxed{\;I = I_c\,\sin\delta\;}
+\qquad\text{(DC Josephson effect).}
+\tag{4.6}
+\]</span></p>
+<p>Three things are remarkable about (4.6):</p>
+<ul>
+<li><strong>No voltage required.</strong> A finite current flows at <span class="math inline">\(V=0\)</span> — this is the <strong>DC Josephson effect</strong>. The current is driven by a <em>phase difference</em>, not by a chemical-potential difference.</li>
+<li><strong>Bounded.</strong> The supercurrent saturates at <span class="math inline">\(|I|\le I_c\)</span>. If you try to push more than <span class="math inline">\(I_c\)</span> through the junction, no static solution exists and the junction switches to a finite-voltage state in which the phase winds in time (see (4.10) below).</li>
+<li><strong>Sinusoidal.</strong> The <span class="math inline">\(\sin\delta\)</span> shape is generic for a tunnel barrier; for stronger coupling (point contacts, weak links) higher harmonics <span class="math inline">\(\sin 2\delta, \sin 3\delta,\ldots\)</span> appear. For the SIS junctions we care about the first harmonic is overwhelmingly dominant.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled" title="Definition: gauge-invariant phase $\delta$">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: gauge-invariant phase <span class="math inline">\(\delta\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The phase difference appearing in (4.6) is the <strong>gauge-invariant phase</strong> <span class="math display">\[
+\delta = \varphi_2 - \varphi_1 - \frac{2e}{\hbar}\int_1^2 \mathbf A\cdot d\boldsymbol\ell,
+\]</span> where the line integral is taken across the barrier. In zero vector potential this reduces to <span class="math inline">\(\delta=\varphi_2-\varphi_1\)</span>, the bare phase difference we just used. The line-integral correction is exactly the one needed for (4.6) to be invariant under the electromagnetic gauge transformation <span class="math inline">\(\mathbf A\to\mathbf A+\nabla\chi,\ \varphi_j\to\varphi_j+(2e/\hbar)\chi\)</span>. <em>This is the same <span class="math inline">\(\delta\)</span> that appeared in the DC-SQUID current of Chapter 2</em>: there we used it without derivation, here we have just defined it.</p>
+</div>
+</div>
+<div class="callout callout-style-simple callout-note callout-titled" title="Definition: critical current $I_c$">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: critical current <span class="math inline">\(I_c\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <strong>critical current</strong> <span class="math inline">\(I_c\)</span> is the maximum supercurrent the junction can sustain at zero voltage. From (4.5) it scales linearly with the tunnelling amplitude <span class="math inline">\(K\)</span> and with the condensate density. A microscopic calculation by Ambegaokar and Baratoff gives, at <span class="math inline">\(T=0\)</span>, <span class="math display">\[
+I_c = \frac{\pi\Delta_{\mathrm{BCS}}}{2eR_n},
+\]</span> where <span class="math inline">\(\Delta_{\mathrm{BCS}}\)</span> is the BCS gap and <span class="math inline">\(R_n\)</span> is the <em>normal-state</em> resistance of the junction (measured above <span class="math inline">\(T_c\)</span>, or — for tunnel junctions — well-approximated by the room-temperature resistance). The practical consequence is that one can estimate <span class="math inline">\(I_c\)</span> from a simple resistance measurement at room temperature: a typical aluminium tunnel junction with <span class="math inline">\(R_n \sim 10\)</span> k<span class="math inline">\(\Omega\)</span> has <span class="math inline">\(I_c \sim 30\)</span> nA.</p>
+</div>
+</div>
+<p><img src="../Grafiche/Figure/04-fig2.svg" class="tikz-figure img-fluid" alt=""></p>
+</section>
+<section id="josephsons-second-ac-equation-voltagephase-relation" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="josephsons-second-ac-equation-voltagephase-relation"><span class="header-section-number">5.3.2</span> Josephson’s second (AC) equation: voltage–phase relation</h3>
+<p>The phase dynamics (4.4) gives Josephson’s second equation almost for free. Subtracting, <span class="math display">\[
+\dot\delta = \dot\varphi_2 - \dot\varphi_1
+= -\frac{K}{\hbar}\Big(\sqrt{\tfrac{n_1}{n_2}}-\sqrt{\tfrac{n_2}{n_1}}\Big)\cos\delta - \frac{E_2 - E_1}{\hbar}.
+\]</span> In the reservoir limit <span class="math inline">\(n_1\simeq n_2\)</span>, the bracket vanishes and <span class="math display">\[
+\dot\delta = \frac{E_1 - E_2}{\hbar}.
+\]</span> Combined with the voltage–energy relation (4.2), <span class="math inline">\(E_1 - E_2 = 2eV\)</span>, we obtain Josephson’s second equation,</p>
+<p><span class="math display">\[
+\boxed{\;\hbar\,\dot\delta = 2eV\;}
+\qquad\text{(AC Josephson effect).}
+\tag{4.7}
+\]</span></p>
+<p>Two consequences:</p>
+<ul>
+<li><strong>DC bias <span class="math inline">\(\Rightarrow\)</span> winding phase.</strong> A constant voltage <span class="math inline">\(V\)</span> makes <span class="math inline">\(\delta(t) = \delta_0 + (2eV/\hbar)t\)</span>. Plugging into (4.6) gives an <strong>oscillating supercurrent</strong> <span class="math inline">\(I(t) = I_c\sin\!\big(\delta_0 + \omega_J t\big)\)</span> at the <strong>Josephson frequency</strong> <span class="math display">\[
+\omega_J = \frac{2eV}{\hbar},
+\qquad \frac{\omega_J}{2\pi V} \approx 483.6\ \text{MHz}/\mu\text{V}.
+\]</span> This is the AC Josephson effect: a DC voltage produces a high-frequency AC current. The proportionality <span class="math inline">\(2e/h\)</span> is so accurate that it underpins the SI definition of the volt.</li>
+<li><strong>Flux quantum re-appears.</strong> Integrating (4.7) gives <span class="math inline">\(\hbar\delta = 2e\!\int V\,dt = 2e\,\Phi\)</span>, where <span class="math inline">\(\Phi\)</span> is the magnetic flux threading the loop in which <span class="math inline">\(V\)</span> is the EMF. Hence <span class="math display">\[
+\delta = \frac{2\pi\Phi}{\Phi_0},
+\qquad \Phi_0 = \frac{h}{2e},
+\tag{4.8}
+\]</span> recovering the flux quantum introduced in Chapter 1 and confirming that the phase difference and the (gauge-invariant) flux through a junction loop are the same dynamical variable up to the factor <span class="math inline">\(2\pi/\Phi_0\)</span>.</li>
+</ul>
+<div class="callout callout-style-simple callout-tip callout-titled" title="Summary: Josephson's two equations">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Summary: Josephson’s two equations
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The two constitutive relations of a Josephson junction are <span class="math display">\[
+I = I_c\sin\delta \qquad\text{and}\qquad V = \frac{\hbar}{2e}\,\dot\delta.
+\]</span> Together they tell us: <strong>the phase difference <span class="math inline">\(\delta\)</span> is the dynamical variable of the junction; the supercurrent depends on its value, the voltage on its rate of change.</strong></p>
+</div>
+</div>
+</section>
+</section>
+<section id="josephson-inductance" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="josephson-inductance"><span class="header-section-number">5.4</span> Josephson inductance</h2>
+<p>We now extract from (4.6)–(4.7) the <em>circuit element</em> the junction realises. Recall the defining relation of an ordinary inductor: <span class="math inline">\(V = L\,\dot I\)</span>, equivalently <span class="math inline">\(L = (dI/d\Phi)^{-1}\)</span> in terms of the flux <span class="math inline">\(\Phi\)</span> that produces a current <span class="math inline">\(I\)</span>. We apply the same definition to the JJ.</p>
+<p>From (4.8) the phase <span class="math inline">\(\delta\)</span> plays the role of the flux up to the constant <span class="math inline">\(\Phi_0/(2\pi)\)</span>: <span class="math inline">\(\Phi = (\Phi_0/2\pi)\delta\)</span>, so <span class="math inline">\(d\Phi = (\Phi_0/2\pi)\,d\delta\)</span>. Differentiating the current–phase relation, <span class="math display">\[
+\frac{dI}{d\Phi} = \frac{dI}{d\delta}\,\frac{d\delta}{d\Phi}
+= I_c\cos\delta \cdot \frac{2\pi}{\Phi_0}
+= \frac{2\pi I_c\cos\delta}{\Phi_0}.
+\]</span> Inverting,</p>
+<p><span class="math display">\[
+\boxed{\;L_J(\delta) = \left(\frac{dI}{d\Phi}\right)^{-1} = \frac{\Phi_0}{2\pi I_c\cos\delta}\;}
+\tag{4.9}
+\]</span></p>
+<p>This is the <strong>Josephson inductance</strong>.</p>
+<p>A check that the definition is consistent: combining (4.6) and (4.7), <span class="math display">\[
+\dot I = I_c\cos\delta\cdot\dot\delta = \frac{2eI_c\cos\delta}{\hbar}\,V
+\;\;\Longrightarrow\;\;
+V = \frac{\hbar}{2eI_c\cos\delta}\,\dot I,
+\]</span> so we can equivalently write <span class="math display">\[
+L_J = \frac{\hbar}{2eI_c\cos\delta},
+\]</span> which agrees with (4.9) using <span class="math inline">\(\Phi_0 = h/(2e)\)</span>.</p>
+<div class="callout callout-style-simple callout-note callout-titled" title="Definition: Josephson energy $E_J$ and Josephson inductance $L_J$">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Definition: Josephson energy <span class="math inline">\(E_J\)</span> and Josephson inductance <span class="math inline">\(L_J\)</span>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The energy stored in the junction is <span class="math display">\[
+U(\delta) = \int_0^{\delta} I(\delta')\,\frac{\Phi_0}{2\pi}\,d\delta'
+= \frac{I_c\Phi_0}{2\pi}\big(1-\cos\delta\big) = E_J(1-\cos\delta),
+\]</span> where the <strong>Josephson energy</strong> is <span class="math display">\[
+E_J \equiv \frac{I_c\Phi_0}{2\pi} = \frac{\hbar I_c}{2e}.
+\]</span> The <strong>Josephson inductance</strong> is the differential inductance defined above, <span class="math display">\[
+L_J(\delta) = \frac{\Phi_0}{2\pi I_c\cos\delta} = \frac{\hbar}{2eI_c\cos\delta} = \frac{L_{J0}}{\cos\delta},
+\qquad L_{J0}\equiv \frac{\Phi_0}{2\pi I_c}.
+\]</span> <span class="math inline">\(E_J\)</span> has units of energy; <span class="math inline">\(L_J\)</span> has units of henries. They are related by <span class="math inline">\(E_J = (\Phi_0/2\pi)^2/L_{J0}\)</span>, just like the magnetic energy <span class="math inline">\(\tfrac12 LI^2\)</span> stored in an ordinary inductor.</p>
+</div>
+</div>
+<section id="properties-of-l_j" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="properties-of-l_j"><span class="header-section-number">5.4.1</span> Properties of <span class="math inline">\(L_J\)</span></h3>
+<p>Equation (4.9) is the central result of this chapter. Several features deserve emphasis.</p>
+<ul>
+<li><strong>Non-linear.</strong> <span class="math inline">\(L_J\)</span> depends on <span class="math inline">\(\delta\)</span>, hence on the current <span class="math inline">\(I\)</span> through <span class="math inline">\(\cos\delta = \sqrt{1-(I/I_c)^2}\)</span>. In contrast, an ordinary inductor has <span class="math inline">\(L\)</span> constant — the field energy is quadratic in the current.</li>
+<li><strong>Small-signal limit.</strong> For <span class="math inline">\(|\delta|\ll 1\)</span> (equivalently <span class="math inline">\(|I|\ll I_c\)</span>), <span class="math inline">\(\cos\delta\simeq 1\)</span> and <span class="math display">\[
+L_J \simeq L_{J0} = \frac{\Phi_0}{2\pi I_c}.
+\]</span> In this regime the junction is <em>approximately</em> a linear inductor of value <span class="math inline">\(L_{J0}\)</span>. This is the regime in which the LC oscillator picture of Chapter 3 applies, with <span class="math inline">\(L\to L_{J0}\)</span>.</li>
+<li><strong>Singularity at <span class="math inline">\(\delta=\pi/2\)</span>.</strong> As <span class="math inline">\(\delta\to\pi/2\)</span>, <span class="math inline">\(\cos\delta\to 0\)</span> and <span class="math inline">\(L_J\to\infty\)</span>. This is exactly the point where the supercurrent reaches its maximum <span class="math inline">\(I_c\)</span>: any further increase in current would require an infinite incremental inductance, which is the mathematical signature that the static (zero-voltage) branch terminates at <span class="math inline">\(I=I_c\)</span>.</li>
+<li><strong>Negative branch.</strong> For <span class="math inline">\(\pi/2&lt;\delta&lt;3\pi/2\)</span>, <span class="math inline">\(\cos\delta&lt;0\)</span> and <span class="math inline">\(L_J&lt;0\)</span>. A negative differential inductance corresponds to a dynamically unstable branch of the <span class="math inline">\(I\)</span>–<span class="math inline">\(\delta\)</span> curve; the junction does not sit there for long.</li>
+<li><strong>Dissipationless.</strong> No resistive term ever appeared in the derivation. The energy <span class="math inline">\(E_J(1-\cos\delta)\)</span> is stored in the macroscopic phase and recovered when <span class="math inline">\(\delta\)</span> returns to zero. (Real junctions have a small parallel quasiparticle conductance, but for <span class="math inline">\(V\ll 2\Delta/e\)</span> and at low temperature this is exponentially suppressed.)</li>
+</ul>
+<p><img src="../Grafiche/Figure/04-fig3.svg" class="tikz-figure img-fluid" alt=""></p>
+</section>
+<section id="where-does-the-non-linearity-come-from" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="where-does-the-non-linearity-come-from"><span class="header-section-number">5.4.2</span> Where does the non-linearity come from?</h3>
+<p>The reader may wonder why a tunnel barrier — a perfectly passive piece of insulator — produces a non-linear element. The non-linearity is <em>not</em> in the barrier; it is in the constitutive relation. An ordinary inductor stores energy <span class="math inline">\(\tfrac12 LI^2\)</span> in a magnetic field built up <em>outside</em> the wire. A Josephson junction stores energy <span class="math display">\[
+U(\delta) = E_J(1-\cos\delta)
+\]</span> in the <em>phase</em> of the macroscopic wavefunction — and this is a <span class="math inline">\(2\pi\)</span>-periodic quantity, not a real number. Periodic potentials are necessarily non-quadratic, and any deviation from the parabolic minimum is the source of anharmonicity.</p>
+</section>
+</section>
+<section id="connection-to-the-rest-of-the-course" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="connection-to-the-rest-of-the-course"><span class="header-section-number">5.5</span> Connection to the rest of the course</h2>
+<p>We can now close two loops left open in earlier chapters.</p>
+<ul>
+<li><p><strong>Connection to Chapter 2 (DC SQUID).</strong> In Chapter 2 we wrote the SQUID current as <span class="math inline">\(I_s = I_{c,1}\sin\delta_1 + I_{c,2}\sin\delta_2\)</span> and quantised the flux through the loop by demanding single-valuedness of the wavefunction along a contour deep inside the superconductor. The two phase drops <span class="math inline">\(\delta_{1,2}\)</span> in that derivation are exactly the gauge-invariant Josephson phases (4.6) of the two weak links. The flux quantisation condition <span class="math inline">\(\delta_2-\delta_1 = 2\pi\Phi/\Phi_0\)</span> used there is just (4.8) applied around the loop.</p></li>
+<li><p><strong>Connection to Chapter 3 (the missing non-linearity).</strong> Section 3.5 closed with the observation that an LC oscillator has perfectly evenly-spaced energy levels — and is therefore useless as a qubit. The <em>missing element</em> was a non-linear, dissipationless inductor. Equation (4.9) is exactly that element: it reduces to a linear inductor of value <span class="math inline">\(L_{J0}\)</span> in the small-amplitude limit, recovering the LC oscillator of Chapter 3 with <span class="math inline">\(\omega_0 = 1/\sqrt{L_{J0}C}\)</span> — but its full <span class="math inline">\(1/\cos\delta\)</span> dependence bends the parabolic potential into the cosine well <span class="math inline">\(E_J(1-\cos\delta)\)</span> that Chapter 5 will quantise.</p></li>
+</ul>
+<div class="callout callout-style-simple callout-tip callout-titled" title="The central message">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+The central message
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The Josephson junction is a <strong>non-linear, dissipationless inductor</strong>. Replacing the linear inductor in the LC circuit of Chapter 3 with a JJ turns the harmonic oscillator <span class="math display">\[
+H_{LC} = \frac{\hat q^2}{2C} + \frac{\hat\Phi^2}{2L}
+\quad\longrightarrow\quad
+H_{JJ} = \frac{\hat q^2}{2C} + E_J\big[1-\cos(2\pi\hat\Phi/\Phi_0)\big]
+\]</span> into an anharmonic oscillator — the <strong>transmon Hamiltonian</strong> of Chapter 5. The unequal level spacing that follows from anharmonicity is what makes the lowest two states <span class="math inline">\(\ket{0},\ket{1}\)</span> addressable as a qubit, and resolves the “missing anharmonicity” problem highlighted at the end of Chapter 3.</p>
+</div>
+</div>
+</section>
+<section id="sources" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="sources"><span class="header-section-number">5.6</span> Sources</h2>
+<ul>
+<li><strong>Lecturer’s lecture notes</strong>: §4 (<em>Josephson junction</em>), pp.&nbsp;13–15.</li>
+<li><strong>Feynman, R. P., Leighton, R. B. &amp; Sands, M.</strong> <em>The Feynman Lectures on Physics</em>, Vol. 3, §21-9 (coupled-wavefunction derivation of Josephson’s equations).</li>
+<li><strong>Tinkham, M.</strong> <em>Introduction to Superconductivity</em>, 2nd ed., Dover (2004), Chapter 6 (Josephson effect, RCSJ model, Ambegaokar–Baratoff formula).</li>
+<li><strong>Vool, U. &amp; Devoret, M.</strong> <em>Introduction to quantum electromagnetic circuits</em>, Int. J. Circ. Theor. Appl. <strong>45</strong>, 897 (2017), §3 (Josephson element as a non-linear inductor).</li>
+<li><strong>Josephson, B. D.</strong> <em>Possible new effects in superconductive tunnelling</em>, Phys. Lett. <strong>1</strong>, 251 (1962) — the original two-page paper.</li>
+<li><strong>Ambegaokar, V. &amp; Baratoff, A.</strong> <em>Tunneling between superconductors</em>, Phys. Rev.&nbsp;Lett. <strong>10</strong>, 486 (1963).</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/03-superconducting-circuits.html" class="pagination-link" aria-label="Superconducting circuits: from the LC oscillator to qubits">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Superconducting circuits: from the LC oscillator to qubits</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/05-superconducting-qubits.html" class="pagination-link" aria-label="Superconducting qubits: from the Cooper pair box to the transmon">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Superconducting qubits: from the Cooper pair box to the transmon</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "The Josephson junction"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Overview</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>In Chapter 3 we promised a **non-linear, dissipationless** circuit element that could turn the harmonic LC oscillator into an anharmonic qubit. In Chapter 2 we wrote down the supercurrent in a SQUID loop in terms of a phase difference $\delta$ across each weak link, but we never derived where that phase difference came from. Both promises are paid off here.</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>The **Josephson junction** (JJ) is two superconducting electrodes separated by a thin (typically $\sim 1$–$2$ nm) insulating barrier, written as $\mathrm{SIS}$ (Superconductor–Insulator–Superconductor). Classically the barrier is impenetrable; quantum mechanically, Cooper pairs tunnel coherently. Brian Josephson's 1962 insight was that the *macroscopic phase coherence* of the two BCS condensates survives the tunnelling, so that a supercurrent can flow without any voltage drop, governed entirely by the **phase difference** between the two sides.</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>In this chapter we follow the phenomenological derivation of *The Feynman Lectures on Physics*, Vol. 3, §21-9. Starting from two coupled Schrödinger equations for the macroscopic wavefunctions $\Psi_1,\Psi_2$, we obtain Josephson's two constitutive relations:</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**First (DC) Josephson equation**: $\;I = I_c \sin\delta$ — a finite supercurrent flows at zero voltage, set by the phase difference.</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Second (AC) Josephson equation**: $\;\hbar\,\dot\delta = 2eV$ — a finite voltage makes the phase wind in time at the rate $2eV/\hbar$.</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>From the current–phase relation we read off the **Josephson inductance** $L_J = \Phi_0/(2\pi I_c\cos\delta)$: a *phase-dependent*, *non-linear*, *dissipationless* inductance. That is the missing element of Chapter 3.</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="in">```{=latex}</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="in">\input{Grafiche/Figure/04-fig1.tex}</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">## Coupled Schrödinger equations</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>Inside each electrode the superconducting state is described by a single complex order parameter — the BCS macroscopic wavefunction inherited from Chapter 1:</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>\Psi_j(t) = \sqrt{n_j(t)}\, e^{i\varphi_j(t)}, \qquad j = 1,2,</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>where $n_j = |\Psi_j|^2$ is the local Cooper-pair density and $\varphi_j$ the macroscopic phase. If the two electrodes were isolated, each $\Psi_j$ would simply evolve as $i\hbar\,\partial_t\Psi_j = E_j\Psi_j$, where $E_j$ is the chemical potential (Fermi energy) of side $j$.</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>A thin barrier opens a small amplitude for Cooper pairs to tunnel from one side to the other. To leading order in the barrier transparency, the dynamics of the two condensates is captured by the **coupled Schrödinger equations**</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>i\hbar\,\frac{\partial \Psi_1}{\partial t} = E_1\,\Psi_1 + K\,\Psi_2,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>i\hbar\,\frac{\partial \Psi_2}{\partial t} = E_2\,\Psi_2 + K\,\Psi_1.</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>\tag{4.1}</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>The off-diagonal term is the heart of the model.</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple" title="Definition: tunnel matrix element"}</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>The real constant $K$ is the **tunnel matrix element** (also: tunnelling amplitude, coupling constant). It has units of energy, is exponentially small in the barrier thickness and height, and quantifies the rate at which Cooper-pair amplitude leaks from one electrode into the other. The microscopic Bardeen tunnelling Hamiltonian gives an explicit expression for $K$ in terms of the normal-state transparency of the barrier; phenomenologically, $K$ is the only adjustable parameter of the model.</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>A few remarks on (4.1) before we solve it:</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sign / symmetry.** The same $K$ appears in both equations because the barrier is reciprocal: the amplitude to tunnel from $1\to 2$ equals the amplitude $2\to 1$ (Hermiticity of the tunnelling Hamiltonian).</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Voltage bias.** If we bias the junction with a DC voltage $V$, the chemical potentials shift so that Cooper pairs (charge $2e$) feel an energy difference</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>E_1 - E_2 = 2eV.</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>\tag{4.2}</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>This is the only place where the external voltage enters the model.</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**What is left out.** The model neglects quasiparticle tunnelling, the internal dynamics of the order-parameter magnitude $|\Psi_j|$ on the scale of the BCS gap $\Delta$, and any inelastic processes; all of these are subsumed into a single number $K$. Despite the simplifications, (4.1) reproduces *all* of Josephson's predictions.</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="fu">## Phase–amplitude decomposition</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>We now insert the polar form $\Psi_j = \sqrt{n_j}\,e^{i\varphi_j}$ into (4.1) and separate real and imaginary parts. The time derivative is</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>\partial_t \Psi_j = \Big(\tfrac{\dot n_j}{2\sqrt{n_j}} + i\sqrt{n_j}\,\dot\varphi_j\Big)e^{i\varphi_j}.</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>Multiplying (4.1) by $e^{-i\varphi_j}$ and using $\Psi_k\, e^{-i\varphi_j} = \sqrt{n_k}\,e^{i(\varphi_k-\varphi_j)}$ gives, for $j=1$ with $k=2$,</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>i\hbar\Big(\tfrac{\dot n_1}{2\sqrt{n_1}} + i\sqrt{n_1}\,\dot\varphi_1\Big)</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>= E_1\sqrt{n_1} + K\sqrt{n_2}\,e^{i(\varphi_2-\varphi_1)},</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>and similarly for $j=2$ with $k=1$. Writing $e^{i(\varphi_2-\varphi_1)} = \cos\delta + i\sin\delta$ with</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>\boxed{\;\delta \equiv \varphi_2 - \varphi_1\;}</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>the **phase difference** across the junction, and matching real and imaginary parts on both sides, we obtain four real equations:</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>**Imaginary parts** (population dynamics):</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>\dot n_1 = \frac{2K}{\hbar}\sqrt{n_1 n_2}\,\sin\delta,</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>\dot n_2 = -\frac{2K}{\hbar}\sqrt{n_1 n_2}\,\sin\delta.</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>\tag{4.3}</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>**Real parts** (phase dynamics):</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>\dot\varphi_1 = -\frac{K}{\hbar}\sqrt{\frac{n_2}{n_1}}\cos\delta - \frac{E_1}{\hbar},</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>\dot\varphi_2 = -\frac{K}{\hbar}\sqrt{\frac{n_1}{n_2}}\cos\delta - \frac{E_2}{\hbar}.</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>\tag{4.4}</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>Two observations:</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Charge conservation.** Equation (4.3) gives $\dot n_1 = -\dot n_2$, as it should: every Cooper pair that disappears from electrode 1 reappears in electrode 2.</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Reservoir limit.** Each electrode is a macroscopic superconductor connected to an external circuit that replenishes any leaked pairs. On the time-scale of the junction dynamics we can therefore set</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>n_1 \simeq n_2 \equiv n_0 = \text{const},</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>even though pairs are still tunnelling: the *current* through the junction is finite, but the populations are pinned by the external circuit.</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="fu">### Josephson's first (DC) equation: current–phase relation</span></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>From population dynamics to current is now a one-line argument. The rate at which Cooper pairs leave electrode 1 is $\dot n_1$; each carries charge $q^* = 2e$, so the **supercurrent** through the junction is</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>I = 2e\,\dot n_1 = \frac{4eK}{\hbar}\sqrt{n_1 n_2}\,\sin\delta.</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>Defining the **critical current**</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>I_c \equiv \frac{4eK}{\hbar}\sqrt{n_1 n_2} \;\xrightarrow{n_1\simeq n_2=n_0}\; \frac{4eK\,n_0}{\hbar},</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>\tag{4.5}</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>we obtain Josephson's first equation,</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>\boxed{\;I = I_c\,\sin\delta\;}</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>\qquad\text{(DC Josephson effect).}</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>\tag{4.6}</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>Three things are remarkable about (4.6):</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**No voltage required.** A finite current flows at $V=0$ — this is the **DC Josephson effect**. The current is driven by a *phase difference*, not by a chemical-potential difference.</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Bounded.** The supercurrent saturates at $|I|\le I_c$. If you try to push more than $I_c$ through the junction, no static solution exists and the junction switches to a finite-voltage state in which the phase winds in time (see (4.10) below).</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sinusoidal.** The $\sin\delta$ shape is generic for a tunnel barrier; for stronger coupling (point contacts, weak links) higher harmonics $\sin 2\delta, \sin 3\delta,\ldots$ appear. For the SIS junctions we care about the first harmonic is overwhelmingly dominant.</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple" title="Definition: gauge-invariant phase $\delta$"}</span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>The phase difference appearing in (4.6) is the **gauge-invariant phase**</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>\delta = \varphi_2 - \varphi_1 - \frac{2e}{\hbar}\int_1^2 \mathbf A\cdot d\boldsymbol\ell,</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>where the line integral is taken across the barrier. In zero vector potential this reduces to $\delta=\varphi_2-\varphi_1$, the bare phase difference we just used. The line-integral correction is exactly the one needed for (4.6) to be invariant under the electromagnetic gauge transformation $\mathbf A\to\mathbf A+\nabla\chi,\ \varphi_j\to\varphi_j+(2e/\hbar)\chi$. *This is the same $\delta$ that appeared in the DC-SQUID current of Chapter 2*: there we used it without derivation, here we have just defined it.</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple" title="Definition: critical current $I_c$"}</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>The **critical current** $I_c$ is the maximum supercurrent the junction can sustain at zero voltage. From (4.5) it scales linearly with the tunnelling amplitude $K$ and with the condensate density. A microscopic calculation by Ambegaokar and Baratoff gives, at $T=0$,</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>I_c = \frac{\pi\Delta_{\mathrm{BCS}}}{2eR_n},</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>where $\Delta_{\mathrm{BCS}}$ is the BCS gap and $R_n$ is the *normal-state* resistance of the junction (measured above $T_c$, or — for tunnel junctions — well-approximated by the room-temperature resistance). The practical consequence is that one can estimate $I_c$ from a simple resistance measurement at room temperature: a typical aluminium tunnel junction with $R_n \sim 10$ k$\Omega$ has $I_c \sim 30$ nA.</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="in">```{=latex}</span></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="in">\input{Grafiche/Figure/04-fig2.tex}</span></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="fu">### Josephson's second (AC) equation: voltage–phase relation</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>The phase dynamics (4.4) gives Josephson's second equation almost for free. Subtracting,</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>\dot\delta = \dot\varphi_2 - \dot\varphi_1</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>= -\frac{K}{\hbar}\Big(\sqrt{\tfrac{n_1}{n_2}}-\sqrt{\tfrac{n_2}{n_1}}\Big)\cos\delta - \frac{E_2 - E_1}{\hbar}.</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>In the reservoir limit $n_1\simeq n_2$, the bracket vanishes and</span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>\dot\delta = \frac{E_1 - E_2}{\hbar}.</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>Combined with the voltage–energy relation (4.2), $E_1 - E_2 = 2eV$, we obtain Josephson's second equation,</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>\boxed{\;\hbar\,\dot\delta = 2eV\;}</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>\qquad\text{(AC Josephson effect).}</span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>\tag{4.7}</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>Two consequences:</span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**DC bias $\Rightarrow$ winding phase.** A constant voltage $V$ makes $\delta(t) = \delta_0 + (2eV/\hbar)t$. Plugging into (4.6) gives an **oscillating supercurrent** $I(t) = I_c\sin\!\big(\delta_0 + \omega_J t\big)$ at the **Josephson frequency**</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>\omega_J = \frac{2eV}{\hbar},</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>\qquad \frac{\omega_J}{2\pi V} \approx 483.6\ \text{MHz}/\mu\text{V}.</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>This is the AC Josephson effect: a DC voltage produces a high-frequency AC current. The proportionality $2e/h$ is so accurate that it underpins the SI definition of the volt.</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Flux quantum re-appears.** Integrating (4.7) gives $\hbar\delta = 2e<span class="sc">\!</span>\int V\,dt = 2e\,\Phi$, where $\Phi$ is the magnetic flux threading the loop in which $V$ is the EMF. Hence</span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>\delta = \frac{2\pi\Phi}{\Phi_0},</span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>\qquad \Phi_0 = \frac{h}{2e},</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>\tag{4.8}</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>recovering the flux quantum introduced in Chapter 1 and confirming that the phase difference and the (gauge-invariant) flux through a junction loop are the same dynamical variable up to the factor $2\pi/\Phi_0$.</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip appearance="simple" title="Summary: Josephson's two equations"}</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>The two constitutive relations of a Josephson junction are</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>I = I_c\sin\delta \qquad\text{and}\qquad V = \frac{\hbar}{2e}\,\dot\delta.</span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>Together they tell us: **the phase difference $\delta$ is the dynamical variable of the junction; the supercurrent depends on its value, the voltage on its rate of change.**</span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a><span class="fu">## Josephson inductance</span></span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>We now extract from (4.6)–(4.7) the *circuit element* the junction realises. Recall the defining relation of an ordinary inductor: $V = L\,\dot I$, equivalently $L = (dI/d\Phi)^{-1}$ in terms of the flux $\Phi$ that produces a current $I$. We apply the same definition to the JJ.</span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>From (4.8) the phase $\delta$ plays the role of the flux up to the constant $\Phi_0/(2\pi)$: $\Phi = (\Phi_0/2\pi)\delta$, so $d\Phi = (\Phi_0/2\pi)\,d\delta$. Differentiating the current–phase relation,</span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a>\frac{dI}{d\Phi} = \frac{dI}{d\delta}\,\frac{d\delta}{d\Phi}</span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>= I_c\cos\delta \cdot \frac{2\pi}{\Phi_0}</span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>= \frac{2\pi I_c\cos\delta}{\Phi_0}.</span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>Inverting,</span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>\boxed{\;L_J(\delta) = \left(\frac{dI}{d\Phi}\right)^{-1} = \frac{\Phi_0}{2\pi I_c\cos\delta}\;}</span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>\tag{4.9}</span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>This is the **Josephson inductance**.</span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>A check that the definition is consistent: combining (4.6) and (4.7),</span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>\dot I = I_c\cos\delta\cdot\dot\delta = \frac{2eI_c\cos\delta}{\hbar}\,V</span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a>\;\;\Longrightarrow\;\;</span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>V = \frac{\hbar}{2eI_c\cos\delta}\,\dot I,</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>so we can equivalently write</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>L_J = \frac{\hbar}{2eI_c\cos\delta},</span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>which agrees with (4.9) using $\Phi_0 = h/(2e)$.</span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>::: {.callout-note appearance="simple" title="Definition: Josephson energy $E_J$ and Josephson inductance $L_J$"}</span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>The energy stored in the junction is</span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>U(\delta) = \int_0^{\delta} I(\delta')\,\frac{\Phi_0}{2\pi}\,d\delta'</span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a>= \frac{I_c\Phi_0}{2\pi}\big(1-\cos\delta\big) = E_J(1-\cos\delta),</span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>where the **Josephson energy** is</span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>E_J \equiv \frac{I_c\Phi_0}{2\pi} = \frac{\hbar I_c}{2e}.</span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>The **Josephson inductance** is the differential inductance defined above,</span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>L_J(\delta) = \frac{\Phi_0}{2\pi I_c\cos\delta} = \frac{\hbar}{2eI_c\cos\delta} = \frac{L_{J0}}{\cos\delta},</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>\qquad L_{J0}\equiv \frac{\Phi_0}{2\pi I_c}.</span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>$E_J$ has units of energy; $L_J$ has units of henries. They are related by $E_J = (\Phi_0/2\pi)^2/L_{J0}$, just like the magnetic energy $\tfrac12 LI^2$ stored in an ordinary inductor.</span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a><span class="fu">### Properties of $L_J$</span></span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>Equation (4.9) is the central result of this chapter. Several features deserve emphasis.</span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Non-linear.** $L_J$ depends on $\delta$, hence on the current $I$ through $\cos\delta = \sqrt{1-(I/I_c)^2}$. In contrast, an ordinary inductor has $L$ constant — the field energy is quadratic in the current.</span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Small-signal limit.** For $|\delta|\ll 1$ (equivalently $|I|\ll I_c$), $\cos\delta\simeq 1$ and</span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a>L_J \simeq L_{J0} = \frac{\Phi_0}{2\pi I_c}.</span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a>In this regime the junction is *approximately* a linear inductor of value $L_{J0}$. This is the regime in which the LC oscillator picture of Chapter 3 applies, with $L\to L_{J0}$.</span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Singularity at $\delta=\pi/2$.** As $\delta\to\pi/2$, $\cos\delta\to 0$ and $L_J\to\infty$. This is exactly the point where the supercurrent reaches its maximum $I_c$: any further increase in current would require an infinite incremental inductance, which is the mathematical signature that the static (zero-voltage) branch terminates at $I=I_c$.</span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Negative branch.** For $\pi/2&lt;\delta&lt;3\pi/2$, $\cos\delta&lt;0$ and $L_J&lt;0$. A negative differential inductance corresponds to a dynamically unstable branch of the $I$–$\delta$ curve; the junction does not sit there for long.</span>
+<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Dissipationless.** No resistive term ever appeared in the derivation. The energy $E_J(1-\cos\delta)$ is stored in the macroscopic phase and recovered when $\delta$ returns to zero. (Real junctions have a small parallel quasiparticle conductance, but for $V\ll 2\Delta/e$ and at low temperature this is exponentially suppressed.)</span>
+<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a><span class="in">```{=latex}</span></span>
+<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a><span class="in">\input{Grafiche/Figure/04-fig3.tex}</span></span>
+<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a><span class="fu">### Where does the non-linearity come from?</span></span>
+<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>The reader may wonder why a tunnel barrier — a perfectly passive piece of insulator — produces a non-linear element. The non-linearity is *not* in the barrier; it is in the constitutive relation. An ordinary inductor stores energy $\tfrac12 LI^2$ in a magnetic field built up *outside* the wire. A Josephson junction stores energy</span>
+<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>U(\delta) = E_J(1-\cos\delta)</span>
+<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>in the *phase* of the macroscopic wavefunction — and this is a $2\pi$-periodic quantity, not a real number. Periodic potentials are necessarily non-quadratic, and any deviation from the parabolic minimum is the source of anharmonicity.</span>
+<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a><span class="fu">## Connection to the rest of the course</span></span>
+<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>We can now close two loops left open in earlier chapters.</span>
+<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Connection to Chapter 2 (DC SQUID).** In Chapter 2 we wrote the SQUID current as $I_s = I_{c,1}\sin\delta_1 + I_{c,2}\sin\delta_2$ and quantised the flux through the loop by demanding single-valuedness of the wavefunction along a contour deep inside the superconductor. The two phase drops $\delta_{1,2}$ in that derivation are exactly the gauge-invariant Josephson phases (4.6) of the two weak links. The flux quantisation condition $\delta_2-\delta_1 = 2\pi\Phi/\Phi_0$ used there is just (4.8) applied around the loop.</span>
+<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Connection to Chapter 3 (the missing non-linearity).** Section 3.5 closed with the observation that an LC oscillator has perfectly evenly-spaced energy levels — and is therefore useless as a qubit. The *missing element* was a non-linear, dissipationless inductor. Equation (4.9) is exactly that element: it reduces to a linear inductor of value $L_{J0}$ in the small-amplitude limit, recovering the LC oscillator of Chapter 3 with $\omega_0 = 1/\sqrt{L_{J0}C}$ — but its full $1/\cos\delta$ dependence bends the parabolic potential into the cosine well $E_J(1-\cos\delta)$ that Chapter 5 will quantise.</span>
+<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip appearance="simple" title="The central message"}</span>
+<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a>The Josephson junction is a **non-linear, dissipationless inductor**. Replacing the linear inductor in the LC circuit of Chapter 3 with a JJ turns the harmonic oscillator</span>
+<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a>H_{LC} = \frac{\hat q^2}{2C} + \frac{\hat\Phi^2}{2L}</span>
+<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a>\quad\longrightarrow\quad</span>
+<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a>H_{JJ} = \frac{\hat q^2}{2C} + E_J\big<span class="co">[</span><span class="ot">1-\cos(2\pi\hat\Phi/\Phi_0)\big</span><span class="co">]</span></span>
+<span id="cb1-276"><a href="#cb1-276" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-277"><a href="#cb1-277" aria-hidden="true" tabindex="-1"></a>into an anharmonic oscillator — the **transmon Hamiltonian** of Chapter 5. The unequal level spacing that follows from anharmonicity is what makes the lowest two states $\ket{0},\ket{1}$ addressable as a qubit, and resolves the "missing anharmonicity" problem highlighted at the end of Chapter 3.</span>
+<span id="cb1-278"><a href="#cb1-278" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-279"><a href="#cb1-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-280"><a href="#cb1-280" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-281"><a href="#cb1-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-282"><a href="#cb1-282" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Lecturer's lecture notes**: §4 (*Josephson junction*), pp. 13–15.</span>
+<span id="cb1-283"><a href="#cb1-283" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Feynman, R. P., Leighton, R. B. &amp; Sands, M.** *The Feynman Lectures on Physics*, Vol. 3, §21-9 (coupled-wavefunction derivation of Josephson's equations).</span>
+<span id="cb1-284"><a href="#cb1-284" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Tinkham, M.** *Introduction to Superconductivity*, 2nd ed., Dover (2004), Chapter 6 (Josephson effect, RCSJ model, Ambegaokar–Baratoff formula).</span>
+<span id="cb1-285"><a href="#cb1-285" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Vool, U. &amp; Devoret, M.** *Introduction to quantum electromagnetic circuits*, Int. J. Circ. Theor. Appl. **45**, 897 (2017), §3 (Josephson element as a non-linear inductor).</span>
+<span id="cb1-286"><a href="#cb1-286" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Josephson, B. D.** *Possible new effects in superconductive tunnelling*, Phys. Lett. **1**, 251 (1962) — the original two-page paper.</span>
+<span id="cb1-287"><a href="#cb1-287" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Ambegaokar, V. &amp; Baratoff, A.** *Tunneling between superconductors*, Phys. Rev. Lett. **10**, 486 (1963).</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

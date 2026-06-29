@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""
+r"""
 build-tex-svg.py — pre-render every TikZ / circuitikz figure that a .qmd
 chapter pulls in via raw LaTeX, so the HTML build can serve them as SVG.
 
@@ -60,12 +60,15 @@ PREAMBLE = r"""
 \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 \usepackage{xcolor}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{braket}          % \ket, \bra, \braket — used by IQH transmon figures
 \usepackage{booktabs,multirow,array,subcaption}
 \usepackage{tikz}
 \usepackage{circuitikz}
+%__PGFPLOTS_SLOT__
 \usetikzlibrary{calc, arrows.meta, positioning, shapes.geometric,
                 shapes.misc, fit, decorations.pathreplacing,
-                decorations.pathmorphing, automata, matrix, chains}
+                decorations.pathmorphing, automata, matrix, chains,
+                patterns, patterns.meta, intersections}
 \ctikzset{logic ports=ieee, logic ports/scale=0.85}
 % Styles defined in the shared Notes preamble — repeated here because
 % standalone figures don't see Notes/pdf/preamble.tex.
@@ -103,6 +106,21 @@ PREAMBLE = r"""
 """
 POSTAMBLE = "\n\\end{document}\n"
 
+# pgfplots is heavyweight (~1–2 s startup) and only a minority of figures
+# need it, so we splice it in conditionally — see _build_preamble().
+PGFPLOTS_SNIPPET = r"\usepackage{pgfplots}" "\n" r"\pgfplotsset{compat=1.18}"
+_PGFPLOTS_USE = re.compile(
+    r"\\addplot\b|\\begin\{(?:axis|semilogyaxis|semilogxaxis|loglogaxis|polaraxis)\}"
+)
+
+
+def _build_preamble(tex_body: str) -> str:
+    """Return the standalone preamble, loading pgfplots only when the
+    body actually uses an axis env or \\addplot."""
+    if _PGFPLOTS_USE.search(tex_body):
+        return PREAMBLE.replace("%__PGFPLOTS_SLOT__", PGFPLOTS_SNIPPET)
+    return PREAMBLE.replace("%__PGFPLOTS_SLOT__", "")
+
 
 # Strip outer figure / center wrappers so `standalone` doesn't choke on
 # floats it has no page for. The inner tikzpicture / circuitikz drawing
@@ -112,8 +130,41 @@ _FIGURE_OPEN2 = re.compile(r"\\begin\{(?:figure|table)\}")
 _FIGURE_CLOSE = re.compile(r"\\end\{(?:figure|table)\}")
 _CENTER_OPEN  = re.compile(r"\\begin\{center\}")
 _CENTER_CLOSE = re.compile(r"\\end\{center\}")
-_CAPTION      = re.compile(r"\\caption\s*(?:\[[^\]]*\])?\s*\{(?:[^{}]*|\{[^{}]*\})*\}")
-_LABEL        = re.compile(r"\\label\s*\{[^}]*\}")
+_CAPTION_START = re.compile(r"\\caption\s*(?:\[[^\]]*\])?\s*\{")
+_LABEL         = re.compile(r"\\label\s*\{[^}]*\}")
+
+
+def _strip_balanced_caption(body: str) -> str:
+    """Remove every ``\\caption{…}`` from *body*, allowing arbitrary brace
+    nesting inside the caption argument (e.g.\\ ``$I_{\\text{in}}$`` which
+    has two levels of `{` / `}`).
+
+    The old regex-based stripper only handled one level of nesting, which
+    left captions intact in the standalone .tex when they contained subscripts
+    with `\\text{…}` and similar — silently passing the caption through to
+    pdflatex and, on at least one figure (IQH ``02-fig1.tex``), causing
+    pdflatex to sit forever in argument-collection.
+    """
+    out: list[str] = []
+    i = 0
+    n = len(body)
+    while i < n:
+        m = _CAPTION_START.search(body, i)
+        if not m:
+            out.append(body[i:])
+            break
+        out.append(body[i:m.start()])
+        depth = 1
+        j = m.end()
+        while j < n and depth > 0:
+            c = body[j]
+            if c == "{":
+                depth += 1
+            elif c == "}":
+                depth -= 1
+            j += 1
+        i = j  # skip past the closing brace of the caption argument
+    return "".join(out)
 
 
 def _strip_figure_wrapper(body: str) -> str:
@@ -127,7 +178,7 @@ def _strip_figure_wrapper(body: str) -> str:
         body = _FIGURE_CLOSE.sub("", body)
     body = _CENTER_OPEN.sub("", body)
     body = _CENTER_CLOSE.sub("", body)
-    body = _CAPTION.sub("", body)
+    body = _strip_balanced_caption(body)
     body = _LABEL.sub("", body)
     body = re.sub(r"\\centering\b", "", body)
     return body
@@ -140,8 +191,26 @@ RAW_LATEX_BLOCK = re.compile(
 INPUT_RE = re.compile(r"\\input\s*\{([^}]+)\}")
 
 
-def _run(cmd, cwd=None):
-    return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, check=False)
+def _run(cmd, cwd=None, timeout=60):
+    """Run *cmd* with the given timeout (seconds).
+
+    Without a timeout, a hung pdflatex (e.g.\\ waiting on stdin because of
+    a malformed argument that survived the figure-wrapper stripping) would
+    stall the entire batch indefinitely. Surface the timeout as a synthetic
+    failure-style CompletedProcess so callers don't have to learn about a
+    new exception type.
+    """
+    try:
+        return subprocess.run(
+            cmd, cwd=cwd, capture_output=True, text=True,
+            check=False, timeout=timeout,
+        )
+    except subprocess.TimeoutExpired as e:
+        sys.stderr.write(
+            f"  ✗ timed out after {timeout}s: {' '.join(cmd)}\n")
+        return subprocess.CompletedProcess(
+            cmd, returncode=124,                # 124 = canonical "timeout"
+            stdout=e.stdout or "", stderr=e.stderr or "")
 
 
 def _compile_to_svg(tex_body: str, out_svg: Path, *, label: str) -> bool:
@@ -153,7 +222,8 @@ def _compile_to_svg(tex_body: str, out_svg: Path, *, label: str) -> bool:
         tmp = Path(tmpdir)
         tex_path = tmp / "fig.tex"
         tex_path.write_text(
-            PREAMBLE + _strip_figure_wrapper(tex_body) + POSTAMBLE,
+            _build_preamble(tex_body)
+            + _strip_figure_wrapper(tex_body) + POSTAMBLE,
             encoding="utf-8")
         # pdflatex: one pass is enough for standalone tikz figures.
         r = _run(["pdflatex", "-interaction=nonstopmode", "-halt-on-error",
@@ -228,8 +298,9 @@ def process_course(notes_dir: Path) -> tuple[int, int, int]:
                 cached += 1
                 continue
             body = inc_path.read_text(encoding="utf-8", errors="replace")
+            print(f"  … compiling {inc_rel}", flush=True)
             if _compile_to_svg(body, svg_path, label=str(inc_rel)):
-                print(f"  ✓ {inc_rel}")
+                print(f"  ✓ {inc_rel}", flush=True)
                 new += 1
             else:
                 failed += 1
@@ -249,9 +320,10 @@ def process_course(notes_dir: Path) -> tuple[int, int, int]:
             if svg_path.is_file():
                 cached += 1
             else:
+                print(f"  … compiling inline-{h} ({qmd.name})", flush=True)
                 if _compile_to_svg(body, svg_path,
                                    label=f"{qmd.name} block #{i}"):
-                    print(f"  ✓ inline-{h}.svg ({qmd.name})")
+                    print(f"  ✓ inline-{h}.svg ({qmd.name})", flush=True)
                     new += 1
                 else:
                     failed += 1
@@ -264,6 +336,14 @@ def process_course(notes_dir: Path) -> tuple[int, int, int]:
 
 
 def main():
+    # Line-buffer stdout so each "✓ figure" line appears as it happens, not
+    # after the whole batch finishes (Python defaults to block buffering when
+    # stdout is not a TTY, e.g. piped or redirected).
+    try:
+        sys.stdout.reconfigure(line_buffering=True)
+    except AttributeError:
+        pass  # Python < 3.7 fallback — not expected on this project's stack
+
     only = sys.argv[1] if len(sys.argv) > 1 else None
     if not shutil.which("pdflatex") or not shutil.which("pdftocairo"):
         sys.stderr.write("error: pdflatex and pdftocairo are required\n")
@@ -272,7 +352,7 @@ def main():
     total_new = total_cached = total_failed = 0
     for notes_dir in _gather_courses(only):
         rel = notes_dir.relative_to(ROOT)
-        print(f"▶ {rel}")
+        print(f"▶ {rel}", flush=True)
         n, c, f = process_course(notes_dir)
         total_new    += n
         total_cached += c

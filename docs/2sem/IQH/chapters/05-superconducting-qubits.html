@@ -1,0 +1,1552 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>6&nbsp; Superconducting qubits: from the Cooper pair box to the transmon – Introduction to Quantum Hardware</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/06-cavity-to-circuit-qed.html" rel="next">
+<link href="../chapters/04-josephson-junction.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-superconducting-qubits.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Superconducting qubits: from the Cooper pair box to the transmon</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Introduction to Quantum Hardware</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-ginzburg-landau-cooper-pairs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Ginzburg–Landau theory and Cooper pairs</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-dc-squid.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">The DC SQUID</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-superconducting-circuits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Superconducting circuits: from the LC oscillator to qubits</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-josephson-junction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Josephson junction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-superconducting-qubits.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Superconducting qubits: from the Cooper pair box to the transmon</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-cavity-to-circuit-qed.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">From cavity QED to circuit QED</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-cooper-pair-box-cpb" id="toc-the-cooper-pair-box-cpb" class="nav-link active" data-scroll-target="#the-cooper-pair-box-cpb"><span class="header-section-number">6.1</span> The Cooper pair box (CPB)</a>
+  <ul class="collapse">
+  <li><a href="#circuit" id="toc-circuit" class="nav-link" data-scroll-target="#circuit"><span class="header-section-number">6.1.1</span> Circuit</a></li>
+  <li><a href="#lagrangian-and-hamiltonian" id="toc-lagrangian-and-hamiltonian" class="nav-link" data-scroll-target="#lagrangian-and-hamiltonian"><span class="header-section-number">6.1.2</span> Lagrangian and Hamiltonian</a></li>
+  <li><a href="#conjugate-operators-and-the-charge-basis" id="toc-conjugate-operators-and-the-charge-basis" class="nav-link" data-scroll-target="#conjugate-operators-and-the-charge-basis"><span class="header-section-number">6.1.3</span> Conjugate operators and the charge basis</a></li>
+  <li><a href="#charge-dispersion-and-the-sweet-spot-e_j-ll-e_c" id="toc-charge-dispersion-and-the-sweet-spot-e_j-ll-e_c" class="nav-link" data-scroll-target="#charge-dispersion-and-the-sweet-spot-e_j-ll-e_c"><span class="header-section-number">6.1.4</span> Charge dispersion and the sweet spot (<span class="math inline">\(E_J \ll E_C\)</span>)</a></li>
+  </ul></li>
+  <li><a href="#from-the-cpb-to-the-transmon" id="toc-from-the-cpb-to-the-transmon" class="nav-link" data-scroll-target="#from-the-cpb-to-the-transmon"><span class="header-section-number">6.2</span> From the CPB to the transmon</a>
+  <ul class="collapse">
+  <li><a href="#engineering-choice" id="toc-engineering-choice" class="nav-link" data-scroll-target="#engineering-choice"><span class="header-section-number">6.2.1</span> Engineering choice</a></li>
+  </ul></li>
+  <li><a href="#idea-of-the-transmon" id="toc-idea-of-the-transmon" class="nav-link" data-scroll-target="#idea-of-the-transmon"><span class="header-section-number">6.3</span> Idea of the transmon</a></li>
+  <li><a href="#hamiltonian-of-the-transmon" id="toc-hamiltonian-of-the-transmon" class="nav-link" data-scroll-target="#hamiltonian-of-the-transmon"><span class="header-section-number">6.4</span> Hamiltonian of the transmon</a>
+  <ul class="collapse">
+  <li><a href="#bosonic-quantisation" id="toc-bosonic-quantisation" class="nav-link" data-scroll-target="#bosonic-quantisation"><span class="header-section-number">6.4.1</span> Bosonic quantisation</a></li>
+  <li><a href="#rotating-wave-approximation" id="toc-rotating-wave-approximation" class="nav-link" data-scroll-target="#rotating-wave-approximation"><span class="header-section-number">6.4.2</span> Rotating-wave approximation</a></li>
+  </ul></li>
+  <li><a href="#transmon-as-a-qubit" id="toc-transmon-as-a-qubit" class="nav-link" data-scroll-target="#transmon-as-a-qubit"><span class="header-section-number">6.5</span> Transmon as a qubit</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">6.6</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Superconducting qubits: from the Cooper pair box to the transmon</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This chapter is the centre of mass of the course. We take the Josephson junction built in Chapter 4 (the only non-linear, dissipationless lumped element available in superconducting circuits) and embed it in the lumped-element framework of Chapter 3 to obtain an <em>artificial atom</em> whose two lowest levels can be addressed coherently as a qubit.</p>
+<p>We follow the historical path. The <strong>Cooper pair box</strong> (CPB) of Nakamura <em>et al.</em> (1999) is the simplest charge qubit one can draw. It is also the canonical example of a circuit that is <em>spoiled by charge noise</em>, and understanding precisely <em>why</em> leads, by a single design choice, to the <strong>transmon</strong> of Koch <em>et al.</em> (2007). The transmon is the qubit we will couple to a microwave cavity in Chapter 6 — virtually every mainstream superconducting quantum processor today (IBM, Google, Rigetti, QuEra-Atomic, …) is built out of transmons.</p>
+<p>The whole chapter is governed by a single Hamiltonian <span id="eq-cpb-master"><span class="math display">\[
+\hat H_{\text{CPB}} \;=\; 4 E_C\,(\hat n - n_g)^2 \;-\; E_J\,\cos\hat\varphi,
+\tag{6.1}\]</span></span> and the single dimensionless parameter <span class="math inline">\(E_J/E_C\)</span> that controls its regime. The CPB and the transmon are two limits of <a href="#eq-cpb-master" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-cpb-master</span></a>, not two different circuits.</p>
+<section id="the-cooper-pair-box-cpb" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="the-cooper-pair-box-cpb"><span class="header-section-number">6.1</span> The Cooper pair box (CPB)</h2>
+<section id="circuit" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="circuit"><span class="header-section-number">6.1.1</span> Circuit</h3>
+<p>The CPB consists of a tiny <strong>superconducting island</strong> connected to a <strong>reservoir</strong> through a single Josephson junction (JJ), and capacitively coupled to an external gate voltage <span class="math inline">\(V_g\)</span> through a gate capacitor <span class="math inline">\(C_g\)</span> (see <a href="#fig-cpb-circuit" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-cpb-circuit</span></a>). The JJ has its own self-capacitance <span class="math inline">\(C_J\)</span>, so the total capacitance seen by the island is <span class="math display">\[
+C_\Sigma \;=\; C_J + C_g.
+\]</span> The gate voltage induces a continuous, classically controllable charge <span class="math inline">\(Q_g = C_g V_g\)</span> on the island. The Josephson junction allows <strong>Cooper pairs</strong>, and only Cooper pairs (single-electron tunnelling is gapped out by the superconducting gap <span class="math inline">\(\Delta\)</span>), to enter or leave the island in discrete units of <span class="math inline">\(2e\)</span>.</p>
+<p><img src="../Grafiche/Figure/05-fig1.svg" class="tikz-figure img-fluid" alt=""></p>
+</section>
+<section id="lagrangian-and-hamiltonian" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="lagrangian-and-hamiltonian"><span class="header-section-number">6.1.2</span> Lagrangian and Hamiltonian</h3>
+<p>We repeat the LC-quantisation routine of Chapter 3, taking the junction flux <span class="math inline">\(\Phi_J\)</span> as the loop coordinate and writing <span class="math inline">\(\varphi = (2\pi/\Phi_0)\,\Phi_J\)</span> for the dimensionless phase.</p>
+<ul>
+<li><strong>Kinetic energy</strong> — the two capacitors store <span class="math display">\[
+T \;=\; \tfrac12\, C_J\,\dot\Phi_J^{\,2}
+     \;+\; \tfrac12\, C_g\,(\dot\Phi_J - V_g)^2.
+\]</span></li>
+<li><strong>Potential energy</strong> — only the junction contributes, <span class="math display">\[
+U \;=\; -E_J\cos\!\left(\tfrac{2\pi}{\Phi_0}\Phi_J\right)
+      \;=\; -E_J\cos\varphi.
+\]</span></li>
+<li><strong>Conjugate momentum.</strong> The Lagrangian <span class="math inline">\(\mathcal L = T - U\)</span> gives a conjugate momentum that, up to the standard offset, is the total charge on the island, <span class="math display">\[
+Q \;=\; \frac{\partial \mathcal L}{\partial \dot\Phi_J}
+     \;=\; C_\Sigma\,\dot\Phi_J - C_g V_g.
+\]</span></li>
+<li><strong>Legendre transform.</strong> Solving for <span class="math inline">\(\dot\Phi_J = (Q + C_g V_g)/C_\Sigma\)</span> and collecting, <span class="math display">\[
+H \;=\; \frac{(Q + C_g V_g)^2}{2 C_\Sigma} \;-\; E_J \cos\varphi.
+\]</span></li>
+</ul>
+<p>The first term is the electrostatic charging energy with the gate offset built in. Counting charge in Cooper pairs and introducing the <strong>charging energy</strong> <span class="math display">\[
+\boxed{\,E_C \;=\; \frac{e^2}{2 C_\Sigma}\,}
+\]</span> together with the dimensionless <strong>Cooper-pair number</strong> and <strong>offset charge</strong> <span class="math display">\[
+\hat n \;\equiv\; \hat Q / (2e),
+\qquad
+n_g \;\equiv\; C_g V_g / (2e),
+\]</span> the Hamiltonian becomes the master equation <a href="#eq-cpb-master" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-cpb-master</span></a>: <span class="math display">\[
+\hat H_{\text{CPB}} \;=\; 4 E_C\,(\hat n - n_g)^2 \;-\; E_J\cos\hat\varphi.
+\]</span></p>
+<div class="definition" name="CPB charging and Josephson energies">
+<p><span class="math inline">\(E_C = e^2/(2 C_\Sigma)\)</span> is the electrostatic cost of putting <strong>one extra electron</strong> on the island. The factor of four in front of <span class="math inline">\((\hat n - n_g)^2\)</span> converts it into the cost of one extra <strong>Cooper pair</strong> (<span class="math inline">\((2e)^2/(2 C_\Sigma) = 4 E_C\)</span>). The Josephson energy <span class="math inline">\(E_J = \Phi_0 I_c/(2\pi)\)</span> is the depth of the cosine washboard derived in Chapter 4.</p>
+</div>
+</section>
+<section id="conjugate-operators-and-the-charge-basis" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="conjugate-operators-and-the-charge-basis"><span class="header-section-number">6.1.3</span> Conjugate operators and the charge basis</h3>
+<p><span class="math inline">\(\hat n\)</span> and <span class="math inline">\(\hat\varphi\)</span> are the canonical pair of the circuit. Starting from <span class="math inline">\([\hat\Phi_J,\hat Q] = i\hbar\)</span> in the LC sector (Chapter 3) and using <span class="math inline">\(\hat\varphi = (2\pi/\Phi_0)\hat\Phi_J\)</span> and <span class="math inline">\(\hat n = \hat Q/(2e)\)</span>, <span class="math display">\[
+[\hat\varphi,\hat n]
+\;=\; \frac{2\pi}{\Phi_0}\cdot\frac{1}{2e}\,[\hat\Phi_J,\hat Q]
+\;=\; \frac{2\pi}{\Phi_0\cdot 2e}\,i\hbar
+\;=\; i,
+\]</span> since <span class="math inline">\(\Phi_0 = h/(2e)\)</span>. So <span class="math inline">\(\hat\varphi\)</span> is the <strong>phase</strong> conjugate to the Cooper-pair number <span class="math inline">\(\hat n\)</span>, exactly as angle is conjugate to angular momentum.</p>
+<ul>
+<li><strong>Charge basis.</strong> Eigenstates <span class="math inline">\(\hat n\ket n = n\ket n\)</span> with <span class="math inline">\(n\in\mathbb Z\)</span>, labelling the number of excess Cooper pairs on the island.</li>
+<li><strong>Phase basis.</strong> Eigenstates <span class="math inline">\(\hat\varphi\ket\varphi = \varphi\ket\varphi\)</span> with <span class="math inline">\(\varphi\in[0,2\pi)\)</span>. The Fourier kernel is <span class="math inline">\(\braket{\varphi|n} = e^{in\varphi}/\sqrt{2\pi}\)</span>.</li>
+<li><strong>Cosine as a hopping term.</strong> Writing <span class="math inline">\(\cos\hat\varphi = \tfrac12(e^{i\hat\varphi} + e^{-i\hat\varphi})\)</span> and noting that <span class="math inline">\(e^{\pm i\hat\varphi}\ket n = \ket{n\pm 1}\)</span> (because <span class="math inline">\(\hat\varphi\)</span> is conjugate to <span class="math inline">\(\hat n\)</span>), we obtain the <strong>charge-basis representation</strong> <span id="eq-cpb-charge"><span class="math display">\[
+\hat H_{\text{CPB}}
+\;=\; \sum_n 4 E_C(n - n_g)^2 \ket n\!\bra n
+\;-\; \tfrac{E_J}{2}\sum_n \bigl(\ket n\!\bra{n+1} + \ket{n+1}\!\bra n\bigr).
+\tag{6.2}\]</span></span></li>
+<li><strong>Physical reading.</strong> The first piece is diagonal — the <em>electrostatic cost</em> <span class="math inline">\(E_C(2(n-n_g))^2/2\)</span> of carrying <span class="math inline">\(2e(n-n_g)\)</span> charge across <span class="math inline">\(C_\Sigma\)</span>. The second piece is a nearest-neighbour hopping in charge space — the <em>coherent tunnelling of one Cooper pair</em> through the junction, with amplitude <span class="math inline">\(E_J/2\)</span>.</li>
+</ul>
+</section>
+<section id="charge-dispersion-and-the-sweet-spot-e_j-ll-e_c" class="level3" data-number="6.1.4">
+<h3 data-number="6.1.4" class="anchored" data-anchor-id="charge-dispersion-and-the-sweet-spot-e_j-ll-e_c"><span class="header-section-number">6.1.4</span> Charge dispersion and the sweet spot (<span class="math inline">\(E_J \ll E_C\)</span>)</h3>
+<p>In the <strong>charge regime</strong> <span class="math inline">\(E_J \ll E_C\)</span> the diagonal parabolas <span class="math inline">\(E_n(n_g) = 4 E_C (n - n_g)^2\)</span> dominate; the Josephson term is a perturbation that mixes the parabolas only where they cross.</p>
+<ul>
+<li><strong>Parabolas of the CPB.</strong> For each fixed <span class="math inline">\(n\)</span>, <span class="math inline">\(E_n(n_g)\)</span> is a parabola in <span class="math inline">\(n_g\)</span> with minimum at <span class="math inline">\(n_g = n\)</span>. Consecutive parabolas <span class="math inline">\(n\)</span> and <span class="math inline">\(n+1\)</span> intersect at the <strong>degeneracy point</strong> <span class="math inline">\(n_g = n + 1/2\)</span>.</li>
+<li><strong>Near <span class="math inline">\(n_g = 1/2\)</span>.</strong> Restricting to <span class="math inline">\(\{\ket 0,\ket 1\}\)</span> and dropping high-energy charge states (separated by <span class="math inline">\(\sim 8 E_C\)</span>), <a href="#eq-cpb-charge" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-cpb-charge</span></a> collapses to the two-level Hamiltonian <span class="math display">\[
+\hat H_{2\times 2}
+\;=\; 4 E_C(n_g - \tfrac12)\,\hat\sigma_z \;-\; \tfrac{E_J}{2}\,\hat\sigma_x,
+\]</span> with eigenvalues <span class="math inline">\(E_\pm = \pm\sqrt{\epsilon^2 + (E_J/2)^2}\)</span>, <span class="math inline">\(\epsilon = 4 E_C(n_g - 1/2)\)</span>.</li>
+<li><strong>Avoided crossing.</strong> Exactly at <span class="math inline">\(n_g = 1/2\)</span> the gap is <span class="math inline">\(\Delta E = E_J\)</span> — the Josephson term lifts the charge degeneracy and the eigenstates become the symmetric/antisymmetric combinations <span class="math inline">\(\ket\pm = (\ket 0 \pm \ket 1)/\sqrt 2\)</span>. This is the spectral signature of coherent Cooper-pair tunnelling.</li>
+<li><strong>Sweet spot.</strong> At <span class="math inline">\(n_g = 1/2\)</span>, <span class="math inline">\(\partial\omega_{01}/\partial n_g = 0\)</span> to first order — the qubit frequency is first-order insensitive to gate noise. The CPB is operated <em>exactly</em> at this point. Away from it, <span class="math inline">\(\omega_{01}(n_g)\)</span> varies linearly with <span class="math inline">\(n_g\)</span> and any low-frequency charge fluctuation <span class="math inline">\(\delta n_g\)</span> dephases the qubit.</li>
+</ul>
+<div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Why charge noise kills the CPB.</strong> Microscopic two-level fluctuators in the substrate and gate dielectric continuously shift <span class="math inline">\(n_g\)</span> by fractions of a Cooper pair. Even at the sweet spot, second-order sensitivity remains, and the device cannot be parked there indefinitely because tuning to other operating points is required for gates. This limits <span class="math inline">\(T_2\)</span> to nanoseconds.</p>
+</div>
+</div>
+</div>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em> (Mathieu equation). </span>The full eigenproblem of <a href="#eq-cpb-master" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-cpb-master</span></a> is a <strong>Mathieu equation</strong> in the phase basis: writing <span class="math inline">\(\hat n = -i\,\partial_\varphi\)</span>, the Schrödinger equation reads <span class="math display">\[
+\bigl[-4 E_C(\partial_\varphi + i n_g)^2 - E_J\cos\varphi\bigr]\psi
+\;=\; E\,\psi,
+\]</span> whose Floquet–Mathieu solutions give Bloch bands <span class="math inline">\(E_m(n_g)\)</span>. We will not need the explicit Mathieu characteristic values — every regime we care about can be reached from one of the two natural perturbative expansions: small-<span class="math inline">\(E_J/E_C\)</span> around the charge basis (this section), and large-<span class="math inline">\(E_J/E_C\)</span> around a phase oscillator (§5.4).</p>
+</div>
+</section>
+</section>
+<section id="from-the-cpb-to-the-transmon" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="from-the-cpb-to-the-transmon"><span class="header-section-number">6.2</span> From the CPB to the transmon</h2>
+<p>Numerically diagonalising <a href="#eq-cpb-master" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-cpb-master</span></a> across a sweep of <span class="math inline">\(E_J/E_C\)</span> produces the standard family of band diagrams (sketched in <a href="#fig-bands" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-bands</span></a>). Two trends are visible:</p>
+<ul>
+<li><strong>Charge dispersion shrinks.</strong> The peak-to-peak amplitude <span class="math inline">\(\epsilon_m \equiv \max_{n_g} E_m(n_g) - \min_{n_g} E_m(n_g)\)</span> of band <span class="math inline">\(m\)</span> decreases monotonically with <span class="math inline">\(E_J/E_C\)</span>. For the qubit band <span class="math inline">\(m=1\)</span> the asymptotic result of Koch <em>et al.</em> (2007) is the <strong>exponential suppression</strong> <span id="eq-charge-dispersion"><span class="math display">\[
+\epsilon_1 \;\sim\; E_C\,2^{4}\sqrt{\tfrac{2}{\pi}}
+          \Bigl(\tfrac{E_J}{2 E_C}\Bigr)^{\!3/4}\,
+          e^{-\sqrt{8 E_J/E_C}}.
+\tag{6.3}\]</span></span></li>
+<li><strong>Spectrum becomes more harmonic.</strong> The level spacings <span class="math inline">\(E_{m+1} - E_m\)</span> approach the uniform value <span class="math inline">\(\sqrt{8 E_J E_C}\)</span> predicted by the quadratic-in-<span class="math inline">\(\varphi\)</span> truncation; anharmonicity, defined below, shrinks only algebraically.</li>
+</ul>
+<p><img src="../Grafiche/Figure/05-fig2.svg" class="tikz-figure img-fluid" alt=""></p>
+<section id="engineering-choice" class="level3" data-number="6.2.1">
+<h3 data-number="6.2.1" class="anchored" data-anchor-id="engineering-choice"><span class="header-section-number">6.2.1</span> Engineering choice</h3>
+<p>The transmon takes the <em>same</em> CPB Hamiltonian and operates it in the regime <span class="math inline">\(E_J/E_C \gg 1\)</span>. Experimentally one shunts the junction by a large interdigitated capacitor that raises <span class="math inline">\(C_\Sigma\)</span> by orders of magnitude: <span class="math display">\[
+E_C \;=\; \frac{e^2}{2 C_\Sigma}
+\quad\xrightarrow{\;C_\Sigma\uparrow\;}\quad E_C\downarrow.
+\]</span> A typical transmon sits at <span class="math inline">\(E_J/E_C \sim 50\text{--}100\)</span>, with <span class="math inline">\(E_J/h \sim 10\)</span>–<span class="math inline">\(20\)</span> GHz and <span class="math inline">\(E_C/h \sim 200\)</span>–<span class="math inline">\(300\)</span> MHz.</p>
+<p><img src="../Grafiche/Figure/05-fig3.svg" class="tikz-figure img-fluid" alt=""></p>
+<div class="callout callout-style-simple callout-tip">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>The transmon is <strong>not a new Hamiltonian</strong> — it is the CPB Hamiltonian <a href="#eq-cpb-master" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-cpb-master</span></a> operated deep in the <span class="math inline">\(E_J/E_C \gg 1\)</span> corner by a single circuit-level design choice (shunt capacitor).</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="idea-of-the-transmon" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="idea-of-the-transmon"><span class="header-section-number">6.3</span> Idea of the transmon</h2>
+<p>The transmon is a deliberate compromise. By driving <span class="math inline">\(E_J/E_C\)</span> up one gains exponential insensitivity to charge noise (<a href="#eq-charge-dispersion" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-charge-dispersion</span></a>) at the price of a more harmonic spectrum.</p>
+<ul>
+<li><strong>Charge-noise insensitivity.</strong> <span class="math inline">\(\partial\omega_{01}/\partial n_g \to 0\)</span> exponentially, so the qubit can be parked at <em>any</em> value of <span class="math inline">\(n_g\)</span> — the sweet spot is everywhere.</li>
+<li><strong>Residual anharmonicity.</strong> The next correction to the harmonic spectrum gives a small but finite anharmonicity <span class="math display">\[
+\alpha \;=\; \omega_{12} - \omega_{01} \;\simeq\; -\,E_C/\hbar,
+\]</span> which we derive properly in §5.4. The relative anharmonicity <span class="math inline">\(\alpha/\omega_{01} \sim -\sqrt{E_C/8E_J}\)</span> does decrease, but only as a square root — never fast enough to wash out.</li>
+<li><strong>Operating window.</strong> Real-world transmons are tuned to <span class="math inline">\(|\alpha|/2\pi \sim 100\)</span>–<span class="math inline">\(400\)</span> MHz with <span class="math inline">\(\omega_{01}/2\pi \sim 4\)</span>–<span class="math inline">\(8\)</span> GHz, leaving comfortable headroom for short gates without spectral leakage to the <span class="math inline">\(\ket 2\)</span> level.</li>
+</ul>
+<div class="callout callout-style-simple callout-note callout-titled" title="Exponential beats algebraic">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exponential beats algebraic
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Charge dispersion in the qubit band falls <em>exponentially</em> in <span class="math inline">\(\sqrt{8 E_J/E_C}\)</span> (<a href="#eq-charge-dispersion" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-charge-dispersion</span></a>) while anharmonicity falls only as <span class="math inline">\((E_C/E_J)^{1/2}\)</span>. So as <span class="math inline">\(E_J/E_C\)</span> grows, the noise immunity wins by orders of magnitude faster than the anharmonicity is lost — which is exactly why the transmon is the right compromise.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="hamiltonian-of-the-transmon" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="hamiltonian-of-the-transmon"><span class="header-section-number">6.4</span> Hamiltonian of the transmon</h2>
+<p>Since <span class="math inline">\(E_J \gg E_C\)</span>, the phase <span class="math inline">\(\hat\varphi\)</span> is small (the wavepacket is localised near the bottom of one cosine well), and we may expand <span class="math inline">\(\cos\hat\varphi\)</span> to fourth order, dropping the constant: <span id="eq-transmon-quartic"><span class="math display">\[
+\hat H_t \;=\; 4 E_C\,\hat n^2
+            \;+\; \tfrac{E_J}{2}\,\hat\varphi^2
+            \;-\; \tfrac{E_J}{24}\,\hat\varphi^4.
+\tag{6.4}\]</span></span> We have set <span class="math inline">\(n_g \to 0\)</span> because the offset charge drops out of the spectrum to exponential accuracy — that is the whole point of the transmon. The quadratic part is the Hamiltonian of an LC oscillator with <span class="math inline">\(E_J\)</span> playing the role of the inverse Josephson inductance (Chapter 4) and <span class="math inline">\(E_C\)</span> the role of the charging energy (Chapter 3).</p>
+<p><img src="../Grafiche/Figure/05-fig4.svg" class="tikz-figure img-fluid" alt=""></p>
+<section id="bosonic-quantisation" class="level3" data-number="6.4.1">
+<h3 data-number="6.4.1" class="anchored" data-anchor-id="bosonic-quantisation"><span class="header-section-number">6.4.1</span> Bosonic quantisation</h3>
+<p>Introduce ladder operators that diagonalise the quadratic part of <a href="#eq-transmon-quartic" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-transmon-quartic</span></a>: <span class="math display">\[
+\hat\varphi \;=\; \varphi_{\text{zpf}}(\hat b^\dagger + \hat b),
+\qquad
+\hat n \;=\; i\,n_{\text{zpf}}(\hat b^\dagger - \hat b),
+\]</span> with zero-point fluctuations <span class="math display">\[
+\varphi_{\text{zpf}} \;=\; \frac{1}{\sqrt 2}\Bigl(\frac{8 E_C}{E_J}\Bigr)^{\!1/4},
+\qquad
+n_{\text{zpf}} \;=\; \frac{1}{\sqrt 2}\Bigl(\frac{E_J}{8 E_C}\Bigr)^{\!1/4}.
+\]</span> The canonical commutator <span class="math inline">\([\hat\varphi,\hat n] = i\)</span> becomes the bosonic <span class="math inline">\([\hat b,\hat b^\dagger] = 1\)</span>. Substituting and simplifying — the algebra is straightforward but tedious, see the lecturer’s notes for the line-by-line cancellation — gives <span id="eq-transmon-pre-rwa"><span class="math display">\[
+\hat H_t \;=\; \sqrt{8 E_J E_C}\,\bigl(\hat b^\dagger \hat b + \tfrac12\bigr)
+            \;-\; \tfrac{E_C}{12}\,(\hat b^\dagger + \hat b)^{4}.
+\tag{6.5}\]</span></span></p>
+</section>
+<section id="rotating-wave-approximation" class="level3" data-number="6.4.2">
+<h3 data-number="6.4.2" class="anchored" data-anchor-id="rotating-wave-approximation"><span class="header-section-number">6.4.2</span> Rotating-wave approximation</h3>
+<p>The quartic <span class="math inline">\((\hat b^\dagger + \hat b)^4\)</span> contains terms that conserve the excitation number (<span class="math inline">\(\hat b^{\dagger 2}\hat b^2\)</span>, <span class="math inline">\(\hat b^\dagger\hat b\)</span>) and terms that do not (<span class="math inline">\(\hat b^4\)</span>, <span class="math inline">\(\hat b^{\dagger 4}\)</span>, <span class="math inline">\(\hat b^{\dagger 3}\hat b\)</span>, …). The latter are off-resonant by <span class="math inline">\(\sim n\sqrt{8 E_J E_C}/\hbar\)</span> and may be dropped — a <strong>rotating-wave approximation</strong> valid when the anharmonicity is small compared to the plasma frequency: <span class="math display">\[
+(\hat b^\dagger + \hat b)^4
+\;\xrightarrow{\,\text{RWA}\,}\;
+6\,\hat b^\dagger\hat b^\dagger\hat b\hat b
++ 12\,\hat b^\dagger\hat b
++ (\text{constants}).
+\]</span> Plugging back, absorbing the linear <span class="math inline">\(\hat b^\dagger\hat b\)</span> into a redefinition of the plasma frequency and dropping constants, one arrives at the <strong>Duffing-oscillator</strong> Hamiltonian: <span id="eq-transmon-duffing"><span class="math display">\[
+\boxed{\;
+\hat H_t \;=\; \hbar\omega_q\,\bigl(\hat b^\dagger\hat b + \tfrac12\bigr)
+            \;+\; \frac{\hbar\alpha}{2}\,\hat b^\dagger\hat b^\dagger\hat b\hat b,\;}
+\tag{6.6}\]</span></span> with <span class="math display">\[
+\hbar\omega_q \;\simeq\; \sqrt{8 E_J E_C} \;-\; E_C,
+\qquad
+\hbar\alpha \;\simeq\; -E_C.
+\]</span> The spectrum is <span class="math inline">\(E_m = \hbar\omega_q\,m + \tfrac{\hbar\alpha}{2}\,m(m-1)\)</span>, so the <span class="math inline">\(\ket 0\!\to\!\ket 1\)</span> transition sits at <span class="math inline">\(\omega_q\)</span> and the <span class="math inline">\(\ket 1\!\to\!\ket 2\)</span> transition at <span class="math inline">\(\omega_q + \alpha\)</span> — split by <span class="math inline">\(|\alpha| \sim E_C/\hbar\)</span> from the qubit drive.</p>
+<div class="proposition" name="Transmon scalings">
+<p>In the transmon regime <span class="math inline">\(E_J/E_C \gg 1\)</span>, <span class="math display">\[
+\hbar\omega_{01} \;\simeq\; \sqrt{8 E_J E_C} - E_C,
+\qquad
+\hbar\alpha \;\simeq\; -\,E_C,
+\qquad
+\hbar\alpha / \hbar\omega_{01} \;\simeq\; -\sqrt{E_C/8 E_J}.
+\]</span> Charge dispersion of the qubit transition is suppressed as <a href="#eq-charge-dispersion" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-charge-dispersion</span></a>. All four scalings come from the same Duffing oscillator <a href="#eq-transmon-duffing" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-transmon-duffing</span></a>.</p>
+</div>
+<div class="callout callout-style-simple callout-warning">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Spectral leakage.</strong> A square drive pulse of duration <span class="math inline">\(\Delta t\)</span> has spectral width <span class="math inline">\(\sim 1/\Delta t\)</span>. When <span class="math inline">\(1/\Delta t \gtrsim |\alpha|\)</span>, the pulse spills power on the <span class="math inline">\(\ket 1\!\to\!\ket 2\)</span> transition and leaks population out of the qubit subspace. The minimum gate time is roughly <span class="math inline">\(\Delta t_{\min} \sim 1/|\alpha|\)</span> — a hard upper bound on single-qubit gate fidelity. Practical drives use Gaussian or DRAG shaping (Chow <em>et al.</em> 2010) to suppress leakage at given <span class="math inline">\(\Delta t\)</span>.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="transmon-as-a-qubit" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="transmon-as-a-qubit"><span class="header-section-number">6.5</span> Transmon as a qubit</h2>
+<p>We now project <a href="#eq-transmon-duffing" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-transmon-duffing</span></a> onto the lowest two transmon eigenstates <span class="math inline">\(\ket g \equiv \ket 0\)</span>, <span class="math inline">\(\ket e \equiv \ket 1\)</span>. Higher states <span class="math inline">\(\ket 2, \ket 3, \dots\)</span> are detuned by <span class="math inline">\(|\alpha|\gg\)</span> drive linewidth and may be neglected for properly shaped pulses.</p>
+<ul>
+<li><strong>Ladder operators in the qubit subspace.</strong> Restricted to <span class="math inline">\(\{\ket g,\ket e\}\)</span>, <span class="math display">\[
+\hat b^\dagger \;\to\; \ket e\!\bra g \;=\; \hat\sigma_+,
+\qquad
+\hat b       \;\to\; \ket g\!\bra e \;=\; \hat\sigma_-.
+\]</span></li>
+<li><strong>Number operator.</strong> <span class="math inline">\(\hat b^\dagger\hat b \to \ket e\!\bra e
+= (\mathbb I - \hat\sigma_z)/2\)</span>, where <span class="math inline">\(\hat\sigma_z = \ket g\!\bra g - \ket e\!\bra e\)</span>.</li>
+<li><strong>Quartic term drops out.</strong> <span class="math inline">\(\hat b^\dagger\hat b^\dagger\hat b\hat b
+\to \ket e\!\bra e\,\ket e\!\bra e = \ket e\!\bra e\)</span> — a constant shift in the qubit subspace, irrelevant to the dynamics.</li>
+<li><strong>Effective qubit Hamiltonian.</strong> Dropping the constant <span class="math inline">\(\hbar\omega_q/2\)</span>, <span class="math display">\[
+\hbar\omega_q\bigl(\hat b^\dagger\hat b + \tfrac12\bigr)
+\;\to\;
+\hbar\omega_q\Bigl(\frac{\mathbb I - \hat\sigma_z}{2} + \frac12\Bigr)
+\;=\; \hbar\omega_q\Bigl(1 - \frac{\hat\sigma_z}{2}\Bigr).
+\]</span></li>
+<li><strong>Final form.</strong> Absorbing the c-number, <span id="eq-qubit-hamiltonian"><span class="math display">\[
+\boxed{\;\hat H_q \;=\; -\,\frac{\hbar\omega_q}{2}\,\hat\sigma_z.\;}
+\tag{6.7}\]</span></span></li>
+</ul>
+<div class="proposition" name="Transmon qubit">
+<p>In the qubit subspace <span class="math inline">\(\{\ket g,\ket e\}\)</span> the transmon is the canonical two-level system <a href="#eq-qubit-hamiltonian" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-qubit-hamiltonian</span></a> with <span class="math inline">\(\hat\sigma_z\ket g = +\ket g\)</span>, <span class="math inline">\(\hat\sigma_z\ket e = -\ket e\)</span>, energies <span class="math inline">\(E_g = -\hbar\omega_q/2\)</span>, <span class="math inline">\(E_e = +\hbar\omega_q/2\)</span>, and transition frequency <span class="math inline">\(\omega_q = (E_e - E_g)/\hbar\)</span>.</p>
+</div>
+<p>This is the form that we will plug into the <strong>Jaynes–Cummings</strong> Hamiltonian of circuit QED in Chapter 6: a microwave cavity (a photon mode <span class="math inline">\(\hat a\)</span>) coupled to the transmon dipole through <span class="math inline">\(g(\hat a^\dagger\hat\sigma_- + \hat a\hat\sigma_+)\)</span>. The whole machinery of dispersive readout and two-qubit gates is built on top of this two-level reduction.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Where each piece of the transmon came from.</strong></p>
+<ul>
+<li><span class="math inline">\(E_J\)</span> is the depth of the Josephson cosine <span class="math inline">\(\to\)</span> see Chapter 4 (Josephson junction).</li>
+<li><span class="math inline">\(E_C = e^2/(2 C_\Sigma)\)</span> is the charging energy of the LC circuit formed by the island and its shunt <span class="math inline">\(\to\)</span> see Chapter 3 (superconducting circuits).</li>
+<li>The cosine potential is what makes the level spacings unequal <span class="math inline">\(\to\)</span> this anharmonicity is what <em>defines</em> a qubit, distinguishing it from the harmonic LC oscillator of Chapter 3.</li>
+<li>The two-level Hamiltonian <a href="#eq-qubit-hamiltonian" class="quarto-xref">Equation&nbsp;<span class="quarto-unresolved-ref">eq-qubit-hamiltonian</span></a> is the starting point of circuit QED <span class="math inline">\(\to\)</span> Chapter 6.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="sources" class="level2" data-number="6.6">
+<h2 data-number="6.6" class="anchored" data-anchor-id="sources"><span class="header-section-number">6.6</span> Sources</h2>
+<ul>
+<li>Lecturer’s notes, §5 (Cooper pair box and transmon), pages 16–23.</li>
+<li>Koch, J. <em>et al.</em> <em>Charge-insensitive qubit design derived from the Cooper pair box</em>, Phys. Rev.&nbsp;A <strong>76</strong>, 042319 (2007).</li>
+<li>Vool, U. &amp; Devoret, M. <em>Introduction to quantum electromagnetic circuits</em>, Int. J. Circ. Theor. Appl. <strong>45</strong>, 897 (2017), §6.</li>
+<li>Blais, A., Grimsmo, A. L., Girvin, S. M. &amp; Wallraff, A. <em>Circuit quantum electrodynamics</em>, Rev.&nbsp;Mod. Phys. <strong>93</strong>, 025005 (2021), §II.D–E (charge qubits and the transmon).</li>
+<li>Nakamura, Y., Pashkin, Yu. A. &amp; Tsai, J. S. <em>Coherent control of macroscopic quantum states in a single-Cooper-pair box</em>, Nature <strong>398</strong>, 786 (1999) — original CPB experiment.</li>
+<li>Chow, J. M. <em>et al.</em> <em>Optimized driving of superconducting artificial atoms for improved single-qubit gates</em>, Phys. Rev.&nbsp;A <strong>82</strong>, 040405(R) (2010) — DRAG pulse shaping, referenced in the spectral leakage callout.</li>
+</ul>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/04-josephson-junction.html" class="pagination-link" aria-label="The Josephson junction">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">The Josephson junction</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/06-cavity-to-circuit-qed.html" class="pagination-link" aria-label="From cavity QED to circuit QED">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">From cavity QED to circuit QED</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Superconducting qubits: from the Cooper pair box to the transmon"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>This chapter is the centre of mass of the course. We take the</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Josephson junction built in Chapter 4 (the only non-linear,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>dissipationless lumped element available in superconducting circuits)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>and embed it in the lumped-element framework of Chapter 3 to obtain</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>an *artificial atom* whose two lowest levels can be addressed</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>coherently as a qubit.</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>We follow the historical path. The **Cooper pair box** (CPB) of Nakamura</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>*et al.* (1999) is the simplest charge qubit one can draw. It is also</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>the canonical example of a circuit that is *spoiled by charge noise*,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>and understanding precisely *why* leads, by a single design choice, to</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>the **transmon** of Koch *et al.* (2007). The transmon is the qubit we</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>will couple to a microwave cavity in Chapter 6 — virtually every</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>mainstream superconducting quantum processor today (IBM, Google, Rigetti,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>QuEra-Atomic, …) is built out of transmons.</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>The whole chapter is governed by a single Hamiltonian</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>\hat H_{\text{CPB}} \;=\; 4 E_C\,(\hat n - n_g)^2 \;-\; E_J\,\cos\hat\varphi,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>$$ {#eq-cpb-master}</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>and the single dimensionless parameter $E_J/E_C$ that controls its</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>regime. The CPB and the transmon are two limits of @eq-cpb-master, not</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>two different circuits.</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Cooper pair box (CPB)</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="fu">### Circuit</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>The CPB consists of a tiny **superconducting island** connected to a</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>**reservoir** through a single Josephson junction (JJ), and</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>capacitively coupled to an external gate voltage $V_g$ through a gate</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>capacitor $C_g$ (see @fig-cpb-circuit). The JJ has its own</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>self-capacitance $C_J$, so the total capacitance seen by the island is</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>C_\Sigma \;=\; C_J + C_g.</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>The gate voltage induces a continuous, classically controllable charge</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>$Q_g = C_g V_g$ on the island. The Josephson junction allows</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>**Cooper pairs**, and only Cooper pairs (single-electron tunnelling is</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>gapped out by the superconducting gap $\Delta$), to enter or leave the</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>island in discrete units of $2e$.</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>\input{Grafiche/Figure/05-fig1.tex}</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="fu">### Lagrangian and Hamiltonian</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>We repeat the LC-quantisation routine of Chapter 3, taking the</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>junction flux $\Phi_J$ as the loop coordinate and writing</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>$\varphi = (2\pi/\Phi_0)\,\Phi_J$ for the dimensionless phase.</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Kinetic energy** — the two capacitors store</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>  T \;=\; \tfrac12\, C_J\,\dot\Phi_J^{\,2}</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>       \;+\; \tfrac12\, C_g\,(\dot\Phi_J - V_g)^2.</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Potential energy** — only the junction contributes,</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>  U \;=\; -E_J\cos<span class="sc">\!</span>\left(\tfrac{2\pi}{\Phi_0}\Phi_J\right)</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>        \;=\; -E_J\cos\varphi.</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Conjugate momentum.** The Lagrangian $\mathcal L = T - U$ gives a</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>  conjugate momentum that, up to the standard offset, is the total</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>  charge on the island,</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>  Q \;=\; \frac{\partial \mathcal L}{\partial \dot\Phi_J}</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>       \;=\; C_\Sigma\,\dot\Phi_J - C_g V_g.</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Legendre transform.** Solving for $\dot\Phi_J = (Q + C_g V_g)/C_\Sigma$ and</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>  collecting,</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>  H \;=\; \frac{(Q + C_g V_g)^2}{2 C_\Sigma} \;-\; E_J \cos\varphi.</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>The first term is the electrostatic charging energy with the gate</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>offset built in. Counting charge in Cooper pairs and introducing the</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>**charging energy**</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>\boxed{\,E_C \;=\; \frac{e^2}{2 C_\Sigma}\,}</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>together with the dimensionless **Cooper-pair number** and</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>**offset charge**</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>\hat n \;\equiv\; \hat Q / (2e),</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>n_g \;\equiv\; C_g V_g / (2e),</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>the Hamiltonian becomes the master equation @eq-cpb-master:</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>\hat H_{\text{CPB}} \;=\; 4 E_C\,(\hat n - n_g)^2 \;-\; E_J\cos\hat\varphi.</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>::: {.definition name="CPB charging and Josephson energies"}</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>$E_C = e^2/(2 C_\Sigma)$ is the electrostatic cost of putting **one</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>extra electron** on the island. The factor of four in front of</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>$(\hat n - n_g)^2$ converts it into the cost of one extra **Cooper</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>pair** ($(2e)^2/(2 C_\Sigma) = 4 E_C$). The Josephson energy</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>$E_J = \Phi_0 I_c/(2\pi)$ is the depth of the cosine washboard derived</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>in Chapter 4.</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a><span class="fu">### Conjugate operators and the charge basis</span></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>$\hat n$ and $\hat\varphi$ are the canonical pair of the circuit.</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>Starting from $<span class="co">[</span><span class="ot">\hat\Phi_J,\hat Q</span><span class="co">]</span> = i\hbar$ in the LC sector</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>(Chapter 3) and using $\hat\varphi = (2\pi/\Phi_0)\hat\Phi_J$ and</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>$\hat n = \hat Q/(2e)$,</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">\hat\varphi,\hat n</span><span class="co">]</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a> \;=\; \frac{2\pi}{\Phi_0}\cdot\frac{1}{2e}\,<span class="co">[</span><span class="ot">\hat\Phi_J,\hat Q</span><span class="co">]</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a> \;=\; \frac{2\pi}{\Phi_0\cdot 2e}\,i\hbar</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a> \;=\; i,</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>since $\Phi_0 = h/(2e)$. So $\hat\varphi$ is the **phase** conjugate</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>to the Cooper-pair number $\hat n$, exactly as angle is conjugate to</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>angular momentum.</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Charge basis.** Eigenstates $\hat n\ket n = n\ket n$ with</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>  $n\in\mathbb Z$, labelling the number of excess Cooper pairs on the</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>  island.</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Phase basis.** Eigenstates $\hat\varphi\ket\varphi = \varphi\ket\varphi$</span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>  with $\varphi\in[0,2\pi)$. The Fourier kernel is</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>  $\braket{\varphi|n} = e^{in\varphi}/\sqrt{2\pi}$.</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Cosine as a hopping term.** Writing</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>  $\cos\hat\varphi = \tfrac12(e^{i\hat\varphi} + e^{-i\hat\varphi})$ and</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>  noting that $e^{\pm i\hat\varphi}\ket n = \ket{n\pm 1}$ (because</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>  $\hat\varphi$ is conjugate to $\hat n$), we obtain the **charge-basis</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>  representation**</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>  \hat H_{\text{CPB}}</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>   \;=\; \sum_n 4 E_C(n - n_g)^2 \ket n<span class="sc">\!</span>\bra n</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>   \;-\; \tfrac{E_J}{2}\sum_n \bigl(\ket n<span class="sc">\!</span>\bra{n+1} + \ket{n+1}<span class="sc">\!</span>\bra n\bigr).</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>  $$ {#eq-cpb-charge}</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Physical reading.** The first piece is diagonal — the</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>  *electrostatic cost* $E_C(2(n-n_g))^2/2$ of carrying $2e(n-n_g)$</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>  charge across $C_\Sigma$. The second piece is a nearest-neighbour</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>  hopping in charge space — the *coherent tunnelling of one Cooper</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>  pair* through the junction, with amplitude $E_J/2$.</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="fu">### Charge dispersion and the sweet spot ($E_J \ll E_C$)</span></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>In the **charge regime** $E_J \ll E_C$ the diagonal parabolas</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>$E_n(n_g) = 4 E_C (n - n_g)^2$ dominate; the Josephson term is a</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>perturbation that mixes the parabolas only where they cross.</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Parabolas of the CPB.** For each fixed $n$, $E_n(n_g)$ is a</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>  parabola in $n_g$ with minimum at $n_g = n$. Consecutive parabolas</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>  $n$ and $n+1$ intersect at the **degeneracy point** $n_g = n + 1/2$.</span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Near $n_g = 1/2$.** Restricting to $<span class="sc">\{</span>\ket 0,\ket 1<span class="sc">\}</span>$ and dropping</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>  high-energy charge states (separated by $\sim 8 E_C$),</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>  @eq-cpb-charge collapses to the two-level Hamiltonian</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>  \hat H_{2\times 2}</span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>   \;=\; 4 E_C(n_g - \tfrac12)\,\hat\sigma_z \;-\; \tfrac{E_J}{2}\,\hat\sigma_x,</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>  with eigenvalues</span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>  $E_\pm = \pm\sqrt{\epsilon^2 + (E_J/2)^2}$, $\epsilon = 4 E_C(n_g - 1/2)$.</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Avoided crossing.** Exactly at $n_g = 1/2$ the gap is</span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>  $\Delta E = E_J$ — the Josephson term lifts the charge degeneracy</span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>  and the eigenstates become the symmetric/antisymmetric combinations</span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>  $\ket\pm = (\ket 0 \pm \ket 1)/\sqrt 2$. This is the spectral</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>  signature of coherent Cooper-pair tunnelling.</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Sweet spot.** At $n_g = 1/2$, $\partial\omega_{01}/\partial n_g = 0$ to</span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>  first order — the qubit frequency is first-order insensitive to gate</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>  noise. The CPB is operated *exactly* at this point. Away from it,</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>  $\omega_{01}(n_g)$ varies linearly with $n_g$ and any low-frequency</span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>  charge fluctuation $\delta n_g$ dephases the qubit.</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>**Why charge noise kills the CPB.** Microscopic two-level fluctuators</span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>in the substrate and gate dielectric continuously shift $n_g$ by</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>fractions of a Cooper pair. Even at the sweet spot, second-order</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>sensitivity remains, and the device cannot be parked there indefinitely</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>because tuning to other operating points is required for gates. This</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>limits $T_2$ to nanoseconds.</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>::: {.remark name="Mathieu equation"}</span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>The full eigenproblem of @eq-cpb-master is a **Mathieu equation** in</span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>the phase basis: writing $\hat n = -i\,\partial_\varphi$, the</span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>Schrödinger equation reads</span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>\bigl<span class="co">[</span><span class="ot">-4 E_C(\partial_\varphi + i n_g)^2 - E_J\cos\varphi\bigr</span><span class="co">]</span>\psi</span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a> \;=\; E\,\psi,</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>whose Floquet–Mathieu solutions give Bloch bands $E_m(n_g)$. We will</span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>not need the explicit Mathieu characteristic values — every regime we</span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>care about can be reached from one of the two natural perturbative</span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>expansions: small-$E_J/E_C$ around the charge basis (this section),</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a>and large-$E_J/E_C$ around a phase oscillator (§5.4).</span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a><span class="fu">## From the CPB to the transmon</span></span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>Numerically diagonalising @eq-cpb-master across a sweep of $E_J/E_C$</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>produces the standard family of band diagrams (sketched in</span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>@fig-bands). Two trends are visible:</span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Charge dispersion shrinks.** The peak-to-peak amplitude</span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>  $\epsilon_m \equiv \max_{n_g} E_m(n_g) - \min_{n_g} E_m(n_g)$ of band</span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>  $m$ decreases monotonically with $E_J/E_C$. For the qubit band $m=1$</span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a>  the asymptotic result of Koch *et al.* (2007) is the **exponential</span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>  suppression**</span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>  \epsilon_1 \;\sim\; E_C\,2^{4}\sqrt{\tfrac{2}{\pi}}</span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a>            \Bigl(\tfrac{E_J}{2 E_C}\Bigr)^{<span class="sc">\!</span>3/4}\,</span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>            e^{-\sqrt{8 E_J/E_C}}.</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>  $$ {#eq-charge-dispersion}</span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Spectrum becomes more harmonic.** The level spacings $E_{m+1} - E_m$</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a>  approach the uniform value $\sqrt{8 E_J E_C}$ predicted by the</span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>  quadratic-in-$\varphi$ truncation; anharmonicity, defined below,</span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>  shrinks only algebraically.</span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a>\input{Grafiche/Figure/05-fig2.tex}</span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a><span class="fu">### Engineering choice</span></span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>The transmon takes the *same* CPB Hamiltonian and operates it in the</span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a>regime $E_J/E_C \gg 1$. Experimentally one shunts the junction by a</span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>large interdigitated capacitor that raises $C_\Sigma$ by orders of</span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>magnitude:</span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>E_C \;=\; \frac{e^2}{2 C_\Sigma}</span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a> \quad\xrightarrow{\;C_\Sigma\uparrow\;}\quad E_C\downarrow.</span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>A typical transmon sits at $E_J/E_C \sim 50\text{--}100$, with</span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>$E_J/h \sim 10$–$20$ GHz and $E_C/h \sim 200$–$300$ MHz.</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>\input{Grafiche/Figure/05-fig3.tex}</span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a>The transmon is **not a new Hamiltonian** — it is the CPB</span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>Hamiltonian @eq-cpb-master operated deep in the $E_J/E_C \gg 1$ corner</span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a>by a single circuit-level design choice (shunt capacitor).</span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a><span class="fu">## Idea of the transmon</span></span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>The transmon is a deliberate compromise. By driving $E_J/E_C$ up one</span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a>gains exponential insensitivity to charge noise (@eq-charge-dispersion)</span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>at the price of a more harmonic spectrum.</span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Charge-noise insensitivity.** $\partial\omega_{01}/\partial n_g \to 0$</span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a>  exponentially, so the qubit can be parked at *any* value of $n_g$ —</span>
+<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>  the sweet spot is everywhere.</span>
+<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Residual anharmonicity.** The next correction to the harmonic</span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>  spectrum gives a small but finite anharmonicity</span>
+<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>  \alpha \;=\; \omega_{12} - \omega_{01} \;\simeq\; -\,E_C/\hbar,</span>
+<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>  which we derive properly in §5.4. The relative anharmonicity</span>
+<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a>  $\alpha/\omega_{01} \sim -\sqrt{E_C/8E_J}$ does decrease, but only as</span>
+<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>  a square root — never fast enough to wash out.</span>
+<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Operating window.** Real-world transmons are tuned to</span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>  $|\alpha|/2\pi \sim 100$–$400$ MHz with</span>
+<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>  $\omega_{01}/2\pi \sim 4$–$8$ GHz, leaving comfortable headroom for</span>
+<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>  short gates without spectral leakage to the $\ket 2$ level.</span>
+<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse="true" title="Exponential beats algebraic"}</span>
+<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a>Charge dispersion in the qubit band falls *exponentially* in</span>
+<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>$\sqrt{8 E_J/E_C}$ (@eq-charge-dispersion) while anharmonicity falls</span>
+<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a>only as $(E_C/E_J)^{1/2}$. So as $E_J/E_C$ grows, the noise immunity</span>
+<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a>wins by orders of magnitude faster than the anharmonicity is lost —</span>
+<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a>which is exactly why the transmon is the right compromise.</span>
+<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a><span class="fu">## Hamiltonian of the transmon</span></span>
+<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>Since $E_J \gg E_C$, the phase $\hat\varphi$ is small (the wavepacket</span>
+<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a>is localised near the bottom of one cosine well), and we may expand</span>
+<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a>$\cos\hat\varphi$ to fourth order, dropping the constant:</span>
+<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-276"><a href="#cb1-276" aria-hidden="true" tabindex="-1"></a>\hat H_t \;=\; 4 E_C\,\hat n^2</span>
+<span id="cb1-277"><a href="#cb1-277" aria-hidden="true" tabindex="-1"></a>            \;+\; \tfrac{E_J}{2}\,\hat\varphi^2</span>
+<span id="cb1-278"><a href="#cb1-278" aria-hidden="true" tabindex="-1"></a>            \;-\; \tfrac{E_J}{24}\,\hat\varphi^4.</span>
+<span id="cb1-279"><a href="#cb1-279" aria-hidden="true" tabindex="-1"></a>$$ {#eq-transmon-quartic}</span>
+<span id="cb1-280"><a href="#cb1-280" aria-hidden="true" tabindex="-1"></a>We have set $n_g \to 0$ because the offset charge drops out of the</span>
+<span id="cb1-281"><a href="#cb1-281" aria-hidden="true" tabindex="-1"></a>spectrum to exponential accuracy — that is the whole point of the</span>
+<span id="cb1-282"><a href="#cb1-282" aria-hidden="true" tabindex="-1"></a>transmon. The quadratic part is the Hamiltonian of an LC oscillator</span>
+<span id="cb1-283"><a href="#cb1-283" aria-hidden="true" tabindex="-1"></a>with $E_J$ playing the role of the inverse Josephson inductance</span>
+<span id="cb1-284"><a href="#cb1-284" aria-hidden="true" tabindex="-1"></a>(Chapter 4) and $E_C$ the role of the charging energy (Chapter 3).</span>
+<span id="cb1-285"><a href="#cb1-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-286"><a href="#cb1-286" aria-hidden="true" tabindex="-1"></a>\input{Grafiche/Figure/05-fig4.tex}</span>
+<span id="cb1-287"><a href="#cb1-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-288"><a href="#cb1-288" aria-hidden="true" tabindex="-1"></a><span class="fu">### Bosonic quantisation</span></span>
+<span id="cb1-289"><a href="#cb1-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-290"><a href="#cb1-290" aria-hidden="true" tabindex="-1"></a>Introduce ladder operators that diagonalise the quadratic part of</span>
+<span id="cb1-291"><a href="#cb1-291" aria-hidden="true" tabindex="-1"></a>@eq-transmon-quartic:</span>
+<span id="cb1-292"><a href="#cb1-292" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-293"><a href="#cb1-293" aria-hidden="true" tabindex="-1"></a>\hat\varphi \;=\; \varphi_{\text{zpf}}(\hat b^\dagger + \hat b),</span>
+<span id="cb1-294"><a href="#cb1-294" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb1-295"><a href="#cb1-295" aria-hidden="true" tabindex="-1"></a>\hat n \;=\; i\,n_{\text{zpf}}(\hat b^\dagger - \hat b),</span>
+<span id="cb1-296"><a href="#cb1-296" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-297"><a href="#cb1-297" aria-hidden="true" tabindex="-1"></a>with zero-point fluctuations</span>
+<span id="cb1-298"><a href="#cb1-298" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-299"><a href="#cb1-299" aria-hidden="true" tabindex="-1"></a>\varphi_{\text{zpf}} \;=\; \frac{1}{\sqrt 2}\Bigl(\frac{8 E_C}{E_J}\Bigr)^{<span class="sc">\!</span>1/4},</span>
+<span id="cb1-300"><a href="#cb1-300" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb1-301"><a href="#cb1-301" aria-hidden="true" tabindex="-1"></a>n_{\text{zpf}} \;=\; \frac{1}{\sqrt 2}\Bigl(\frac{E_J}{8 E_C}\Bigr)^{<span class="sc">\!</span>1/4}.</span>
+<span id="cb1-302"><a href="#cb1-302" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-303"><a href="#cb1-303" aria-hidden="true" tabindex="-1"></a>The canonical commutator $<span class="co">[</span><span class="ot">\hat\varphi,\hat n</span><span class="co">]</span> = i$ becomes the bosonic</span>
+<span id="cb1-304"><a href="#cb1-304" aria-hidden="true" tabindex="-1"></a>$<span class="co">[</span><span class="ot">\hat b,\hat b^\dagger</span><span class="co">]</span> = 1$. Substituting and simplifying — the</span>
+<span id="cb1-305"><a href="#cb1-305" aria-hidden="true" tabindex="-1"></a>algebra is straightforward but tedious, see the lecturer's notes for</span>
+<span id="cb1-306"><a href="#cb1-306" aria-hidden="true" tabindex="-1"></a>the line-by-line cancellation — gives</span>
+<span id="cb1-307"><a href="#cb1-307" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-308"><a href="#cb1-308" aria-hidden="true" tabindex="-1"></a>\hat H_t \;=\; \sqrt{8 E_J E_C}\,\bigl(\hat b^\dagger \hat b + \tfrac12\bigr)</span>
+<span id="cb1-309"><a href="#cb1-309" aria-hidden="true" tabindex="-1"></a>            \;-\; \tfrac{E_C}{12}\,(\hat b^\dagger + \hat b)^{4}.</span>
+<span id="cb1-310"><a href="#cb1-310" aria-hidden="true" tabindex="-1"></a>$$ {#eq-transmon-pre-rwa}</span>
+<span id="cb1-311"><a href="#cb1-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-312"><a href="#cb1-312" aria-hidden="true" tabindex="-1"></a><span class="fu">### Rotating-wave approximation</span></span>
+<span id="cb1-313"><a href="#cb1-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-314"><a href="#cb1-314" aria-hidden="true" tabindex="-1"></a>The quartic $(\hat b^\dagger + \hat b)^4$ contains terms that conserve</span>
+<span id="cb1-315"><a href="#cb1-315" aria-hidden="true" tabindex="-1"></a>the excitation number ($\hat b^{\dagger 2}\hat b^2$, $\hat b^\dagger\hat b$)</span>
+<span id="cb1-316"><a href="#cb1-316" aria-hidden="true" tabindex="-1"></a>and terms that do not ($\hat b^4$, $\hat b^{\dagger 4}$,</span>
+<span id="cb1-317"><a href="#cb1-317" aria-hidden="true" tabindex="-1"></a>$\hat b^{\dagger 3}\hat b$, …). The latter are off-resonant by</span>
+<span id="cb1-318"><a href="#cb1-318" aria-hidden="true" tabindex="-1"></a>$\sim n\sqrt{8 E_J E_C}/\hbar$ and may be dropped — a **rotating-wave</span>
+<span id="cb1-319"><a href="#cb1-319" aria-hidden="true" tabindex="-1"></a>approximation** valid when the anharmonicity is small compared to the</span>
+<span id="cb1-320"><a href="#cb1-320" aria-hidden="true" tabindex="-1"></a>plasma frequency:</span>
+<span id="cb1-321"><a href="#cb1-321" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-322"><a href="#cb1-322" aria-hidden="true" tabindex="-1"></a>(\hat b^\dagger + \hat b)^4</span>
+<span id="cb1-323"><a href="#cb1-323" aria-hidden="true" tabindex="-1"></a> \;\xrightarrow{\,\text{RWA}\,}\;</span>
+<span id="cb1-324"><a href="#cb1-324" aria-hidden="true" tabindex="-1"></a> 6\,\hat b^\dagger\hat b^\dagger\hat b\hat b</span>
+<span id="cb1-325"><a href="#cb1-325" aria-hidden="true" tabindex="-1"></a><span class="ss"> + </span>12\,\hat b^\dagger\hat b</span>
+<span id="cb1-326"><a href="#cb1-326" aria-hidden="true" tabindex="-1"></a><span class="ss"> + </span>(\text{constants}).</span>
+<span id="cb1-327"><a href="#cb1-327" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-328"><a href="#cb1-328" aria-hidden="true" tabindex="-1"></a>Plugging back, absorbing the linear $\hat b^\dagger\hat b$ into a</span>
+<span id="cb1-329"><a href="#cb1-329" aria-hidden="true" tabindex="-1"></a>redefinition of the plasma frequency and dropping constants, one</span>
+<span id="cb1-330"><a href="#cb1-330" aria-hidden="true" tabindex="-1"></a>arrives at the **Duffing-oscillator** Hamiltonian:</span>
+<span id="cb1-331"><a href="#cb1-331" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-332"><a href="#cb1-332" aria-hidden="true" tabindex="-1"></a>\boxed{\;</span>
+<span id="cb1-333"><a href="#cb1-333" aria-hidden="true" tabindex="-1"></a>\hat H_t \;=\; \hbar\omega_q\,\bigl(\hat b^\dagger\hat b + \tfrac12\bigr)</span>
+<span id="cb1-334"><a href="#cb1-334" aria-hidden="true" tabindex="-1"></a>            \;+\; \frac{\hbar\alpha}{2}\,\hat b^\dagger\hat b^\dagger\hat b\hat b,\;}</span>
+<span id="cb1-335"><a href="#cb1-335" aria-hidden="true" tabindex="-1"></a>$$ {#eq-transmon-duffing}</span>
+<span id="cb1-336"><a href="#cb1-336" aria-hidden="true" tabindex="-1"></a>with</span>
+<span id="cb1-337"><a href="#cb1-337" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-338"><a href="#cb1-338" aria-hidden="true" tabindex="-1"></a>\hbar\omega_q \;\simeq\; \sqrt{8 E_J E_C} \;-\; E_C,</span>
+<span id="cb1-339"><a href="#cb1-339" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb1-340"><a href="#cb1-340" aria-hidden="true" tabindex="-1"></a>\hbar\alpha \;\simeq\; -E_C.</span>
+<span id="cb1-341"><a href="#cb1-341" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-342"><a href="#cb1-342" aria-hidden="true" tabindex="-1"></a>The spectrum is</span>
+<span id="cb1-343"><a href="#cb1-343" aria-hidden="true" tabindex="-1"></a>$E_m = \hbar\omega_q\,m + \tfrac{\hbar\alpha}{2}\,m(m-1)$, so the</span>
+<span id="cb1-344"><a href="#cb1-344" aria-hidden="true" tabindex="-1"></a>$\ket 0<span class="sc">\!</span>\to<span class="sc">\!</span>\ket 1$ transition sits at $\omega_q$ and the</span>
+<span id="cb1-345"><a href="#cb1-345" aria-hidden="true" tabindex="-1"></a>$\ket 1<span class="sc">\!</span>\to<span class="sc">\!</span>\ket 2$ transition at $\omega_q + \alpha$ — split by</span>
+<span id="cb1-346"><a href="#cb1-346" aria-hidden="true" tabindex="-1"></a>$|\alpha| \sim E_C/\hbar$ from the qubit drive.</span>
+<span id="cb1-347"><a href="#cb1-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-348"><a href="#cb1-348" aria-hidden="true" tabindex="-1"></a>::: {.proposition name="Transmon scalings"}</span>
+<span id="cb1-349"><a href="#cb1-349" aria-hidden="true" tabindex="-1"></a>In the transmon regime $E_J/E_C \gg 1$,</span>
+<span id="cb1-350"><a href="#cb1-350" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-351"><a href="#cb1-351" aria-hidden="true" tabindex="-1"></a>\hbar\omega_{01} \;\simeq\; \sqrt{8 E_J E_C} - E_C,</span>
+<span id="cb1-352"><a href="#cb1-352" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb1-353"><a href="#cb1-353" aria-hidden="true" tabindex="-1"></a>\hbar\alpha \;\simeq\; -\,E_C,</span>
+<span id="cb1-354"><a href="#cb1-354" aria-hidden="true" tabindex="-1"></a>\qquad</span>
+<span id="cb1-355"><a href="#cb1-355" aria-hidden="true" tabindex="-1"></a>\hbar\alpha / \hbar\omega_{01} \;\simeq\; -\sqrt{E_C/8 E_J}.</span>
+<span id="cb1-356"><a href="#cb1-356" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-357"><a href="#cb1-357" aria-hidden="true" tabindex="-1"></a>Charge dispersion of the qubit transition is suppressed as</span>
+<span id="cb1-358"><a href="#cb1-358" aria-hidden="true" tabindex="-1"></a>@eq-charge-dispersion. All four scalings come from the same Duffing</span>
+<span id="cb1-359"><a href="#cb1-359" aria-hidden="true" tabindex="-1"></a>oscillator @eq-transmon-duffing.</span>
+<span id="cb1-360"><a href="#cb1-360" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-361"><a href="#cb1-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-362"><a href="#cb1-362" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb1-363"><a href="#cb1-363" aria-hidden="true" tabindex="-1"></a>**Spectral leakage.** A square drive pulse of duration $\Delta t$ has</span>
+<span id="cb1-364"><a href="#cb1-364" aria-hidden="true" tabindex="-1"></a>spectral width $\sim 1/\Delta t$. When $1/\Delta t \gtrsim |\alpha|$,</span>
+<span id="cb1-365"><a href="#cb1-365" aria-hidden="true" tabindex="-1"></a>the pulse spills power on the $\ket 1<span class="sc">\!</span>\to<span class="sc">\!</span>\ket 2$ transition and</span>
+<span id="cb1-366"><a href="#cb1-366" aria-hidden="true" tabindex="-1"></a>leaks population out of the qubit subspace. The minimum gate time is</span>
+<span id="cb1-367"><a href="#cb1-367" aria-hidden="true" tabindex="-1"></a>roughly $\Delta t_{\min} \sim 1/|\alpha|$ — a hard upper bound on</span>
+<span id="cb1-368"><a href="#cb1-368" aria-hidden="true" tabindex="-1"></a>single-qubit gate fidelity. Practical drives use Gaussian or DRAG</span>
+<span id="cb1-369"><a href="#cb1-369" aria-hidden="true" tabindex="-1"></a>shaping (Chow *et al.* 2010) to suppress leakage at given $\Delta t$.</span>
+<span id="cb1-370"><a href="#cb1-370" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-371"><a href="#cb1-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-372"><a href="#cb1-372" aria-hidden="true" tabindex="-1"></a><span class="fu">## Transmon as a qubit</span></span>
+<span id="cb1-373"><a href="#cb1-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-374"><a href="#cb1-374" aria-hidden="true" tabindex="-1"></a>We now project @eq-transmon-duffing onto the lowest two transmon</span>
+<span id="cb1-375"><a href="#cb1-375" aria-hidden="true" tabindex="-1"></a>eigenstates $\ket g \equiv \ket 0$, $\ket e \equiv \ket 1$. Higher</span>
+<span id="cb1-376"><a href="#cb1-376" aria-hidden="true" tabindex="-1"></a>states $\ket 2, \ket 3, \dots$ are detuned by $|\alpha|\gg$ drive</span>
+<span id="cb1-377"><a href="#cb1-377" aria-hidden="true" tabindex="-1"></a>linewidth and may be neglected for properly shaped pulses.</span>
+<span id="cb1-378"><a href="#cb1-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-379"><a href="#cb1-379" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Ladder operators in the qubit subspace.** Restricted to</span>
+<span id="cb1-380"><a href="#cb1-380" aria-hidden="true" tabindex="-1"></a>  $<span class="sc">\{</span>\ket g,\ket e<span class="sc">\}</span>$,</span>
+<span id="cb1-381"><a href="#cb1-381" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-382"><a href="#cb1-382" aria-hidden="true" tabindex="-1"></a>  \hat b^\dagger \;\to\; \ket e<span class="sc">\!</span>\bra g \;=\; \hat\sigma_+,</span>
+<span id="cb1-383"><a href="#cb1-383" aria-hidden="true" tabindex="-1"></a>  \qquad</span>
+<span id="cb1-384"><a href="#cb1-384" aria-hidden="true" tabindex="-1"></a>  \hat b       \;\to\; \ket g<span class="sc">\!</span>\bra e \;=\; \hat\sigma_-.</span>
+<span id="cb1-385"><a href="#cb1-385" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-386"><a href="#cb1-386" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Number operator.** $\hat b^\dagger\hat b \to \ket e<span class="sc">\!</span>\bra e</span>
+<span id="cb1-387"><a href="#cb1-387" aria-hidden="true" tabindex="-1"></a>  = (\mathbb I - \hat\sigma_z)/2$, where</span>
+<span id="cb1-388"><a href="#cb1-388" aria-hidden="true" tabindex="-1"></a>  $\hat\sigma_z = \ket g<span class="sc">\!</span>\bra g - \ket e<span class="sc">\!</span>\bra e$.</span>
+<span id="cb1-389"><a href="#cb1-389" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Quartic term drops out.** $\hat b^\dagger\hat b^\dagger\hat b\hat b</span>
+<span id="cb1-390"><a href="#cb1-390" aria-hidden="true" tabindex="-1"></a>  \to \ket e<span class="sc">\!</span>\bra e\,\ket e<span class="sc">\!</span>\bra e = \ket e<span class="sc">\!</span>\bra e$ — a constant</span>
+<span id="cb1-391"><a href="#cb1-391" aria-hidden="true" tabindex="-1"></a>  shift in the qubit subspace, irrelevant to the dynamics.</span>
+<span id="cb1-392"><a href="#cb1-392" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Effective qubit Hamiltonian.** Dropping the constant</span>
+<span id="cb1-393"><a href="#cb1-393" aria-hidden="true" tabindex="-1"></a>  $\hbar\omega_q/2$,</span>
+<span id="cb1-394"><a href="#cb1-394" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-395"><a href="#cb1-395" aria-hidden="true" tabindex="-1"></a>  \hbar\omega_q\bigl(\hat b^\dagger\hat b + \tfrac12\bigr)</span>
+<span id="cb1-396"><a href="#cb1-396" aria-hidden="true" tabindex="-1"></a>  \;\to\;</span>
+<span id="cb1-397"><a href="#cb1-397" aria-hidden="true" tabindex="-1"></a>  \hbar\omega_q\Bigl(\frac{\mathbb I - \hat\sigma_z}{2} + \frac12\Bigr)</span>
+<span id="cb1-398"><a href="#cb1-398" aria-hidden="true" tabindex="-1"></a>  \;=\; \hbar\omega_q\Bigl(1 - \frac{\hat\sigma_z}{2}\Bigr).</span>
+<span id="cb1-399"><a href="#cb1-399" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-400"><a href="#cb1-400" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Final form.** Absorbing the c-number,</span>
+<span id="cb1-401"><a href="#cb1-401" aria-hidden="true" tabindex="-1"></a>  $$</span>
+<span id="cb1-402"><a href="#cb1-402" aria-hidden="true" tabindex="-1"></a>  \boxed{\;\hat H_q \;=\; -\,\frac{\hbar\omega_q}{2}\,\hat\sigma_z.\;}</span>
+<span id="cb1-403"><a href="#cb1-403" aria-hidden="true" tabindex="-1"></a>  $$ {#eq-qubit-hamiltonian}</span>
+<span id="cb1-404"><a href="#cb1-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-405"><a href="#cb1-405" aria-hidden="true" tabindex="-1"></a>::: {.proposition name="Transmon qubit"}</span>
+<span id="cb1-406"><a href="#cb1-406" aria-hidden="true" tabindex="-1"></a>In the qubit subspace $<span class="sc">\{</span>\ket g,\ket e<span class="sc">\}</span>$ the transmon is the canonical</span>
+<span id="cb1-407"><a href="#cb1-407" aria-hidden="true" tabindex="-1"></a>two-level system @eq-qubit-hamiltonian with $\hat\sigma_z\ket g = +\ket g$,</span>
+<span id="cb1-408"><a href="#cb1-408" aria-hidden="true" tabindex="-1"></a>$\hat\sigma_z\ket e = -\ket e$, energies $E_g = -\hbar\omega_q/2$,</span>
+<span id="cb1-409"><a href="#cb1-409" aria-hidden="true" tabindex="-1"></a>$E_e = +\hbar\omega_q/2$, and transition frequency</span>
+<span id="cb1-410"><a href="#cb1-410" aria-hidden="true" tabindex="-1"></a>$\omega_q = (E_e - E_g)/\hbar$.</span>
+<span id="cb1-411"><a href="#cb1-411" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-412"><a href="#cb1-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-413"><a href="#cb1-413" aria-hidden="true" tabindex="-1"></a>This is the form that we will plug into the **Jaynes–Cummings**</span>
+<span id="cb1-414"><a href="#cb1-414" aria-hidden="true" tabindex="-1"></a>Hamiltonian of circuit QED in Chapter 6: a microwave cavity (a</span>
+<span id="cb1-415"><a href="#cb1-415" aria-hidden="true" tabindex="-1"></a>photon mode $\hat a$) coupled to the transmon dipole through</span>
+<span id="cb1-416"><a href="#cb1-416" aria-hidden="true" tabindex="-1"></a>$g(\hat a^\dagger\hat\sigma_- + \hat a\hat\sigma_+)$. The whole</span>
+<span id="cb1-417"><a href="#cb1-417" aria-hidden="true" tabindex="-1"></a>machinery of dispersive readout and two-qubit gates is built on top of</span>
+<span id="cb1-418"><a href="#cb1-418" aria-hidden="true" tabindex="-1"></a>this two-level reduction.</span>
+<span id="cb1-419"><a href="#cb1-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-420"><a href="#cb1-420" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb1-421"><a href="#cb1-421" aria-hidden="true" tabindex="-1"></a>**Where each piece of the transmon came from.**</span>
+<span id="cb1-422"><a href="#cb1-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-423"><a href="#cb1-423" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$E_J$ is the depth of the Josephson cosine $\to$ see</span>
+<span id="cb1-424"><a href="#cb1-424" aria-hidden="true" tabindex="-1"></a>  Chapter 4 (Josephson junction).</span>
+<span id="cb1-425"><a href="#cb1-425" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$E_C = e^2/(2 C_\Sigma)$ is the charging energy of the LC circuit</span>
+<span id="cb1-426"><a href="#cb1-426" aria-hidden="true" tabindex="-1"></a>  formed by the island and its shunt $\to$ see Chapter 3</span>
+<span id="cb1-427"><a href="#cb1-427" aria-hidden="true" tabindex="-1"></a>  (superconducting circuits).</span>
+<span id="cb1-428"><a href="#cb1-428" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The cosine potential is what makes the level spacings unequal $\to$</span>
+<span id="cb1-429"><a href="#cb1-429" aria-hidden="true" tabindex="-1"></a>  this anharmonicity is what *defines* a qubit, distinguishing it from</span>
+<span id="cb1-430"><a href="#cb1-430" aria-hidden="true" tabindex="-1"></a>  the harmonic LC oscillator of Chapter 3.</span>
+<span id="cb1-431"><a href="#cb1-431" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The two-level Hamiltonian @eq-qubit-hamiltonian is the starting</span>
+<span id="cb1-432"><a href="#cb1-432" aria-hidden="true" tabindex="-1"></a>  point of circuit QED $\to$ Chapter 6.</span>
+<span id="cb1-433"><a href="#cb1-433" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-434"><a href="#cb1-434" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-435"><a href="#cb1-435" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-436"><a href="#cb1-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-437"><a href="#cb1-437" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lecturer's notes, §5 (Cooper pair box and transmon), pages 16–23.</span>
+<span id="cb1-438"><a href="#cb1-438" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Koch, J. *et al.* *Charge-insensitive qubit design derived from the</span>
+<span id="cb1-439"><a href="#cb1-439" aria-hidden="true" tabindex="-1"></a>  Cooper pair box*, Phys. Rev. A **76**, 042319 (2007).</span>
+<span id="cb1-440"><a href="#cb1-440" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Vool, U. &amp; Devoret, M. *Introduction to quantum electromagnetic</span>
+<span id="cb1-441"><a href="#cb1-441" aria-hidden="true" tabindex="-1"></a>  circuits*, Int. J. Circ. Theor. Appl. **45**, 897 (2017), §6.</span>
+<span id="cb1-442"><a href="#cb1-442" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Blais, A., Grimsmo, A. L., Girvin, S. M. &amp; Wallraff, A. *Circuit</span>
+<span id="cb1-443"><a href="#cb1-443" aria-hidden="true" tabindex="-1"></a>  quantum electrodynamics*, Rev. Mod. Phys. **93**, 025005 (2021),</span>
+<span id="cb1-444"><a href="#cb1-444" aria-hidden="true" tabindex="-1"></a>  §II.D–E (charge qubits and the transmon).</span>
+<span id="cb1-445"><a href="#cb1-445" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Nakamura, Y., Pashkin, Yu. A. &amp; Tsai, J. S. *Coherent control of</span>
+<span id="cb1-446"><a href="#cb1-446" aria-hidden="true" tabindex="-1"></a>  macroscopic quantum states in a single-Cooper-pair box*, Nature</span>
+<span id="cb1-447"><a href="#cb1-447" aria-hidden="true" tabindex="-1"></a>  **398**, 786 (1999) — original CPB experiment.</span>
+<span id="cb1-448"><a href="#cb1-448" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Chow, J. M. *et al.* *Optimized driving of superconducting artificial</span>
+<span id="cb1-449"><a href="#cb1-449" aria-hidden="true" tabindex="-1"></a>  atoms for improved single-qubit gates*, Phys. Rev. A **82**,</span>
+<span id="cb1-450"><a href="#cb1-450" aria-hidden="true" tabindex="-1"></a>  040405(R) (2010) — DRAG pulse shaping, referenced in the spectral</span>
+<span id="cb1-451"><a href="#cb1-451" aria-hidden="true" tabindex="-1"></a>  leakage callout.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

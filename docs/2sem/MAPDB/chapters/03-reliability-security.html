@@ -905,43 +905,50 @@ SSH in Practice
 <p>Define mirroring, striping, and parity check. Discuss the pros and cons of each technique, and compare them in terms of reliability in RAID configurations.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Mirroring: Duplicates the data in to different devices. Pros: In case of disk failure the data is still available. Cons: You duplicate the data using mor storage Striping: Divides the data into smaller portions and the portions are distributed in different devices. Pros: It increases throughput (it can be parallelized). Cons: If there is disk failure the data is lost Parity checks: It assigns a parity to the data and checks the data with XOR operations. Pros: It makes sure the data is not corrupted and it can reverse data loss in some cases. Cons: It reduces throughput due to performing checkings.</p>
+<p>In terms of reliability the best methods are mirroring and parity checking since are the only ones where disk failure does not necessarilly mean data loss. Stripping is only prefered when throughput needs to be high.</p>
 </div>
 <div class="exercise" name="RAID 0 vs RAID 1">
 <p>What is the performance impact of using RAID 0 vs RAID 1? What factors should be considered when choosing between them?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>The two main factors are the reliability and throughput. RAID 0 is prefered when multiple operations needs to be done at the same time and fast, as it uses striping. RAID 1 is prefered when reliability is main factor to guarantee, as it uses mirroring. A third factor would be storage capacity, as it is a limiting factor, specially in a RAID 1 configuration since you need twice or more storage capacity than data.</p>
 </div>
 <div class="exercise" name="RAID 0 Throughput and Risks">
 <p>How does RAID 0 increase data throughput, and what are the risks associated with this configuration?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>The RAID 0 throughput is increased via striping (dividing the data into multiple disks), since this make reading and writting faster via parallelization of the task. The main risk affecting the RAID 0 configuration is data loss, as there is no back up copies of the data when a disk fails all data is lost.</p>
 </div>
 <div class="exercise" name="RAID 5 Capacity">
 <p>You have five disks with sizes <span class="math inline">\(x_1, x_2, x_3, x_4, x_5\)</span>. If you arrange them in a RAID 5 system, what will be the usable storage capacity of the system? Express the answer in terms of the individual disk sizes.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>The usable storage capacity will be <span class="math inline">\(4\times\)</span> the lowest storage capacity as one disk is kept for allocating the parity of the data.</p>
 </div>
 <div class="exercise" name="Parity Placement">
 <p>Can you store the parity of a data block on the same disk as the data block itself? Explain your answer in the context of RAID reliability.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>The answer is NO. If we stored the data in the same disk as the data it would be impossible to recover the data as we would have lost the data and the parity of the data. If the parity is stored in a different disk is possible to compute the parity of the data and compared with the stored parity in order to recover it, but if we lose both parts we can not computed or know which parity had. That is why is important in terms of reliability to store them in different disks</p>
 </div>
 <div class="exercise" name="RAID 6 Configuration">
 <p>You have a RAID 6 configuration with 5 disks. What is the usable storage capacity of the filesystem (expressed as a fraction of total raw capacity)? How many disks can fail simultaneously without data loss?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>In a RAID 6 configuration we can lose up to 2 disks.The total capacity (assuming all disks have equal capacity) would <span class="math inline">\(3/5\)</span> of the raw capacity as we use 2 disks for parity checking. If the disks have different capacity the usable storage would be smaller than <span class="math inline">\(3/5\)</span></p>
 </div>
 <div class="exercise" name="RAID 10 vs RAID 6">
 <p>Compare RAID 10 and RAID 6 in terms of pros and cons regarding storage efficiency and reliability (fault tolerance).</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ul>
+<li><strong>Storage efficiency.</strong> RAID 6 wins: <span class="math inline">\((n-2)/n\)</span> usable vs <span class="math inline">\(1/2\)</span> for RAID 10. With <span class="math inline">\(n=6\)</span>: <span class="math inline">\(4/6\)</span> vs <span class="math inline">\(3/6\)</span>.</li>
+<li><strong>Write performance.</strong> RAID 10 wins: mirror + stripe with no parity computation. RAID 6 pays double-parity overhead on every write.</li>
+<li><strong>Fault tolerance.</strong> RAID 6 tolerates <em>any</em> 2 simultaneous failures. RAID 10 also tolerates 2 in the worst case (and up to one per mirror in the best), but loses data if both halves of any single mirror fail together.</li>
+</ul>
+<p>Rule of thumb: RAID 6 for capacity-bound archives, RAID 10 for write-heavy databases.</p>
 </div>
 <div class="exercise" name="RAID Configuration Exercise (1)">
 <p>You are tasked with choosing a RAID configuration to store a 3.5 TB dataset. You have 6 disks available with the following capacities:</p>
@@ -982,7 +989,7 @@ SSH in Practice
 <p>The dataset needs to be stored with high reliability and fault tolerance. Which RAID configuration would you choose, and why? Consider both the storage requirements and fault tolerance.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>The RAID 6 configuration is the best choice as it has an storage capacity of <span class="math inline">\((6-2)\times 1.0~[TB]=4.0~[TB]\)</span> (RAID 5 would give us more storage, but is less reliable) where we could lose 2 disks before data loss. RAID 0 would give us more storage (6.0 [TB]) but no reliability and RAID 1 or RAID 10 do not meet the storage requirements.</p>
 </div>
 <div class="exercise" name="RAID Configuration Exercise (2)">
 <p>Arrange the following 6 disks in a RAID 10 configuration:</p>
@@ -1034,73 +1041,120 @@ SSH in Practice
 </ul>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Pair similar capacities so the mirror loss is small: <span class="math inline">\((1000+750),\,(720+640),\,(640+500)\)</span>, giving mirror sizes <span class="math inline">\(750,\,640,\,500\)</span> GB.</p>
+<p>Striping across the three pairs is limited by the smallest pair-min, so the usable capacity is <span class="math inline">\(3\times 500~[GB]=1.5~[TB]\)</span>.</p>
+<p>Up to three disks can fail (one per pair); if both halves of any single mirror fail, data is lost.</p>
 </div>
 <div class="exercise" name="Encryption vs Hashing">
 <p>What is the difference between encryption and hashing? Why are both techniques important and useful for ensuring data security? Give an example use case for each.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Encryption is used in secure communication as data can be coded and decoded if the users have the keys or methods to do it. Hashing instead can not be decoded and is used to check and store data.</p>
+<p>We use encryption we want to have a controled acees to data, like when we send a message in an app to a person, we want only that person to be able to read it and replying. Instead we would use hashing when we want to check the data (the same data will produce the same digest, so if we know the digest and want to check the data we can compare it) or to store data (like when we enter a password into a web service the platform will check the digest, so they don’t know or have your password but they can authenticate you by the digest)</p>
 </div>
 <div class="exercise" name="Symmetric vs Asymmetric Encryption">
 <p>What are the differences between symmetric and asymmetric encryption? In what scenarios is each type preferable?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>In symetric encryption only one key is generated and is meant to be shared only with the entity we want to communicate, in asymmetric encryption 2 keys are generated and one is meant to be public for anyone and the other one is meant to be completly private, in that way entities can communicate with you but only you can read what they send to you. Asymetric encryption is always preferable, since you don’t need to share anything that is meant to be private. Symetric key encryption can be used in private communications and asymetric encryption can be used when you want to share data with other people but have control about who can read it.</p>
 </div>
 <div class="exercise" name="Asymmetric Encryption Vulnerabilities">
 <p>How can data be compromised in an asymmetric key encryption scheme? Describe at least two attack vectors or points of failure.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ul>
+<li><strong>Man-in-the-middle.</strong> Without a trusted PKI / certificate authority, an attacker can substitute their own public key for the recipient’s and intercept all subsequent traffic.</li>
+<li><strong>Private-key compromise.</strong> If the private key is stolen, copied, or generated with a weak RNG, every past and future message encrypted to it becomes decryptable. RSA is also vulnerable to factorisation attacks if the key length is too small (below ~2048 bits today).</li>
+</ul>
 </div>
 <div class="exercise" name="Data Confidentiality in Network Communications">
 <p>What common methods are used for protecting data confidentiality in network communications? Name and briefly describe at least three techniques.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ul>
+<li><strong>TLS / HTTPS.</strong> An asymmetric handshake establishes a session key, then the payload is symmetrically encrypted (AES). Used in essentially all modern web traffic.</li>
+<li><strong>VPN / IPsec.</strong> Encrypts the whole IP packet between two endpoints, hiding source/destination as well as the payload.</li>
+<li><strong>End-to-end encryption</strong> (PGP, Signal, age). Application-level encryption so the transport provider cannot read content; only the recipient’s private key decrypts.</li>
+</ul>
 </div>
 <div class="exercise" name="Authentication vs Authorisation">
 <p>What is the difference between authentication and authorisation? Provide a concrete example illustrating the distinction.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>In authentication you want to verify the person who is logging in and in authorisation is where you manage what permission (what the authenticated user can do) they have. An example could be a university website, where students and professors are authenticated in order to access, but they have different authorisations as the students can not alter grades.</p>
 </div>
 <div class="exercise" name="Data Integrity">
 <p>What is integrity in data security, and what strategies can be used to ensure it? Describe at least two mechanisms used in practice.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span><strong>Integrity</strong> is the guarantee that data has not been altered — accidentally or maliciously — since it was written. Two practical mechanisms:</p>
+<ul>
+<li><strong>Cryptographic hashes / checksums</strong> (SHA-256, CRC32). The producer publishes the digest; the consumer recomputes it on receipt and compares.</li>
+<li><strong>Digital signatures.</strong> The producer signs the hash with their private key; anyone with the matching public key verifies <em>integrity</em> and <em>authenticity</em> in one step.</li>
+</ul>
 </div>
 <div class="exercise" name="Confidentiality in Cryptography">
 <p>Describe how confidentiality can be ensured through cryptographic techniques. What properties must a secure encryption algorithm have?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span><strong>Confidentiality</strong> is achieved by encrypting data so only holders of the right key can recover the plaintext. A secure encryption algorithm must be:</p>
+<ul>
+<li><strong>Hard to invert without the key</strong> — no efficient decryption beyond brute force.</li>
+<li><strong>Resistant to chosen-plaintext attacks</strong> — many <span class="math inline">\((plaintext, ciphertext)\)</span> pairs must not leak the key.</li>
+<li><strong>Semantically secure</strong> — ciphertexts of two chosen plaintexts must be indistinguishable to an attacker.</li>
+<li><strong>Randomised</strong> via fresh IVs / nonces so identical plaintexts yield different ciphertexts.</li>
+</ul>
+<p>Examples: AES-256-GCM (symmetric), RSA-OAEP or ECIES (asymmetric).</p>
 </div>
 <div class="exercise" name="Cloud Confidentiality for Patient Data">
 <p>How could confidentiality be ensured in a Cloud system that contains sensitive data about patients? What technical and organisational measures would you implement?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span><strong>Technical.</strong></p>
+<ul>
+<li><strong>Encryption at rest</strong> (AES-256) and <strong>in transit</strong> (TLS).</li>
+<li><strong>Client-side encryption</strong> so the provider stores only ciphertext; keys held in a separate KMS or on-premise HSM.</li>
+<li><strong>Pseudonymisation</strong> of identifying fields (name, ID, date of birth) before upload.</li>
+</ul>
+<p><strong>Organisational.</strong></p>
+<ul>
+<li><strong>Role-based access control</strong> with audit logs of every read.</li>
+<li><strong>Vetted provider</strong> under a compliant data-processing agreement (HIPAA, GDPR).</li>
+<li><strong>Geographic restrictions</strong> so the data never leaves the legal jurisdiction.</li>
+</ul>
 </div>
 <div class="exercise" name="Managing a Sensitive Physics Dataset">
 <p>You are tasked with defining the strategy to manage and share with others (e.g., physicists) a large dataset of potentially sensitive data, such as records of hospital patients. What techniques and strategies would you consider effective? Consider data access control, anonymisation, encryption, and audit trails.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ul>
+<li><strong>Access control.</strong> Authenticated users only, with RBAC: clinicians see identifiable records, researchers see pseudonymised ones.</li>
+<li><strong>Anonymisation / pseudonymisation.</strong> Strip direct identifiers before release and replace with stable tokens so re-linking requires a separate key held by the data custodian.</li>
+<li><strong>Encryption.</strong> AES-256 at rest, TLS in transit, plus client-side encryption for highly sensitive fields.</li>
+<li><strong>Audit trails.</strong> Immutable logs of every access (who, when, what record) for compliance review.</li>
+<li><strong>Data-sharing agreements</strong> with collaborators specifying allowed analyses and prohibiting re-identification.</li>
+</ul>
 </div>
 <div class="exercise" name="Hash Collisions">
 <p>What is a hash collision? Why do we want to avoid it, and is it totally avoidable? How do modern hash functions (e.g.&nbsp;SHA-256) minimise the probability of collisions?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>A <strong>collision</strong> is two distinct inputs <span class="math inline">\(x \neq y\)</span> with the same digest <span class="math inline">\(h(x) = h(y)\)</span>. We want to avoid them because an attacker who finds a collision can substitute one input for another — e.g.&nbsp;a malicious file for a benign one — without changing the published hash.</p>
+<p><strong>Not totally avoidable</strong>: any fixed-length hash maps an infinite input space into <span class="math inline">\(2^{n}\)</span> outputs, so collisions exist by pigeonhole. Modern hashes like SHA-256 make them <em>computationally infeasible</em>: the birthday-bound cost of finding one is <span class="math inline">\(2^{n/2} = 2^{128}\)</span>, well beyond any feasible compute.</p>
 </div>
 <div class="exercise" name="Parity Checks and Checksums">
 <p>What is the role of parity checks and checksums in data management? In what contexts are they used, and what are their limitations?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Both detect accidental data corruption.</p>
+<ul>
+<li><strong>Parity bit.</strong> A single bit added so the count of 1s in a word is even (or odd). Detects any odd number of bit-flips but cannot locate or correct them, and is useless against bursts. Used in RAM ECC, RAID 5/6, serial links.</li>
+<li><strong>Checksum</strong> (CRC, Adler-32, MD5). A short fixed-size digest of a longer block. Detects most random errors and many bursts. Used in TCP/IP packets, <code>md5sum</code> file checks, ZFS / ext4 block validation.</li>
+</ul>
+<p><strong>Limitations.</strong> Neither resists <em>intentional</em> tampering — an attacker who modifies the data can recompute the checksum. For that you need a cryptographic hash or a MAC.</p>
 </div>
 <div class="exercise" name="Brute-Force Cracking Exercises">
 <p>Answer the following two sub-questions:</p>
@@ -1108,7 +1162,8 @@ SSH in Practice
 <p><strong>(b)</strong> If you use SHA-256 hashing on a text and an algorithm can guess at a rate of <span class="math inline">\(2 \times 10^{18}\)</span> guesses per second, how long will the algorithm take in the worst case to find the original input? (Recall that SHA-256 produces a 256-bit digest, giving <span class="math inline">\(2^{256}\)</span> possible hash values.)</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span><strong>(a)</strong> Search space <span class="math inline">\(= 62^{10} \approx 8.4 \times 10^{17}\)</span>. At <span class="math inline">\(10^{3}\)</span> hashes/hour, <span class="math display">\[\frac{62^{10}}{10^{3}~h^{-1}} \approx 8.4 \times 10^{14}~h \approx 9.6 \times 10^{10}~\text{years}.\]</span> About a hundred billion years — astronomically safe at that hash rate.</p>
+<p><strong>(b)</strong> With <span class="math inline">\(2^{256} \approx 1.16 \times 10^{77}\)</span> possible digests and <span class="math inline">\(2 \times 10^{18}\)</span> guesses/s, <span class="math display">\[\frac{2^{256}}{2 \times 10^{18}~s^{-1}} \approx 5.8 \times 10^{58}~s \approx 1.8 \times 10^{51}~\text{years}.\]</span> Brute force on the digest space is infeasible regardless of how short the input was; this is why pre-image resistance of cryptographic hashes is the load-bearing property in password hashing.</p>
 </div>
 
 
@@ -1891,196 +1946,262 @@ SSH in Practice
 <span id="cb5-303"><a href="#cb5-303" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-304"><a href="#cb5-304" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-305"><a href="#cb5-305" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 0 vs RAID 1"}</span>
-<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a>What is the performance impact of using RAID 0 vs RAID 1? What factors should be considered when choosing between them?</span>
+<span id="cb5-306"><a href="#cb5-306" aria-hidden="true" tabindex="-1"></a>Mirroring: Duplicates the data in to different devices. Pros: In case of disk failure the data is still available. Cons: You duplicate the data using mor storage</span>
+<span id="cb5-307"><a href="#cb5-307" aria-hidden="true" tabindex="-1"></a>Striping: Divides the data into smaller portions and the portions are distributed in different devices. Pros: It increases throughput (it can be parallelized). Cons: If there is disk failure the data is lost</span>
+<span id="cb5-308"><a href="#cb5-308" aria-hidden="true" tabindex="-1"></a>Parity checks: It assigns a parity to the data and checks the data with XOR operations. Pros: It makes sure the data is not corrupted and it can reverse data loss in some cases. Cons: It reduces throughput due to performing checkings.</span>
+<span id="cb5-309"><a href="#cb5-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-310"><a href="#cb5-310" aria-hidden="true" tabindex="-1"></a>In terms of reliability the best methods are mirroring and parity checking since are the only ones where disk failure does not necessarilly mean data loss. Stripping is only prefered when throughput needs to be high.</span>
 <span id="cb5-311"><a href="#cb5-311" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-312"><a href="#cb5-312" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-313"><a href="#cb5-313" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 0 vs RAID 1"}</span>
+<span id="cb5-314"><a href="#cb5-314" aria-hidden="true" tabindex="-1"></a>What is the performance impact of using RAID 0 vs RAID 1? What factors should be considered when choosing between them?</span>
 <span id="cb5-315"><a href="#cb5-315" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-316"><a href="#cb5-316" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 0 Throughput and Risks"}</span>
-<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a>How does RAID 0 increase data throughput, and what are the risks associated with this configuration?</span>
-<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 5 Capacity"}</span>
-<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a>You have five disks with sizes $x_1, x_2, x_3, x_4, x_5$. If you arrange them in a RAID 5 system, what will be the usable storage capacity of the system? Express the answer in terms of the individual disk sizes.</span>
-<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Parity Placement"}</span>
-<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a>Can you store the parity of a data block on the same disk as the data block itself? Explain your answer in the context of RAID reliability.</span>
-<span id="cb5-335"><a href="#cb5-335" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 6 Configuration"}</span>
-<span id="cb5-342"><a href="#cb5-342" aria-hidden="true" tabindex="-1"></a>You have a RAID 6 configuration with 5 disks. What is the usable storage capacity of the filesystem (expressed as a fraction of total raw capacity)? How many disks can fail simultaneously without data loss?</span>
-<span id="cb5-343"><a href="#cb5-343" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-344"><a href="#cb5-344" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-345"><a href="#cb5-345" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-346"><a href="#cb5-346" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-347"><a href="#cb5-347" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-348"><a href="#cb5-348" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-349"><a href="#cb5-349" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 10 vs RAID 6"}</span>
-<span id="cb5-350"><a href="#cb5-350" aria-hidden="true" tabindex="-1"></a>Compare RAID 10 and RAID 6 in terms of pros and cons regarding storage efficiency and reliability (fault tolerance).</span>
-<span id="cb5-351"><a href="#cb5-351" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-352"><a href="#cb5-352" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-353"><a href="#cb5-353" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-354"><a href="#cb5-354" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-355"><a href="#cb5-355" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-356"><a href="#cb5-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-357"><a href="#cb5-357" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID Configuration Exercise (1)"}</span>
-<span id="cb5-358"><a href="#cb5-358" aria-hidden="true" tabindex="-1"></a>You are tasked with choosing a RAID configuration to store a 3.5 TB dataset. You have 6 disks available with the following capacities:</span>
-<span id="cb5-359"><a href="#cb5-359" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-360"><a href="#cb5-360" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk <span class="pp">|</span> Capacity (TB) <span class="pp">|</span></span>
-<span id="cb5-361"><a href="#cb5-361" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|--------------|</span></span>
-<span id="cb5-362"><a href="#cb5-362" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-0 <span class="pp">|</span> 1.0 <span class="pp">|</span></span>
-<span id="cb5-363"><a href="#cb5-363" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-1 <span class="pp">|</span> 1.0 <span class="pp">|</span></span>
-<span id="cb5-364"><a href="#cb5-364" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-2 <span class="pp">|</span> 1.2 <span class="pp">|</span></span>
-<span id="cb5-365"><a href="#cb5-365" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-3 <span class="pp">|</span> 1.5 <span class="pp">|</span></span>
-<span id="cb5-366"><a href="#cb5-366" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-4 <span class="pp">|</span> 1.5 <span class="pp">|</span></span>
-<span id="cb5-367"><a href="#cb5-367" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-5 <span class="pp">|</span> 1.8 <span class="pp">|</span></span>
-<span id="cb5-368"><a href="#cb5-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-369"><a href="#cb5-369" aria-hidden="true" tabindex="-1"></a>The dataset needs to be stored with high reliability and fault tolerance. Which RAID configuration would you choose, and why? Consider both the storage requirements and fault tolerance.</span>
-<span id="cb5-370"><a href="#cb5-370" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-371"><a href="#cb5-371" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-372"><a href="#cb5-372" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-373"><a href="#cb5-373" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-374"><a href="#cb5-374" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-375"><a href="#cb5-375" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-376"><a href="#cb5-376" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID Configuration Exercise (2)"}</span>
-<span id="cb5-377"><a href="#cb5-377" aria-hidden="true" tabindex="-1"></a>Arrange the following 6 disks in a RAID 10 configuration:</span>
-<span id="cb5-378"><a href="#cb5-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-379"><a href="#cb5-379" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk <span class="pp">|</span> Capacity (GB) <span class="pp">|</span> Throughput (MB/s) <span class="pp">|</span></span>
-<span id="cb5-380"><a href="#cb5-380" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|--------------|-------------------|</span></span>
-<span id="cb5-381"><a href="#cb5-381" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 0 <span class="pp">|</span> 750 <span class="pp">|</span> 120 <span class="pp">|</span></span>
-<span id="cb5-382"><a href="#cb5-382" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="pp">|</span> 640 <span class="pp">|</span> 200 <span class="pp">|</span></span>
-<span id="cb5-383"><a href="#cb5-383" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2 <span class="pp">|</span> 500 <span class="pp">|</span> 250 <span class="pp">|</span></span>
-<span id="cb5-384"><a href="#cb5-384" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> 640 <span class="pp">|</span> 150 <span class="pp">|</span></span>
-<span id="cb5-385"><a href="#cb5-385" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 4 <span class="pp">|</span> 1000 <span class="pp">|</span> 120 <span class="pp">|</span></span>
-<span id="cb5-386"><a href="#cb5-386" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 5 <span class="pp">|</span> 720 <span class="pp">|</span> 160 <span class="pp">|</span></span>
-<span id="cb5-387"><a href="#cb5-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-388"><a href="#cb5-388" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>How can the 6 disks be arranged into mirrored pairs?</span>
-<span id="cb5-389"><a href="#cb5-389" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>What is the estimated overall usable storage capacity?</span>
-<span id="cb5-390"><a href="#cb5-390" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>How many disks can fail without incurring data loss in this configuration?</span>
-<span id="cb5-391"><a href="#cb5-391" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-392"><a href="#cb5-392" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-393"><a href="#cb5-393" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-394"><a href="#cb5-394" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-395"><a href="#cb5-395" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-396"><a href="#cb5-396" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-397"><a href="#cb5-397" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Encryption vs Hashing"}</span>
-<span id="cb5-398"><a href="#cb5-398" aria-hidden="true" tabindex="-1"></a>What is the difference between encryption and hashing? Why are both techniques important and useful for ensuring data security? Give an example use case for each.</span>
-<span id="cb5-399"><a href="#cb5-399" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-400"><a href="#cb5-400" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-401"><a href="#cb5-401" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-402"><a href="#cb5-402" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-403"><a href="#cb5-403" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-404"><a href="#cb5-404" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-405"><a href="#cb5-405" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Symmetric vs Asymmetric Encryption"}</span>
-<span id="cb5-406"><a href="#cb5-406" aria-hidden="true" tabindex="-1"></a>What are the differences between symmetric and asymmetric encryption? In what scenarios is each type preferable?</span>
-<span id="cb5-407"><a href="#cb5-407" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-408"><a href="#cb5-408" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-409"><a href="#cb5-409" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-410"><a href="#cb5-410" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-411"><a href="#cb5-411" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-317"><a href="#cb5-317" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-318"><a href="#cb5-318" aria-hidden="true" tabindex="-1"></a>The two main factors are the reliability and throughput. RAID 0 is prefered when multiple operations needs to be done at the same time and fast, as it uses striping.</span>
+<span id="cb5-319"><a href="#cb5-319" aria-hidden="true" tabindex="-1"></a>RAID 1 is prefered when reliability is main factor to guarantee, as it uses mirroring. A third factor would be storage capacity, as it is a limiting factor, specially in a RAID 1 configuration since you need twice or more </span>
+<span id="cb5-320"><a href="#cb5-320" aria-hidden="true" tabindex="-1"></a>storage capacity than data.</span>
+<span id="cb5-321"><a href="#cb5-321" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-322"><a href="#cb5-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-323"><a href="#cb5-323" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 0 Throughput and Risks"}</span>
+<span id="cb5-324"><a href="#cb5-324" aria-hidden="true" tabindex="-1"></a>How does RAID 0 increase data throughput, and what are the risks associated with this configuration?</span>
+<span id="cb5-325"><a href="#cb5-325" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-326"><a href="#cb5-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-327"><a href="#cb5-327" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-328"><a href="#cb5-328" aria-hidden="true" tabindex="-1"></a>The RAID 0 throughput is increased via striping (dividing the data into multiple disks), since this make reading and writting faster via parallelization of the task. </span>
+<span id="cb5-329"><a href="#cb5-329" aria-hidden="true" tabindex="-1"></a>The main risk affecting the RAID 0 configuration is data loss, as there is no back up copies of the data when a disk fails all data is lost.</span>
+<span id="cb5-330"><a href="#cb5-330" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-331"><a href="#cb5-331" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-332"><a href="#cb5-332" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 5 Capacity"}</span>
+<span id="cb5-333"><a href="#cb5-333" aria-hidden="true" tabindex="-1"></a>You have five disks with sizes $x_1, x_2, x_3, x_4, x_5$. If you arrange them in a RAID 5 system, what will be the usable storage capacity of the system? Express the answer in terms of the individual disk sizes.</span>
+<span id="cb5-334"><a href="#cb5-334" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-335"><a href="#cb5-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-336"><a href="#cb5-336" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-337"><a href="#cb5-337" aria-hidden="true" tabindex="-1"></a>The usable storage capacity will be $4\times$ the lowest storage capacity as one disk is kept for allocating the parity of the data.</span>
+<span id="cb5-338"><a href="#cb5-338" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-339"><a href="#cb5-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-340"><a href="#cb5-340" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Parity Placement"}</span>
+<span id="cb5-341"><a href="#cb5-341" aria-hidden="true" tabindex="-1"></a>Can you store the parity of a data block on the same disk as the data block itself? Explain your answer in the context of RAID reliability.</span>
+<span id="cb5-342"><a href="#cb5-342" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-343"><a href="#cb5-343" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-344"><a href="#cb5-344" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-345"><a href="#cb5-345" aria-hidden="true" tabindex="-1"></a>The answer is NO. If we stored the data in the same disk as the data it would be impossible to recover the data as we would have lost the data and the parity of the data.</span>
+<span id="cb5-346"><a href="#cb5-346" aria-hidden="true" tabindex="-1"></a>If the parity is stored in a different disk is possible to compute the parity of the data and compared with the stored parity in order to recover it, but if we lose both parts we can not computed or know which parity had. </span>
+<span id="cb5-347"><a href="#cb5-347" aria-hidden="true" tabindex="-1"></a>That is why is important in terms of reliability to store them in different disks</span>
+<span id="cb5-348"><a href="#cb5-348" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-349"><a href="#cb5-349" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-350"><a href="#cb5-350" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 6 Configuration"}</span>
+<span id="cb5-351"><a href="#cb5-351" aria-hidden="true" tabindex="-1"></a>You have a RAID 6 configuration with 5 disks. What is the usable storage capacity of the filesystem (expressed as a fraction of total raw capacity)? How many disks can fail simultaneously without data loss?</span>
+<span id="cb5-352"><a href="#cb5-352" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-353"><a href="#cb5-353" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-354"><a href="#cb5-354" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-355"><a href="#cb5-355" aria-hidden="true" tabindex="-1"></a>In a RAID 6 configuration we can lose up to 2 disks.The total capacity (assuming all disks have equal capacity) would $3/5$ of the raw capacity as we use 2 disks for parity checking. </span>
+<span id="cb5-356"><a href="#cb5-356" aria-hidden="true" tabindex="-1"></a>If the disks have different capacity the usable storage would be smaller than $3/5$</span>
+<span id="cb5-357"><a href="#cb5-357" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-358"><a href="#cb5-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-359"><a href="#cb5-359" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID 10 vs RAID 6"}</span>
+<span id="cb5-360"><a href="#cb5-360" aria-hidden="true" tabindex="-1"></a>Compare RAID 10 and RAID 6 in terms of pros and cons regarding storage efficiency and reliability (fault tolerance).</span>
+<span id="cb5-361"><a href="#cb5-361" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-362"><a href="#cb5-362" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-363"><a href="#cb5-363" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-364"><a href="#cb5-364" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Storage efficiency.** RAID 6 wins: $(n-2)/n$ usable vs $1/2$ for RAID 10. With $n=6$: $4/6$ vs $3/6$.</span>
+<span id="cb5-365"><a href="#cb5-365" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Write performance.** RAID 10 wins: mirror + stripe with no parity computation. RAID 6 pays double-parity overhead on every write.</span>
+<span id="cb5-366"><a href="#cb5-366" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Fault tolerance.** RAID 6 tolerates *any* 2 simultaneous failures. RAID 10 also tolerates 2 in the worst case (and up to one per mirror in the best), but loses data if both halves of any single mirror fail together.</span>
+<span id="cb5-367"><a href="#cb5-367" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-368"><a href="#cb5-368" aria-hidden="true" tabindex="-1"></a>Rule of thumb: RAID 6 for capacity-bound archives, RAID 10 for write-heavy databases.</span>
+<span id="cb5-369"><a href="#cb5-369" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-370"><a href="#cb5-370" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-371"><a href="#cb5-371" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID Configuration Exercise (1)"}</span>
+<span id="cb5-372"><a href="#cb5-372" aria-hidden="true" tabindex="-1"></a>You are tasked with choosing a RAID configuration to store a 3.5 TB dataset. You have 6 disks available with the following capacities:</span>
+<span id="cb5-373"><a href="#cb5-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-374"><a href="#cb5-374" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk <span class="pp">|</span> Capacity (TB) <span class="pp">|</span></span>
+<span id="cb5-375"><a href="#cb5-375" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|--------------|</span></span>
+<span id="cb5-376"><a href="#cb5-376" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-0 <span class="pp">|</span> 1.0 <span class="pp">|</span></span>
+<span id="cb5-377"><a href="#cb5-377" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-1 <span class="pp">|</span> 1.0 <span class="pp">|</span></span>
+<span id="cb5-378"><a href="#cb5-378" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-2 <span class="pp">|</span> 1.2 <span class="pp">|</span></span>
+<span id="cb5-379"><a href="#cb5-379" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-3 <span class="pp">|</span> 1.5 <span class="pp">|</span></span>
+<span id="cb5-380"><a href="#cb5-380" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-4 <span class="pp">|</span> 1.5 <span class="pp">|</span></span>
+<span id="cb5-381"><a href="#cb5-381" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk-5 <span class="pp">|</span> 1.8 <span class="pp">|</span></span>
+<span id="cb5-382"><a href="#cb5-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-383"><a href="#cb5-383" aria-hidden="true" tabindex="-1"></a>The dataset needs to be stored with high reliability and fault tolerance. Which RAID configuration would you choose, and why? Consider both the storage requirements and fault tolerance.</span>
+<span id="cb5-384"><a href="#cb5-384" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-385"><a href="#cb5-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-386"><a href="#cb5-386" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-387"><a href="#cb5-387" aria-hidden="true" tabindex="-1"></a>The RAID 6 configuration is the best choice as it has an storage capacity of $(6-2)\times 1.0~<span class="co">[</span><span class="ot">TB</span><span class="co">]</span>=4.0~<span class="co">[</span><span class="ot">TB</span><span class="co">]</span>$ (RAID 5 would give us more storage, but is less reliable) where we could lose 2 disks before data loss.</span>
+<span id="cb5-388"><a href="#cb5-388" aria-hidden="true" tabindex="-1"></a>RAID 0 would give us more storage (6.0 <span class="co">[</span><span class="ot">TB</span><span class="co">]</span>) but no reliability and RAID 1 or RAID 10 do not meet the storage requirements.</span>
+<span id="cb5-389"><a href="#cb5-389" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-390"><a href="#cb5-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-391"><a href="#cb5-391" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="RAID Configuration Exercise (2)"}</span>
+<span id="cb5-392"><a href="#cb5-392" aria-hidden="true" tabindex="-1"></a>Arrange the following 6 disks in a RAID 10 configuration:</span>
+<span id="cb5-393"><a href="#cb5-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-394"><a href="#cb5-394" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Disk <span class="pp">|</span> Capacity (GB) <span class="pp">|</span> Throughput (MB/s) <span class="pp">|</span></span>
+<span id="cb5-395"><a href="#cb5-395" aria-hidden="true" tabindex="-1"></a><span class="pp">|------|--------------|-------------------|</span></span>
+<span id="cb5-396"><a href="#cb5-396" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 0 <span class="pp">|</span> 750 <span class="pp">|</span> 120 <span class="pp">|</span></span>
+<span id="cb5-397"><a href="#cb5-397" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="pp">|</span> 640 <span class="pp">|</span> 200 <span class="pp">|</span></span>
+<span id="cb5-398"><a href="#cb5-398" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 2 <span class="pp">|</span> 500 <span class="pp">|</span> 250 <span class="pp">|</span></span>
+<span id="cb5-399"><a href="#cb5-399" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> 640 <span class="pp">|</span> 150 <span class="pp">|</span></span>
+<span id="cb5-400"><a href="#cb5-400" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 4 <span class="pp">|</span> 1000 <span class="pp">|</span> 120 <span class="pp">|</span></span>
+<span id="cb5-401"><a href="#cb5-401" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 5 <span class="pp">|</span> 720 <span class="pp">|</span> 160 <span class="pp">|</span></span>
+<span id="cb5-402"><a href="#cb5-402" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-403"><a href="#cb5-403" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>How can the 6 disks be arranged into mirrored pairs?</span>
+<span id="cb5-404"><a href="#cb5-404" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>What is the estimated overall usable storage capacity?</span>
+<span id="cb5-405"><a href="#cb5-405" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>How many disks can fail without incurring data loss in this configuration?</span>
+<span id="cb5-406"><a href="#cb5-406" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-407"><a href="#cb5-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-408"><a href="#cb5-408" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-409"><a href="#cb5-409" aria-hidden="true" tabindex="-1"></a>Pair similar capacities so the mirror loss is small: $(1000+750),\,(720+640),\,(640+500)$, giving mirror sizes $750,\,640,\,500$ GB.</span>
+<span id="cb5-410"><a href="#cb5-410" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-411"><a href="#cb5-411" aria-hidden="true" tabindex="-1"></a>Striping across the three pairs is limited by the smallest pair-min, so the usable capacity is $3\times 500~<span class="co">[</span><span class="ot">GB</span><span class="co">]</span>=1.5~<span class="co">[</span><span class="ot">TB</span><span class="co">]</span>$.</span>
 <span id="cb5-412"><a href="#cb5-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-413"><a href="#cb5-413" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Asymmetric Encryption Vulnerabilities"}</span>
-<span id="cb5-414"><a href="#cb5-414" aria-hidden="true" tabindex="-1"></a>How can data be compromised in an asymmetric key encryption scheme? Describe at least two attack vectors or points of failure.</span>
-<span id="cb5-415"><a href="#cb5-415" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-416"><a href="#cb5-416" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-417"><a href="#cb5-417" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-418"><a href="#cb5-418" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-419"><a href="#cb5-419" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-420"><a href="#cb5-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-421"><a href="#cb5-421" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Data Confidentiality in Network Communications"}</span>
-<span id="cb5-422"><a href="#cb5-422" aria-hidden="true" tabindex="-1"></a>What common methods are used for protecting data confidentiality in network communications? Name and briefly describe at least three techniques.</span>
-<span id="cb5-423"><a href="#cb5-423" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-424"><a href="#cb5-424" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-425"><a href="#cb5-425" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-426"><a href="#cb5-426" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-427"><a href="#cb5-427" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-428"><a href="#cb5-428" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-429"><a href="#cb5-429" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Authentication vs Authorisation"}</span>
-<span id="cb5-430"><a href="#cb5-430" aria-hidden="true" tabindex="-1"></a>What is the difference between authentication and authorisation? Provide a concrete example illustrating the distinction.</span>
-<span id="cb5-431"><a href="#cb5-431" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-432"><a href="#cb5-432" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-433"><a href="#cb5-433" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-434"><a href="#cb5-434" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-435"><a href="#cb5-435" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-436"><a href="#cb5-436" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-437"><a href="#cb5-437" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Data Integrity"}</span>
-<span id="cb5-438"><a href="#cb5-438" aria-hidden="true" tabindex="-1"></a>What is integrity in data security, and what strategies can be used to ensure it? Describe at least two mechanisms used in practice.</span>
-<span id="cb5-439"><a href="#cb5-439" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-440"><a href="#cb5-440" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-441"><a href="#cb5-441" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-442"><a href="#cb5-442" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-443"><a href="#cb5-443" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-444"><a href="#cb5-444" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-445"><a href="#cb5-445" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Confidentiality in Cryptography"}</span>
-<span id="cb5-446"><a href="#cb5-446" aria-hidden="true" tabindex="-1"></a>Describe how confidentiality can be ensured through cryptographic techniques. What properties must a secure encryption algorithm have?</span>
-<span id="cb5-447"><a href="#cb5-447" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-448"><a href="#cb5-448" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-449"><a href="#cb5-449" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-450"><a href="#cb5-450" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-451"><a href="#cb5-451" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-452"><a href="#cb5-452" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-453"><a href="#cb5-453" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Cloud Confidentiality for Patient Data"}</span>
-<span id="cb5-454"><a href="#cb5-454" aria-hidden="true" tabindex="-1"></a>How could confidentiality be ensured in a Cloud system that contains sensitive data about patients? What technical and organisational measures would you implement?</span>
+<span id="cb5-413"><a href="#cb5-413" aria-hidden="true" tabindex="-1"></a>Up to three disks can fail (one per pair); if both halves of any single mirror fail, data is lost.</span>
+<span id="cb5-414"><a href="#cb5-414" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-415"><a href="#cb5-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-416"><a href="#cb5-416" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Encryption vs Hashing"}</span>
+<span id="cb5-417"><a href="#cb5-417" aria-hidden="true" tabindex="-1"></a>What is the difference between encryption and hashing? Why are both techniques important and useful for ensuring data security? Give an example use case for each.</span>
+<span id="cb5-418"><a href="#cb5-418" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-419"><a href="#cb5-419" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-420"><a href="#cb5-420" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-421"><a href="#cb5-421" aria-hidden="true" tabindex="-1"></a>Encryption is used in secure communication as data can be coded and decoded if the users have the keys or methods to do it. Hashing instead can not be decoded and is used to check and store data.</span>
+<span id="cb5-422"><a href="#cb5-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-423"><a href="#cb5-423" aria-hidden="true" tabindex="-1"></a>We use encryption we want to have a controled acees to data, like when we send a message in an app to a person, we want only that person to be able to read it and replying.</span>
+<span id="cb5-424"><a href="#cb5-424" aria-hidden="true" tabindex="-1"></a>Instead we would use hashing when we want to check the data (the same data will produce the same digest, so if we know the digest and want to check the data we can compare it) </span>
+<span id="cb5-425"><a href="#cb5-425" aria-hidden="true" tabindex="-1"></a>or to store data (like when we enter a password into a web service the platform will check the digest, so they don't know or have your password but they can authenticate you by the digest)</span>
+<span id="cb5-426"><a href="#cb5-426" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-427"><a href="#cb5-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-428"><a href="#cb5-428" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Symmetric vs Asymmetric Encryption"}</span>
+<span id="cb5-429"><a href="#cb5-429" aria-hidden="true" tabindex="-1"></a>What are the differences between symmetric and asymmetric encryption? In what scenarios is each type preferable?</span>
+<span id="cb5-430"><a href="#cb5-430" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-431"><a href="#cb5-431" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-432"><a href="#cb5-432" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-433"><a href="#cb5-433" aria-hidden="true" tabindex="-1"></a>In symetric encryption only one key is generated and is meant to be shared only with the entity we want to communicate, in asymmetric encryption 2 keys are generated and </span>
+<span id="cb5-434"><a href="#cb5-434" aria-hidden="true" tabindex="-1"></a>one is meant to be public for anyone and the other one is meant to be completly private, in that way entities can communicate with you but only you can read what they send to you. Asymetric encryption is always</span>
+<span id="cb5-435"><a href="#cb5-435" aria-hidden="true" tabindex="-1"></a>preferable, since you don't need to share anything that is meant to be private. Symetric key encryption can be used in private communications and asymetric encryption can be used when you want to share data with other people but have control about who can read it.</span>
+<span id="cb5-436"><a href="#cb5-436" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-437"><a href="#cb5-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-438"><a href="#cb5-438" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Asymmetric Encryption Vulnerabilities"}</span>
+<span id="cb5-439"><a href="#cb5-439" aria-hidden="true" tabindex="-1"></a>How can data be compromised in an asymmetric key encryption scheme? Describe at least two attack vectors or points of failure.</span>
+<span id="cb5-440"><a href="#cb5-440" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-441"><a href="#cb5-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-442"><a href="#cb5-442" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-443"><a href="#cb5-443" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Man-in-the-middle.** Without a trusted PKI / certificate authority, an attacker can substitute their own public key for the recipient's and intercept all subsequent traffic.</span>
+<span id="cb5-444"><a href="#cb5-444" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Private-key compromise.** If the private key is stolen, copied, or generated with a weak RNG, every past and future message encrypted to it becomes decryptable. RSA is also vulnerable to factorisation attacks if the key length is too small (below ~2048 bits today).</span>
+<span id="cb5-445"><a href="#cb5-445" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-446"><a href="#cb5-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-447"><a href="#cb5-447" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Data Confidentiality in Network Communications"}</span>
+<span id="cb5-448"><a href="#cb5-448" aria-hidden="true" tabindex="-1"></a>What common methods are used for protecting data confidentiality in network communications? Name and briefly describe at least three techniques.</span>
+<span id="cb5-449"><a href="#cb5-449" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-450"><a href="#cb5-450" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-451"><a href="#cb5-451" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-452"><a href="#cb5-452" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**TLS / HTTPS.** An asymmetric handshake establishes a session key, then the payload is symmetrically encrypted (AES). Used in essentially all modern web traffic.</span>
+<span id="cb5-453"><a href="#cb5-453" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**VPN / IPsec.** Encrypts the whole IP packet between two endpoints, hiding source/destination as well as the payload.</span>
+<span id="cb5-454"><a href="#cb5-454" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**End-to-end encryption** (PGP, Signal, age). Application-level encryption so the transport provider cannot read content; only the recipient's private key decrypts.</span>
 <span id="cb5-455"><a href="#cb5-455" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-456"><a href="#cb5-456" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-457"><a href="#cb5-457" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-458"><a href="#cb5-458" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-457"><a href="#cb5-457" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Authentication vs Authorisation"}</span>
+<span id="cb5-458"><a href="#cb5-458" aria-hidden="true" tabindex="-1"></a>What is the difference between authentication and authorisation? Provide a concrete example illustrating the distinction.</span>
 <span id="cb5-459"><a href="#cb5-459" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-460"><a href="#cb5-460" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-461"><a href="#cb5-461" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Managing a Sensitive Physics Dataset"}</span>
-<span id="cb5-462"><a href="#cb5-462" aria-hidden="true" tabindex="-1"></a>You are tasked with defining the strategy to manage and share with others (e.g., physicists) a large dataset of potentially sensitive data, such as records of hospital patients. What techniques and strategies would you consider effective? Consider data access control, anonymisation, encryption, and audit trails.</span>
-<span id="cb5-463"><a href="#cb5-463" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-464"><a href="#cb5-464" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-465"><a href="#cb5-465" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-466"><a href="#cb5-466" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-467"><a href="#cb5-467" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-468"><a href="#cb5-468" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-469"><a href="#cb5-469" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Hash Collisions"}</span>
-<span id="cb5-470"><a href="#cb5-470" aria-hidden="true" tabindex="-1"></a>What is a hash collision? Why do we want to avoid it, and is it totally avoidable? How do modern hash functions (e.g. SHA-256) minimise the probability of collisions?</span>
-<span id="cb5-471"><a href="#cb5-471" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-461"><a href="#cb5-461" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-462"><a href="#cb5-462" aria-hidden="true" tabindex="-1"></a>In authentication you want to verify the person who is logging in and in authorisation is where you manage what permission (what the authenticated user can do) they have. </span>
+<span id="cb5-463"><a href="#cb5-463" aria-hidden="true" tabindex="-1"></a>An example could be a university website, where students and professors are authenticated in order to access, but they have different authorisations as the students can not alter grades.</span>
+<span id="cb5-464"><a href="#cb5-464" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-465"><a href="#cb5-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-466"><a href="#cb5-466" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Data Integrity"}</span>
+<span id="cb5-467"><a href="#cb5-467" aria-hidden="true" tabindex="-1"></a>What is integrity in data security, and what strategies can be used to ensure it? Describe at least two mechanisms used in practice.</span>
+<span id="cb5-468"><a href="#cb5-468" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-469"><a href="#cb5-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-470"><a href="#cb5-470" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-471"><a href="#cb5-471" aria-hidden="true" tabindex="-1"></a>**Integrity** is the guarantee that data has not been altered — accidentally or maliciously — since it was written. Two practical mechanisms:</span>
 <span id="cb5-472"><a href="#cb5-472" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-473"><a href="#cb5-473" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-474"><a href="#cb5-474" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb5-473"><a href="#cb5-473" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Cryptographic hashes / checksums** (SHA-256, CRC32). The producer publishes the digest; the consumer recomputes it on receipt and compares.</span>
+<span id="cb5-474"><a href="#cb5-474" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Digital signatures.** The producer signs the hash with their private key; anyone with the matching public key verifies *integrity* and *authenticity* in one step.</span>
 <span id="cb5-475"><a href="#cb5-475" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-476"><a href="#cb5-476" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-477"><a href="#cb5-477" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Parity Checks and Checksums"}</span>
-<span id="cb5-478"><a href="#cb5-478" aria-hidden="true" tabindex="-1"></a>What is the role of parity checks and checksums in data management? In what contexts are they used, and what are their limitations?</span>
+<span id="cb5-477"><a href="#cb5-477" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Confidentiality in Cryptography"}</span>
+<span id="cb5-478"><a href="#cb5-478" aria-hidden="true" tabindex="-1"></a>Describe how confidentiality can be ensured through cryptographic techniques. What properties must a secure encryption algorithm have?</span>
 <span id="cb5-479"><a href="#cb5-479" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb5-480"><a href="#cb5-480" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-481"><a href="#cb5-481" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-482"><a href="#cb5-482" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-483"><a href="#cb5-483" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-484"><a href="#cb5-484" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-485"><a href="#cb5-485" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Brute-Force Cracking Exercises"}</span>
-<span id="cb5-486"><a href="#cb5-486" aria-hidden="true" tabindex="-1"></a>Answer the following two sub-questions:</span>
-<span id="cb5-487"><a href="#cb5-487" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-488"><a href="#cb5-488" aria-hidden="true" tabindex="-1"></a>**(a)** Imagine your password is hashed via the SHA-256 algorithm and it contains 10 characters drawn from a standard alphanumeric character set (letters a–z, A–Z, digits 0–9: 62 characters total). A hacker can try 1,000 different hash combinations per hour. How much time does it take for the hacker to crack your password in the worst case?</span>
-<span id="cb5-489"><a href="#cb5-489" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-490"><a href="#cb5-490" aria-hidden="true" tabindex="-1"></a>**(b)** If you use SHA-256 hashing on a text and an algorithm can guess at a rate of $2 \times 10^{18}$ guesses per second, how long will the algorithm take in the worst case to find the original input? (Recall that SHA-256 produces a 256-bit digest, giving $2^{256}$ possible hash values.)</span>
-<span id="cb5-491"><a href="#cb5-491" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb5-492"><a href="#cb5-492" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-493"><a href="#cb5-493" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb5-494"><a href="#cb5-494" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb5-495"><a href="#cb5-495" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb5-482"><a href="#cb5-482" aria-hidden="true" tabindex="-1"></a>**Confidentiality** is achieved by encrypting data so only holders of the right key can recover the plaintext. A secure encryption algorithm must be:</span>
+<span id="cb5-483"><a href="#cb5-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-484"><a href="#cb5-484" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Hard to invert without the key** — no efficient decryption beyond brute force.</span>
+<span id="cb5-485"><a href="#cb5-485" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Resistant to chosen-plaintext attacks** — many $(plaintext, ciphertext)$ pairs must not leak the key.</span>
+<span id="cb5-486"><a href="#cb5-486" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Semantically secure** — ciphertexts of two chosen plaintexts must be indistinguishable to an attacker.</span>
+<span id="cb5-487"><a href="#cb5-487" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Randomised** via fresh IVs / nonces so identical plaintexts yield different ciphertexts.</span>
+<span id="cb5-488"><a href="#cb5-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-489"><a href="#cb5-489" aria-hidden="true" tabindex="-1"></a>Examples: AES-256-GCM (symmetric), RSA-OAEP or ECIES (asymmetric).</span>
+<span id="cb5-490"><a href="#cb5-490" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-491"><a href="#cb5-491" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-492"><a href="#cb5-492" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Cloud Confidentiality for Patient Data"}</span>
+<span id="cb5-493"><a href="#cb5-493" aria-hidden="true" tabindex="-1"></a>How could confidentiality be ensured in a Cloud system that contains sensitive data about patients? What technical and organisational measures would you implement?</span>
+<span id="cb5-494"><a href="#cb5-494" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-495"><a href="#cb5-495" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-496"><a href="#cb5-496" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-497"><a href="#cb5-497" aria-hidden="true" tabindex="-1"></a>**Technical.**</span>
+<span id="cb5-498"><a href="#cb5-498" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-499"><a href="#cb5-499" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Encryption at rest** (AES-256) and **in transit** (TLS).</span>
+<span id="cb5-500"><a href="#cb5-500" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Client-side encryption** so the provider stores only ciphertext; keys held in a separate KMS or on-premise HSM.</span>
+<span id="cb5-501"><a href="#cb5-501" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Pseudonymisation** of identifying fields (name, ID, date of birth) before upload.</span>
+<span id="cb5-502"><a href="#cb5-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-503"><a href="#cb5-503" aria-hidden="true" tabindex="-1"></a>**Organisational.**</span>
+<span id="cb5-504"><a href="#cb5-504" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-505"><a href="#cb5-505" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Role-based access control** with audit logs of every read.</span>
+<span id="cb5-506"><a href="#cb5-506" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Vetted provider** under a compliant data-processing agreement (HIPAA, GDPR).</span>
+<span id="cb5-507"><a href="#cb5-507" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Geographic restrictions** so the data never leaves the legal jurisdiction.</span>
+<span id="cb5-508"><a href="#cb5-508" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-509"><a href="#cb5-509" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-510"><a href="#cb5-510" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Managing a Sensitive Physics Dataset"}</span>
+<span id="cb5-511"><a href="#cb5-511" aria-hidden="true" tabindex="-1"></a>You are tasked with defining the strategy to manage and share with others (e.g., physicists) a large dataset of potentially sensitive data, such as records of hospital patients. What techniques and strategies would you consider effective? Consider data access control, anonymisation, encryption, and audit trails.</span>
+<span id="cb5-512"><a href="#cb5-512" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-513"><a href="#cb5-513" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-514"><a href="#cb5-514" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-515"><a href="#cb5-515" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Access control.** Authenticated users only, with RBAC: clinicians see identifiable records, researchers see pseudonymised ones.</span>
+<span id="cb5-516"><a href="#cb5-516" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Anonymisation / pseudonymisation.** Strip direct identifiers before release and replace with stable tokens so re-linking requires a separate key held by the data custodian.</span>
+<span id="cb5-517"><a href="#cb5-517" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Encryption.** AES-256 at rest, TLS in transit, plus client-side encryption for highly sensitive fields.</span>
+<span id="cb5-518"><a href="#cb5-518" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Audit trails.** Immutable logs of every access (who, when, what record) for compliance review.</span>
+<span id="cb5-519"><a href="#cb5-519" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Data-sharing agreements** with collaborators specifying allowed analyses and prohibiting re-identification.</span>
+<span id="cb5-520"><a href="#cb5-520" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-521"><a href="#cb5-521" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-522"><a href="#cb5-522" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Hash Collisions"}</span>
+<span id="cb5-523"><a href="#cb5-523" aria-hidden="true" tabindex="-1"></a>What is a hash collision? Why do we want to avoid it, and is it totally avoidable? How do modern hash functions (e.g. SHA-256) minimise the probability of collisions?</span>
+<span id="cb5-524"><a href="#cb5-524" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-525"><a href="#cb5-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-526"><a href="#cb5-526" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-527"><a href="#cb5-527" aria-hidden="true" tabindex="-1"></a>A **collision** is two distinct inputs $x \neq y$ with the same digest $h(x) = h(y)$. We want to avoid them because an attacker who finds a collision can substitute one input for another — e.g.\ a malicious file for a benign one — without changing the published hash.</span>
+<span id="cb5-528"><a href="#cb5-528" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-529"><a href="#cb5-529" aria-hidden="true" tabindex="-1"></a>**Not totally avoidable**: any fixed-length hash maps an infinite input space into $2^{n}$ outputs, so collisions exist by pigeonhole. Modern hashes like SHA-256 make them *computationally infeasible*: the birthday-bound cost of finding one is $2^{n/2} = 2^{128}$, well beyond any feasible compute.</span>
+<span id="cb5-530"><a href="#cb5-530" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-531"><a href="#cb5-531" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-532"><a href="#cb5-532" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Parity Checks and Checksums"}</span>
+<span id="cb5-533"><a href="#cb5-533" aria-hidden="true" tabindex="-1"></a>What is the role of parity checks and checksums in data management? In what contexts are they used, and what are their limitations?</span>
+<span id="cb5-534"><a href="#cb5-534" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-535"><a href="#cb5-535" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-536"><a href="#cb5-536" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-537"><a href="#cb5-537" aria-hidden="true" tabindex="-1"></a>Both detect accidental data corruption.</span>
+<span id="cb5-538"><a href="#cb5-538" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-539"><a href="#cb5-539" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Parity bit.** A single bit added so the count of 1s in a word is even (or odd). Detects any odd number of bit-flips but cannot locate or correct them, and is useless against bursts. Used in RAM ECC, RAID 5/6, serial links.</span>
+<span id="cb5-540"><a href="#cb5-540" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Checksum** (CRC, Adler-32, MD5). A short fixed-size digest of a longer block. Detects most random errors and many bursts. Used in TCP/IP packets, <span class="in">`md5sum`</span> file checks, ZFS / ext4 block validation.</span>
+<span id="cb5-541"><a href="#cb5-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-542"><a href="#cb5-542" aria-hidden="true" tabindex="-1"></a>**Limitations.** Neither resists *intentional* tampering — an attacker who modifies the data can recompute the checksum. For that you need a cryptographic hash or a MAC.</span>
+<span id="cb5-543"><a href="#cb5-543" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-544"><a href="#cb5-544" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-545"><a href="#cb5-545" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Brute-Force Cracking Exercises"}</span>
+<span id="cb5-546"><a href="#cb5-546" aria-hidden="true" tabindex="-1"></a>Answer the following two sub-questions:</span>
+<span id="cb5-547"><a href="#cb5-547" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-548"><a href="#cb5-548" aria-hidden="true" tabindex="-1"></a>**(a)** Imagine your password is hashed via the SHA-256 algorithm and it contains 10 characters drawn from a standard alphanumeric character set (letters a–z, A–Z, digits 0–9: 62 characters total). A hacker can try 1,000 different hash combinations per hour. How much time does it take for the hacker to crack your password in the worst case?</span>
+<span id="cb5-549"><a href="#cb5-549" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-550"><a href="#cb5-550" aria-hidden="true" tabindex="-1"></a>**(b)** If you use SHA-256 hashing on a text and an algorithm can guess at a rate of $2 \times 10^{18}$ guesses per second, how long will the algorithm take in the worst case to find the original input? (Recall that SHA-256 produces a 256-bit digest, giving $2^{256}$ possible hash values.)</span>
+<span id="cb5-551"><a href="#cb5-551" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb5-552"><a href="#cb5-552" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-553"><a href="#cb5-553" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb5-554"><a href="#cb5-554" aria-hidden="true" tabindex="-1"></a>**(a)** Search space $= 62^{10} \approx 8.4 \times 10^{17}$. At $10^{3}$ hashes/hour,</span>
+<span id="cb5-555"><a href="#cb5-555" aria-hidden="true" tabindex="-1"></a>$$\frac{62^{10}}{10^{3}~h^{-1}} \approx 8.4 \times 10^{14}~h \approx 9.6 \times 10^{10}~\text{years}.$$</span>
+<span id="cb5-556"><a href="#cb5-556" aria-hidden="true" tabindex="-1"></a>About a hundred billion years — astronomically safe at that hash rate.</span>
+<span id="cb5-557"><a href="#cb5-557" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-558"><a href="#cb5-558" aria-hidden="true" tabindex="-1"></a>**(b)** With $2^{256} \approx 1.16 \times 10^{77}$ possible digests and $2 \times 10^{18}$ guesses/s,</span>
+<span id="cb5-559"><a href="#cb5-559" aria-hidden="true" tabindex="-1"></a>$$\frac{2^{256}}{2 \times 10^{18}~s^{-1}} \approx 5.8 \times 10^{58}~s \approx 1.8 \times 10^{51}~\text{years}.$$</span>
+<span id="cb5-560"><a href="#cb5-560" aria-hidden="true" tabindex="-1"></a>Brute force on the digest space is infeasible regardless of how short the input was; this is why pre-image resistance of cryptographic hashes is the load-bearing property in password hashing.</span>
+<span id="cb5-561"><a href="#cb5-561" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <style>

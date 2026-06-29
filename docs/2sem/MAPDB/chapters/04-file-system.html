@@ -665,7 +665,7 @@ File System Paths in Practice
 <p>How does increasing the number of indirect blocks impact the maximum file size in an indexed file system? Explain the relationship between indirect block levels and file size limits.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Indirect blcoks optimize the space used to sotre data as we store the pointer and not the data itself (which has a lower size in memory), so the more pointers we have the bigger the file we can store. This comes with a trade-off as the number of pointers increase the time to read the data also increases. If we use double indirected blocks, which is a indirect block that points to another indirect block that then points to the data, it encreases exponentially as it would <span class="math inline">\(n^{2}\)</span></p>
 </div>
 <div class="exercise" name="File System Size Calculation">
 <p>You have a simple indexed file system with the following parameters:</p>
@@ -679,13 +679,16 @@ File System Paths in Practice
 <p>What is the maximum size of a file that can be stored in this file system? Show all calculation steps.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>First lets compute the number of pointers per block, that is:</p>
+<p><span class="math display">\[\frac{512~[B]}{4~[B]}=128\text{ pointers}\]</span></p>
+<p>The maximum size for a file would be: <span class="math display">\[3\times 512~[B] + 2\times 128\times 512~[B] + 128\times 128\times 512~[B] = 8{,}521{,}216~[B] \approx 8.5~[MB]\]</span> As we account for the direct blocks, the 2 singly-indirect blocks and the doubly-indirect block.<br>
+The space used to store that file would be: <span class="math display">\[3\times512~[B]+2\times128\times4~[B]+128\times128\times4~[B]=68,096~[B]=68.096~[kB]\]</span></p>
 </div>
 <div class="exercise" name="Types of File Access">
 <p>What are the types of memory access in a local file system? Describe each type and give an example use case where it is most appropriate.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>The first type is the sequential access, where the data is stored in order so the data is stored in order and can be accessed by symply moving forward in the memory. Like a movie tape where we can see each fotogram of the movie displayed in order. You just need to unroll the tape to see everything but you can not go directly to the end as you would have to see everything before. The second type is direct access, in this case you only store the information of where is the data and can be accessed from anywhere in the system. The last one is indexed access, here the information is stored in and index table (or key-value table) which contains pointers to the data. You can see it as a menu, where the file system (you) select what file you want (the dish) and then that is retrieved for you to use (eat).</p>
 </div>
 
 
@@ -1324,32 +1327,43 @@ File System Paths in Practice
 <span id="cb2-159"><a href="#cb2-159" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb2-160"><a href="#cb2-160" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-161"><a href="#cb2-161" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="File System Size Calculation"}</span>
-<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>You have a simple indexed file system with the following parameters:</span>
-<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Block size: 512 bytes</span>
-<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pointer size: 4 bytes</span>
-<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>3 direct blocks</span>
-<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>2 singly-indirect blocks</span>
-<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>1 doubly-indirect block</span>
-<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a>What is the maximum size of a file that can be stored in this file system? Show all calculation steps.</span>
-<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-162"><a href="#cb2-162" aria-hidden="true" tabindex="-1"></a>Indirect blcoks optimize the space used to sotre data as we store the pointer and not the data itself (which has a lower size in memory), so the more pointers we have the bigger the file we can store. This comes with a trade-off as the number of pointers increase the time to read the data also increases.</span>
+<span id="cb2-163"><a href="#cb2-163" aria-hidden="true" tabindex="-1"></a>If we use double indirected blocks, which is a indirect block that points to another indirect block that then points to the data, it encreases exponentially as it would $n^{2}$</span>
+<span id="cb2-164"><a href="#cb2-164" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-165"><a href="#cb2-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-166"><a href="#cb2-166" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="File System Size Calculation"}</span>
+<span id="cb2-167"><a href="#cb2-167" aria-hidden="true" tabindex="-1"></a>You have a simple indexed file system with the following parameters:</span>
+<span id="cb2-168"><a href="#cb2-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-169"><a href="#cb2-169" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Block size: 512 bytes</span>
+<span id="cb2-170"><a href="#cb2-170" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Pointer size: 4 bytes</span>
+<span id="cb2-171"><a href="#cb2-171" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>3 direct blocks</span>
+<span id="cb2-172"><a href="#cb2-172" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>2 singly-indirect blocks</span>
+<span id="cb2-173"><a href="#cb2-173" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>1 doubly-indirect block</span>
+<span id="cb2-174"><a href="#cb2-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-175"><a href="#cb2-175" aria-hidden="true" tabindex="-1"></a>What is the maximum size of a file that can be stored in this file system? Show all calculation steps.</span>
+<span id="cb2-176"><a href="#cb2-176" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-177"><a href="#cb2-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-178"><a href="#cb2-178" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb2-179"><a href="#cb2-179" aria-hidden="true" tabindex="-1"></a>First lets compute the number of pointers per block, that is:</span>
 <span id="cb2-180"><a href="#cb2-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Types of File Access"}</span>
-<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a>What are the types of memory access in a local file system? Describe each type and give an example use case where it is most appropriate.</span>
-<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb2-181"><a href="#cb2-181" aria-hidden="true" tabindex="-1"></a>$$\frac{512~<span class="co">[</span><span class="ot">B</span><span class="co">]</span>}{4~<span class="co">[</span><span class="ot">B</span><span class="co">]</span>}=128\text{ pointers}$$ </span>
+<span id="cb2-182"><a href="#cb2-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-183"><a href="#cb2-183" aria-hidden="true" tabindex="-1"></a>The maximum size for a file would be:</span>
+<span id="cb2-184"><a href="#cb2-184" aria-hidden="true" tabindex="-1"></a>    $$3\times 512~<span class="co">[</span><span class="ot">B</span><span class="co">]</span> + 2\times 128\times 512~<span class="co">[</span><span class="ot">B</span><span class="co">]</span> + 128\times 128\times 512~<span class="co">[</span><span class="ot">B</span><span class="co">]</span> = 8{,}521{,}216~<span class="co">[</span><span class="ot">B</span><span class="co">]</span> \approx 8.5~<span class="co">[</span><span class="ot">MB</span><span class="co">]</span>$$</span>
+<span id="cb2-185"><a href="#cb2-185" aria-hidden="true" tabindex="-1"></a>As we account for the direct blocks, the 2 singly-indirect blocks and the doubly-indirect block.  </span>
+<span id="cb2-186"><a href="#cb2-186" aria-hidden="true" tabindex="-1"></a>The space used to store that file would be:</span>
+<span id="cb2-187"><a href="#cb2-187" aria-hidden="true" tabindex="-1"></a>$$3\times512~<span class="co">[</span><span class="ot">B</span><span class="co">]</span>+2\times128\times4~<span class="co">[</span><span class="ot">B</span><span class="co">]</span>+128\times128\times4~<span class="co">[</span><span class="ot">B</span><span class="co">]</span>=68,096~<span class="co">[</span><span class="ot">B</span><span class="co">]</span>=68.096~<span class="co">[</span><span class="ot">kB</span><span class="co">]</span>$$</span>
+<span id="cb2-188"><a href="#cb2-188" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-189"><a href="#cb2-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-190"><a href="#cb2-190" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Types of File Access"}</span>
+<span id="cb2-191"><a href="#cb2-191" aria-hidden="true" tabindex="-1"></a>What are the types of memory access in a local file system? Describe each type and give an example use case where it is most appropriate.</span>
+<span id="cb2-192"><a href="#cb2-192" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-193"><a href="#cb2-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-194"><a href="#cb2-194" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb2-195"><a href="#cb2-195" aria-hidden="true" tabindex="-1"></a>The first type is the sequential access, where the data is stored in order so the data is stored in order and can be accessed by symply moving forward in the memory. Like a movie tape where we can see each fotogram of the movie displayed in order. You just need to unroll the tape to see everything but you can not go directly to the end as you would have to see everything before.</span>
+<span id="cb2-196"><a href="#cb2-196" aria-hidden="true" tabindex="-1"></a>The second type is direct access, in this case you only store the information of where is the data and can be accessed from anywhere in the system.</span>
+<span id="cb2-197"><a href="#cb2-197" aria-hidden="true" tabindex="-1"></a>The last one is indexed access, here the information is stored in and index table (or key-value table) which contains pointers to the data. You can see it as a menu, where the file system (you) select what file you want (the dish) and then that is retrieved for you to use (eat).</span>
+<span id="cb2-198"><a href="#cb2-198" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <style>

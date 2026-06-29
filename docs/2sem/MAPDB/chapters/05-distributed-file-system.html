@@ -498,121 +498,165 @@ Secondary NameNode — what it is and what it is not
 <p>Explain how a client interacts with HDFS when it wants to write a file. Describe the roles of the NameNode and DataNodes in this process.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>The client first contacts the <strong>NameNode</strong> with the write request. The NameNode checks authorisation and returns the list of DataNodes that should host each block. The client then connects <strong>directly</strong> to those DataNodes — data is <strong>not</strong> routed through the NameNode. Each block is written through a <strong>replication pipeline</strong>: client → DN1 → DN2 → DN3 (default replication factor 3). Acknowledgements propagate back to the client and the DataNodes report the new block to the NameNode.</p>
 </div>
 <div class="exercise" name="Heartbeat in HDFS">
 <p>What is meant by a heartbeat in a distributed system such as HDFS? What is its main role, and what happens if heartbeats stop?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>It is a preiodic signal the DataNodes send to the NameNode to make sure the DataNodes are working and available. Its main funnctionallity is to prevent Network Failures, so in case that “heartbeat” stops the NameNode excludes that DataNode until is available and redirects to another DataNode containing the same data.</p>
 </div>
 <div class="exercise" name="DataNode Failure">
 <p>What happens in HDFS when a DataNode fails? How does HDFS detect the failure and what corrective actions does it take?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>The NameNode detects the failure when heartbeats from the DataNode stop. The data on the dead node is “lost” from that copy, but other replicas survive on different DataNodes, so the NameNode redirects clients to those. Crucially, the NameNode also triggers <strong>re-replication</strong>: it identifies every block whose replication factor dropped below the configured value and instructs surviving DataNodes to copy those blocks to other live DataNodes, restoring the target factor. Without this step durability would degrade with every subsequent failure.</p>
 </div>
 <div class="exercise" name="Fault Tolerance in HDFS">
 <p>How is fault tolerance implemented in HDFS? Describe the mechanisms used to ensure data durability in the presence of hardware failures.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Faul tolerance is devided in three categories:</p>
+<ul>
+<li>Network inestability: The NameNode can not interact with a DataNode, this is avoided by having multiple DataNodes with copies of the data, as DataNodes are continuosly sending signals to the NameNode when the signal fails that Node is excluded and redirected to another working node while the signal is restored.</li>
+<li>DataNode failure: The data of a DataNode is lost, to avoid that multiple copies of the data is stored in different DataNodes, so the NameNode uses one of the copies while the failed one is being restored</li>
+<li>NameNode failure: The worst case, this can be avoided by having a secondary NameNode that is activated, but needs to be done manually.</li>
+</ul>
 </div>
 <div class="exercise" name="AC in a Distributed File System">
 <p>Can we create a system that behaves as AC (Available + Consistent) in a distributed file system? Relate your answer to the CAP theorem.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>No.&nbsp;The CAP theorem says a distributed system can guarantee at most two of {C, A, P}. <strong>Partition tolerance cannot be designed away</strong> — network links between nodes will eventually fail (cable cuts, switch failures, congestion), and when they do the system is partitioned whether we like it or not. Since P is forced upon us, the practical choice is <strong>CP</strong> or <strong>AP</strong>. AC is only viable for non-distributed (single-node, vertically scaled) systems where there is no inter-node network to fail.</p>
 </div>
 <div class="exercise" name="CAP Theorem Explained">
 <p>Explain the CAP Theorem in the context of a distributed computing system. Define each of the three properties and explain why only two can be fully guaranteed simultaneously.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ul>
+<li><strong>Consistency (C).</strong> Every read returns the most recent write — all nodes see the same value at the same time.</li>
+<li><strong>Availability (A).</strong> Every request receives a (non-error) response, regardless of the state of any individual node.</li>
+<li><strong>Partition tolerance (P).</strong> The system continues to operate correctly even when the inter-node network is split into disconnected groups (a <em>partition</em>).</li>
+</ul>
+<p>Only two can hold simultaneously because during a partition the system must choose: either refuse some requests on the minority side to keep the data consistent (sacrifices A) or accept divergent writes on each side and reconcile later (sacrifices C). Since real networks always eventually partition, the practical choice in any distributed system is <strong>CP</strong> or <strong>AP</strong>.</p>
 </div>
 <div class="exercise" name="CAP Theorem and Implementation">
 <p>Describe the CAP theorem and discuss how it guides the design and implementation of distributed databases.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>CAP says a distributed database must pick <strong>CP</strong> or <strong>AP</strong>. That choice dictates the architecture:</p>
+<ul>
+<li><strong>CP designs</strong> use leader-based replication with quorum writes; during a partition the minority side refuses writes to preserve consistency (e.g.&nbsp;HBase, MongoDB default, Spanner).</li>
+<li><strong>AP designs</strong> use multi-master replication with eventual consistency and conflict resolution (last-write-wins, vector clocks, CRDTs) — every node keeps serving requests during a partition and reconciles state afterwards (e.g.&nbsp;Cassandra, DynamoDB, Riak).</li>
+</ul>
+<p>So CAP doesn’t just classify databases — it shapes the replication protocol, the consistency model, and the failure-mode behaviour the application must handle.</p>
 </div>
 <div class="exercise" name="CAP and Databases">
 <p>Does the CAP theorem apply to databases? Discuss with examples of real database systems.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Yes — any database that is replicated across nodes is subject to CAP.</p>
+<ul>
+<li><strong>CP</strong>: HBase, MongoDB (default), Google Spanner, etcd, ZooKeeper.</li>
+<li><strong>AP</strong>: Cassandra, DynamoDB, Riak, CouchDB.</li>
+<li><strong>Single-node RDBMS</strong> (PostgreSQL, MySQL on one host) are effectively <strong>CA</strong> because there is no inter-node partition to tolerate; clustering them turns them into CP systems.</li>
+</ul>
+<p>Some systems are <strong>tunable</strong> per operation (Cassandra: <span class="math inline">\(R + W &gt; N\)</span> gives stronger consistency; MongoDB: read-concern levels), letting the application slide along the CP–AP spectrum.</p>
 </div>
 <div class="exercise" name="CAP and ATM Booths">
 <p>Describe how the CAP theorem applies to ATM booths of a banking system. Which two properties does this system typically prioritise, and why?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Banking systems prioritise <strong>CP</strong>. During a network partition between an ATM and the central ledger, the ATM will <strong>refuse</strong> the withdrawal rather than risk inconsistent balances or overdrafts — i.e.&nbsp;availability is sacrificed to preserve consistency. Money has integrity constraints that cannot tolerate divergent replicas: a brief “sorry, please try again later” is acceptable; a double-spend is not.</p>
 </div>
 <div class="exercise" name="CAP and Live Chat Systems">
 <p>Describe how the CAP theorem applies to a live chat system that wants to deliver messages as quickly as possible. Which CAP combination does this system choose?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Live chat picks <strong>AP</strong>. Users care that messages are delivered fast and that the service stays up under network turbulence; they tolerate brief inconsistencies (messages temporarily showing in a different order on different devices, late delivery on a slow link). Strong consistency would force every message through a single coordinator and add latency the users would notice. Eventual consistency is fine here.</p>
 </div>
 <div class="exercise" name="Social Media DBMS">
 <p>How would you classify the database management system of a social media platform that wants to upload messages as quickly as possible? Describe it using the CAP theorem framework (as an AP system).</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span><strong>AP</strong>. Posts must be accepted quickly and the timeline must stay reachable at all times. It is acceptable that a new post appears on followers’ feeds with a few seconds’ lag, or that the like-count is briefly stale on different servers — eventual consistency suffices. The cost of refusing a write (lost engagement) is much higher than the cost of a slightly stale read. Hence the typical storage layer is a multi-master, eventually consistent system like Cassandra or DynamoDB.</p>
 </div>
 <div class="exercise" name="AP Systems">
 <p>Discuss Availability–Partition tolerance (AP) distributed systems according to the CAP theorem. What consistency guarantees do AP systems provide, and what do they sacrifice?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>AP systems guarantee that every node keeps responding to requests during a partition, sacrificing strict consistency. They typically provide <strong>eventual consistency</strong>: replicas may diverge temporarily but converge to the same state once the partition heals and writes propagate. Conflicts are resolved by mechanisms such as <strong>last-write-wins</strong> timestamps, <strong>vector clocks</strong> or <strong>CRDTs</strong>. The application has to be prepared to read stale data and, sometimes, see anomalies like read-your-own-writes failures unless extra session guarantees are layered on top.</p>
 </div>
 <div class="exercise" name="Consistency vs Availability Trade-off">
 <p>Discuss the consistency and availability trade-off in distributed NoSQL databases. How do different systems position themselves along this spectrum?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>NoSQL stores span the whole spectrum:</p>
+<ul>
+<li><strong>Strongly consistent (CP).</strong> HBase, Spanner, ZooKeeper, MongoDB (default). Slow writes during partitions, may refuse requests, but never serve stale data.</li>
+<li><strong>Tunable.</strong> Cassandra (per-query consistency level: <span class="math inline">\(R + W &gt; N\)</span> for quorum), DynamoDB (eventual or strong reads), MongoDB (write-concern levels). The operator picks the trade-off per workload.</li>
+<li><strong>Eventually consistent (AP).</strong> Riak, Voldemort, CouchDB. Lowest latency, highest availability, reads may be stale, conflicts resolved post-hoc.</li>
+</ul>
+<p>The choice is essentially how much <strong>staleness / divergence</strong> the application tolerates in exchange for <strong>latency / availability</strong>.</p>
 </div>
 <div class="exercise" name="CAP in Relational and NoSQL DBs">
 <p>Explain the CAP theorem in the context of both relational and NoSQL databases. How do traditional RDBMS systems typically position themselves compared to NoSQL systems?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Traditional single-node RDBMS (PostgreSQL, MySQL) are effectively <strong>CA</strong> — there is no partition because there is only one node. As soon as they are clustered with synchronous replication they become <strong>CP</strong>: writes are blocked on the minority side of a partition to preserve consistency.</p>
+<p>NoSQL systems were created precisely to give up some consistency for <strong>horizontal scale and availability</strong>, so most lean <strong>AP</strong> (Cassandra, DynamoDB, Riak). A few NoSQL systems remain CP (HBase, MongoDB-default) when consistency is non-negotiable. The shift from RDBMS to NoSQL was, in CAP terms, the explicit acceptance of eventual consistency as the price of always-on, geo-distributed scale.</p>
 </div>
 <div class="exercise" name="&quot;C&quot; in CAP vs &quot;C&quot; in ACID">
 <p>What is the difference between the “C” (Consistency) in the CAP theorem and the “C” (Consistency) in the ACID model? Are they the same concept?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span><strong>No, they are different concepts.</strong></p>
+<ul>
+<li><strong>CAP-C</strong> is <em>linearizability</em>: every read sees the most recent write, and all replicas agree on the value at every instant. It is a property of how replicas are kept in sync across the network.</li>
+<li><strong>ACID-C</strong> is <em>integrity</em>: a transaction moves the database from one valid state to another, preserving constraints (foreign keys, uniqueness, business rules). It is a property of a single transaction on a single logical database, independent of replication.</li>
+</ul>
+<p>A single-node RDBMS satisfies ACID-C without CAP ever applying; a distributed AP store may violate CAP-C while still respecting ACID-C within each replica.</p>
 </div>
 <div class="exercise" name="CAP Consistency">
 <p>Explain the concept of Consistency from the perspective of the CAP theorem. How does it differ from eventual consistency?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>CAP-Consistency (linearizability) requires that <strong>every read returns the most recent committed write</strong> — as if there were a single global copy of the data. To uphold it on <span class="math inline">\(N\)</span> replicas, every write must be propagated and acknowledged before any later read can succeed.</p>
+<p><strong>Eventual consistency</strong> is weaker: it only promises that <strong>if no new writes occur, all replicas will converge to the same value</strong>. In the meantime, reads may return stale data, and different clients may briefly see different values. Eventual consistency is the consistency model of AP systems; CAP-C is the one CP systems uphold.</p>
 </div>
 <div class="exercise" name="Partition Tolerance">
 <p>What is the meaning of “Partition” in the context of the CAP theorem? Why is partition tolerance generally considered non-negotiable in distributed systems?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>A <strong>partition</strong> is a state of the network in which some subset of nodes can no longer communicate with the rest — caused by cable cuts, switch failures, congestion, routing problems, or whole-datacentre outages. <strong>Partition tolerance</strong> is the property of continuing to operate correctly when this happens.</p>
+<p>It is non-negotiable because partitions are not a design choice — they will happen in any sufficiently long-lived networked system. A “non-P” design would simply fail (or worse, silently corrupt data) on the first network blip, which is unacceptable.</p>
 </div>
 <div class="exercise" name="Why Partition Tolerance is Crucial">
 <p>Why is partition tolerance crucial in distributed systems? What would happen to a distributed system that does not tolerate network partitions?</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>Because network failures (link cuts, switch faults, congestion, dropped packets) are <strong>routine</strong>, not exotic, in any system that spans more than one host. A system that did not tolerate partitions would either become completely unavailable on the first link failure, or — worse — keep accepting writes on both sides without reconciliation, silently producing inconsistent state. Neither is acceptable in production, which is why P is mandatory and the real CAP choice is between <strong>CP</strong> and <strong>AP</strong>.</p>
 </div>
 <div class="exercise" name="Ways to Partition Databases">
 <p>What are the different ways to partition (shard) databases? Describe at least three partitioning strategies and their trade-offs.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ul>
+<li><strong>Range partitioning.</strong> Each shard owns a contiguous key range (rows 0–1M on node A, 1M–2M on node B). Simple, range scans are cheap, but <strong>hotspots</strong> appear on popular ranges.</li>
+<li><strong>Hash partitioning.</strong> Shard <span class="math inline">\(= \mathrm{hash}(\text{key}) \bmod N\)</span>. Distributes load evenly, but adding a node reshuffles every record unless you use <strong>consistent hashing</strong>, and range scans become expensive (a scan visits every shard).</li>
+<li><strong>Directory / lookup-based partitioning.</strong> A separate metadata service maps each key to a shard, allowing arbitrary placement. Maximally flexible, but the lookup service is a SPOF and an extra hop.</li>
+<li><strong>Vertical partitioning.</strong> Different <em>columns</em> or <em>tables</em> live on different nodes (split hot vs cold attributes). Improves cache locality but joins across partitions become expensive.</li>
+</ul>
+<p>Choosing a strategy trades off <strong>load balance</strong>, <strong>range-query locality</strong>, <strong>rebalance cost</strong> and <strong>operational complexity</strong>.</p>
 </div>
 <div class="exercise" name="MongoDB and CAP">
 <p>MongoDB is a NoSQL database focused on consistency. Does it mean it is CA or CP (or perhaps somewhere in the middle)? Motivate your answer with reference to MongoDB’s replication and failover mechanisms.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span><em>(To be completed.)</em></p>
+<p><span class="proof-title"><em>Solution</em>. </span>MongoDB is <strong>CP</strong> (not CA — CA is impossible for any real distributed system). A replica set has a single <strong>primary</strong> that accepts writes and replicates them to secondaries via the oplog. On a partition, only the side holding a majority of nodes can elect a primary and continue serving writes; the minority side <strong>rejects writes</strong> to preserve consistency — that is the CP trade-off, sacrificing availability on one side of the partition.</p>
+<p>It is “in the middle” only in the sense of being <strong>tunable on reads</strong>: reading from the primary gives linearizable behaviour, while reading from secondaries (<code>readPreference: secondary</code>) gives faster but potentially stale data — an AP-like operation point on top of the otherwise CP architecture.</p>
 </div>
 
 
@@ -1208,7 +1252,7 @@ Secondary NameNode — what it is and what it is not
 <span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>The client first contacts the **NameNode** with the write request. The NameNode checks authorisation and returns the list of DataNodes that should host each block. The client then connects **directly** to those DataNodes — data is **not** routed through the NameNode. Each block is written through a **replication pipeline**: client → DN1 → DN2 → DN3 (default replication factor 3). Acknowledgements propagate back to the client and the DataNodes report the new block to the NameNode.</span>
 <span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Heartbeat in HDFS"}</span>
@@ -1216,7 +1260,7 @@ Secondary NameNode — what it is and what it is not
 <span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>It is a preiodic signal the DataNodes send to the NameNode to make sure the DataNodes are working and available. Its main funnctionallity is to prevent Network Failures, so in case that "heartbeat" stops the NameNode excludes that DataNode until is available and redirects to another DataNode containing the same data.</span>
 <span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="DataNode Failure"}</span>
@@ -1224,7 +1268,7 @@ Secondary NameNode — what it is and what it is not
 <span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>The NameNode detects the failure when heartbeats from the DataNode stop. The data on the dead node is "lost" from that copy, but other replicas survive on different DataNodes, so the NameNode redirects clients to those. Crucially, the NameNode also triggers **re-replication**: it identifies every block whose replication factor dropped below the configured value and instructs surviving DataNodes to copy those blocks to other live DataNodes, restoring the target factor. Without this step durability would degrade with every subsequent failure.</span>
 <span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Fault Tolerance in HDFS"}</span>
@@ -1232,136 +1276,179 @@ Secondary NameNode — what it is and what it is not
 <span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="AC in a Distributed File System"}</span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>Can we create a system that behaves as AC (Available + Consistent) in a distributed file system? Relate your answer to the CAP theorem.</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>Faul tolerance is devided in three categories:</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>Network inestability: The NameNode can not interact with a DataNode, this is avoided by having multiple DataNodes with copies of the data, as DataNodes are continuosly sending signals to the NameNode when the signal fails that Node is excluded and redirected to another working node while the signal is restored.</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>DataNode failure: The data of a DataNode is lost, to avoid that multiple copies of the data is stored in different DataNodes, so the NameNode uses one of the copies while the failed one is being restored</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="ss">   * </span>NameNode failure: The worst case, this can be avoided by having a secondary NameNode that is activated, but needs to be done manually.</span>
 <span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="AC in a Distributed File System"}</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>Can we create a system that behaves as AC (Available + Consistent) in a distributed file system? Relate your answer to the CAP theorem.</span>
 <span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP Theorem Explained"}</span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>Explain the CAP Theorem in the context of a distributed computing system. Define each of the three properties and explain why only two can be fully guaranteed simultaneously.</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>No. The CAP theorem says a distributed system can guarantee at most two of {C, A, P}. **Partition tolerance cannot be designed away** — network links between nodes will eventually fail (cable cuts, switch failures, congestion), and when they do the system is partitioned whether we like it or not. Since P is forced upon us, the practical choice is **CP** or **AP**. AC is only viable for non-distributed (single-node, vertically scaled) systems where there is no inter-node network to fail.</span>
 <span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP Theorem Explained"}</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>Explain the CAP Theorem in the context of a distributed computing system. Define each of the three properties and explain why only two can be fully guaranteed simultaneously.</span>
 <span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP Theorem and Implementation"}</span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>Describe the CAP theorem and discuss how it guides the design and implementation of distributed databases.</span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Consistency (C).** Every read returns the most recent write — all nodes see the same value at the same time.</span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Availability (A).** Every request receives a (non-error) response, regardless of the state of any individual node.</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Partition tolerance (P).** The system continues to operate correctly even when the inter-node network is split into disconnected groups (a *partition*).</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>Only two can hold simultaneously because during a partition the system must choose: either refuse some requests on the minority side to keep the data consistent (sacrifices A) or accept divergent writes on each side and reconcile later (sacrifices C). Since real networks always eventually partition, the practical choice in any distributed system is **CP** or **AP**.</span>
 <span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP and Databases"}</span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>Does the CAP theorem apply to databases? Discuss with examples of real database systems.</span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP Theorem and Implementation"}</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>Describe the CAP theorem and discuss how it guides the design and implementation of distributed databases.</span>
 <span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP and ATM Booths"}</span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>Describe how the CAP theorem applies to ATM booths of a banking system. Which two properties does this system typically prioritise, and why?</span>
-<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP and Live Chat Systems"}</span>
-<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>Describe how the CAP theorem applies to a live chat system that wants to deliver messages as quickly as possible. Which CAP combination does this system choose?</span>
-<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>CAP says a distributed database must pick **CP** or **AP**. That choice dictates the architecture:</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CP designs** use leader-based replication with quorum writes; during a partition the minority side refuses writes to preserve consistency (e.g.\ HBase, MongoDB default, Spanner).</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**AP designs** use multi-master replication with eventual consistency and conflict resolution (last-write-wins, vector clocks, CRDTs) — every node keeps serving requests during a partition and reconciles state afterwards (e.g.\ Cassandra, DynamoDB, Riak).</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>So CAP doesn't just classify databases — it shapes the replication protocol, the consistency model, and the failure-mode behaviour the application must handle.</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP and Databases"}</span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>Does the CAP theorem apply to databases? Discuss with examples of real database systems.</span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>Yes — any database that is replicated across nodes is subject to CAP.</span>
 <span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CP**: HBase, MongoDB (default), Google Spanner, etcd, ZooKeeper.</span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**AP**: Cassandra, DynamoDB, Riak, CouchDB.</span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Single-node RDBMS** (PostgreSQL, MySQL on one host) are effectively **CA** because there is no inter-node partition to tolerate; clustering them turns them into CP systems.</span>
 <span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Social Media DBMS"}</span>
-<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>How would you classify the database management system of a social media platform that wants to upload messages as quickly as possible? Describe it using the CAP theorem framework (as an AP system).</span>
-<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="AP Systems"}</span>
-<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>Discuss Availability–Partition tolerance (AP) distributed systems according to the CAP theorem. What consistency guarantees do AP systems provide, and what do they sacrifice?</span>
-<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Consistency vs Availability Trade-off"}</span>
-<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>Discuss the consistency and availability trade-off in distributed NoSQL databases. How do different systems position themselves along this spectrum?</span>
-<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP in Relational and NoSQL DBs"}</span>
-<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>Explain the CAP theorem in the context of both relational and NoSQL databases. How do traditional RDBMS systems typically position themselves compared to NoSQL systems?</span>
-<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="\"C\" in CAP vs \"C\" in ACID"}</span>
-<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>What is the difference between the "C" (Consistency) in the CAP theorem and the "C" (Consistency) in the ACID model? Are they the same concept?</span>
-<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP Consistency"}</span>
-<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a>Explain the concept of Consistency from the perspective of the CAP theorem. How does it differ from eventual consistency?</span>
-<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Partition Tolerance"}</span>
-<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a>What is the meaning of "Partition" in the context of the CAP theorem? Why is partition tolerance generally considered non-negotiable in distributed systems?</span>
-<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>Some systems are **tunable** per operation (Cassandra: $R + W &gt; N$ gives stronger consistency; MongoDB: read-concern levels), letting the application slide along the CP–AP spectrum.</span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP and ATM Booths"}</span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>Describe how the CAP theorem applies to ATM booths of a banking system. Which two properties does this system typically prioritise, and why?</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>Banking systems prioritise **CP**. During a network partition between an ATM and the central ledger, the ATM will **refuse** the withdrawal rather than risk inconsistent balances or overdrafts — i.e.\ availability is sacrificed to preserve consistency. Money has integrity constraints that cannot tolerate divergent replicas: a brief "sorry, please try again later" is acceptable; a double-spend is not.</span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP and Live Chat Systems"}</span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>Describe how the CAP theorem applies to a live chat system that wants to deliver messages as quickly as possible. Which CAP combination does this system choose?</span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>Live chat picks **AP**. Users care that messages are delivered fast and that the service stays up under network turbulence; they tolerate brief inconsistencies (messages temporarily showing in a different order on different devices, late delivery on a slow link). Strong consistency would force every message through a single coordinator and add latency the users would notice. Eventual consistency is fine here.</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Social Media DBMS"}</span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>How would you classify the database management system of a social media platform that wants to upload messages as quickly as possible? Describe it using the CAP theorem framework (as an AP system).</span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>**AP**. Posts must be accepted quickly and the timeline must stay reachable at all times. It is acceptable that a new post appears on followers' feeds with a few seconds' lag, or that the like-count is briefly stale on different servers — eventual consistency suffices. The cost of refusing a write (lost engagement) is much higher than the cost of a slightly stale read. Hence the typical storage layer is a multi-master, eventually consistent system like Cassandra or DynamoDB.</span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="AP Systems"}</span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a>Discuss Availability–Partition tolerance (AP) distributed systems according to the CAP theorem. What consistency guarantees do AP systems provide, and what do they sacrifice?</span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>AP systems guarantee that every node keeps responding to requests during a partition, sacrificing strict consistency. They typically provide **eventual consistency**: replicas may diverge temporarily but converge to the same state once the partition heals and writes propagate. Conflicts are resolved by mechanisms such as **last-write-wins** timestamps, **vector clocks** or **CRDTs**. The application has to be prepared to read stale data and, sometimes, see anomalies like read-your-own-writes failures unless extra session guarantees are layered on top.</span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Consistency vs Availability Trade-off"}</span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>Discuss the consistency and availability trade-off in distributed NoSQL databases. How do different systems position themselves along this spectrum?</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>NoSQL stores span the whole spectrum:</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Strongly consistent (CP).** HBase, Spanner, ZooKeeper, MongoDB (default). Slow writes during partitions, may refuse requests, but never serve stale data.</span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Tunable.** Cassandra (per-query consistency level: $R + W &gt; N$ for quorum), DynamoDB (eventual or strong reads), MongoDB (write-concern levels). The operator picks the trade-off per workload.</span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Eventually consistent (AP).** Riak, Voldemort, CouchDB. Lowest latency, highest availability, reads may be stale, conflicts resolved post-hoc.</span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a>The choice is essentially how much **staleness / divergence** the application tolerates in exchange for **latency / availability**.</span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP in Relational and NoSQL DBs"}</span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>Explain the CAP theorem in the context of both relational and NoSQL databases. How do traditional RDBMS systems typically position themselves compared to NoSQL systems?</span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>Traditional single-node RDBMS (PostgreSQL, MySQL) are effectively **CA** — there is no partition because there is only one node. As soon as they are clustered with synchronous replication they become **CP**: writes are blocked on the minority side of a partition to preserve consistency.</span>
 <span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Why Partition Tolerance is Crucial"}</span>
-<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a>Why is partition tolerance crucial in distributed systems? What would happen to a distributed system that does not tolerate network partitions?</span>
-<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Ways to Partition Databases"}</span>
-<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>What are the different ways to partition (shard) databases? Describe at least three partitioning strategies and their trade-offs.</span>
-<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>NoSQL systems were created precisely to give up some consistency for **horizontal scale and availability**, so most lean **AP** (Cassandra, DynamoDB, Riak). A few NoSQL systems remain CP (HBase, MongoDB-default) when consistency is non-negotiable. The shift from RDBMS to NoSQL was, in CAP terms, the explicit acceptance of eventual consistency as the price of always-on, geo-distributed scale.</span>
+<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="\"C\" in CAP vs \"C\" in ACID"}</span>
+<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>What is the difference between the "C" (Consistency) in the CAP theorem and the "C" (Consistency) in the ACID model? Are they the same concept?</span>
+<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>**No, they are different concepts.**</span>
+<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CAP-C** is *linearizability*: every read sees the most recent write, and all replicas agree on the value at every instant. It is a property of how replicas are kept in sync across the network.</span>
+<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**ACID-C** is *integrity*: a transaction moves the database from one valid state to another, preserving constraints (foreign keys, uniqueness, business rules). It is a property of a single transaction on a single logical database, independent of replication.</span>
+<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a>A single-node RDBMS satisfies ACID-C without CAP ever applying; a distributed AP store may violate CAP-C while still respecting ACID-C within each replica.</span>
 <span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="MongoDB and CAP"}</span>
-<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a>MongoDB is a NoSQL database focused on consistency. Does it mean it is CA or CP (or perhaps somewhere in the middle)? Motivate your answer with reference to MongoDB's replication and failover mechanisms.</span>
+<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="CAP Consistency"}</span>
+<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a>Explain the concept of Consistency from the perspective of the CAP theorem. How does it differ from eventual consistency?</span>
 <span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a>*(To be completed.)*</span>
-<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a>CAP-Consistency (linearizability) requires that **every read returns the most recent committed write** — as if there were a single global copy of the data. To uphold it on $N$ replicas, every write must be propagated and acknowledged before any later read can succeed.</span>
+<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a>**Eventual consistency** is weaker: it only promises that **if no new writes occur, all replicas will converge to the same value**. In the meantime, reads may return stale data, and different clients may briefly see different values. Eventual consistency is the consistency model of AP systems; CAP-C is the one CP systems uphold.</span>
+<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-276"><a href="#cb1-276" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Partition Tolerance"}</span>
+<span id="cb1-277"><a href="#cb1-277" aria-hidden="true" tabindex="-1"></a>What is the meaning of "Partition" in the context of the CAP theorem? Why is partition tolerance generally considered non-negotiable in distributed systems?</span>
+<span id="cb1-278"><a href="#cb1-278" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-279"><a href="#cb1-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-280"><a href="#cb1-280" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-281"><a href="#cb1-281" aria-hidden="true" tabindex="-1"></a>A **partition** is a state of the network in which some subset of nodes can no longer communicate with the rest — caused by cable cuts, switch failures, congestion, routing problems, or whole-datacentre outages. **Partition tolerance** is the property of continuing to operate correctly when this happens.</span>
+<span id="cb1-282"><a href="#cb1-282" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-283"><a href="#cb1-283" aria-hidden="true" tabindex="-1"></a>It is non-negotiable because partitions are not a design choice — they will happen in any sufficiently long-lived networked system. A "non-P" design would simply fail (or worse, silently corrupt data) on the first network blip, which is unacceptable.</span>
+<span id="cb1-284"><a href="#cb1-284" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-285"><a href="#cb1-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-286"><a href="#cb1-286" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Why Partition Tolerance is Crucial"}</span>
+<span id="cb1-287"><a href="#cb1-287" aria-hidden="true" tabindex="-1"></a>Why is partition tolerance crucial in distributed systems? What would happen to a distributed system that does not tolerate network partitions?</span>
+<span id="cb1-288"><a href="#cb1-288" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-289"><a href="#cb1-289" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-290"><a href="#cb1-290" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-291"><a href="#cb1-291" aria-hidden="true" tabindex="-1"></a>Because network failures (link cuts, switch faults, congestion, dropped packets) are **routine**, not exotic, in any system that spans more than one host. A system that did not tolerate partitions would either become completely unavailable on the first link failure, or — worse — keep accepting writes on both sides without reconciliation, silently producing inconsistent state. Neither is acceptable in production, which is why P is mandatory and the real CAP choice is between **CP** and **AP**.</span>
+<span id="cb1-292"><a href="#cb1-292" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-293"><a href="#cb1-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-294"><a href="#cb1-294" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="Ways to Partition Databases"}</span>
+<span id="cb1-295"><a href="#cb1-295" aria-hidden="true" tabindex="-1"></a>What are the different ways to partition (shard) databases? Describe at least three partitioning strategies and their trade-offs.</span>
+<span id="cb1-296"><a href="#cb1-296" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-297"><a href="#cb1-297" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-298"><a href="#cb1-298" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-299"><a href="#cb1-299" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Range partitioning.** Each shard owns a contiguous key range (rows 0–1M on node A, 1M–2M on node B). Simple, range scans are cheap, but **hotspots** appear on popular ranges.</span>
+<span id="cb1-300"><a href="#cb1-300" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Hash partitioning.** Shard $= \mathrm{hash}(\text{key}) \bmod N$. Distributes load evenly, but adding a node reshuffles every record unless you use **consistent hashing**, and range scans become expensive (a scan visits every shard).</span>
+<span id="cb1-301"><a href="#cb1-301" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Directory / lookup-based partitioning.** A separate metadata service maps each key to a shard, allowing arbitrary placement. Maximally flexible, but the lookup service is a SPOF and an extra hop.</span>
+<span id="cb1-302"><a href="#cb1-302" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Vertical partitioning.** Different *columns* or *tables* live on different nodes (split hot vs cold attributes). Improves cache locality but joins across partitions become expensive.</span>
+<span id="cb1-303"><a href="#cb1-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-304"><a href="#cb1-304" aria-hidden="true" tabindex="-1"></a>Choosing a strategy trades off **load balance**, **range-query locality**, **rebalance cost** and **operational complexity**.</span>
+<span id="cb1-305"><a href="#cb1-305" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-306"><a href="#cb1-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-307"><a href="#cb1-307" aria-hidden="true" tabindex="-1"></a>::: {.exercise name="MongoDB and CAP"}</span>
+<span id="cb1-308"><a href="#cb1-308" aria-hidden="true" tabindex="-1"></a>MongoDB is a NoSQL database focused on consistency. Does it mean it is CA or CP (or perhaps somewhere in the middle)? Motivate your answer with reference to MongoDB's replication and failover mechanisms.</span>
+<span id="cb1-309"><a href="#cb1-309" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-310"><a href="#cb1-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-311"><a href="#cb1-311" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-312"><a href="#cb1-312" aria-hidden="true" tabindex="-1"></a>MongoDB is **CP** (not CA — CA is impossible for any real distributed system). A replica set has a single **primary** that accepts writes and replicates them to secondaries via the oplog. On a partition, only the side holding a majority of nodes can elect a primary and continue serving writes; the minority side **rejects writes** to preserve consistency — that is the CP trade-off, sacrificing availability on one side of the partition.</span>
+<span id="cb1-313"><a href="#cb1-313" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-314"><a href="#cb1-314" aria-hidden="true" tabindex="-1"></a>It is "in the middle" only in the sense of being **tunable on reads**: reading from the primary gives linearizable behaviour, while reading from secondaries (<span class="in">`readPreference: secondary`</span>) gives faster but potentially stale data — an AP-like operation point on top of the otherwise CP architecture.</span>
+<span id="cb1-315"><a href="#cb1-315" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <style>
