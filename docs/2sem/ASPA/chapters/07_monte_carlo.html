@@ -611,7 +611,7 @@ logarithmic plot</code></pre>
 <span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Acceptance rate:"</span>, mh<span class="sc">$</span>accept_rate, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Acceptance rate: 0.5304306 </code></pre>
+<pre><code>Acceptance rate: 0.5310906 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -628,14 +628,14 @@ logarithmic plot</code></pre>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Integrated autocorr time:"</span>, <span class="fu">round</span>(t_int, <span class="dv">2</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Integrated autocorr time: 38.65 </code></pre>
+<pre><code>Integrated autocorr time: 42.19 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="sourceCode cell-code" id="cb9" data-lst-cap="Metropolis–Hastings on a bimodal target"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"N_eff:"</span>, <span class="fu">round</span>(N_eff, <span class="dv">0</span>), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>N_eff: 582 </code></pre>
+<pre><code>N_eff: 533 </code></pre>
 </div>
 <details class="code-fold">
 <summary>Show code</summary>
@@ -692,61 +692,71 @@ logarithmic plot</code></pre>
 <p><em>(Written test, 15 June 2026 — Q5.)</em> A target density is <span class="math inline">\(f(x) = 3x^2\)</span> with <span class="math inline">\(0 &lt; x \leq 1\)</span>. A proposal density is <span class="math inline">\(g(x) = 1\)</span> with <span class="math inline">\(0 &lt; x \leq 1\)</span>. Find the smallest constant <span class="math inline">\(M\)</span> so that <span class="math inline">\(g\)</span> can be used in a rejection sampling algorithm to sample <span class="math inline">\(f\)</span>. Give the expected acceptance probability.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span>We need <span class="math inline">\(M \geq \sup_{x \in (0,1]} f(x)/g(x) = \sup 3x^2 = 3\)</span>, so the smallest admissible constant is <span class="math display">\[M = 3.\]</span> The expected acceptance probability is <span class="math display">\[P(\text{accept}) = \frac{1}{M} = \frac{1}{3}.\]</span></p>
+<p><span class="proof-title"><em>Solution</em>. </span>The exercise asks for the smallest envelope constant <span class="math inline">\(M\)</span> enabling rejection sampling of <span class="math inline">\(f(x) = 3x^2\)</span> on <span class="math inline">\((0, 1]\)</span> using the uniform proposal <span class="math inline">\(g(x) = 1\)</span>, together with the resulting long-run acceptance rate. By the rejection-sampling definition (§ Rejection sampling), the algorithm requires an <span class="math inline">\(M &gt; 0\)</span> satisfying <span class="math inline">\(f(x) \le M\,g(x)\)</span> for all <span class="math inline">\(x\)</span> in the common support, i.e.&nbsp;<span class="math inline">\(M \ge \sup_x f(x)/g(x)\)</span>; the <em>optimal</em> (efficiency-maximising) choice is <span class="math inline">\(M^\star = \sup_x f(x)/g(x)\)</span>. Here the ratio is <span class="math display">\[\frac{f(x)}{g(x)} = \frac{3x^2}{1} = 3x^2,\]</span> which is increasing on <span class="math inline">\((0,1]\)</span> and attains its supremum at <span class="math inline">\(x = 1\)</span>, giving <span class="math display">\[M^\star = \sup_{x \in (0,1]} 3x^2 = 3.\]</span> Any <span class="math inline">\(M &lt; 3\)</span> would violate the envelope inequality at <span class="math inline">\(x = 1\)</span>, invalidating the algorithm; any <span class="math inline">\(M &gt; 3\)</span> would still be correct but wasteful. To obtain the acceptance rate, apply the marginalisation identity derived in the correctness proof of the § Rejection sampling section: with <span class="math inline">\(f\)</span> already normalised (<span class="math inline">\(\int_0^1 3x^2 dx = 1\)</span>), <span class="math display">\[P(\text{accept}) = \int_0^1 g(x)\,\frac{f(x)}{M\,g(x)}\,dx = \frac{1}{M}\int_0^1 f(x)\,dx = \frac{1}{M}.\]</span> Substituting <span class="math inline">\(M = 3\)</span> yields <span class="math inline">\(P(\text{accept}) = 1/3\)</span>, meaning we expect roughly three uniform proposals per accepted sample.</p>
+<p><strong>Cross-reference:</strong> § Rejection sampling — envelope definition <span class="math inline">\(f \le M q\)</span> and correctness identity <span class="math inline">\(P(\text{accept}) = Z/M\)</span>.</p>
 </div>
 <div class="exercise">
 <p>Inverse transform. Show that if <span class="math inline">\(U \sim \text{Uniform}(0, 1)\)</span> and <span class="math inline">\(\lambda &gt; 0\)</span>, then <span class="math inline">\(X = -\log(U)/\lambda\)</span> has the <span class="math inline">\(\text{Exp}(\lambda)\)</span> distribution.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span>For <span class="math inline">\(x \geq 0\)</span>, using that <span class="math inline">\(U\)</span> and <span class="math inline">\(1-U\)</span> are both uniform on <span class="math inline">\((0,1)\)</span>, <span class="math display">\[P(X \leq x) = P(-\log U / \lambda \leq x) = P(U \geq e^{-\lambda x}) = 1 - e^{-\lambda x}.\]</span> Differentiating yields the density <span class="math inline">\(f_X(x) = \lambda e^{-\lambda x}\)</span> for <span class="math inline">\(x \geq 0\)</span>, i.e.&nbsp;<span class="math inline">\(X \sim \text{Exp}(\lambda)\)</span>.</p>
+<p><span class="proof-title"><em>Solution</em>. </span>We must show that the transformation <span class="math inline">\(X = -\lambda^{-1}\log U\)</span> of a uniform variate yields an <span class="math inline">\(\text{Exp}(\lambda)\)</span> random variable. The inverse-transform theorem (§ Direct sampling: inverse transform method) guarantees that for any absolutely continuous CDF <span class="math inline">\(F\)</span> with a proper inverse <span class="math inline">\(F^{-1}\)</span>, the variate <span class="math inline">\(F^{-1}(U)\)</span> with <span class="math inline">\(U \sim \text{Uniform}(0,1)\)</span> has CDF <span class="math inline">\(F\)</span>; here we verify the exponential case by direct computation rather than invoking the general result. Compute the CDF of <span class="math inline">\(X\)</span> for <span class="math inline">\(x \ge 0\)</span>: <span class="math display">\[P(X \le x) = P\!\left(-\lambda^{-1}\log U \le x\right) = P\!\left(\log U \ge -\lambda x\right) = P\!\left(U \ge e^{-\lambda x}\right).\]</span> Since <span class="math inline">\(U\)</span> is uniform on <span class="math inline">\((0,1)\)</span>, <span class="math inline">\(P(U \ge u_0) = 1 - u_0\)</span> for <span class="math inline">\(u_0 \in (0,1)\)</span>, and <span class="math inline">\(e^{-\lambda x} \in (0,1]\)</span> for <span class="math inline">\(x \ge 0\)</span>, hence <span class="math display">\[F_X(x) = 1 - e^{-\lambda x}, \qquad x \ge 0,\]</span> which is precisely the exponential CDF. Differentiating gives <span class="math display">\[f_X(x) = \frac{d}{dx}\left(1 - e^{-\lambda x}\right) = \lambda e^{-\lambda x}, \qquad x \ge 0,\]</span> so <span class="math inline">\(X \sim \text{Exp}(\lambda)\)</span>. Equivalently, one may note that <span class="math inline">\(1 - U \stackrel{d}{=} U\)</span> so <span class="math inline">\(-\lambda^{-1}\log U\)</span> has the same distribution as <span class="math inline">\(-\lambda^{-1}\log(1-U) = F^{-1}(U)\)</span> for the exponential CDF <span class="math inline">\(F(x) = 1 - e^{-\lambda x}\)</span>, matching the recipe in the § Direct sampling worked example. This is the canonical one-line Monte Carlo sampler underlying every Poisson-process simulator.</p>
+<p><strong>Cross-reference:</strong> § Direct sampling: inverse transform method — definition of <span class="math inline">\(F^{-1}(U)\)</span> and the worked exponential example.</p>
 </div>
 <div class="exercise">
 <p>Inverse transform for the Pareto distribution with CDF <span class="math inline">\(F(x) = 1 - (x_m / x)^\alpha\)</span> for <span class="math inline">\(x \geq x_m\)</span>. Derive the sampling formula in terms of <span class="math inline">\(U \sim \text{Uniform}(0, 1)\)</span>.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span>Setting <span class="math inline">\(U = F(X) = 1 - (x_m/X)^\alpha\)</span> and solving for <span class="math inline">\(X\)</span>, <span class="math display">\[(x_m / X)^\alpha = 1 - U \quad\Longrightarrow\quad X = \frac{x_m}{(1 - U)^{1/\alpha}}.\]</span> Since <span class="math inline">\(1 - U \stackrel{d}{=} U\)</span>, one may equivalently use <span class="math inline">\(X = x_m\,U^{-1/\alpha}\)</span>.</p>
+<p><span class="proof-title"><em>Solution</em>. </span>The task is to derive a closed-form Pareto sampler from a uniform variate, given the CDF <span class="math inline">\(F(x) = 1 - (x_m/x)^\alpha\)</span> for <span class="math inline">\(x \ge x_m\)</span>. The § Direct sampling: inverse transform method definition prescribes: (i) compute <span class="math inline">\(F(x)\)</span> (given), (ii) invert it analytically to obtain <span class="math inline">\(F^{-1}(u)\)</span>, and (iii) set <span class="math inline">\(X = F^{-1}(U)\)</span> with <span class="math inline">\(U \sim \text{Uniform}(0,1)\)</span>. Since <span class="math inline">\(F\)</span> is strictly increasing and continuous on <span class="math inline">\([x_m,\infty)\)</span> with range <span class="math inline">\([0,1)\)</span>, it admits a well-defined inverse. Setting <span class="math inline">\(u = F(x)\)</span> and solving for <span class="math inline">\(x\)</span>, <span class="math display">\[u = 1 - \left(\frac{x_m}{x}\right)^\alpha \iff \left(\frac{x_m}{x}\right)^\alpha = 1 - u \iff \frac{x_m}{x} = (1 - u)^{1/\alpha},\]</span> where the last step used that both sides are positive so we may take <span class="math inline">\(\alpha\)</span>-th roots without a sign ambiguity. Solving for <span class="math inline">\(x\)</span> yields <span class="math display">\[F^{-1}(u) = \frac{x_m}{(1 - u)^{1/\alpha}}, \qquad u \in [0, 1).\]</span> By the inverse-transform theorem (proof in § Direct sampling), <span class="math inline">\(X = F^{-1}(U) = x_m\,(1-U)^{-1/\alpha}\)</span> is distributed as <span class="math inline">\(\text{Pareto}(x_m, \alpha)\)</span>. Since <span class="math inline">\(1 - U\)</span> has the same uniform distribution as <span class="math inline">\(U\)</span>, the equivalent one-liner <span class="math display">\[X = x_m\,U^{-1/\alpha}\]</span> is standard in practice. A quick sanity check: <span class="math inline">\(P(X \ge x) = P(U \le (x_m/x)^\alpha) = (x_m/x)^\alpha\)</span>, recovering the survival function of the Pareto law.</p>
+<p><strong>Cross-reference:</strong> § Direct sampling: inverse transform method — three-step definition and its correctness proof by the probability integral transform.</p>
 </div>
 <div class="exercise">
 <p>Inverse transform for the geometric distribution on <span class="math inline">\(\{1, 2, 3, \ldots\}\)</span> with parameter <span class="math inline">\(p\)</span>. Derive the smallest integer <span class="math inline">\(X\)</span> such that <span class="math inline">\(1 - (1-p)^X \geq U\)</span>, with <span class="math inline">\(U \sim \text{Uniform}(0,1)\)</span>.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span>The CDF is <span class="math inline">\(F(k) = 1 - (1-p)^k\)</span> for <span class="math inline">\(k \geq 1\)</span>. Requiring <span class="math inline">\(F(X) \geq U\)</span> gives <span class="math inline">\((1-p)^X \leq 1 - U\)</span>, i.e. <span class="math display">\[X \geq \frac{\log(1 - U)}{\log(1 - p)}.\]</span> The smallest such integer is <span class="math display">\[X = \left\lceil \frac{\log(1 - U)}{\log(1 - p)} \right\rceil,\]</span> which (using <span class="math inline">\(1-U \stackrel{d}{=} U\)</span>) is the standard geometric sampler.</p>
+<p><span class="proof-title"><em>Solution</em>. </span>We derive the inverse-CDF sampler for the geometric law <span class="math inline">\(P(X = k) = (1-p)^{k-1} p\)</span> on <span class="math inline">\(\{1, 2, \ldots\}\)</span>. Because the distribution is discrete, we use the discrete generalisation of the inverse-transform recipe (§ Direct sampling: inverse transform method): defining <span class="math inline">\(F(k) = P(X \le k)\)</span>, set <span class="math inline">\(X\)</span> equal to the smallest integer with <span class="math inline">\(F(X) \ge U\)</span>, where <span class="math inline">\(U \sim \text{Uniform}(0,1)\)</span>. Summing the geometric probabilities, <span class="math display">\[F(k) = \sum_{j=1}^k (1-p)^{j-1} p = p\,\frac{1 - (1-p)^k}{1 - (1-p)} = 1 - (1-p)^k, \qquad k \ge 1.\]</span> The condition <span class="math inline">\(F(X) \ge U\)</span> becomes <span class="math display">\[1 - (1-p)^X \ge U \iff (1-p)^X \le 1 - U.\]</span> Taking <span class="math inline">\(\log\)</span> (a monotone increasing function) and dividing by <span class="math inline">\(\log(1-p) &lt; 0\)</span> (which flips the inequality), <span class="math display">\[X \log(1-p) \le \log(1 - U) \iff X \ge \frac{\log(1-U)}{\log(1-p)}.\]</span> The smallest integer satisfying this is the ceiling, <span class="math display">\[X = \left\lceil \frac{\log(1-U)}{\log(1-p)} \right\rceil.\]</span> Since <span class="math inline">\(1-U \stackrel{d}{=} U\)</span>, one may equivalently write <span class="math inline">\(X = \lceil \log(U)/\log(1-p) \rceil\)</span>. The discrete inverse-transform theorem (§ Direct sampling: inverse transform method — the same probability integral transform argument extended to jump CDFs) guarantees that this <span class="math inline">\(X\)</span> has exactly the target geometric distribution.</p>
+<p><strong>Cross-reference:</strong> § Direct sampling: inverse transform method — inverse-CDF construction, generalised to the smallest-integer form for discrete distributions.</p>
 </div>
 <div class="exercise">
 <p>Rejection from <span class="math inline">\(\text{Gamma}(2, 1)\)</span> with density <span class="math inline">\(f(x) = x\,e^{-x}\)</span> for <span class="math inline">\(x &gt; 0\)</span>, using the proposal <span class="math inline">\(g(x) = e^{-x}\)</span> (i.e.&nbsp;<span class="math inline">\(\text{Exp}(1)\)</span>). Find the smallest constant <span class="math inline">\(M\)</span> such that <span class="math inline">\(f(x) \leq M\,g(x)\)</span>. Give the expected acceptance probability.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span>The ratio <span class="math inline">\(f(x)/g(x) = x\)</span> is unbounded on <span class="math inline">\((0, \infty)\)</span>, so no finite <span class="math inline">\(M\)</span> exists and rejection from <span class="math inline">\(\text{Exp}(1)\)</span> fails. Choosing instead a lighter exponential <span class="math inline">\(g_\lambda(x) = \lambda e^{-\lambda x}\)</span> with <span class="math inline">\(\lambda &lt; 1\)</span> gives a bounded ratio <span class="math display">\[\frac{f(x)}{g_\lambda(x)} = \frac{x\,e^{-(1-\lambda)x}}{\lambda},\]</span> maximised at <span class="math inline">\(x^\star = 1/(1-\lambda)\)</span>, yielding <span class="math inline">\(M(\lambda) = 1/[\lambda e(1-\lambda)]\)</span>, minimised at <span class="math inline">\(\lambda = 1/2\)</span> with <span class="math inline">\(M = 4/e\)</span> and acceptance probability <span class="math display">\[P(\text{accept}) = \frac{1}{M} = \frac{e}{4}.\]</span></p>
+<p><span class="proof-title"><em>Solution</em>. </span>We are asked to find the smallest envelope constant <span class="math inline">\(M\)</span> (and hence the acceptance probability) for rejection sampling from <span class="math inline">\(f(x) = xe^{-x}\)</span> using <span class="math inline">\(g(x) = e^{-x}\)</span> on <span class="math inline">\((0, \infty)\)</span>. The § Rejection sampling definition requires <span class="math inline">\(M \ge \sup_x f(x)/g(x)\)</span> with the <em>optimal</em> choice being that supremum, since <span class="math inline">\(P(\text{accept}) = 1/M\)</span> (from the same section’s correctness identity, given both densities are normalised). Compute the ratio: <span class="math display">\[\frac{f(x)}{g(x)} = \frac{x e^{-x}}{e^{-x}} = x.\]</span> This ratio is unbounded on <span class="math inline">\((0, \infty)\)</span> — as <span class="math inline">\(x \to \infty\)</span>, <span class="math inline">\(f(x)/g(x) \to \infty\)</span> — so <strong>no finite <span class="math inline">\(M\)</span> exists</strong> and the envelope condition of § Rejection sampling cannot be satisfied. Rejection from <span class="math inline">\(\text{Exp}(1)\)</span> therefore fails and one must reject the reject-sampling design. The standard remedy is a <em>lighter</em> exponential proposal <span class="math inline">\(g_\lambda(x) = \lambda e^{-\lambda x}\)</span> with <span class="math inline">\(0 &lt; \lambda &lt; 1\)</span>, which has a heavier tail than <span class="math inline">\(f\)</span> (whose <span class="math inline">\(e^{-x}\)</span> tail decays faster than <span class="math inline">\(e^{-\lambda x}\)</span>). The ratio is <span class="math display">\[\frac{f(x)}{g_\lambda(x)} = \frac{x e^{-x}}{\lambda e^{-\lambda x}} = \frac{x\,e^{-(1-\lambda)x}}{\lambda},\]</span> whose stationary point satisfies <span class="math inline">\(\frac{d}{dx}[x e^{-(1-\lambda)x}] = e^{-(1-\lambda)x}[1 - (1-\lambda)x] = 0\)</span>, giving <span class="math inline">\(x^\star = 1/(1-\lambda)\)</span>. Substituting, <span class="math display">\[M(\lambda) = \frac{x^\star e^{-(1-\lambda)x^\star}}{\lambda} = \frac{1}{\lambda(1-\lambda)e}.\]</span> Minimising over <span class="math inline">\(\lambda \in (0,1)\)</span>: <span class="math inline">\(\frac{d}{d\lambda}[\lambda(1-\lambda)] = 1 - 2\lambda = 0\)</span> so <span class="math inline">\(\lambda = 1/2\)</span>, yielding <span class="math inline">\(M^\star = 1/[(1/2)(1/2)e] = 4/e\)</span>. By the marginal-acceptance identity of § Rejection sampling, <span class="math display">\[P(\text{accept}) = \frac{1}{M^\star} = \frac{e}{4} \approx 0.68.\]</span></p>
+<p><strong>Cross-reference:</strong> § Rejection sampling — envelope condition <span class="math inline">\(M \ge \sup f/g\)</span> and <span class="math inline">\(P(\text{accept}) = 1/M\)</span>.</p>
 </div>
 <div class="exercise">
 <p>Rejection sampling from the half-normal <span class="math inline">\(f(x) \propto e^{-x^2/2}\)</span> on <span class="math inline">\(x \geq 0\)</span> using the exponential proposal <span class="math inline">\(g(x) = e^{-x}\)</span>. Find the smallest <span class="math inline">\(M\)</span> and the acceptance probability.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span>Using the normalised half-normal <span class="math inline">\(f(x) = \sqrt{2/\pi}\,e^{-x^2/2}\)</span>, the ratio is <span class="math display">\[\frac{f(x)}{g(x)} = \sqrt{\frac{2}{\pi}}\,e^{x - x^2/2},\]</span> which is maximised at <span class="math inline">\(x^\star = 1\)</span>, giving <span class="math display">\[M = \sqrt{\frac{2e}{\pi}}, \qquad P(\text{accept}) = \frac{1}{M} = \sqrt{\frac{\pi}{2e}} \approx 0.76.\]</span></p>
+<p><span class="proof-title"><em>Solution</em>. </span>The exercise asks for the smallest <span class="math inline">\(M\)</span> and acceptance probability when rejection-sampling the half-normal density <span class="math inline">\(f(x) \propto e^{-x^2/2}\)</span> on <span class="math inline">\(x \ge 0\)</span> with exponential proposal <span class="math inline">\(g(x) = e^{-x}\)</span>. Following the § Rejection sampling definition, the envelope condition <span class="math inline">\(f(x) \le M g(x)\)</span> requires <span class="math inline">\(M \ge \sup_{x \ge 0} f(x)/g(x)\)</span>. First normalise <span class="math inline">\(f\)</span>: <span class="math inline">\(\int_0^\infty e^{-x^2/2} dx = \sqrt{\pi/2}\)</span>, so the normalised density is <span class="math display">\[f(x) = \sqrt{\frac{2}{\pi}}\,e^{-x^2/2}, \qquad x \ge 0.\]</span> Then <span class="math display">\[\frac{f(x)}{g(x)} = \sqrt{\frac{2}{\pi}}\,\frac{e^{-x^2/2}}{e^{-x}} = \sqrt{\frac{2}{\pi}}\,e^{\,x - x^2/2}.\]</span> Maximise the exponent <span class="math inline">\(\phi(x) = x - x^2/2\)</span>: <span class="math inline">\(\phi'(x) = 1 - x = 0\)</span> at <span class="math inline">\(x^\star = 1\)</span>, and <span class="math inline">\(\phi''(x^\star) = -1 &lt; 0\)</span> confirms a maximum with <span class="math inline">\(\phi(1) = 1/2\)</span>. Therefore <span class="math display">\[M^\star = \sqrt{\frac{2}{\pi}}\,e^{1/2} = \sqrt{\frac{2e}{\pi}} \approx 1.315.\]</span> By the acceptance identity <span class="math inline">\(P(\text{accept}) = 1/M\)</span> from § Rejection sampling (valid because both <span class="math inline">\(f\)</span> and <span class="math inline">\(g\)</span> are normalised), <span class="math display">\[P(\text{accept}) = \frac{1}{M^\star} = \sqrt{\frac{\pi}{2e}} \approx 0.76.\]</span> Roughly three-quarters of exponential proposals will be accepted — a very efficient sampler, in contrast to the previous exercise where the naive Exp(1) proposal for a Gamma(2,1) target failed outright.</p>
+<p><strong>Cross-reference:</strong> § Rejection sampling — envelope-constant optimisation <span class="math inline">\(M = \sup f/g\)</span> and acceptance identity <span class="math inline">\(P(\text{accept}) = 1/M\)</span>.</p>
 </div>
 <div class="exercise">
 <p>Show that in rejection sampling the overall acceptance probability is exactly <span class="math inline">\(1/M\)</span>, where <span class="math inline">\(M = \sup_x f(x)/g(x)\)</span>. State the implication for the expected number of proposals needed to obtain one sample.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span>Marginalising over the proposal, <span class="math display">\[P(\text{accept}) = \int g(x)\,\frac{f(x)}{M\,g(x)}\,dx = \frac{1}{M}\int f(x)\,dx = \frac{1}{M}.\]</span> Hence the number of proposals until the first acceptance is geometric with mean <span class="math display">\[E[N_{\text{prop}}] = M,\]</span> so large <span class="math inline">\(M\)</span> (poor proposal) makes rejection sampling prohibitively expensive.</p>
+<p><span class="proof-title"><em>Solution</em>. </span>We must prove from first principles that the overall acceptance probability of the rejection algorithm equals <span class="math inline">\(1/M\)</span>, and interpret the consequence for the number of proposals per accepted sample. Recall the § Rejection sampling algorithm: draw <span class="math inline">\(x \sim g\)</span>, draw <span class="math inline">\(u \sim \text{Uniform}(0,1)\)</span>, accept when <span class="math inline">\(u \le f(x)/[M g(x)]\)</span>. The joint density of a proposal-and-acceptance event is <span class="math display">\[p(x,\,\text{accept}) = g(x)\cdot P(u \le f(x)/[M g(x)]) = g(x)\cdot \frac{f(x)}{M\,g(x)} = \frac{f(x)}{M},\]</span> where the middle step uses the CDF of a uniform on <span class="math inline">\((0,1)\)</span>: <span class="math inline">\(P(U \le c) = c\)</span> for <span class="math inline">\(c \in [0,1]\)</span>, and the envelope condition <span class="math inline">\(f \le M g\)</span> guarantees <span class="math inline">\(c = f/(Mg) \in [0,1]\)</span>. Marginalising over <span class="math inline">\(x\)</span> (using that <span class="math inline">\(f\)</span> is normalised to <span class="math inline">\(\int f = 1\)</span>), <span class="math display">\[P(\text{accept}) = \int_{-\infty}^\infty \frac{f(x)}{M}\,dx = \frac{1}{M}\int f = \frac{1}{M}.\]</span> For an unnormalised target <span class="math inline">\(\tilde\pi\)</span> with normalisation <span class="math inline">\(Z\)</span>, the same computation returns <span class="math inline">\(P(\text{accept}) = Z/M\)</span>, matching the correctness proof in § Rejection sampling. Since each trial independently accepts with probability <span class="math inline">\(1/M\)</span>, the number of proposals <span class="math inline">\(N_{\text{prop}}\)</span> until the first acceptance follows a geometric law with success probability <span class="math inline">\(1/M\)</span>, so <span class="math display">\[E[N_{\text{prop}}] = \frac{1}{1/M} = M.\]</span> The implication is that the <em>cost per sample</em> grows linearly with <span class="math inline">\(M\)</span>: a poorly chosen proposal <span class="math inline">\(g\)</span> (large <span class="math inline">\(\sup f/g\)</span>) makes rejection sampling prohibitively expensive, which is exactly the failure mode signalled at the end of § Rejection sampling (acceptance decays as <span class="math inline">\(e^{-\alpha d}\)</span> in high dimensions).</p>
+<p><strong>Cross-reference:</strong> § Rejection sampling — correctness proof identity <span class="math inline">\(P(\text{accept}) = Z/M\)</span>; the number of trials is geometric because acceptance events are i.i.d.&nbsp;Bernoulli.</p>
 </div>
 <div class="exercise">
 <p>Importance sampling. Estimate <span class="math inline">\(\mathbb{E}_p[X^2]\)</span> for <span class="math inline">\(p = \mathcal{N}(0, 1)\)</span> using the proposal <span class="math inline">\(q = \mathcal{N}(0, 4)\)</span>. Write the importance weights <span class="math inline">\(w(x) = p(x)/q(x)\)</span> explicitly and the unbiased estimator based on <span class="math inline">\(N\)</span> samples.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span>The weight ratio of two zero-mean Gaussians is <span class="math display">\[w(x) = \frac{p(x)}{q(x)} = \frac{(2\pi)^{-1/2}e^{-x^2/2}}{(2\pi\cdot 4)^{-1/2}e^{-x^2/8}} = 2\,\exp\!\left(-\frac{3x^2}{8}\right).\]</span> With <span class="math inline">\(x_i \sim q\)</span> i.i.d., the unbiased importance-sampling estimator is <span class="math display">\[\widehat{I} = \frac{1}{N}\sum_{i=1}^N x_i^2\,w(x_i),\]</span> which converges to <span class="math inline">\(E_p[X^2] = 1\)</span>.</p>
+<p><span class="proof-title"><em>Solution</em>. </span>We want to estimate <span class="math inline">\(E_p[X^2]\)</span> with <span class="math inline">\(p = \mathcal N(0, 1)\)</span> by drawing from the wider proposal <span class="math inline">\(q = \mathcal N(0, 4)\)</span>. The § Importance sampling definition rewrites <span class="math display">\[E_p[f(X)] = \int f(x)\,p(x)\,dx = \int f(x)\,\frac{p(x)}{q(x)}\,q(x)\,dx = E_q[f(X)\,w(X)],\]</span> with importance weight <span class="math inline">\(w(x) = p(x)/q(x)\)</span>. Substituting the two Gaussian densities, <span class="math display">\[w(x) = \frac{p(x)}{q(x)} = \frac{(2\pi)^{-1/2}\exp(-x^2/2)}{(2\pi\cdot 4)^{-1/2}\exp(-x^2/8)} = \frac{\sqrt{4}}{\sqrt{1}}\,\exp\!\left(-\frac{x^2}{2} + \frac{x^2}{8}\right) = 2\,\exp\!\left(-\frac{3x^2}{8}\right).\]</span> With <span class="math inline">\(x_1, \ldots, x_N \stackrel{\text{iid}}{\sim} q\)</span>, the § Importance sampling definition gives the estimator <span class="math display">\[\widehat I = \frac{1}{N}\sum_{i=1}^N f(x_i)\,w(x_i) = \frac{1}{N}\sum_{i=1}^N x_i^2\cdot 2\,\exp\!\left(-\frac{3 x_i^2}{8}\right).\]</span> Unbiasedness follows from the change-of-variable identity above: <span class="math inline">\(E_q[\widehat I] = E_q[X^2 w(X)] = E_p[X^2] = 1\)</span>, invoking the unbiasedness property stated in § Importance sampling. The variance is <span class="math inline">\(\text{Var}(\widehat I) = N^{-1}\text{Var}_q(X^2 w(X))\)</span>; here the weights are well-behaved since <span class="math inline">\(q\)</span> has heavier tails than <span class="math inline">\(p\)</span> (<span class="math inline">\(\sigma_q^2 = 4 &gt; 1 = \sigma_p^2\)</span>), avoiding the tail-mismatch weight blow-up warned about at the end of the § Importance sampling section. If instead we had picked <span class="math inline">\(\sigma_q^2 &lt; 1\)</span>, the weight <span class="math inline">\(w(x) \propto \exp(+\text{const}\,x^2)\)</span> would blow up in the tails and the variance would diverge.</p>
+<p><strong>Cross-reference:</strong> § Importance sampling — definition of the weight <span class="math inline">\(w(x) = p(x)/q(x)\)</span> and the unbiased estimator <span class="math inline">\(\widehat I = N^{-1}\sum f(x_i) w(x_i)\)</span>.</p>
 </div>
 <div class="exercise">
 <p>Importance sampling for a tail probability. Estimate <span class="math inline">\(\mathbb{P}_p(X &gt; 3)\)</span> for <span class="math inline">\(p = \mathcal{N}(0, 1)\)</span> using the shifted proposal <span class="math inline">\(q = \mathcal{N}(3, 1)\)</span>. Write the estimator and explain why the proposal beats naïve Monte Carlo.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span>With <span class="math inline">\(f(x) = \mathbb{1}_{x &gt; 3}\)</span> and weights <span class="math display">\[w(x) = \frac{p(x)}{q(x)} = \exp\!\left(-\tfrac{1}{2}x^2 + \tfrac{1}{2}(x-3)^2\right) = e^{-3x + 9/2},\]</span> the estimator with <span class="math inline">\(x_i \sim \mathcal N(3, 1)\)</span> is <span class="math display">\[\widehat{P} = \frac{1}{N}\sum_{i=1}^N \mathbb{1}_{x_i &gt; 3}\,e^{-3 x_i + 9/2}.\]</span> Naïve sampling from <span class="math inline">\(p\)</span> produces a hit only with probability <span class="math inline">\(\Phi^c(3) \approx 1.35\cdot 10^{-3}\)</span>, so its relative error blows up; the shifted proposal places roughly half the samples in the rare region, making the variance of order <span class="math inline">\(1/N\)</span> instead of <span class="math inline">\(1/(N\,\Phi^c(3))\)</span>.</p>
+<p><span class="proof-title"><em>Solution</em>. </span>The task is to estimate the rare-event probability <span class="math inline">\(P_p(X &gt; 3)\)</span> under <span class="math inline">\(p = \mathcal N(0, 1)\)</span> using the shifted proposal <span class="math inline">\(q = \mathcal N(3, 1)\)</span>, and to justify why this beats naive Monte Carlo. The event is <span class="math inline">\(f(X) = \mathbb 1_{X &gt; 3}\)</span>, so by the § Importance sampling definition, <span class="math display">\[P_p(X &gt; 3) = E_p[\mathbb 1_{X &gt; 3}] = E_q[\mathbb 1_{X &gt; 3}\,w(X)], \qquad w(x) = \frac{p(x)}{q(x)}.\]</span> Compute the weight ratio of two unit-variance Gaussians differing only in mean: <span class="math display">\[w(x) = \frac{(2\pi)^{-1/2}\exp(-x^2/2)}{(2\pi)^{-1/2}\exp(-(x-3)^2/2)} = \exp\!\left[-\frac{x^2}{2} + \frac{(x - 3)^2}{2}\right] = \exp\!\left(-3x + \frac{9}{2}\right).\]</span> With <span class="math inline">\(x_1, \ldots, x_N \stackrel{\text{iid}}{\sim} q = \mathcal N(3, 1)\)</span>, the estimator prescribed in § Importance sampling is <span class="math display">\[\widehat P = \frac{1}{N}\sum_{i=1}^N \mathbb 1_{x_i &gt; 3}\,e^{-3 x_i + 9/2}.\]</span> Under <span class="math inline">\(p\)</span>, the target probability is <span class="math inline">\(\Phi^c(3) = 1 - \Phi(3) \approx 1.35\times 10^{-3}\)</span>. Naive Monte Carlo produces a Bernoulli<span class="math inline">\((\Phi^c(3))\)</span> indicator, whose relative variance is <span class="math inline">\(\text{Var}/\text{mean}^2 = (1 - p)/(N p) \approx 1/(N\Phi^c(3))\)</span> — enormous unless <span class="math inline">\(N \gg 10^3\)</span> (this is exactly the rare-event blow-up flagged in § Motivation). Under <span class="math inline">\(q = \mathcal N(3, 1)\)</span>, approximately half of all samples satisfy <span class="math inline">\(x_i &gt; 3\)</span> (since 3 is the mean), so the variance of the estimator is <span class="math inline">\(O(1/N)\)</span> with no rare-event penalty — an exponential efficiency gain in the tail. Provided the weight <span class="math inline">\(w\)</span> is finite where <span class="math inline">\(q\)</span> has support (which holds because both densities are strictly positive everywhere), the estimator is unbiased by the § Importance sampling identity.</p>
+<p><strong>Cross-reference:</strong> § Importance sampling — definition and unbiasedness of <span class="math inline">\(\widehat I = N^{-1}\sum f(x_i)w(x_i)\)</span>; the rare-event weight-degeneracy discussion in § Motivation and the closing paragraph of § Importance sampling.</p>
 </div>
 <div class="exercise">
 <p>Effective sample size. For three normalised importance weights <span class="math inline">\((w_1, w_2, w_3) = (0.7,\, 0.2,\, 0.1)\)</span> compute <span class="math inline">\(\text{ESS} = 1 / \sum_i w_i^2\)</span>.</p>
 </div>
 <div class="proof solution">
-<p><span class="proof-title"><em>Solution</em>. </span>Computing the sum of squares, <span class="math display">\[\sum_i w_i^2 = 0.49 + 0.04 + 0.01 = 0.54,\]</span> so <span class="math display">\[\text{ESS} = \frac{1}{0.54} = \frac{50}{27} \approx 1.85.\]</span> Three samples carry less than two effective ones — the first weight dominates and signals severe degeneracy.</p>
+<p><span class="proof-title"><em>Solution</em>. </span>We are asked to compute the ESS for the normalised importance weights <span class="math inline">\((w_1, w_2, w_3) = (0.7, 0.2, 0.1)\)</span>. By the § Importance sampling definition of effective sample size, <span class="math display">\[\text{ESS} = \frac{(\sum_i \tilde w_i)^2}{\sum_i \tilde w_i^2}.\]</span> When the weights are already normalised so that <span class="math inline">\(\sum_i w_i = 1\)</span>, the formula collapses to <span class="math inline">\(\text{ESS} = 1/\sum_i w_i^2\)</span> (as stated in the exercise). Compute the denominator directly: <span class="math display">\[\sum_i w_i^2 = 0.7^2 + 0.2^2 + 0.1^2 = 0.49 + 0.04 + 0.01 = 0.54.\]</span> Hence <span class="math display">\[\text{ESS} = \frac{1}{0.54} = \frac{100}{54} = \frac{50}{27} \approx 1.85.\]</span> For reference, the § Importance sampling definition notes that if all weights were equal (<span class="math inline">\(w_i = 1/3\)</span> here), then <span class="math inline">\(\sum_i w_i^2 = 3\cdot (1/3)^2 = 1/3\)</span> and <span class="math inline">\(\text{ESS} = 3 = N\)</span>, the ideal case. Instead <span class="math inline">\(\text{ESS} \approx 1.85\)</span>: three weighted samples carry less than two independent-equivalent draws, dominated by <span class="math inline">\(w_1 = 0.7\)</span>. Since <span class="math inline">\(\text{ESS}/N = 1.85/3 \approx 0.62\)</span>, this is on the borderline of the rule-of-thumb threshold <span class="math inline">\(\text{ESS} &lt; N/10\)</span> (which would flag severe degeneracy) — mild degeneracy, but a warning that with more samples in the same regime the tails would collapse.</p>
+<p><strong>Cross-reference:</strong> § Importance sampling — definition of <span class="math inline">\(\text{ESS} = (\sum \tilde w_i)^2 / \sum \tilde w_i^2\)</span> and the <span class="math inline">\(N_{\text{eff}} = N\)</span> equal-weights limit.</p>
 </div>
 <div class="exercise">
 <p>Antithetic variates. Let <span class="math inline">\(U \sim \text{Uniform}(0, 1)\)</span> and consider the estimator <span class="math inline">\(\tfrac{1}{2}[g(U) + g(1 - U)]\)</span>. Show that when <span class="math inline">\(g\)</span> is monotone, <span class="math inline">\(\text{Cov}(g(U), g(1-U)) \leq 0\)</span> and the estimator has variance no larger than the single-sample estimator.</p>
@@ -1714,237 +1724,289 @@ logarithmic plot</code></pre>
 <span id="cb13-434"><a href="#cb13-434" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-435"><a href="#cb13-435" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-436"><a href="#cb13-436" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-437"><a href="#cb13-437" aria-hidden="true" tabindex="-1"></a>We need $M \geq \sup_{x \in (0,1]} f(x)/g(x) = \sup 3x^2 = 3$, so the smallest admissible constant is</span>
-<span id="cb13-438"><a href="#cb13-438" aria-hidden="true" tabindex="-1"></a>$$M = 3.$$</span>
-<span id="cb13-439"><a href="#cb13-439" aria-hidden="true" tabindex="-1"></a>The expected acceptance probability is</span>
-<span id="cb13-440"><a href="#cb13-440" aria-hidden="true" tabindex="-1"></a>$$P(\text{accept}) = \frac{1}{M} = \frac{1}{3}.$$</span>
-<span id="cb13-441"><a href="#cb13-441" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-442"><a href="#cb13-442" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-443"><a href="#cb13-443" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-437"><a href="#cb13-437" aria-hidden="true" tabindex="-1"></a>The exercise asks for the smallest envelope constant $M$ enabling rejection sampling of $f(x) = 3x^2$ on $(0, 1]$ using the uniform proposal $g(x) = 1$, together with the resulting long-run acceptance rate. By the rejection-sampling definition (§ Rejection sampling), the algorithm requires an $M &gt; 0$ satisfying $f(x) \le M\,g(x)$ for all $x$ in the common support, i.e. $M \ge \sup_x f(x)/g(x)$; the *optimal* (efficiency-maximising) choice is $M^\star = \sup_x f(x)/g(x)$. Here the ratio is</span>
+<span id="cb13-438"><a href="#cb13-438" aria-hidden="true" tabindex="-1"></a>$$\frac{f(x)}{g(x)} = \frac{3x^2}{1} = 3x^2,$$</span>
+<span id="cb13-439"><a href="#cb13-439" aria-hidden="true" tabindex="-1"></a>which is increasing on $(0,1]$ and attains its supremum at $x = 1$, giving</span>
+<span id="cb13-440"><a href="#cb13-440" aria-hidden="true" tabindex="-1"></a>$$M^\star = \sup_{x \in (0,1]} 3x^2 = 3.$$</span>
+<span id="cb13-441"><a href="#cb13-441" aria-hidden="true" tabindex="-1"></a>Any $M &lt; 3$ would violate the envelope inequality at $x = 1$, invalidating the algorithm; any $M &gt; 3$ would still be correct but wasteful. To obtain the acceptance rate, apply the marginalisation identity derived in the correctness proof of the § Rejection sampling section: with $f$ already normalised ($\int_0^1 3x^2 dx = 1$),</span>
+<span id="cb13-442"><a href="#cb13-442" aria-hidden="true" tabindex="-1"></a>$$P(\text{accept}) = \int_0^1 g(x)\,\frac{f(x)}{M\,g(x)}\,dx = \frac{1}{M}\int_0^1 f(x)\,dx = \frac{1}{M}.$$</span>
+<span id="cb13-443"><a href="#cb13-443" aria-hidden="true" tabindex="-1"></a>Substituting $M = 3$ yields $P(\text{accept}) = 1/3$, meaning we expect roughly three uniform proposals per accepted sample.</span>
 <span id="cb13-444"><a href="#cb13-444" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-445"><a href="#cb13-445" aria-hidden="true" tabindex="-1"></a>Inverse transform. Show that if $U \sim \text{Uniform}(0, 1)$ and $\lambda &gt; 0$, then $X = -\log(U)/\lambda$ has the $\text{Exp}(\lambda)$ distribution.</span>
+<span id="cb13-445"><a href="#cb13-445" aria-hidden="true" tabindex="-1"></a>**Cross-reference:** § Rejection sampling — envelope definition $f \le M q$ and correctness identity $P(\text{accept}) = Z/M$.</span>
 <span id="cb13-446"><a href="#cb13-446" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-447"><a href="#cb13-447" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-448"><a href="#cb13-448" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-449"><a href="#cb13-449" aria-hidden="true" tabindex="-1"></a>For $x \geq 0$, using that $U$ and $1-U$ are both uniform on $(0,1)$,</span>
-<span id="cb13-450"><a href="#cb13-450" aria-hidden="true" tabindex="-1"></a>$$P(X \leq x) = P(-\log U / \lambda \leq x) = P(U \geq e^{-\lambda x}) = 1 - e^{-\lambda x}.$$</span>
-<span id="cb13-451"><a href="#cb13-451" aria-hidden="true" tabindex="-1"></a>Differentiating yields the density $f_X(x) = \lambda e^{-\lambda x}$ for $x \geq 0$, i.e.\ $X \sim \text{Exp}(\lambda)$.</span>
-<span id="cb13-452"><a href="#cb13-452" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-453"><a href="#cb13-453" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-454"><a href="#cb13-454" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-456"><a href="#cb13-456" aria-hidden="true" tabindex="-1"></a>Inverse transform for the Pareto distribution with CDF $F(x) = 1 - (x_m / x)^\alpha$ for $x \geq x_m$. Derive the sampling formula in terms of $U \sim \text{Uniform}(0, 1)$.</span>
-<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-459"><a href="#cb13-459" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-460"><a href="#cb13-460" aria-hidden="true" tabindex="-1"></a>Setting $U = F(X) = 1 - (x_m/X)^\alpha$ and solving for $X$,</span>
-<span id="cb13-461"><a href="#cb13-461" aria-hidden="true" tabindex="-1"></a>$$(x_m / X)^\alpha = 1 - U \quad\Longrightarrow\quad X = \frac{x_m}{(1 - U)^{1/\alpha}}.$$</span>
-<span id="cb13-462"><a href="#cb13-462" aria-hidden="true" tabindex="-1"></a>Since $1 - U \stackrel{d}{=} U$, one may equivalently use $X = x_m\,U^{-1/\alpha}$.</span>
+<span id="cb13-448"><a href="#cb13-448" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-449"><a href="#cb13-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-450"><a href="#cb13-450" aria-hidden="true" tabindex="-1"></a>Inverse transform. Show that if $U \sim \text{Uniform}(0, 1)$ and $\lambda &gt; 0$, then $X = -\log(U)/\lambda$ has the $\text{Exp}(\lambda)$ distribution.</span>
+<span id="cb13-451"><a href="#cb13-451" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-452"><a href="#cb13-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-453"><a href="#cb13-453" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-454"><a href="#cb13-454" aria-hidden="true" tabindex="-1"></a>We must show that the transformation $X = -\lambda^{-1}\log U$ of a uniform variate yields an $\text{Exp}(\lambda)$ random variable. The inverse-transform theorem (§ Direct sampling: inverse transform method) guarantees that for any absolutely continuous CDF $F$ with a proper inverse $F^{-1}$, the variate $F^{-1}(U)$ with $U \sim \text{Uniform}(0,1)$ has CDF $F$; here we verify the exponential case by direct computation rather than invoking the general result. Compute the CDF of $X$ for $x \ge 0$:</span>
+<span id="cb13-455"><a href="#cb13-455" aria-hidden="true" tabindex="-1"></a>$$P(X \le x) = P<span class="sc">\!</span>\left(-\lambda^{-1}\log U \le x\right) = P<span class="sc">\!</span>\left(\log U \ge -\lambda x\right) = P<span class="sc">\!</span>\left(U \ge e^{-\lambda x}\right).$$</span>
+<span id="cb13-456"><a href="#cb13-456" aria-hidden="true" tabindex="-1"></a>Since $U$ is uniform on $(0,1)$, $P(U \ge u_0) = 1 - u_0$ for $u_0 \in (0,1)$, and $e^{-\lambda x} \in (0,1]$ for $x \ge 0$, hence</span>
+<span id="cb13-457"><a href="#cb13-457" aria-hidden="true" tabindex="-1"></a>$$F_X(x) = 1 - e^{-\lambda x}, \qquad x \ge 0,$$</span>
+<span id="cb13-458"><a href="#cb13-458" aria-hidden="true" tabindex="-1"></a>which is precisely the exponential CDF. Differentiating gives</span>
+<span id="cb13-459"><a href="#cb13-459" aria-hidden="true" tabindex="-1"></a>$$f_X(x) = \frac{d}{dx}\left(1 - e^{-\lambda x}\right) = \lambda e^{-\lambda x}, \qquad x \ge 0,$$</span>
+<span id="cb13-460"><a href="#cb13-460" aria-hidden="true" tabindex="-1"></a>so $X \sim \text{Exp}(\lambda)$. Equivalently, one may note that $1 - U \stackrel{d}{=} U$ so $-\lambda^{-1}\log U$ has the same distribution as $-\lambda^{-1}\log(1-U) = F^{-1}(U)$ for the exponential CDF $F(x) = 1 - e^{-\lambda x}$, matching the recipe in the § Direct sampling worked example. This is the canonical one-line Monte Carlo sampler underlying every Poisson-process simulator.</span>
+<span id="cb13-461"><a href="#cb13-461" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-462"><a href="#cb13-462" aria-hidden="true" tabindex="-1"></a>**Cross-reference:** § Direct sampling: inverse transform method — definition of $F^{-1}(U)$ and the worked exponential example.</span>
 <span id="cb13-463"><a href="#cb13-463" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-464"><a href="#cb13-464" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-465"><a href="#cb13-465" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
 <span id="cb13-466"><a href="#cb13-466" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-467"><a href="#cb13-467" aria-hidden="true" tabindex="-1"></a>Inverse transform for the geometric distribution on $<span class="sc">\{</span>1, 2, 3, \ldots<span class="sc">\}</span>$ with parameter $p$. Derive the smallest integer $X$ such that $1 - (1-p)^X \geq U$, with $U \sim \text{Uniform}(0,1)$.</span>
+<span id="cb13-467"><a href="#cb13-467" aria-hidden="true" tabindex="-1"></a>Inverse transform for the Pareto distribution with CDF $F(x) = 1 - (x_m / x)^\alpha$ for $x \geq x_m$. Derive the sampling formula in terms of $U \sim \text{Uniform}(0, 1)$.</span>
 <span id="cb13-468"><a href="#cb13-468" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-469"><a href="#cb13-469" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-470"><a href="#cb13-470" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-471"><a href="#cb13-471" aria-hidden="true" tabindex="-1"></a>The CDF is $F(k) = 1 - (1-p)^k$ for $k \geq 1$. Requiring $F(X) \geq U$ gives $(1-p)^X \leq 1 - U$, i.e.</span>
-<span id="cb13-472"><a href="#cb13-472" aria-hidden="true" tabindex="-1"></a>$$X \geq \frac{\log(1 - U)}{\log(1 - p)}.$$</span>
-<span id="cb13-473"><a href="#cb13-473" aria-hidden="true" tabindex="-1"></a>The smallest such integer is</span>
-<span id="cb13-474"><a href="#cb13-474" aria-hidden="true" tabindex="-1"></a>$$X = \left\lceil \frac{\log(1 - U)}{\log(1 - p)} \right\rceil,$$</span>
-<span id="cb13-475"><a href="#cb13-475" aria-hidden="true" tabindex="-1"></a>which (using $1-U \stackrel{d}{=} U$) is the standard geometric sampler.</span>
-<span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a>Rejection from $\text{Gamma}(2, 1)$ with density $f(x) = x\,e^{-x}$ for $x &gt; 0$, using the proposal $g(x) = e^{-x}$ (i.e.\ $\text{Exp}(1)$). Find the smallest constant $M$ such that $f(x) \leq M\,g(x)$. Give the expected acceptance probability.</span>
-<span id="cb13-481"><a href="#cb13-481" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-482"><a href="#cb13-482" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-483"><a href="#cb13-483" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-484"><a href="#cb13-484" aria-hidden="true" tabindex="-1"></a>The ratio $f(x)/g(x) = x$ is unbounded on $(0, \infty)$, so no finite $M$ exists and rejection from $\text{Exp}(1)$ fails. Choosing instead a lighter exponential $g_\lambda(x) = \lambda e^{-\lambda x}$ with $\lambda &lt; 1$ gives a bounded ratio</span>
-<span id="cb13-485"><a href="#cb13-485" aria-hidden="true" tabindex="-1"></a>$$\frac{f(x)}{g_\lambda(x)} = \frac{x\,e^{-(1-\lambda)x}}{\lambda},$$</span>
-<span id="cb13-486"><a href="#cb13-486" aria-hidden="true" tabindex="-1"></a>maximised at $x^\star = 1/(1-\lambda)$, yielding $M(\lambda) = 1/<span class="co">[</span><span class="ot">\lambda e(1-\lambda)</span><span class="co">]</span>$, minimised at $\lambda = 1/2$ with $M = 4/e$ and acceptance probability</span>
-<span id="cb13-487"><a href="#cb13-487" aria-hidden="true" tabindex="-1"></a>$$P(\text{accept}) = \frac{1}{M} = \frac{e}{4}.$$</span>
-<span id="cb13-488"><a href="#cb13-488" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-489"><a href="#cb13-489" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-490"><a href="#cb13-490" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-491"><a href="#cb13-491" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-492"><a href="#cb13-492" aria-hidden="true" tabindex="-1"></a>Rejection sampling from the half-normal $f(x) \propto e^{-x^2/2}$ on $x \geq 0$ using the exponential proposal $g(x) = e^{-x}$. Find the smallest $M$ and the acceptance probability.</span>
-<span id="cb13-493"><a href="#cb13-493" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-494"><a href="#cb13-494" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-495"><a href="#cb13-495" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-496"><a href="#cb13-496" aria-hidden="true" tabindex="-1"></a>Using the normalised half-normal $f(x) = \sqrt{2/\pi}\,e^{-x^2/2}$, the ratio is</span>
-<span id="cb13-497"><a href="#cb13-497" aria-hidden="true" tabindex="-1"></a>$$\frac{f(x)}{g(x)} = \sqrt{\frac{2}{\pi}}\,e^{x - x^2/2},$$</span>
-<span id="cb13-498"><a href="#cb13-498" aria-hidden="true" tabindex="-1"></a>which is maximised at $x^\star = 1$, giving</span>
-<span id="cb13-499"><a href="#cb13-499" aria-hidden="true" tabindex="-1"></a>$$M = \sqrt{\frac{2e}{\pi}}, \qquad P(\text{accept}) = \frac{1}{M} = \sqrt{\frac{\pi}{2e}} \approx 0.76.$$</span>
-<span id="cb13-500"><a href="#cb13-500" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-501"><a href="#cb13-501" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-502"><a href="#cb13-502" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-503"><a href="#cb13-503" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-504"><a href="#cb13-504" aria-hidden="true" tabindex="-1"></a>Show that in rejection sampling the overall acceptance probability is exactly $1/M$, where $M = \sup_x f(x)/g(x)$. State the implication for the expected number of proposals needed to obtain one sample.</span>
-<span id="cb13-505"><a href="#cb13-505" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-506"><a href="#cb13-506" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-507"><a href="#cb13-507" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-508"><a href="#cb13-508" aria-hidden="true" tabindex="-1"></a>Marginalising over the proposal,</span>
-<span id="cb13-509"><a href="#cb13-509" aria-hidden="true" tabindex="-1"></a>$$P(\text{accept}) = \int g(x)\,\frac{f(x)}{M\,g(x)}\,dx = \frac{1}{M}\int f(x)\,dx = \frac{1}{M}.$$</span>
-<span id="cb13-510"><a href="#cb13-510" aria-hidden="true" tabindex="-1"></a>Hence the number of proposals until the first acceptance is geometric with mean</span>
-<span id="cb13-511"><a href="#cb13-511" aria-hidden="true" tabindex="-1"></a>$$E<span class="co">[</span><span class="ot">N_{\text{prop}}</span><span class="co">]</span> = M,$$</span>
-<span id="cb13-512"><a href="#cb13-512" aria-hidden="true" tabindex="-1"></a>so large $M$ (poor proposal) makes rejection sampling prohibitively expensive.</span>
-<span id="cb13-513"><a href="#cb13-513" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-514"><a href="#cb13-514" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-515"><a href="#cb13-515" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-516"><a href="#cb13-516" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-517"><a href="#cb13-517" aria-hidden="true" tabindex="-1"></a>Importance sampling. Estimate $\mathbb{E}_p<span class="co">[</span><span class="ot">X^2</span><span class="co">]</span>$ for $p = \mathcal{N}(0, 1)$ using the proposal $q = \mathcal{N}(0, 4)$. Write the importance weights $w(x) = p(x)/q(x)$ explicitly and the unbiased estimator based on $N$ samples.</span>
-<span id="cb13-518"><a href="#cb13-518" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-519"><a href="#cb13-519" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-520"><a href="#cb13-520" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-521"><a href="#cb13-521" aria-hidden="true" tabindex="-1"></a>The weight ratio of two zero-mean Gaussians is</span>
-<span id="cb13-522"><a href="#cb13-522" aria-hidden="true" tabindex="-1"></a>$$w(x) = \frac{p(x)}{q(x)} = \frac{(2\pi)^{-1/2}e^{-x^2/2}}{(2\pi\cdot 4)^{-1/2}e^{-x^2/8}} = 2\,\exp<span class="sc">\!</span>\left(-\frac{3x^2}{8}\right).$$</span>
-<span id="cb13-523"><a href="#cb13-523" aria-hidden="true" tabindex="-1"></a>With $x_i \sim q$ i.i.d., the unbiased importance-sampling estimator is</span>
-<span id="cb13-524"><a href="#cb13-524" aria-hidden="true" tabindex="-1"></a>$$\widehat{I} = \frac{1}{N}\sum_{i=1}^N x_i^2\,w(x_i),$$</span>
-<span id="cb13-525"><a href="#cb13-525" aria-hidden="true" tabindex="-1"></a>which converges to $E_p<span class="co">[</span><span class="ot">X^2</span><span class="co">]</span> = 1$.</span>
-<span id="cb13-526"><a href="#cb13-526" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-527"><a href="#cb13-527" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-528"><a href="#cb13-528" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-529"><a href="#cb13-529" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-530"><a href="#cb13-530" aria-hidden="true" tabindex="-1"></a>Importance sampling for a tail probability. Estimate $\mathbb{P}_p(X &gt; 3)$ for $p = \mathcal{N}(0, 1)$ using the shifted proposal $q = \mathcal{N}(3, 1)$. Write the estimator and explain why the proposal beats naïve Monte Carlo.</span>
-<span id="cb13-531"><a href="#cb13-531" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-532"><a href="#cb13-532" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-533"><a href="#cb13-533" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-534"><a href="#cb13-534" aria-hidden="true" tabindex="-1"></a>With $f(x) = \mathbb{1}_{x &gt; 3}$ and weights</span>
-<span id="cb13-535"><a href="#cb13-535" aria-hidden="true" tabindex="-1"></a>$$w(x) = \frac{p(x)}{q(x)} = \exp<span class="sc">\!</span>\left(-\tfrac{1}{2}x^2 + \tfrac{1}{2}(x-3)^2\right) = e^{-3x + 9/2},$$</span>
-<span id="cb13-536"><a href="#cb13-536" aria-hidden="true" tabindex="-1"></a>the estimator with $x_i \sim \mathcal N(3, 1)$ is</span>
-<span id="cb13-537"><a href="#cb13-537" aria-hidden="true" tabindex="-1"></a>$$\widehat{P} = \frac{1}{N}\sum_{i=1}^N \mathbb{1}_{x_i &gt; 3}\,e^{-3 x_i + 9/2}.$$</span>
-<span id="cb13-538"><a href="#cb13-538" aria-hidden="true" tabindex="-1"></a>Naïve sampling from $p$ produces a hit only with probability $\Phi^c(3) \approx 1.35\cdot 10^{-3}$, so its relative error blows up; the shifted proposal places roughly half the samples in the rare region, making the variance of order $1/N$ instead of $1/(N\,\Phi^c(3))$.</span>
-<span id="cb13-539"><a href="#cb13-539" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-540"><a href="#cb13-540" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-541"><a href="#cb13-541" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-471"><a href="#cb13-471" aria-hidden="true" tabindex="-1"></a>The task is to derive a closed-form Pareto sampler from a uniform variate, given the CDF $F(x) = 1 - (x_m/x)^\alpha$ for $x \ge x_m$. The § Direct sampling: inverse transform method definition prescribes: (i) compute $F(x)$ (given), (ii) invert it analytically to obtain $F^{-1}(u)$, and (iii) set $X = F^{-1}(U)$ with $U \sim \text{Uniform}(0,1)$. Since $F$ is strictly increasing and continuous on $[x_m,\infty)$ with range $[0,1)$, it admits a well-defined inverse. Setting $u = F(x)$ and solving for $x$,</span>
+<span id="cb13-472"><a href="#cb13-472" aria-hidden="true" tabindex="-1"></a>$$u = 1 - \left(\frac{x_m}{x}\right)^\alpha \iff \left(\frac{x_m}{x}\right)^\alpha = 1 - u \iff \frac{x_m}{x} = (1 - u)^{1/\alpha},$$</span>
+<span id="cb13-473"><a href="#cb13-473" aria-hidden="true" tabindex="-1"></a>where the last step used that both sides are positive so we may take $\alpha$-th roots without a sign ambiguity. Solving for $x$ yields</span>
+<span id="cb13-474"><a href="#cb13-474" aria-hidden="true" tabindex="-1"></a>$$F^{-1}(u) = \frac{x_m}{(1 - u)^{1/\alpha}}, \qquad u \in [0, 1).$$</span>
+<span id="cb13-475"><a href="#cb13-475" aria-hidden="true" tabindex="-1"></a>By the inverse-transform theorem (proof in § Direct sampling), $X = F^{-1}(U) = x_m\,(1-U)^{-1/\alpha}$ is distributed as $\text{Pareto}(x_m, \alpha)$. Since $1 - U$ has the same uniform distribution as $U$, the equivalent one-liner</span>
+<span id="cb13-476"><a href="#cb13-476" aria-hidden="true" tabindex="-1"></a>$$X = x_m\,U^{-1/\alpha}$$</span>
+<span id="cb13-477"><a href="#cb13-477" aria-hidden="true" tabindex="-1"></a>is standard in practice. A quick sanity check: $P(X \ge x) = P(U \le (x_m/x)^\alpha) = (x_m/x)^\alpha$, recovering the survival function of the Pareto law.</span>
+<span id="cb13-478"><a href="#cb13-478" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-479"><a href="#cb13-479" aria-hidden="true" tabindex="-1"></a>**Cross-reference:** § Direct sampling: inverse transform method — three-step definition and its correctness proof by the probability integral transform.</span>
+<span id="cb13-480"><a href="#cb13-480" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-481"><a href="#cb13-481" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-482"><a href="#cb13-482" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-483"><a href="#cb13-483" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-484"><a href="#cb13-484" aria-hidden="true" tabindex="-1"></a>Inverse transform for the geometric distribution on $<span class="sc">\{</span>1, 2, 3, \ldots<span class="sc">\}</span>$ with parameter $p$. Derive the smallest integer $X$ such that $1 - (1-p)^X \geq U$, with $U \sim \text{Uniform}(0,1)$.</span>
+<span id="cb13-485"><a href="#cb13-485" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-486"><a href="#cb13-486" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-487"><a href="#cb13-487" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-488"><a href="#cb13-488" aria-hidden="true" tabindex="-1"></a>We derive the inverse-CDF sampler for the geometric law $P(X = k) = (1-p)^{k-1} p$ on $<span class="sc">\{</span>1, 2, \ldots<span class="sc">\}</span>$. Because the distribution is discrete, we use the discrete generalisation of the inverse-transform recipe (§ Direct sampling: inverse transform method): defining $F(k) = P(X \le k)$, set $X$ equal to the smallest integer with $F(X) \ge U$, where $U \sim \text{Uniform}(0,1)$. Summing the geometric probabilities,</span>
+<span id="cb13-489"><a href="#cb13-489" aria-hidden="true" tabindex="-1"></a>$$F(k) = \sum_{j=1}^k (1-p)^{j-1} p = p\,\frac{1 - (1-p)^k}{1 - (1-p)} = 1 - (1-p)^k, \qquad k \ge 1.$$</span>
+<span id="cb13-490"><a href="#cb13-490" aria-hidden="true" tabindex="-1"></a>The condition $F(X) \ge U$ becomes</span>
+<span id="cb13-491"><a href="#cb13-491" aria-hidden="true" tabindex="-1"></a>$$1 - (1-p)^X \ge U \iff (1-p)^X \le 1 - U.$$</span>
+<span id="cb13-492"><a href="#cb13-492" aria-hidden="true" tabindex="-1"></a>Taking $\log$ (a monotone increasing function) and dividing by $\log(1-p) &lt; 0$ (which flips the inequality),</span>
+<span id="cb13-493"><a href="#cb13-493" aria-hidden="true" tabindex="-1"></a>$$X \log(1-p) \le \log(1 - U) \iff X \ge \frac{\log(1-U)}{\log(1-p)}.$$</span>
+<span id="cb13-494"><a href="#cb13-494" aria-hidden="true" tabindex="-1"></a>The smallest integer satisfying this is the ceiling,</span>
+<span id="cb13-495"><a href="#cb13-495" aria-hidden="true" tabindex="-1"></a>$$X = \left\lceil \frac{\log(1-U)}{\log(1-p)} \right\rceil.$$</span>
+<span id="cb13-496"><a href="#cb13-496" aria-hidden="true" tabindex="-1"></a>Since $1-U \stackrel{d}{=} U$, one may equivalently write $X = \lceil \log(U)/\log(1-p) \rceil$. The discrete inverse-transform theorem (§ Direct sampling: inverse transform method — the same probability integral transform argument extended to jump CDFs) guarantees that this $X$ has exactly the target geometric distribution.</span>
+<span id="cb13-497"><a href="#cb13-497" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-498"><a href="#cb13-498" aria-hidden="true" tabindex="-1"></a>**Cross-reference:** § Direct sampling: inverse transform method — inverse-CDF construction, generalised to the smallest-integer form for discrete distributions.</span>
+<span id="cb13-499"><a href="#cb13-499" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-500"><a href="#cb13-500" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-501"><a href="#cb13-501" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-502"><a href="#cb13-502" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-503"><a href="#cb13-503" aria-hidden="true" tabindex="-1"></a>Rejection from $\text{Gamma}(2, 1)$ with density $f(x) = x\,e^{-x}$ for $x &gt; 0$, using the proposal $g(x) = e^{-x}$ (i.e.\ $\text{Exp}(1)$). Find the smallest constant $M$ such that $f(x) \leq M\,g(x)$. Give the expected acceptance probability.</span>
+<span id="cb13-504"><a href="#cb13-504" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-505"><a href="#cb13-505" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-506"><a href="#cb13-506" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-507"><a href="#cb13-507" aria-hidden="true" tabindex="-1"></a>We are asked to find the smallest envelope constant $M$ (and hence the acceptance probability) for rejection sampling from $f(x) = xe^{-x}$ using $g(x) = e^{-x}$ on $(0, \infty)$. The § Rejection sampling definition requires $M \ge \sup_x f(x)/g(x)$ with the *optimal* choice being that supremum, since $P(\text{accept}) = 1/M$ (from the same section's correctness identity, given both densities are normalised). Compute the ratio:</span>
+<span id="cb13-508"><a href="#cb13-508" aria-hidden="true" tabindex="-1"></a>$$\frac{f(x)}{g(x)} = \frac{x e^{-x}}{e^{-x}} = x.$$</span>
+<span id="cb13-509"><a href="#cb13-509" aria-hidden="true" tabindex="-1"></a>This ratio is unbounded on $(0, \infty)$ — as $x \to \infty$, $f(x)/g(x) \to \infty$ — so **no finite $M$ exists** and the envelope condition of § Rejection sampling cannot be satisfied. Rejection from $\text{Exp}(1)$ therefore fails and one must reject the reject-sampling design. The standard remedy is a *lighter* exponential proposal $g_\lambda(x) = \lambda e^{-\lambda x}$ with $0 &lt; \lambda &lt; 1$, which has a heavier tail than $f$ (whose $e^{-x}$ tail decays faster than $e^{-\lambda x}$). The ratio is</span>
+<span id="cb13-510"><a href="#cb13-510" aria-hidden="true" tabindex="-1"></a>$$\frac{f(x)}{g_\lambda(x)} = \frac{x e^{-x}}{\lambda e^{-\lambda x}} = \frac{x\,e^{-(1-\lambda)x}}{\lambda},$$</span>
+<span id="cb13-511"><a href="#cb13-511" aria-hidden="true" tabindex="-1"></a>whose stationary point satisfies $\frac{d}{dx}<span class="co">[</span><span class="ot">x e^{-(1-\lambda)x}</span><span class="co">]</span> = e^{-(1-\lambda)x}<span class="co">[</span><span class="ot">1 - (1-\lambda)x</span><span class="co">]</span> = 0$, giving $x^\star = 1/(1-\lambda)$. Substituting,</span>
+<span id="cb13-512"><a href="#cb13-512" aria-hidden="true" tabindex="-1"></a>$$M(\lambda) = \frac{x^\star e^{-(1-\lambda)x^\star}}{\lambda} = \frac{1}{\lambda(1-\lambda)e}.$$</span>
+<span id="cb13-513"><a href="#cb13-513" aria-hidden="true" tabindex="-1"></a>Minimising over $\lambda \in (0,1)$: $\frac{d}{d\lambda}<span class="co">[</span><span class="ot">\lambda(1-\lambda)</span><span class="co">]</span> = 1 - 2\lambda = 0$ so $\lambda = 1/2$, yielding $M^\star = 1/<span class="co">[</span><span class="ot">(1/2)(1/2)e</span><span class="co">]</span> = 4/e$. By the marginal-acceptance identity of § Rejection sampling,</span>
+<span id="cb13-514"><a href="#cb13-514" aria-hidden="true" tabindex="-1"></a>$$P(\text{accept}) = \frac{1}{M^\star} = \frac{e}{4} \approx 0.68.$$</span>
+<span id="cb13-515"><a href="#cb13-515" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-516"><a href="#cb13-516" aria-hidden="true" tabindex="-1"></a>**Cross-reference:** § Rejection sampling — envelope condition $M \ge \sup f/g$ and $P(\text{accept}) = 1/M$.</span>
+<span id="cb13-517"><a href="#cb13-517" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-518"><a href="#cb13-518" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-519"><a href="#cb13-519" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-520"><a href="#cb13-520" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-521"><a href="#cb13-521" aria-hidden="true" tabindex="-1"></a>Rejection sampling from the half-normal $f(x) \propto e^{-x^2/2}$ on $x \geq 0$ using the exponential proposal $g(x) = e^{-x}$. Find the smallest $M$ and the acceptance probability.</span>
+<span id="cb13-522"><a href="#cb13-522" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-523"><a href="#cb13-523" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-524"><a href="#cb13-524" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-525"><a href="#cb13-525" aria-hidden="true" tabindex="-1"></a>The exercise asks for the smallest $M$ and acceptance probability when rejection-sampling the half-normal density $f(x) \propto e^{-x^2/2}$ on $x \ge 0$ with exponential proposal $g(x) = e^{-x}$. Following the § Rejection sampling definition, the envelope condition $f(x) \le M g(x)$ requires $M \ge \sup_{x \ge 0} f(x)/g(x)$. First normalise $f$: $\int_0^\infty e^{-x^2/2} dx = \sqrt{\pi/2}$, so the normalised density is</span>
+<span id="cb13-526"><a href="#cb13-526" aria-hidden="true" tabindex="-1"></a>$$f(x) = \sqrt{\frac{2}{\pi}}\,e^{-x^2/2}, \qquad x \ge 0.$$</span>
+<span id="cb13-527"><a href="#cb13-527" aria-hidden="true" tabindex="-1"></a>Then</span>
+<span id="cb13-528"><a href="#cb13-528" aria-hidden="true" tabindex="-1"></a>$$\frac{f(x)}{g(x)} = \sqrt{\frac{2}{\pi}}\,\frac{e^{-x^2/2}}{e^{-x}} = \sqrt{\frac{2}{\pi}}\,e^{\,x - x^2/2}.$$</span>
+<span id="cb13-529"><a href="#cb13-529" aria-hidden="true" tabindex="-1"></a>Maximise the exponent $\phi(x) = x - x^2/2$: $\phi'(x) = 1 - x = 0$ at $x^\star = 1$, and $\phi''(x^\star) = -1 &lt; 0$ confirms a maximum with $\phi(1) = 1/2$. Therefore</span>
+<span id="cb13-530"><a href="#cb13-530" aria-hidden="true" tabindex="-1"></a>$$M^\star = \sqrt{\frac{2}{\pi}}\,e^{1/2} = \sqrt{\frac{2e}{\pi}} \approx 1.315.$$</span>
+<span id="cb13-531"><a href="#cb13-531" aria-hidden="true" tabindex="-1"></a>By the acceptance identity $P(\text{accept}) = 1/M$ from § Rejection sampling (valid because both $f$ and $g$ are normalised),</span>
+<span id="cb13-532"><a href="#cb13-532" aria-hidden="true" tabindex="-1"></a>$$P(\text{accept}) = \frac{1}{M^\star} = \sqrt{\frac{\pi}{2e}} \approx 0.76.$$</span>
+<span id="cb13-533"><a href="#cb13-533" aria-hidden="true" tabindex="-1"></a>Roughly three-quarters of exponential proposals will be accepted — a very efficient sampler, in contrast to the previous exercise where the naive Exp(1) proposal for a Gamma(2,1) target failed outright.</span>
+<span id="cb13-534"><a href="#cb13-534" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-535"><a href="#cb13-535" aria-hidden="true" tabindex="-1"></a>**Cross-reference:** § Rejection sampling — envelope-constant optimisation $M = \sup f/g$ and acceptance identity $P(\text{accept}) = 1/M$.</span>
+<span id="cb13-536"><a href="#cb13-536" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-537"><a href="#cb13-537" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-538"><a href="#cb13-538" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-539"><a href="#cb13-539" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-540"><a href="#cb13-540" aria-hidden="true" tabindex="-1"></a>Show that in rejection sampling the overall acceptance probability is exactly $1/M$, where $M = \sup_x f(x)/g(x)$. State the implication for the expected number of proposals needed to obtain one sample.</span>
+<span id="cb13-541"><a href="#cb13-541" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-542"><a href="#cb13-542" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-543"><a href="#cb13-543" aria-hidden="true" tabindex="-1"></a>Effective sample size. For three normalised importance weights $(w_1, w_2, w_3) = (0.7,\, 0.2,\, 0.1)$ compute $\text{ESS} = 1 / \sum_i w_i^2$.</span>
-<span id="cb13-544"><a href="#cb13-544" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-545"><a href="#cb13-545" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-546"><a href="#cb13-546" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-547"><a href="#cb13-547" aria-hidden="true" tabindex="-1"></a>Computing the sum of squares,</span>
-<span id="cb13-548"><a href="#cb13-548" aria-hidden="true" tabindex="-1"></a>$$\sum_i w_i^2 = 0.49 + 0.04 + 0.01 = 0.54,$$</span>
-<span id="cb13-549"><a href="#cb13-549" aria-hidden="true" tabindex="-1"></a>so</span>
-<span id="cb13-550"><a href="#cb13-550" aria-hidden="true" tabindex="-1"></a>$$\text{ESS} = \frac{1}{0.54} = \frac{50}{27} \approx 1.85.$$</span>
-<span id="cb13-551"><a href="#cb13-551" aria-hidden="true" tabindex="-1"></a>Three samples carry less than two effective ones — the first weight dominates and signals severe degeneracy.</span>
-<span id="cb13-552"><a href="#cb13-552" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-553"><a href="#cb13-553" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-554"><a href="#cb13-554" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-555"><a href="#cb13-555" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-556"><a href="#cb13-556" aria-hidden="true" tabindex="-1"></a>Antithetic variates. Let $U \sim \text{Uniform}(0, 1)$ and consider the estimator $\tfrac{1}{2}<span class="co">[</span><span class="ot">g(U) + g(1 - U)</span><span class="co">]</span>$. Show that when $g$ is monotone, $\text{Cov}(g(U), g(1-U)) \leq 0$ and the estimator has variance no larger than the single-sample estimator.</span>
-<span id="cb13-557"><a href="#cb13-557" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-558"><a href="#cb13-558" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-559"><a href="#cb13-559" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-560"><a href="#cb13-560" aria-hidden="true" tabindex="-1"></a>If $g$ is monotone, $g(U)$ and $g(1-U)$ are monotone in $U$ in opposite senses, so by the Chebyshev/FKG correlation inequality</span>
-<span id="cb13-561"><a href="#cb13-561" aria-hidden="true" tabindex="-1"></a>$$\text{Cov}(g(U),\,g(1-U)) \leq 0.$$</span>
-<span id="cb13-562"><a href="#cb13-562" aria-hidden="true" tabindex="-1"></a>With $\sigma^2 = \text{Var}\,g(U) = \text{Var}\,g(1-U)$,</span>
-<span id="cb13-563"><a href="#cb13-563" aria-hidden="true" tabindex="-1"></a>$$\text{Var}<span class="sc">\!</span>\left(\tfrac{1}{2}<span class="co">[</span><span class="ot">g(U) + g(1-U)</span><span class="co">]</span>\right) = \tfrac{1}{4}<span class="sc">\!</span>\left<span class="co">[</span><span class="ot">2\sigma^2 + 2\,\text{Cov}\right</span><span class="co">]</span> = \tfrac{\sigma^2}{2} + \tfrac{1}{2}\text{Cov} \leq \tfrac{\sigma^2}{2},$$</span>
-<span id="cb13-564"><a href="#cb13-564" aria-hidden="true" tabindex="-1"></a>which is at most the variance $\sigma^2/2$ of the average of two independent draws of $g(U)$, and strictly smaller when the covariance is negative.</span>
-<span id="cb13-565"><a href="#cb13-565" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-566"><a href="#cb13-566" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-567"><a href="#cb13-567" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-543"><a href="#cb13-543" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-544"><a href="#cb13-544" aria-hidden="true" tabindex="-1"></a>We must prove from first principles that the overall acceptance probability of the rejection algorithm equals $1/M$, and interpret the consequence for the number of proposals per accepted sample. Recall the § Rejection sampling algorithm: draw $x \sim g$, draw $u \sim \text{Uniform}(0,1)$, accept when $u \le f(x)/<span class="co">[</span><span class="ot">M g(x)</span><span class="co">]</span>$. The joint density of a proposal-and-acceptance event is</span>
+<span id="cb13-545"><a href="#cb13-545" aria-hidden="true" tabindex="-1"></a>$$p(x,\,\text{accept}) = g(x)\cdot P(u \le f(x)/<span class="co">[</span><span class="ot">M g(x)</span><span class="co">]</span>) = g(x)\cdot \frac{f(x)}{M\,g(x)} = \frac{f(x)}{M},$$</span>
+<span id="cb13-546"><a href="#cb13-546" aria-hidden="true" tabindex="-1"></a>where the middle step uses the CDF of a uniform on $(0,1)$: $P(U \le c) = c$ for $c \in <span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$, and the envelope condition $f \le M g$ guarantees $c = f/(Mg) \in <span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$. Marginalising over $x$ (using that $f$ is normalised to $\int f = 1$),</span>
+<span id="cb13-547"><a href="#cb13-547" aria-hidden="true" tabindex="-1"></a>$$P(\text{accept}) = \int_{-\infty}^\infty \frac{f(x)}{M}\,dx = \frac{1}{M}\int f = \frac{1}{M}.$$</span>
+<span id="cb13-548"><a href="#cb13-548" aria-hidden="true" tabindex="-1"></a>For an unnormalised target $\tilde\pi$ with normalisation $Z$, the same computation returns $P(\text{accept}) = Z/M$, matching the correctness proof in § Rejection sampling. Since each trial independently accepts with probability $1/M$, the number of proposals $N_{\text{prop}}$ until the first acceptance follows a geometric law with success probability $1/M$, so</span>
+<span id="cb13-549"><a href="#cb13-549" aria-hidden="true" tabindex="-1"></a>$$E<span class="co">[</span><span class="ot">N_{\text{prop}}</span><span class="co">]</span> = \frac{1}{1/M} = M.$$</span>
+<span id="cb13-550"><a href="#cb13-550" aria-hidden="true" tabindex="-1"></a>The implication is that the *cost per sample* grows linearly with $M$: a poorly chosen proposal $g$ (large $\sup f/g$) makes rejection sampling prohibitively expensive, which is exactly the failure mode signalled at the end of § Rejection sampling (acceptance decays as $e^{-\alpha d}$ in high dimensions).</span>
+<span id="cb13-551"><a href="#cb13-551" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-552"><a href="#cb13-552" aria-hidden="true" tabindex="-1"></a>**Cross-reference:** § Rejection sampling — correctness proof identity $P(\text{accept}) = Z/M$; the number of trials is geometric because acceptance events are i.i.d.\ Bernoulli.</span>
+<span id="cb13-553"><a href="#cb13-553" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-554"><a href="#cb13-554" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-555"><a href="#cb13-555" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-556"><a href="#cb13-556" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-557"><a href="#cb13-557" aria-hidden="true" tabindex="-1"></a>Importance sampling. Estimate $\mathbb{E}_p<span class="co">[</span><span class="ot">X^2</span><span class="co">]</span>$ for $p = \mathcal{N}(0, 1)$ using the proposal $q = \mathcal{N}(0, 4)$. Write the importance weights $w(x) = p(x)/q(x)$ explicitly and the unbiased estimator based on $N$ samples.</span>
+<span id="cb13-558"><a href="#cb13-558" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-559"><a href="#cb13-559" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-560"><a href="#cb13-560" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-561"><a href="#cb13-561" aria-hidden="true" tabindex="-1"></a>We want to estimate $E_p<span class="co">[</span><span class="ot">X^2</span><span class="co">]</span>$ with $p = \mathcal N(0, 1)$ by drawing from the wider proposal $q = \mathcal N(0, 4)$. The § Importance sampling definition rewrites</span>
+<span id="cb13-562"><a href="#cb13-562" aria-hidden="true" tabindex="-1"></a>$$E_p<span class="co">[</span><span class="ot">f(X)</span><span class="co">]</span> = \int f(x)\,p(x)\,dx = \int f(x)\,\frac{p(x)}{q(x)}\,q(x)\,dx = E_q<span class="co">[</span><span class="ot">f(X)\,w(X)</span><span class="co">]</span>,$$</span>
+<span id="cb13-563"><a href="#cb13-563" aria-hidden="true" tabindex="-1"></a>with importance weight $w(x) = p(x)/q(x)$. Substituting the two Gaussian densities,</span>
+<span id="cb13-564"><a href="#cb13-564" aria-hidden="true" tabindex="-1"></a>$$w(x) = \frac{p(x)}{q(x)} = \frac{(2\pi)^{-1/2}\exp(-x^2/2)}{(2\pi\cdot 4)^{-1/2}\exp(-x^2/8)} = \frac{\sqrt{4}}{\sqrt{1}}\,\exp<span class="sc">\!</span>\left(-\frac{x^2}{2} + \frac{x^2}{8}\right) = 2\,\exp<span class="sc">\!</span>\left(-\frac{3x^2}{8}\right).$$</span>
+<span id="cb13-565"><a href="#cb13-565" aria-hidden="true" tabindex="-1"></a>With $x_1, \ldots, x_N \stackrel{\text{iid}}{\sim} q$, the § Importance sampling definition gives the estimator</span>
+<span id="cb13-566"><a href="#cb13-566" aria-hidden="true" tabindex="-1"></a>$$\widehat I = \frac{1}{N}\sum_{i=1}^N f(x_i)\,w(x_i) = \frac{1}{N}\sum_{i=1}^N x_i^2\cdot 2\,\exp<span class="sc">\!</span>\left(-\frac{3 x_i^2}{8}\right).$$</span>
+<span id="cb13-567"><a href="#cb13-567" aria-hidden="true" tabindex="-1"></a>Unbiasedness follows from the change-of-variable identity above: $E_q<span class="co">[</span><span class="ot">\widehat I</span><span class="co">]</span> = E_q<span class="co">[</span><span class="ot">X^2 w(X)</span><span class="co">]</span> = E_p<span class="co">[</span><span class="ot">X^2</span><span class="co">]</span> = 1$, invoking the unbiasedness property stated in § Importance sampling. The variance is $\text{Var}(\widehat I) = N^{-1}\text{Var}_q(X^2 w(X))$; here the weights are well-behaved since $q$ has heavier tails than $p$ ($\sigma_q^2 = 4 &gt; 1 = \sigma_p^2$), avoiding the tail-mismatch weight blow-up warned about at the end of the § Importance sampling section. If instead we had picked $\sigma_q^2 &lt; 1$, the weight $w(x) \propto \exp(+\text{const}\,x^2)$ would blow up in the tails and the variance would diverge.</span>
 <span id="cb13-568"><a href="#cb13-568" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-569"><a href="#cb13-569" aria-hidden="true" tabindex="-1"></a>Control variates. Estimate $\theta = \mathbb{E}<span class="co">[</span><span class="ot">h(X)</span><span class="co">]</span>$ with $X \sim \text{Uniform}(0, 1)$ and $h(x) = e^x$, using $X$ itself as a control variate (its mean is $1/2$). Derive the optimal coefficient $c^\star = -\text{Cov}(h(X), X) / \text{Var}(X)$ and write the control-variate estimator.</span>
+<span id="cb13-569"><a href="#cb13-569" aria-hidden="true" tabindex="-1"></a>**Cross-reference:** § Importance sampling — definition of the weight $w(x) = p(x)/q(x)$ and the unbiased estimator $\widehat I = N^{-1}\sum f(x_i) w(x_i)$.</span>
 <span id="cb13-570"><a href="#cb13-570" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-571"><a href="#cb13-571" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-572"><a href="#cb13-572" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-573"><a href="#cb13-573" aria-hidden="true" tabindex="-1"></a>For $X \sim \text{Uniform}(0,1)$, $\text{Var}(X) = 1/12$, and integrating by parts</span>
-<span id="cb13-574"><a href="#cb13-574" aria-hidden="true" tabindex="-1"></a>$$E<span class="co">[</span><span class="ot">X e^X</span><span class="co">]</span> = e - (e - 1) = 1, \qquad \text{Cov}(e^X, X) = 1 - \tfrac{1}{2}(e - 1) = \tfrac{3 - e}{2}.$$</span>
-<span id="cb13-575"><a href="#cb13-575" aria-hidden="true" tabindex="-1"></a>Hence</span>
-<span id="cb13-576"><a href="#cb13-576" aria-hidden="true" tabindex="-1"></a>$$c^\star = -\frac{\text{Cov}(e^X, X)}{\text{Var}(X)} = -12\cdot\frac{3 - e}{2} = 6(e - 3),$$</span>
-<span id="cb13-577"><a href="#cb13-577" aria-hidden="true" tabindex="-1"></a>and the control-variate estimator is</span>
-<span id="cb13-578"><a href="#cb13-578" aria-hidden="true" tabindex="-1"></a>$$\widehat{\theta}_{\text{cv}} = \frac{1}{N}\sum_{i=1}^N \left<span class="co">[</span><span class="ot">e^{X_i} + c^\star\!\left(X_i - \tfrac{1}{2}\right)\right</span><span class="co">]</span>.$$</span>
-<span id="cb13-579"><a href="#cb13-579" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-580"><a href="#cb13-580" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-581"><a href="#cb13-581" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-582"><a href="#cb13-582" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-583"><a href="#cb13-583" aria-hidden="true" tabindex="-1"></a>Two-state Markov chain. The transition matrix is</span>
-<span id="cb13-584"><a href="#cb13-584" aria-hidden="true" tabindex="-1"></a>$$T = \begin{pmatrix} 0.7 &amp; 0.3 <span class="sc">\\</span> 0.4 &amp; 0.6 \end{pmatrix}.$$</span>
-<span id="cb13-585"><a href="#cb13-585" aria-hidden="true" tabindex="-1"></a>Find the stationary distribution $\pi$.</span>
-<span id="cb13-586"><a href="#cb13-586" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-587"><a href="#cb13-587" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-588"><a href="#cb13-588" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-589"><a href="#cb13-589" aria-hidden="true" tabindex="-1"></a>With $a = T_{12} = 0.3$ and $b = T_{21} = 0.4$, balancing the off-diagonal flows $\pi_1 a = \pi_2 b$ together with $\pi_1 + \pi_2 = 1$ gives</span>
-<span id="cb13-590"><a href="#cb13-590" aria-hidden="true" tabindex="-1"></a>$$\pi_1 = \frac{b}{a + b} = \frac{0.4}{0.7} = \frac{4}{7}, \qquad \pi_2 = \frac{a}{a + b} = \frac{0.3}{0.7} = \frac{3}{7}.$$</span>
-<span id="cb13-591"><a href="#cb13-591" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-592"><a href="#cb13-592" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-593"><a href="#cb13-593" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-594"><a href="#cb13-594" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-595"><a href="#cb13-595" aria-hidden="true" tabindex="-1"></a>Detailed balance check. With $T$ as above, verify whether the candidate stationary distribution $\pi = (4/7,\, 3/7)$ satisfies $\pi_i T_{ij} = \pi_j T_{ji}$.</span>
-<span id="cb13-596"><a href="#cb13-596" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-597"><a href="#cb13-597" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-598"><a href="#cb13-598" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-599"><a href="#cb13-599" aria-hidden="true" tabindex="-1"></a>Comparing the two flows,</span>
-<span id="cb13-600"><a href="#cb13-600" aria-hidden="true" tabindex="-1"></a>$$\pi_1 T_{12} = \tfrac{4}{7}\cdot 0.3 = \tfrac{1.2}{7}, \qquad \pi_2 T_{21} = \tfrac{3}{7}\cdot 0.4 = \tfrac{1.2}{7}.$$</span>
-<span id="cb13-601"><a href="#cb13-601" aria-hidden="true" tabindex="-1"></a>The two are equal, so detailed balance holds and the chain is reversible with stationary law $\pi = (4/7, 3/7)$.</span>
-<span id="cb13-602"><a href="#cb13-602" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-603"><a href="#cb13-603" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-604"><a href="#cb13-604" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-572"><a href="#cb13-572" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-573"><a href="#cb13-573" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-574"><a href="#cb13-574" aria-hidden="true" tabindex="-1"></a>Importance sampling for a tail probability. Estimate $\mathbb{P}_p(X &gt; 3)$ for $p = \mathcal{N}(0, 1)$ using the shifted proposal $q = \mathcal{N}(3, 1)$. Write the estimator and explain why the proposal beats naïve Monte Carlo.</span>
+<span id="cb13-575"><a href="#cb13-575" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-576"><a href="#cb13-576" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-577"><a href="#cb13-577" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-578"><a href="#cb13-578" aria-hidden="true" tabindex="-1"></a>The task is to estimate the rare-event probability $P_p(X &gt; 3)$ under $p = \mathcal N(0, 1)$ using the shifted proposal $q = \mathcal N(3, 1)$, and to justify why this beats naive Monte Carlo. The event is $f(X) = \mathbb 1_{X &gt; 3}$, so by the § Importance sampling definition,</span>
+<span id="cb13-579"><a href="#cb13-579" aria-hidden="true" tabindex="-1"></a>$$P_p(X &gt; 3) = E_p<span class="co">[</span><span class="ot">\mathbb 1_{X &gt; 3}</span><span class="co">]</span> = E_q<span class="co">[</span><span class="ot">\mathbb 1_{X &gt; 3}\,w(X)</span><span class="co">]</span>, \qquad w(x) = \frac{p(x)}{q(x)}.$$</span>
+<span id="cb13-580"><a href="#cb13-580" aria-hidden="true" tabindex="-1"></a>Compute the weight ratio of two unit-variance Gaussians differing only in mean:</span>
+<span id="cb13-581"><a href="#cb13-581" aria-hidden="true" tabindex="-1"></a>$$w(x) = \frac{(2\pi)^{-1/2}\exp(-x^2/2)}{(2\pi)^{-1/2}\exp(-(x-3)^2/2)} = \exp<span class="sc">\!</span>\left<span class="co">[</span><span class="ot">-\frac{x^2}{2} + \frac{(x - 3)^2}{2}\right</span><span class="co">]</span> = \exp<span class="sc">\!</span>\left(-3x + \frac{9}{2}\right).$$</span>
+<span id="cb13-582"><a href="#cb13-582" aria-hidden="true" tabindex="-1"></a>With $x_1, \ldots, x_N \stackrel{\text{iid}}{\sim} q = \mathcal N(3, 1)$, the estimator prescribed in § Importance sampling is</span>
+<span id="cb13-583"><a href="#cb13-583" aria-hidden="true" tabindex="-1"></a>$$\widehat P = \frac{1}{N}\sum_{i=1}^N \mathbb 1_{x_i &gt; 3}\,e^{-3 x_i + 9/2}.$$</span>
+<span id="cb13-584"><a href="#cb13-584" aria-hidden="true" tabindex="-1"></a>Under $p$, the target probability is $\Phi^c(3) = 1 - \Phi(3) \approx 1.35\times 10^{-3}$. Naive Monte Carlo produces a Bernoulli$(\Phi^c(3))$ indicator, whose relative variance is $\text{Var}/\text{mean}^2 = (1 - p)/(N p) \approx 1/(N\Phi^c(3))$ — enormous unless $N \gg 10^3$ (this is exactly the rare-event blow-up flagged in § Motivation). Under $q = \mathcal N(3, 1)$, approximately half of all samples satisfy $x_i &gt; 3$ (since 3 is the mean), so the variance of the estimator is $O(1/N)$ with no rare-event penalty — an exponential efficiency gain in the tail. Provided the weight $w$ is finite where $q$ has support (which holds because both densities are strictly positive everywhere), the estimator is unbiased by the § Importance sampling identity.</span>
+<span id="cb13-585"><a href="#cb13-585" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-586"><a href="#cb13-586" aria-hidden="true" tabindex="-1"></a>**Cross-reference:** § Importance sampling — definition and unbiasedness of $\widehat I = N^{-1}\sum f(x_i)w(x_i)$; the rare-event weight-degeneracy discussion in § Motivation and the closing paragraph of § Importance sampling.</span>
+<span id="cb13-587"><a href="#cb13-587" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-588"><a href="#cb13-588" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-589"><a href="#cb13-589" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-590"><a href="#cb13-590" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-591"><a href="#cb13-591" aria-hidden="true" tabindex="-1"></a>Effective sample size. For three normalised importance weights $(w_1, w_2, w_3) = (0.7,\, 0.2,\, 0.1)$ compute $\text{ESS} = 1 / \sum_i w_i^2$.</span>
+<span id="cb13-592"><a href="#cb13-592" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-593"><a href="#cb13-593" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-594"><a href="#cb13-594" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-595"><a href="#cb13-595" aria-hidden="true" tabindex="-1"></a>We are asked to compute the ESS for the normalised importance weights $(w_1, w_2, w_3) = (0.7, 0.2, 0.1)$. By the § Importance sampling definition of effective sample size,</span>
+<span id="cb13-596"><a href="#cb13-596" aria-hidden="true" tabindex="-1"></a>$$\text{ESS} = \frac{(\sum_i \tilde w_i)^2}{\sum_i \tilde w_i^2}.$$</span>
+<span id="cb13-597"><a href="#cb13-597" aria-hidden="true" tabindex="-1"></a>When the weights are already normalised so that $\sum_i w_i = 1$, the formula collapses to $\text{ESS} = 1/\sum_i w_i^2$ (as stated in the exercise). Compute the denominator directly:</span>
+<span id="cb13-598"><a href="#cb13-598" aria-hidden="true" tabindex="-1"></a>$$\sum_i w_i^2 = 0.7^2 + 0.2^2 + 0.1^2 = 0.49 + 0.04 + 0.01 = 0.54.$$</span>
+<span id="cb13-599"><a href="#cb13-599" aria-hidden="true" tabindex="-1"></a>Hence</span>
+<span id="cb13-600"><a href="#cb13-600" aria-hidden="true" tabindex="-1"></a>$$\text{ESS} = \frac{1}{0.54} = \frac{100}{54} = \frac{50}{27} \approx 1.85.$$</span>
+<span id="cb13-601"><a href="#cb13-601" aria-hidden="true" tabindex="-1"></a>For reference, the § Importance sampling definition notes that if all weights were equal ($w_i = 1/3$ here), then $\sum_i w_i^2 = 3\cdot (1/3)^2 = 1/3$ and $\text{ESS} = 3 = N$, the ideal case. Instead $\text{ESS} \approx 1.85$: three weighted samples carry less than two independent-equivalent draws, dominated by $w_1 = 0.7$. Since $\text{ESS}/N = 1.85/3 \approx 0.62$, this is on the borderline of the rule-of-thumb threshold $\text{ESS} &lt; N/10$ (which would flag severe degeneracy) — mild degeneracy, but a warning that with more samples in the same regime the tails would collapse.</span>
+<span id="cb13-602"><a href="#cb13-602" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-603"><a href="#cb13-603" aria-hidden="true" tabindex="-1"></a>**Cross-reference:** § Importance sampling — definition of $\text{ESS} = (\sum \tilde w_i)^2 / \sum \tilde w_i^2$ and the $N_{\text{eff}} = N$ equal-weights limit.</span>
+<span id="cb13-604"><a href="#cb13-604" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-605"><a href="#cb13-605" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-606"><a href="#cb13-606" aria-hidden="true" tabindex="-1"></a>Metropolis acceptance. For target $\pi(x) \propto e^{-x^2/2}$ on $\mathbb{R}$ with a symmetric proposal $q(x' \mid x) = q(x \mid x')$, write the acceptance probability $\alpha(x \to x')$ in closed form and identify when it equals $1$.</span>
-<span id="cb13-607"><a href="#cb13-607" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-608"><a href="#cb13-608" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-609"><a href="#cb13-609" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-610"><a href="#cb13-610" aria-hidden="true" tabindex="-1"></a>Symmetry of $q$ cancels the proposal ratio, leaving</span>
-<span id="cb13-611"><a href="#cb13-611" aria-hidden="true" tabindex="-1"></a>$$\alpha(x \to x') = \min<span class="sc">\!</span>\left(1,\,\frac{\pi(x')}{\pi(x)}\right) = \min<span class="sc">\!</span>\left(1,\,\exp<span class="sc">\!</span>\left<span class="co">[</span><span class="ot">\tfrac{1}{2}(x^2 - x'^2)\right</span><span class="co">]</span>\right).$$</span>
-<span id="cb13-612"><a href="#cb13-612" aria-hidden="true" tabindex="-1"></a>Acceptance equals $1$ whenever $x'^2 \leq x^2$, i.e.\ the proposal moves closer to the mode at the origin; otherwise it accepts with probability $\exp<span class="co">[</span><span class="ot">(x^2 - x'^2)/2</span><span class="co">]</span> &lt; 1$.</span>
-<span id="cb13-613"><a href="#cb13-613" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-614"><a href="#cb13-614" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-615"><a href="#cb13-615" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-616"><a href="#cb13-616" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-617"><a href="#cb13-617" aria-hidden="true" tabindex="-1"></a>*(Define and explain.)* For a stationary Markov chain $<span class="sc">\{</span>x_t<span class="sc">\}</span>_{t=1}^N$ and observable $A(x)$, define the autocorrelation function $C_A(\tau)$, the normalised autocorrelation $\rho_A(\tau)$, and the integrated autocorrelation time $\tau_{\text{int}}$. State the formula for the effective sample size $N_{\text{eff}}$.</span>
-<span id="cb13-618"><a href="#cb13-618" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-619"><a href="#cb13-619" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-620"><a href="#cb13-620" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-621"><a href="#cb13-621" aria-hidden="true" tabindex="-1"></a>The autocorrelation, its normalised version, and the integrated time are</span>
-<span id="cb13-622"><a href="#cb13-622" aria-hidden="true" tabindex="-1"></a>$$C_A(\tau) = E<span class="co">[</span><span class="ot">A(x_t)A(x_{t+\tau})</span><span class="co">]</span> - E<span class="co">[</span><span class="ot">A</span><span class="co">]</span>^2, \quad \rho_A(\tau) = \frac{C_A(\tau)}{C_A(0)}, \quad \tau_{\text{int}} = 1 + 2\sum_{\tau=1}^\infty \rho_A(\tau).$$</span>
-<span id="cb13-623"><a href="#cb13-623" aria-hidden="true" tabindex="-1"></a>The effective sample size after $N$ correlated draws is</span>
-<span id="cb13-624"><a href="#cb13-624" aria-hidden="true" tabindex="-1"></a>$$N_{\text{eff}} \approx \frac{N}{\tau_{\text{int}}},$$</span>
-<span id="cb13-625"><a href="#cb13-625" aria-hidden="true" tabindex="-1"></a>i.e.\ the chain carries $N_{\text{eff}}$ independent draws' worth of information about $E_\pi<span class="co">[</span><span class="ot">A</span><span class="co">]</span>$.</span>
-<span id="cb13-626"><a href="#cb13-626" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-627"><a href="#cb13-627" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-628"><a href="#cb13-628" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-629"><a href="#cb13-629" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-630"><a href="#cb13-630" aria-hidden="true" tabindex="-1"></a>*(Define and explain.)* Explain in one paragraph why Monte Carlo methods are central in Bayesian inference. Contrast with grid-based numerical integration in $d$ dimensions. What is the difference between using independent posterior samples and samples from a Markov chain?</span>
+<span id="cb13-606"><a href="#cb13-606" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-607"><a href="#cb13-607" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-608"><a href="#cb13-608" aria-hidden="true" tabindex="-1"></a>Antithetic variates. Let $U \sim \text{Uniform}(0, 1)$ and consider the estimator $\tfrac{1}{2}<span class="co">[</span><span class="ot">g(U) + g(1 - U)</span><span class="co">]</span>$. Show that when $g$ is monotone, $\text{Cov}(g(U), g(1-U)) \leq 0$ and the estimator has variance no larger than the single-sample estimator.</span>
+<span id="cb13-609"><a href="#cb13-609" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-610"><a href="#cb13-610" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-611"><a href="#cb13-611" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-612"><a href="#cb13-612" aria-hidden="true" tabindex="-1"></a>If $g$ is monotone, $g(U)$ and $g(1-U)$ are monotone in $U$ in opposite senses, so by the Chebyshev/FKG correlation inequality</span>
+<span id="cb13-613"><a href="#cb13-613" aria-hidden="true" tabindex="-1"></a>$$\text{Cov}(g(U),\,g(1-U)) \leq 0.$$</span>
+<span id="cb13-614"><a href="#cb13-614" aria-hidden="true" tabindex="-1"></a>With $\sigma^2 = \text{Var}\,g(U) = \text{Var}\,g(1-U)$,</span>
+<span id="cb13-615"><a href="#cb13-615" aria-hidden="true" tabindex="-1"></a>$$\text{Var}<span class="sc">\!</span>\left(\tfrac{1}{2}<span class="co">[</span><span class="ot">g(U) + g(1-U)</span><span class="co">]</span>\right) = \tfrac{1}{4}<span class="sc">\!</span>\left<span class="co">[</span><span class="ot">2\sigma^2 + 2\,\text{Cov}\right</span><span class="co">]</span> = \tfrac{\sigma^2}{2} + \tfrac{1}{2}\text{Cov} \leq \tfrac{\sigma^2}{2},$$</span>
+<span id="cb13-616"><a href="#cb13-616" aria-hidden="true" tabindex="-1"></a>which is at most the variance $\sigma^2/2$ of the average of two independent draws of $g(U)$, and strictly smaller when the covariance is negative.</span>
+<span id="cb13-617"><a href="#cb13-617" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-618"><a href="#cb13-618" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-619"><a href="#cb13-619" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-620"><a href="#cb13-620" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-621"><a href="#cb13-621" aria-hidden="true" tabindex="-1"></a>Control variates. Estimate $\theta = \mathbb{E}<span class="co">[</span><span class="ot">h(X)</span><span class="co">]</span>$ with $X \sim \text{Uniform}(0, 1)$ and $h(x) = e^x$, using $X$ itself as a control variate (its mean is $1/2$). Derive the optimal coefficient $c^\star = -\text{Cov}(h(X), X) / \text{Var}(X)$ and write the control-variate estimator.</span>
+<span id="cb13-622"><a href="#cb13-622" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-623"><a href="#cb13-623" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-624"><a href="#cb13-624" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-625"><a href="#cb13-625" aria-hidden="true" tabindex="-1"></a>For $X \sim \text{Uniform}(0,1)$, $\text{Var}(X) = 1/12$, and integrating by parts</span>
+<span id="cb13-626"><a href="#cb13-626" aria-hidden="true" tabindex="-1"></a>$$E<span class="co">[</span><span class="ot">X e^X</span><span class="co">]</span> = e - (e - 1) = 1, \qquad \text{Cov}(e^X, X) = 1 - \tfrac{1}{2}(e - 1) = \tfrac{3 - e}{2}.$$</span>
+<span id="cb13-627"><a href="#cb13-627" aria-hidden="true" tabindex="-1"></a>Hence</span>
+<span id="cb13-628"><a href="#cb13-628" aria-hidden="true" tabindex="-1"></a>$$c^\star = -\frac{\text{Cov}(e^X, X)}{\text{Var}(X)} = -12\cdot\frac{3 - e}{2} = 6(e - 3),$$</span>
+<span id="cb13-629"><a href="#cb13-629" aria-hidden="true" tabindex="-1"></a>and the control-variate estimator is</span>
+<span id="cb13-630"><a href="#cb13-630" aria-hidden="true" tabindex="-1"></a>$$\widehat{\theta}_{\text{cv}} = \frac{1}{N}\sum_{i=1}^N \left<span class="co">[</span><span class="ot">e^{X_i} + c^\star\!\left(X_i - \tfrac{1}{2}\right)\right</span><span class="co">]</span>.$$</span>
 <span id="cb13-631"><a href="#cb13-631" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-632"><a href="#cb13-632" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-633"><a href="#cb13-633" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-634"><a href="#cb13-634" aria-hidden="true" tabindex="-1"></a>Bayesian inference reduces to posterior expectations $E<span class="co">[</span><span class="ot">f(\theta) \mid D</span><span class="co">]</span> = \int f(\theta)\pi(\theta \mid D)\,d\theta$, which Monte Carlo replaces by $\widehat{I}_N = N^{-1}\sum_i f(\theta_i)$. The Monte Carlo error scales as $\mathcal{O}(N^{-1/2})$ regardless of dimension, whereas a grid with $n$ points per axis costs $n^d$ evaluations — exponentially worse. Independent samples give $\text{Var}(\widehat{I}_N) = \text{Var}_\pi(f)/N$, while an MCMC chain inflates this by the integrated autocorrelation time,</span>
-<span id="cb13-635"><a href="#cb13-635" aria-hidden="true" tabindex="-1"></a>$$\text{Var}(\widehat{I}_N) \approx \frac{\tau_{\text{int}}}{N}\,\text{Var}_\pi(f),$$</span>
-<span id="cb13-636"><a href="#cb13-636" aria-hidden="true" tabindex="-1"></a>so the relevant figure of merit is the effective sample size $N_{\text{eff}} = N/\tau_{\text{int}}$, not the raw number of stored draws.</span>
-<span id="cb13-637"><a href="#cb13-637" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-638"><a href="#cb13-638" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-639"><a href="#cb13-639" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
-<span id="cb13-640"><a href="#cb13-640" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-641"><a href="#cb13-641" aria-hidden="true" tabindex="-1"></a>*(Compare and contrast.)* Define rejection sampling and importance sampling. State one situation where each one is preferable over the other. What is the cost of a bad proposal in each method?</span>
-<span id="cb13-642"><a href="#cb13-642" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-643"><a href="#cb13-643" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-644"><a href="#cb13-644" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-645"><a href="#cb13-645" aria-hidden="true" tabindex="-1"></a>**Rejection sampling** draws $x \sim q$ and accepts with probability $\tilde\pi(x)/[M\,q(x)]$, producing exact i.i.d.\ samples from $\pi$; **importance sampling** keeps every draw $x_i \sim q$ and weights it by $w(x_i) = \pi(x_i)/q(x_i)$ in $\widehat I = N^{-1}\sum_i f(x_i) w(x_i)$. Rejection is preferable when downstream code requires unweighted samples (e.g.\ visualisation, plugging into a black-box estimator); importance sampling is preferable for rare events or tail probabilities where $q$ can be shifted into the region of interest. The cost of a bad proposal is: in rejection, a vanishing acceptance rate $1/M$ and roughly $M$ proposals per sample; in importance sampling, weight degeneracy quantified by $\text{ESS} = 1/\sum_i w_i^2 \ll N$ and unbounded estimator variance.</span>
-<span id="cb13-646"><a href="#cb13-646" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-647"><a href="#cb13-647" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-648"><a href="#cb13-648" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-633"><a href="#cb13-633" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-634"><a href="#cb13-634" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-635"><a href="#cb13-635" aria-hidden="true" tabindex="-1"></a>Two-state Markov chain. The transition matrix is</span>
+<span id="cb13-636"><a href="#cb13-636" aria-hidden="true" tabindex="-1"></a>$$T = \begin{pmatrix} 0.7 &amp; 0.3 <span class="sc">\\</span> 0.4 &amp; 0.6 \end{pmatrix}.$$</span>
+<span id="cb13-637"><a href="#cb13-637" aria-hidden="true" tabindex="-1"></a>Find the stationary distribution $\pi$.</span>
+<span id="cb13-638"><a href="#cb13-638" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-639"><a href="#cb13-639" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-640"><a href="#cb13-640" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-641"><a href="#cb13-641" aria-hidden="true" tabindex="-1"></a>With $a = T_{12} = 0.3$ and $b = T_{21} = 0.4$, balancing the off-diagonal flows $\pi_1 a = \pi_2 b$ together with $\pi_1 + \pi_2 = 1$ gives</span>
+<span id="cb13-642"><a href="#cb13-642" aria-hidden="true" tabindex="-1"></a>$$\pi_1 = \frac{b}{a + b} = \frac{0.4}{0.7} = \frac{4}{7}, \qquad \pi_2 = \frac{a}{a + b} = \frac{0.3}{0.7} = \frac{3}{7}.$$</span>
+<span id="cb13-643"><a href="#cb13-643" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-644"><a href="#cb13-644" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-645"><a href="#cb13-645" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-646"><a href="#cb13-646" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-647"><a href="#cb13-647" aria-hidden="true" tabindex="-1"></a>Detailed balance check. With $T$ as above, verify whether the candidate stationary distribution $\pi = (4/7,\, 3/7)$ satisfies $\pi_i T_{ij} = \pi_j T_{ji}$.</span>
+<span id="cb13-648"><a href="#cb13-648" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-649"><a href="#cb13-649" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-650"><a href="#cb13-650" aria-hidden="true" tabindex="-1"></a>*(Define and explain.)* State the conditions for a Markov chain to converge to its stationary distribution. Define detailed balance and explain why it is sufficient (but not necessary) for stationarity.</span>
-<span id="cb13-651"><a href="#cb13-651" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb13-652"><a href="#cb13-652" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-653"><a href="#cb13-653" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
-<span id="cb13-654"><a href="#cb13-654" aria-hidden="true" tabindex="-1"></a>A Markov chain with transition $T(x, y)$ converges to a unique stationary law $\pi$ provided it is **irreducible** (any state reachable from any other in finite time), **aperiodic** (no cyclic class), and admits $\pi$ as an invariant measure satisfying</span>
-<span id="cb13-655"><a href="#cb13-655" aria-hidden="true" tabindex="-1"></a>$$\pi(y) = \int T(x, y)\,\pi(x)\,dx.$$</span>
-<span id="cb13-656"><a href="#cb13-656" aria-hidden="true" tabindex="-1"></a>**Detailed balance** is the local-equilibrium condition</span>
-<span id="cb13-657"><a href="#cb13-657" aria-hidden="true" tabindex="-1"></a>$$\pi(x)\,T(x, y) = \pi(y)\,T(y, x).$$</span>
-<span id="cb13-658"><a href="#cb13-658" aria-hidden="true" tabindex="-1"></a>Integrating both sides over $x$ gives the global balance equation above, so detailed balance implies stationarity. It is *not* necessary: chains can be stationary with non-zero probability currents that close up globally without balancing pairwise (e.g.\ deterministic cyclic chains).</span>
+<span id="cb13-650"><a href="#cb13-650" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-651"><a href="#cb13-651" aria-hidden="true" tabindex="-1"></a>Comparing the two flows,</span>
+<span id="cb13-652"><a href="#cb13-652" aria-hidden="true" tabindex="-1"></a>$$\pi_1 T_{12} = \tfrac{4}{7}\cdot 0.3 = \tfrac{1.2}{7}, \qquad \pi_2 T_{21} = \tfrac{3}{7}\cdot 0.4 = \tfrac{1.2}{7}.$$</span>
+<span id="cb13-653"><a href="#cb13-653" aria-hidden="true" tabindex="-1"></a>The two are equal, so detailed balance holds and the chain is reversible with stationary law $\pi = (4/7, 3/7)$.</span>
+<span id="cb13-654"><a href="#cb13-654" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-655"><a href="#cb13-655" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-656"><a href="#cb13-656" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-657"><a href="#cb13-657" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-658"><a href="#cb13-658" aria-hidden="true" tabindex="-1"></a>Metropolis acceptance. For target $\pi(x) \propto e^{-x^2/2}$ on $\mathbb{R}$ with a symmetric proposal $q(x' \mid x) = q(x \mid x')$, write the acceptance probability $\alpha(x \to x')$ in closed form and identify when it equals $1$.</span>
 <span id="cb13-659"><a href="#cb13-659" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-660"><a href="#cb13-660" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-661"><a href="#cb13-661" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
-<span id="cb13-662"><a href="#cb13-662" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-663"><a href="#cb13-663" aria-hidden="true" tabindex="-1"></a>Robert, C. P., &amp; Casella, G. (2004). *Monte Carlo Statistical Methods* (2nd ed.). Springer. Chapters 2–3 (fundamentals and inverse sampling) and Chapter 6 (importance sampling and rejection sampling).</span>
-<span id="cb13-664"><a href="#cb13-664" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-665"><a href="#cb13-665" aria-hidden="true" tabindex="-1"></a>Sivia, D. S., &amp; Skilling, J. (2006). *Data Analysis: A Bayesian Tutorial* (2nd ed.). Oxford University Press. Chapter 9 on computational methods.</span>
+<span id="cb13-661"><a href="#cb13-661" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-662"><a href="#cb13-662" aria-hidden="true" tabindex="-1"></a>Symmetry of $q$ cancels the proposal ratio, leaving</span>
+<span id="cb13-663"><a href="#cb13-663" aria-hidden="true" tabindex="-1"></a>$$\alpha(x \to x') = \min<span class="sc">\!</span>\left(1,\,\frac{\pi(x')}{\pi(x)}\right) = \min<span class="sc">\!</span>\left(1,\,\exp<span class="sc">\!</span>\left<span class="co">[</span><span class="ot">\tfrac{1}{2}(x^2 - x'^2)\right</span><span class="co">]</span>\right).$$</span>
+<span id="cb13-664"><a href="#cb13-664" aria-hidden="true" tabindex="-1"></a>Acceptance equals $1$ whenever $x'^2 \leq x^2$, i.e.\ the proposal moves closer to the mode at the origin; otherwise it accepts with probability $\exp<span class="co">[</span><span class="ot">(x^2 - x'^2)/2</span><span class="co">]</span> &lt; 1$.</span>
+<span id="cb13-665"><a href="#cb13-665" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb13-666"><a href="#cb13-666" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-667"><a href="#cb13-667" aria-hidden="true" tabindex="-1"></a>Falasco, G. Lecture notes on advanced statistics for physics analysis, April 2026. Sections 6–7.</span>
+<span id="cb13-667"><a href="#cb13-667" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-668"><a href="#cb13-668" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-669"><a href="#cb13-669" aria-hidden="true" tabindex="-1"></a>*(Define and explain.)* For a stationary Markov chain $<span class="sc">\{</span>x_t<span class="sc">\}</span>_{t=1}^N$ and observable $A(x)$, define the autocorrelation function $C_A(\tau)$, the normalised autocorrelation $\rho_A(\tau)$, and the integrated autocorrelation time $\tau_{\text{int}}$. State the formula for the effective sample size $N_{\text{eff}}$.</span>
+<span id="cb13-670"><a href="#cb13-670" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-671"><a href="#cb13-671" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-672"><a href="#cb13-672" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-673"><a href="#cb13-673" aria-hidden="true" tabindex="-1"></a>The autocorrelation, its normalised version, and the integrated time are</span>
+<span id="cb13-674"><a href="#cb13-674" aria-hidden="true" tabindex="-1"></a>$$C_A(\tau) = E<span class="co">[</span><span class="ot">A(x_t)A(x_{t+\tau})</span><span class="co">]</span> - E<span class="co">[</span><span class="ot">A</span><span class="co">]</span>^2, \quad \rho_A(\tau) = \frac{C_A(\tau)}{C_A(0)}, \quad \tau_{\text{int}} = 1 + 2\sum_{\tau=1}^\infty \rho_A(\tau).$$</span>
+<span id="cb13-675"><a href="#cb13-675" aria-hidden="true" tabindex="-1"></a>The effective sample size after $N$ correlated draws is</span>
+<span id="cb13-676"><a href="#cb13-676" aria-hidden="true" tabindex="-1"></a>$$N_{\text{eff}} \approx \frac{N}{\tau_{\text{int}}},$$</span>
+<span id="cb13-677"><a href="#cb13-677" aria-hidden="true" tabindex="-1"></a>i.e.\ the chain carries $N_{\text{eff}}$ independent draws' worth of information about $E_\pi<span class="co">[</span><span class="ot">A</span><span class="co">]</span>$.</span>
+<span id="cb13-678"><a href="#cb13-678" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-679"><a href="#cb13-679" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-680"><a href="#cb13-680" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-681"><a href="#cb13-681" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-682"><a href="#cb13-682" aria-hidden="true" tabindex="-1"></a>*(Define and explain.)* Explain in one paragraph why Monte Carlo methods are central in Bayesian inference. Contrast with grid-based numerical integration in $d$ dimensions. What is the difference between using independent posterior samples and samples from a Markov chain?</span>
+<span id="cb13-683"><a href="#cb13-683" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-684"><a href="#cb13-684" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-685"><a href="#cb13-685" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-686"><a href="#cb13-686" aria-hidden="true" tabindex="-1"></a>Bayesian inference reduces to posterior expectations $E<span class="co">[</span><span class="ot">f(\theta) \mid D</span><span class="co">]</span> = \int f(\theta)\pi(\theta \mid D)\,d\theta$, which Monte Carlo replaces by $\widehat{I}_N = N^{-1}\sum_i f(\theta_i)$. The Monte Carlo error scales as $\mathcal{O}(N^{-1/2})$ regardless of dimension, whereas a grid with $n$ points per axis costs $n^d$ evaluations — exponentially worse. Independent samples give $\text{Var}(\widehat{I}_N) = \text{Var}_\pi(f)/N$, while an MCMC chain inflates this by the integrated autocorrelation time,</span>
+<span id="cb13-687"><a href="#cb13-687" aria-hidden="true" tabindex="-1"></a>$$\text{Var}(\widehat{I}_N) \approx \frac{\tau_{\text{int}}}{N}\,\text{Var}_\pi(f),$$</span>
+<span id="cb13-688"><a href="#cb13-688" aria-hidden="true" tabindex="-1"></a>so the relevant figure of merit is the effective sample size $N_{\text{eff}} = N/\tau_{\text{int}}$, not the raw number of stored draws.</span>
+<span id="cb13-689"><a href="#cb13-689" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-690"><a href="#cb13-690" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-691"><a href="#cb13-691" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-692"><a href="#cb13-692" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-693"><a href="#cb13-693" aria-hidden="true" tabindex="-1"></a>*(Compare and contrast.)* Define rejection sampling and importance sampling. State one situation where each one is preferable over the other. What is the cost of a bad proposal in each method?</span>
+<span id="cb13-694"><a href="#cb13-694" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-695"><a href="#cb13-695" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-696"><a href="#cb13-696" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-697"><a href="#cb13-697" aria-hidden="true" tabindex="-1"></a>**Rejection sampling** draws $x \sim q$ and accepts with probability $\tilde\pi(x)/[M\,q(x)]$, producing exact i.i.d.\ samples from $\pi$; **importance sampling** keeps every draw $x_i \sim q$ and weights it by $w(x_i) = \pi(x_i)/q(x_i)$ in $\widehat I = N^{-1}\sum_i f(x_i) w(x_i)$. Rejection is preferable when downstream code requires unweighted samples (e.g.\ visualisation, plugging into a black-box estimator); importance sampling is preferable for rare events or tail probabilities where $q$ can be shifted into the region of interest. The cost of a bad proposal is: in rejection, a vanishing acceptance rate $1/M$ and roughly $M$ proposals per sample; in importance sampling, weight degeneracy quantified by $\text{ESS} = 1/\sum_i w_i^2 \ll N$ and unbounded estimator variance.</span>
+<span id="cb13-698"><a href="#cb13-698" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-699"><a href="#cb13-699" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-700"><a href="#cb13-700" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb13-701"><a href="#cb13-701" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-702"><a href="#cb13-702" aria-hidden="true" tabindex="-1"></a>*(Define and explain.)* State the conditions for a Markov chain to converge to its stationary distribution. Define detailed balance and explain why it is sufficient (but not necessary) for stationarity.</span>
+<span id="cb13-703"><a href="#cb13-703" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-704"><a href="#cb13-704" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-705"><a href="#cb13-705" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb13-706"><a href="#cb13-706" aria-hidden="true" tabindex="-1"></a>A Markov chain with transition $T(x, y)$ converges to a unique stationary law $\pi$ provided it is **irreducible** (any state reachable from any other in finite time), **aperiodic** (no cyclic class), and admits $\pi$ as an invariant measure satisfying</span>
+<span id="cb13-707"><a href="#cb13-707" aria-hidden="true" tabindex="-1"></a>$$\pi(y) = \int T(x, y)\,\pi(x)\,dx.$$</span>
+<span id="cb13-708"><a href="#cb13-708" aria-hidden="true" tabindex="-1"></a>**Detailed balance** is the local-equilibrium condition</span>
+<span id="cb13-709"><a href="#cb13-709" aria-hidden="true" tabindex="-1"></a>$$\pi(x)\,T(x, y) = \pi(y)\,T(y, x).$$</span>
+<span id="cb13-710"><a href="#cb13-710" aria-hidden="true" tabindex="-1"></a>Integrating both sides over $x$ gives the global balance equation above, so detailed balance implies stationarity. It is *not* necessary: chains can be stationary with non-zero probability currents that close up globally without balancing pairwise (e.g.\ deterministic cyclic chains).</span>
+<span id="cb13-711"><a href="#cb13-711" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb13-712"><a href="#cb13-712" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-713"><a href="#cb13-713" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb13-714"><a href="#cb13-714" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-715"><a href="#cb13-715" aria-hidden="true" tabindex="-1"></a>Robert, C. P., &amp; Casella, G. (2004). *Monte Carlo Statistical Methods* (2nd ed.). Springer. Chapters 2–3 (fundamentals and inverse sampling) and Chapter 6 (importance sampling and rejection sampling).</span>
+<span id="cb13-716"><a href="#cb13-716" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-717"><a href="#cb13-717" aria-hidden="true" tabindex="-1"></a>Sivia, D. S., &amp; Skilling, J. (2006). *Data Analysis: A Bayesian Tutorial* (2nd ed.). Oxford University Press. Chapter 9 on computational methods.</span>
+<span id="cb13-718"><a href="#cb13-718" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-719"><a href="#cb13-719" aria-hidden="true" tabindex="-1"></a>Falasco, G. Lecture notes on advanced statistics for physics analysis, April 2026. Sections 6–7.</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
