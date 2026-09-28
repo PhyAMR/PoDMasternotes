@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>7&nbsp; Dynamics of a single neuron – Physical Models of Living Systems</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/07-firing-rate-networks.html" rel="next">
+<link href="../chapters/05-neural-introduction.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-neural-introduction.html">Part II: Neural systems</a></li><li class="breadcrumb-item"><a href="../chapters/06-single-neuron-dynamics.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dynamics of a single neuron</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Physical Models of Living Systems</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Ecology</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-single-species-dynamics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Dynamics of a single species</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-multiple-species-neutral-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Multiple species and neutral theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-species-interactions-random-matrices.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Species interactions and random matrices</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Neural systems</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-neural-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Introduction to neural systems</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-single-neuron-dynamics.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dynamics of a single neuron</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-firing-rate-networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Firing-rate networks</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-plasticity-and-hopfield.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Plasticity, associative memory and Hopfield networks</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-boltzmann-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Boltzmann machines</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-brain-criticality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Structure–function and brain criticality</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-neuron" id="toc-the-neuron" class="nav-link active" data-scroll-target="#the-neuron"><span class="header-section-number">7.1</span> 6.1 The neuron</a></li>
+  <li><a href="#neuron-firing-as-response-to-a-stimulus" id="toc-neuron-firing-as-response-to-a-stimulus" class="nav-link" data-scroll-target="#neuron-firing-as-response-to-a-stimulus"><span class="header-section-number">7.2</span> 6.2 Neuron firing as response to a stimulus</a></li>
+  <li><a href="#bio-electrophysiological-modelling-of-the-neuron" id="toc-bio-electrophysiological-modelling-of-the-neuron" class="nav-link" data-scroll-target="#bio-electrophysiological-modelling-of-the-neuron"><span class="header-section-number">7.3</span> 6.3 Bio-electrophysiological modelling of the neuron</a></li>
+  <li><a href="#mccullochpitts-artificial-neuron" id="toc-mccullochpitts-artificial-neuron" class="nav-link" data-scroll-target="#mccullochpitts-artificial-neuron"><span class="header-section-number">7.4</span> 6.4 McCulloch–Pitts artificial neuron</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">7.5</span> Exercises</a></li>
+  <li><a href="#callouts" id="toc-callouts" class="nav-link" data-scroll-target="#callouts"><span class="header-section-number">7.6</span> Callouts</a></li>
+  <li><a href="#book-supplements" id="toc-book-supplements" class="nav-link" data-scroll-target="#book-supplements"><span class="header-section-number">7.7</span> Book supplements</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">7.8</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/05-neural-introduction.html">Part II: Neural systems</a></li><li class="breadcrumb-item"><a href="../chapters/06-single-neuron-dynamics.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dynamics of a single neuron</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Dynamics of a single neuron</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Before we build networks we need to understand what one node does. This chapter mirrors Prof.&nbsp;Suweis’s Chapter 6: cellular structure and membrane potential; firing rate as a response to a stimulus; the bio-electrophysiological (Hodgkin–Huxley) description; and the McCulloch–Pitts abstraction that will underlie all networks in Chapters 7–9.</p>
+<section id="the-neuron" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="the-neuron"><span class="header-section-number">7.1</span> 6.1 The neuron</h2>
+<p>Neurons are cells specialised for propagating signals over long distances. Their morphology has three functional parts:</p>
+<ul>
+<li><strong>Dendrites</strong> — highly branched extensions that receive input signals from <span class="math inline">\(\sim 10^4\)</span> other neurons through <strong>synapses</strong>.</li>
+<li><strong>Soma</strong> (cell body) — houses the nucleus; integrates the incoming currents.</li>
+<li><strong>Axon</strong> — a single, often very long (<span class="math inline">\(\gtrsim\)</span> 1 m in some sensory neurons), extension that carries the output signal to downstream neurons.</li>
+</ul>
+<div class="definition" name="Membrane potential">
+<p>The <strong>membrane potential</strong> <span class="math inline">\(V\)</span> is the electrical potential inside the cell relative to the extracellular medium. Under resting conditions <span class="math inline">\(V_{\text{rest}} \approx -70\)</span> mV. The cell is then said to be <strong>polarised</strong>.</p>
+</div>
+<p>The resting potential is maintained by <strong>ion pumps</strong> and <strong>channels</strong> in the cell membrane that create concentration gradients of Na<span class="math inline">\(^+\)</span>, K<span class="math inline">\(^+\)</span>, Ca<span class="math inline">\(^{2+}\)</span> and Cl<span class="math inline">\(^-\)</span>. In particular, K<span class="math inline">\(^+\)</span> is more concentrated inside the neuron and Na<span class="math inline">\(^+\)</span> more concentrated outside.</p>
+<div class="definition" name="Depolarisation and hyperpolarisation">
+<ul>
+<li>Current in the form of positive ions flowing <em>out</em> of the cell (or negative ions flowing <em>in</em>) drives <span class="math inline">\(V\)</span> more negative: <strong>hyperpolarisation</strong>.</li>
+<li>Current <em>into</em> the cell drives <span class="math inline">\(V\)</span> less negative or positive: <strong>depolarisation</strong>.</li>
+</ul>
+</div>
+<p>When depolarisation pushes <span class="math inline">\(V\)</span> above a threshold <span class="math inline">\(V_{th} \approx -55\)</span> mV, the neuron fires an <strong>action potential</strong> — a stereotyped <span class="math inline">\(\sim 100\)</span> mV pulse of <span class="math inline">\(\sim 1\)</span> ms duration that propagates along the axon.</p>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span>The action potential’s shape is <em>very nearly the same</em> every time; the information the neuron transmits is coded in the <em>timing</em> of spikes (rate code, temporal code), not in their amplitude. This is the <em>“all-or-none”</em> principle established by Adrian in the 1920s and mathematised by Hodgkin &amp; Huxley in the 1950s.</p>
+</div>
+</section>
+<section id="neuron-firing-as-response-to-a-stimulus" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="neuron-firing-as-response-to-a-stimulus"><span class="header-section-number">7.2</span> 6.2 Neuron firing as response to a stimulus</h2>
+<p>Given an input stimulus <span class="math inline">\(s(t)\)</span> we ask: what is the spike output? Model the spike train as a sum of Dirac deltas:</p>
+<div class="definition" name="Neural response function">
+<p>Given spike times <span class="math inline">\(\{t_i\}_{i=1}^n\)</span> in an interval <span class="math inline">\([0, T]\)</span>, the <strong>neural response function</strong> is <span class="math display">\[\rho(t) = \sum_{i=1}^{n} \delta(t - t_i) .\]</span> For any test function <span class="math inline">\(h(\tau)\)</span> the convolution <span class="math display">\[\sum_{i=1}^{n} h(t - t_i) = \int_{-\infty}^{+\infty} h(\tau)\,\rho(t - \tau)\,d\tau\]</span> converts the spike train into a smooth signal.</p>
+</div>
+<div class="definition" name="Spike-count rate and firing rate">
+<p>The <strong>spike-count rate</strong> on a window <span class="math inline">\([0, T]\)</span> is <span class="math display">\[r = \frac{n}{T} = \frac{1}{T}\int_0^T \rho(\tau)\,d\tau .\]</span> The <strong>time-dependent firing rate</strong> <span class="math inline">\(\phi(t)\)</span> is the running average of <span class="math inline">\(\rho\)</span> over a moving window; formally <span class="math display">\[\phi(t) = \lim_{\Delta t \to 0}\frac{1}{\Delta t}\,\mathbb E\!\left[\int_{t - \Delta t /2}^{t + \Delta t/2}\rho(\tau)\,d\tau\right] .\]</span></p>
+</div>
+<p>For a stationary point process <span class="math inline">\(\phi(t) = \lambda\)</span> is the intensity.</p>
+<div class="example" name="Tuning curve of a sensory neuron">
+<p>For a sensory neuron responding to an oriented visual stimulus, the firing rate as a function of orientation <span class="math inline">\(\theta\)</span> is a bell-shaped <strong>tuning curve</strong>: <span class="math display">\[\phi(\theta) = \phi_{\max}\exp\!\bigl(-(\theta - \theta^*)^2/(2\sigma^2)\bigr),\]</span> where <span class="math inline">\(\theta^*\)</span> is the preferred orientation. Cataloguing tuning curves is a workhorse method of systems neuroscience.</p>
+</div>
+</section>
+<section id="bio-electrophysiological-modelling-of-the-neuron" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="bio-electrophysiological-modelling-of-the-neuron"><span class="header-section-number">7.3</span> 6.3 Bio-electrophysiological modelling of the neuron</h2>
+<p>To go beyond phenomenology we need a physical model of the membrane. The membrane behaves as a capacitor with parallel-conductance ion channels:</p>
+<div class="definition" name="RC equivalent circuit">
+<p>For a passive patch of membrane, <span class="math display">\[C_m\,\frac{dV}{dt} = -g_L(V - V_L) + I(t) ,\]</span> where <span class="math inline">\(C_m\)</span> is the membrane capacitance, <span class="math inline">\(g_L\)</span> the leak conductance, <span class="math inline">\(V_L\)</span> the leak reversal potential, and <span class="math inline">\(I(t)\)</span> the input current. In the absence of active channels, the membrane behaves as a low-pass filter with time constant <span class="math inline">\(\tau_m = C_m/g_L \approx 10{-}30\)</span> ms.</p>
+</div>
+<div class="theorem" name="Hodgkin–Huxley model">
+<p>Adding voltage-gated Na<span class="math inline">\(^+\)</span> and K<span class="math inline">\(^+\)</span> conductances, whose gating variables <span class="math inline">\(m, h, n\)</span> obey first-order kinetics, gives <span class="math display">\[C_m\,\frac{dV}{dt} = -g_{Na}\,m^3 h\,(V - V_{Na}) - g_K\,n^4\,(V - V_K) - g_L(V - V_L) + I(t),\]</span> with <span class="math inline">\(\dot m = \alpha_m(V)(1 - m) - \beta_m(V)m\)</span>, and analogous for <span class="math inline">\(h, n\)</span>. The four-dimensional system exhibits an excitable regime with an action potential and a stable refractory period.</p>
+</div>
+<p>The Hodgkin–Huxley model won its authors the 1963 Nobel Prize in Physiology and remains the biophysical gold standard.</p>
+<div class="proposition" name="Leaky integrate-and-fire">
+<p>For network-scale modelling the Hodgkin–Huxley description is impractical. The <strong>leaky integrate-and-fire (LIF)</strong> neuron replaces the spike-generating dynamics by a threshold: integrate the passive RC equation until <span class="math inline">\(V\)</span> crosses <span class="math inline">\(V_{th}\)</span>, emit a spike, reset <span class="math inline">\(V \to V_{reset}\)</span>, and impose a refractory period <span class="math inline">\(\tau_{ref}\)</span>. LIF captures the essential firing behaviour with a single ODE and one non-linearity.</p>
+</div>
+<div class="corollary" name="LIF firing rate under constant current">
+<p>For a LIF neuron driven by a constant current <span class="math inline">\(I_0 &gt; (V_{th} - V_L)g_L\)</span>, the interspike interval is <span class="math display">\[\Delta t = \tau_m\,\ln\!\left(\frac{I_0/g_L - (V_{reset} - V_L)}{I_0/g_L - (V_{th} - V_L)}\right),\]</span> so the firing rate is <span class="math inline">\(\phi(I_0) = 1/\Delta t\)</span>. This is the <em>rate transfer function</em> used in Wilson–Cowan (Chapter 7).</p>
+</div>
+</section>
+<section id="mccullochpitts-artificial-neuron" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="mccullochpitts-artificial-neuron"><span class="header-section-number">7.4</span> 6.4 McCulloch–Pitts artificial neuron</h2>
+<p>For network-scale mathematical modelling we abstract even further. McCulloch &amp; Pitts (1943) proposed the following:</p>
+<div class="definition" name="McCulloch–Pitts neuron">
+<p>A <strong>McCulloch–Pitts neuron</strong> with <span class="math inline">\(N\)</span> inputs <span class="math inline">\(x_1, \ldots, x_N\)</span> (each 0 or 1), synaptic weights <span class="math inline">\(w_1, \ldots, w_N\)</span>, and threshold <span class="math inline">\(\theta\)</span> produces output <span class="math display">\[y = \Theta\!\left(\sum_{i=1}^{N} w_i\,x_i - \theta\right) \in \{0, 1\},\]</span> where <span class="math inline">\(\Theta\)</span> is the Heaviside step function.</p>
+</div>
+<p>The McCulloch–Pitts unit is the fundamental building block of every neural network in this course.</p>
+<div class="example" name="Logic gates from McCulloch–Pitts">
+<p>With appropriate weights and threshold, a single McCulloch–Pitts unit computes any two-input Boolean function <em>except</em> XOR. A <strong>two-layer</strong> network of such units can compute XOR — the classic Minsky–Papert observation that motivated multi-layer networks.</p>
+</div>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span>The step-function activation of the McCulloch–Pitts unit was replaced in modern practice by the sigmoid <span class="math inline">\(\sigma(x) = 1/(1 + e^{-x})\)</span> (allowing gradient-based learning) and later by ReLU <span class="math inline">\(\max(0, x)\)</span> (avoiding vanishing gradients in deep networks). Both are approximations of the biological non-linearity.</p>
+</div>
+</section>
+<section id="exercises" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="exercises"><span class="header-section-number">7.5</span> Exercises</h2>
+<div class="exercise">
+<p>Derive the LIF firing rate under constant current given above. State the parameter regime where the neuron fires periodically.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Solve <span class="math inline">\(C_m \dot V = -g_L(V - V_L) + I_0\)</span> with initial condition <span class="math inline">\(V(0) = V_{reset}\)</span> and first-passage condition <span class="math inline">\(V(\Delta t) = V_{th}\)</span>. The solution is <span class="math inline">\(V(t) = V_\infty + (V_{reset} - V_\infty)e^{-t/\tau_m}\)</span> with <span class="math inline">\(V_\infty = V_L + I_0/g_L\)</span>. Setting <span class="math inline">\(V(\Delta t) = V_{th}\)</span> and solving for <span class="math inline">\(\Delta t\)</span> gives the formula. The neuron fires periodically iff <span class="math inline">\(V_\infty &gt; V_{th}\)</span>, i.e.&nbsp;<span class="math inline">\(I_0 &gt; (V_{th} - V_L)g_L\)</span>.</p>
+</div>
+<div class="exercise">
+<p>Show that no single McCulloch–Pitts unit implements the XOR function on two inputs.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Suppose weights <span class="math inline">\(w_1, w_2\)</span> and threshold <span class="math inline">\(\theta\)</span> give XOR. Then <span class="math inline">\(w_1 + w_2 \le \theta - 1\)</span> (input <span class="math inline">\((1,1)\)</span> outputs 0), but each of <span class="math inline">\(w_1, w_2 &gt; \theta - 1\)</span> (inputs <span class="math inline">\((1,0)\)</span> and <span class="math inline">\((0,1)\)</span> output 1). Summing: <span class="math inline">\(w_1 + w_2 &gt; 2\theta - 2\)</span>. Combining with <span class="math inline">\(w_1 + w_2 \le \theta - 1\)</span>: <span class="math inline">\(\theta - 1 &gt; 2\theta - 2\)</span>, i.e.&nbsp;<span class="math inline">\(\theta &lt; 1\)</span>. But also <span class="math inline">\((0,0)\)</span> must output 0, so <span class="math inline">\(\theta &gt; 0\)</span>. Both bounds together give <span class="math inline">\(0 &lt; \theta &lt; 1\)</span>. Now check <span class="math inline">\((0, 1)\)</span>: need <span class="math inline">\(w_2 &gt; \theta &gt; 0\)</span>, and <span class="math inline">\((1, 1)\)</span>: <span class="math inline">\(w_1 + w_2 \le \theta - 1 &lt; 0\)</span>. So <span class="math inline">\(w_1 &lt; -w_2 &lt; -\theta &lt; 0\)</span>. Then <span class="math inline">\((1, 0)\)</span>: <span class="math inline">\(w_1 &lt; 0 &lt; \theta\)</span>, so output is 0, not 1. Contradiction.</p>
+</div>
+<div class="exercise">
+<p>Verify that the leak time constant <span class="math inline">\(\tau_m = C_m / g_L\)</span> has units of time given typical values <span class="math inline">\(C_m \sim 10^{-6}\,\text{F/cm}^2\)</span> and <span class="math inline">\(g_L \sim 10^{-4}\,\text{S/cm}^2\)</span>.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><span class="math inline">\(C/g = \text{F/S} = (\text{C/V})/(1/\text{Ω}) = \text{C}\cdot\text{Ω/V} = \text{s}\)</span> (since <span class="math inline">\(\text{V} = \text{Ω A} = \text{Ω C/s}\)</span>). Numerically <span class="math inline">\(\tau_m = 10^{-2}\)</span> s = 10 ms, matching biology.</p>
+</div>
+</section>
+<section id="callouts" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="callouts"><span class="header-section-number">7.6</span> Callouts</h2>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>The three levels of description — Hodgkin–Huxley, integrate-and-fire, McCulloch–Pitts — represent decreasing biological fidelity but increasing analytical tractability. Which one to use depends on the question you are asking.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-tip">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>For any rate model of a network, first sketch the transfer function <span class="math inline">\(\phi(I)\)</span> of a single neuron. Its shape (linear-rectifier, sigmoidal, threshold-linear) will determine the qualitative regimes of the network.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>The action potential is <em>stereotyped</em>: its amplitude carries no information. This is the reason firing-rate models exist — throwing away the details of each spike loses little.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-warning">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>The LIF neuron has a hard reset that removes any memory of the spike time; a soft-reset LIF (subtract <span class="math inline">\(V_{th} - V_{reset}\)</span>) can produce very different collective dynamics near the firing threshold.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="book-supplements" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="book-supplements"><span class="header-section-number">7.7</span> Book supplements</h2>
+<p>The bio-electrophysiological content of this chapter is treated in canonical detail in Dayan &amp; Abbott, <em>Theoretical Neuroscience</em>, MIT Press (2005), Chapters 5 and 6. The original references are Hodgkin &amp; Huxley, <em>A quantitative description of membrane current and its application to conduction and excitation in nerve</em>, J. Physiol. <strong>117</strong>, 500 (1952); McCulloch &amp; Pitts, <em>A logical calculus of the ideas immanent in nervous activity</em>, Bull. Math. Biophys. <strong>5</strong>, 115 (1943).</p>
+</section>
+<section id="sources" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="sources"><span class="header-section-number">7.8</span> Sources</h2>
+<p>Prof.&nbsp;Suweis, <em>PMLS Course Notes</em>, Chapter 6. Dayan &amp; Abbott, Chapters 5–6. Original references cited above.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/05-neural-introduction.html" class="pagination-link" aria-label="Introduction to neural systems">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Introduction to neural systems</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/07-firing-rate-networks.html" class="pagination-link" aria-label="Firing-rate networks">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Firing-rate networks</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Dynamics of a single neuron"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Before we build networks we need to understand what one node does. This chapter mirrors Prof. Suweis's Chapter 6: cellular structure and membrane potential; firing rate as a response to a stimulus; the bio-electrophysiological (Hodgkin–Huxley) description; and the McCulloch–Pitts abstraction that will underlie all networks in Chapters 7–9.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.1 The neuron</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Neurons are cells specialised for propagating signals over long distances. Their morphology has three functional parts:</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Dendrites** — highly branched extensions that receive input signals from $\sim 10^4$ other neurons through **synapses**.</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Soma** (cell body) — houses the nucleus; integrates the incoming currents.</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Axon** — a single, often very long ($\gtrsim$ 1 m in some sensory neurons), extension that carries the output signal to downstream neurons.</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Membrane potential"}</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>The **membrane potential** $V$ is the electrical potential inside the cell relative to the extracellular medium. Under resting conditions $V_{\text{rest}} \approx -70$ mV. The cell is then said to be **polarised**.</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>The resting potential is maintained by **ion pumps** and **channels** in the cell membrane that create concentration gradients of Na$^+$, K$^+$, Ca$^{2+}$ and Cl$^-$. In particular, K$^+$ is more concentrated inside the neuron and Na$^+$ more concentrated outside.</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Depolarisation and hyperpolarisation"}</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Current in the form of positive ions flowing *out* of the cell (or negative ions flowing *in*) drives $V$ more negative: **hyperpolarisation**.</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Current *into* the cell drives $V$ less negative or positive: **depolarisation**.</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>When depolarisation pushes $V$ above a threshold $V_{th} \approx -55$ mV, the neuron fires an **action potential** — a stereotyped $\sim 100$ mV pulse of $\sim 1$ ms duration that propagates along the axon.</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>::: {.remark}</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>The action potential's shape is *very nearly the same* every time; the information the neuron transmits is coded in the *timing* of spikes (rate code, temporal code), not in their amplitude. This is the *"all-or-none"* principle established by Adrian in the 1920s and mathematised by Hodgkin &amp; Huxley in the 1950s.</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.2 Neuron firing as response to a stimulus</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>Given an input stimulus $s(t)$ we ask: what is the spike output? Model the spike train as a sum of Dirac deltas:</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Neural response function"}</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>Given spike times $<span class="sc">\{</span>t_i<span class="sc">\}</span>_{i=1}^n$ in an interval $<span class="co">[</span><span class="ot">0, T</span><span class="co">]</span>$, the **neural response function** is</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>$$\rho(t) = \sum_{i=1}^{n} \delta(t - t_i) .$$</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>For any test function $h(\tau)$ the convolution</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>$$\sum_{i=1}^{n} h(t - t_i) = \int_{-\infty}^{+\infty} h(\tau)\,\rho(t - \tau)\,d\tau$$</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>converts the spike train into a smooth signal.</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Spike-count rate and firing rate"}</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>The **spike-count rate** on a window $<span class="co">[</span><span class="ot">0, T</span><span class="co">]</span>$ is</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>$$r = \frac{n}{T} = \frac{1}{T}\int_0^T \rho(\tau)\,d\tau .$$</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>The **time-dependent firing rate** $\phi(t)$ is the running average of $\rho$ over a moving window; formally</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>$$\phi(t) = \lim_{\Delta t \to 0}\frac{1}{\Delta t}\,\mathbb E<span class="sc">\!</span>\left<span class="co">[</span><span class="ot">\int_{t - \Delta t /2}^{t + \Delta t/2}\rho(\tau)\,d\tau\right</span><span class="co">]</span> .$$</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>For a stationary point process $\phi(t) = \lambda$ is the intensity.</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>::: {.example name="Tuning curve of a sensory neuron"}</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>For a sensory neuron responding to an oriented visual stimulus, the firing rate as a function of orientation $\theta$ is a bell-shaped **tuning curve**:</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>$$\phi(\theta) = \phi_{\max}\exp<span class="sc">\!</span>\bigl(-(\theta - \theta^*)^2/(2\sigma^2)\bigr),$$</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>where $\theta^*$ is the preferred orientation. Cataloguing tuning curves is a workhorse method of systems neuroscience.</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.3 Bio-electrophysiological modelling of the neuron</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>To go beyond phenomenology we need a physical model of the membrane. The membrane behaves as a capacitor with parallel-conductance ion channels:</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>::: {.definition name="RC equivalent circuit"}</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>For a passive patch of membrane,</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>$$C_m\,\frac{dV}{dt} = -g_L(V - V_L) + I(t) ,$$</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>where $C_m$ is the membrane capacitance, $g_L$ the leak conductance, $V_L$ the leak reversal potential, and $I(t)$ the input current. In the absence of active channels, the membrane behaves as a low-pass filter with time constant $\tau_m = C_m/g_L \approx 10{-}30$ ms.</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Hodgkin–Huxley model"}</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>Adding voltage-gated Na$^+$ and K$^+$ conductances, whose gating variables $m, h, n$ obey first-order kinetics, gives</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>$$C_m\,\frac{dV}{dt} = -g_{Na}\,m^3 h\,(V - V_{Na}) - g_K\,n^4\,(V - V_K) - g_L(V - V_L) + I(t),$$</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>with $\dot m = \alpha_m(V)(1 - m) - \beta_m(V)m$, and analogous for $h, n$. The four-dimensional system exhibits an excitable regime with an action potential and a stable refractory period.</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>The Hodgkin–Huxley model won its authors the 1963 Nobel Prize in Physiology and remains the biophysical gold standard.</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>::: {.proposition name="Leaky integrate-and-fire"}</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>For network-scale modelling the Hodgkin–Huxley description is impractical. The **leaky integrate-and-fire (LIF)** neuron replaces the spike-generating dynamics by a threshold: integrate the passive RC equation until $V$ crosses $V_{th}$, emit a spike, reset $V \to V_{reset}$, and impose a refractory period $\tau_{ref}$. LIF captures the essential firing behaviour with a single ODE and one non-linearity.</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>::: {.corollary name="LIF firing rate under constant current"}</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>For a LIF neuron driven by a constant current $I_0 &gt; (V_{th} - V_L)g_L$, the interspike interval is</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>$$\Delta t = \tau_m\,\ln<span class="sc">\!</span>\left(\frac{I_0/g_L - (V_{reset} - V_L)}{I_0/g_L - (V_{th} - V_L)}\right),$$</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>so the firing rate is $\phi(I_0) = 1/\Delta t$. This is the *rate transfer function* used in Wilson–Cowan (Chapter 7).</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="fu">## 6.4 McCulloch–Pitts artificial neuron</span></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>For network-scale mathematical modelling we abstract even further. McCulloch &amp; Pitts (1943) proposed the following:</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>::: {.definition name="McCulloch–Pitts neuron"}</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>A **McCulloch–Pitts neuron** with $N$ inputs $x_1, \ldots, x_N$ (each 0 or 1), synaptic weights $w_1, \ldots, w_N$, and threshold $\theta$ produces output</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>$$y = \Theta<span class="sc">\!</span>\left(\sum_{i=1}^{N} w_i\,x_i - \theta\right) \in <span class="sc">\{</span>0, 1<span class="sc">\}</span>,$$</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>where $\Theta$ is the Heaviside step function.</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>The McCulloch–Pitts unit is the fundamental building block of every neural network in this course.</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>::: {.example name="Logic gates from McCulloch–Pitts"}</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>With appropriate weights and threshold, a single McCulloch–Pitts unit computes any two-input Boolean function *except* XOR. A **two-layer** network of such units can compute XOR — the classic Minsky–Papert observation that motivated multi-layer networks.</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>::: {.remark}</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>The step-function activation of the McCulloch–Pitts unit was replaced in modern practice by the sigmoid $\sigma(x) = 1/(1 + e^{-x})$ (allowing gradient-based learning) and later by ReLU $\max(0, x)$ (avoiding vanishing gradients in deep networks). Both are approximations of the biological non-linearity.</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>Derive the LIF firing rate under constant current given above. State the parameter regime where the neuron fires periodically.</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>Solve $C_m \dot V = -g_L(V - V_L) + I_0$ with initial condition $V(0) = V_{reset}$ and first-passage condition $V(\Delta t) = V_{th}$. The solution is $V(t) = V_\infty + (V_{reset} - V_\infty)e^{-t/\tau_m}$ with $V_\infty = V_L + I_0/g_L$. Setting $V(\Delta t) = V_{th}$ and solving for $\Delta t$ gives the formula. The neuron fires periodically iff $V_\infty &gt; V_{th}$, i.e.\ $I_0 &gt; (V_{th} - V_L)g_L$.</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>Show that no single McCulloch–Pitts unit implements the XOR function on two inputs.</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>Suppose weights $w_1, w_2$ and threshold $\theta$ give XOR. Then $w_1 + w_2 \le \theta - 1$ (input $(1,1)$ outputs 0), but each of $w_1, w_2 &gt; \theta - 1$ (inputs $(1,0)$ and $(0,1)$ output 1). Summing: $w_1 + w_2 &gt; 2\theta - 2$. Combining with $w_1 + w_2 \le \theta - 1$: $\theta - 1 &gt; 2\theta - 2$, i.e.\ $\theta &lt; 1$. But also $(0,0)$ must output 0, so $\theta &gt; 0$. Both bounds together give $0 &lt; \theta &lt; 1$. Now check $(0, 1)$: need $w_2 &gt; \theta &gt; 0$, and $(1, 1)$: $w_1 + w_2 \le \theta - 1 &lt; 0$. So $w_1 &lt; -w_2 &lt; -\theta &lt; 0$. Then $(1, 0)$: $w_1 &lt; 0 &lt; \theta$, so output is 0, not 1. Contradiction.</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>Verify that the leak time constant $\tau_m = C_m / g_L$ has units of time given typical values $C_m \sim 10^{-6}\,\text{F/cm}^2$ and $g_L \sim 10^{-4}\,\text{S/cm}^2$.</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>$C/g = \text{F/S} = (\text{C/V})/(1/\text{Ω}) = \text{C}\cdot\text{Ω/V} = \text{s}$ (since $\text{V} = \text{Ω A} = \text{Ω C/s}$). Numerically $\tau_m = 10^{-2}$ s = 10 ms, matching biology.</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a><span class="fu">## Callouts</span></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>The three levels of description — Hodgkin–Huxley, integrate-and-fire, McCulloch–Pitts — represent decreasing biological fidelity but increasing analytical tractability. Which one to use depends on the question you are asking.</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>For any rate model of a network, first sketch the transfer function $\phi(I)$ of a single neuron. Its shape (linear-rectifier, sigmoidal, threshold-linear) will determine the qualitative regimes of the network.</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>The action potential is *stereotyped*: its amplitude carries no information. This is the reason firing-rate models exist — throwing away the details of each spike loses little.</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>The LIF neuron has a hard reset that removes any memory of the spike time; a soft-reset LIF (subtract $V_{th} - V_{reset}$) can produce very different collective dynamics near the firing threshold.</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="fu">## Book supplements</span></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>The bio-electrophysiological content of this chapter is treated in canonical detail in Dayan &amp; Abbott, *Theoretical Neuroscience*, MIT Press (2005), Chapters 5 and 6. The original references are Hodgkin &amp; Huxley, *A quantitative description of membrane current and its application to conduction and excitation in nerve*, J. Physiol. **117**, 500 (1952); McCulloch &amp; Pitts, *A logical calculus of the ideas immanent in nervous activity*, Bull. Math. Biophys. **5**, 115 (1943).</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>Prof. Suweis, *PMLS Course Notes*, Chapter 6. Dayan &amp; Abbott, Chapters 5–6. Original references cited above.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

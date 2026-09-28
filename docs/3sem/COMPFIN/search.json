@@ -1,0 +1,902 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Stochastic Finance",
+    "section": "",
+    "text": "0.1 Scope\nThese are lecture notes for Stochastic Finance — Financial Mathematics for Data Science (third-semester elective, Master in Physics of Data, University of Padova, instructor Prof. Claudio Fontana). The course is a first mathematical treatment of financial derivatives: how they are priced, how their risks are hedged, and what mathematical machinery (stochastic processes, no-arbitrage arguments, martingale representations) makes the treatment rigorous.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>About these notes</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#reading-the-notes",
+    "href": "index.html#reading-the-notes",
+    "title": "Stochastic Finance",
+    "section": "0.2 Reading the notes",
+    "text": "0.2 Reading the notes\nThe notes follow the classical continuous-time development:\n\nChapters 1–2: economic and institutional background — what markets are, what derivatives are, what “hedging” and “arbitrage” mean.\nChapter 3: the binomial (Cox–Ross–Rubinstein) model, the simplest self-consistent framework where every derivative can be priced and hedged by explicit construction.\nChapter 4: the mathematical infrastructure — Brownian motion, Itô’s lemma, stochastic differential equations.\nChapter 5: the Black–Scholes–Merton model and the celebrated pricing formula.\nChapter 6: Monte-Carlo methods for path-dependent options and high-dimensional derivatives.\nChapter 7: local volatility, stochastic volatility and calibration to option surfaces.\nChapter 8: short-rate models and the modern multi-curve framework for interest-rate derivatives.\n\nEvery chapter uses the styled callout environments to separate definitions, theorems, worked examples and remarks from the surrounding prose.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>About these notes</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#notation",
+    "href": "index.html#notation",
+    "title": "Stochastic Finance",
+    "section": "0.3 Notation",
+    "text": "0.3 Notation\n\n\\(S_t\\): spot price of an underlying asset at time \\(t\\).\n\\(B_t\\): value of the risk-free money-market account, \\(dB_t = r B_t dt\\).\n\\(W_t\\): standard Brownian motion; \\(W_t^{\\mathbb Q}\\) under an equivalent measure \\(\\mathbb Q\\).\n\\(\\mathbb P, \\mathbb Q\\): physical (statistical) and risk-neutral measures.\n\\(\\mathcal F_t\\): filtration modelling information available at time \\(t\\).\n\\(H_t = (\\alpha_t, \\beta_t)\\): self-financing trading strategy in units of asset and cash.\n\\(V_t^H\\): value of the portfolio \\(H\\) at time \\(t\\).\n\\(C(t, S; K, T)\\): value of a European call with strike \\(K\\) and maturity \\(T\\).\n\\(\\sigma(S, t)\\): local volatility; \\(\\sigma^{BS}(K, T)\\): Black–Scholes implied volatility.\n\\(\\Delta, \\Gamma, \\Theta, \\mathcal V, \\rho\\): the option Greeks.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>About these notes</span>"
+    ]
+  },
+  {
+    "objectID": "index.html#sources",
+    "href": "index.html#sources",
+    "title": "Stochastic Finance",
+    "section": "0.4 Sources",
+    "text": "0.4 Sources\nThese notes are a re-organised version of Stochastic Finance lecture slides by Prof. Claudio Fontana (University of Padova, 2025) with additional material from the standard textbooks:\n\nTomas Björk, Arbitrage Theory in Continuous Time, 4th ed., Oxford, 2020.\nMarek Musiela & Marek Rutkowski, Martingale Methods in Financial Modelling, 2nd ed., Springer, 2005.\nJohn C. Hull, Options, Futures, and Other Derivatives, 11th ed., Pearson, 2021.\n\nEvery chapter closes with its own Sources section naming the specific slide decks and book chapters from which its content was drawn.",
+    "crumbs": [
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>About these notes</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html",
+    "href": "chapters/01-financial-markets.html",
+    "title": "2  Financial markets",
+    "section": "",
+    "text": "2.1 What is a financial market?\nBefore we start pricing derivatives it is worth understanding the setting in which they trade. This chapter is short on mathematics and long on institutional vocabulary: the players, the instruments, the sources of risk, and the language (“bid–ask”, “arbitrage”, “hedging”) that the rest of the course assumes.\nThe venue can be centralised (a stock exchange), electronically distributed (an ECN), or bilateral over-the-counter (OTC). What all markets share is a mechanism for matching buyers to sellers and a settlement infrastructure that guarantees delivery.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#what-is-a-financial-market",
+    "href": "chapters/01-financial-markets.html#what-is-a-financial-market",
+    "title": "2  Financial markets",
+    "section": "",
+    "text": "A financial market is an organised venue where economic agents exchange contingent claims — contracts whose payoff depends on future values of certain observable random variables (prices, rates, credit events). The market’s function is to allocate risk and capital across time and across agents.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#main-sources-of-risk",
+    "href": "chapters/01-financial-markets.html#main-sources-of-risk",
+    "title": "2  Financial markets",
+    "section": "2.2 Main sources of risk",
+    "text": "2.2 Main sources of risk\n\nFinancial risk factors are traditionally decomposed into:\n\nMarket risk — losses from changes in market variables (equity prices, FX rates, interest rates, commodity prices).\nCredit risk — losses from counterparty default or from a credit rating downgrade.\nLiquidity risk — losses from being unable to close a position at fair value.\nOperational risk — losses from failures in processes, people, or systems.\nModel risk — losses from a mathematical model being wrong.\n\n\n\nRemark. The 2007–2008 crisis was in essence a compound event: model risk (mispriced CDOs) triggered credit risk (mortgage defaults) which cascaded via liquidity risk (frozen interbank markets). Modern risk management treats these categories as strongly coupled, not orthogonal.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#buyers-sellers-and-market-makers",
+    "href": "chapters/01-financial-markets.html#buyers-sellers-and-market-makers",
+    "title": "2  Financial markets",
+    "section": "2.3 Buyers, sellers, and market makers",
+    "text": "2.3 Buyers, sellers, and market makers\n\nEvery trade has three natural roles:\n\nBuyers and sellers — agents with directional views or hedging needs.\nMarket makers — dealers who continuously post two-sided quotes (bid and ask) and profit from the spread.\nClearing houses — central counterparties that step between buyer and seller after the trade to mutualise counterparty risk.\n\n\n\nFor a highly liquid pair (EUR/USD) the bid–ask spread quoted to a professional counterparty is \\(\\sim 0.1\\) pip on a \\(\\$1\\)M ticket, i.e. transaction cost \\(\\sim \\$10\\). For a less liquid pair (USD/TRY at 3 a.m.) the spread might be \\(10\\) pips, i.e. \\(\\$1000\\). The spread is the price of immediate execution: patient traders can post limit orders at mid and hope to get filled.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#asset-classes",
+    "href": "chapters/01-financial-markets.html#asset-classes",
+    "title": "2  Financial markets",
+    "section": "2.4 Asset classes",
+    "text": "2.4 Asset classes\nA financial market is typically split into asset classes, each with its own conventions and risk factors:\n\nEquities — stocks and stock indices.\nFixed income — bonds and interest-rate derivatives.\nForeign exchange (FX) — currency spot and forwards.\nCommodities — physical commodities and their futures.\nCredit — CDS and cash bonds referencing corporate or sovereign issuers.\n\nEach has its own pricing conventions (yield vs price for bonds, forward points for FX, basis quotes for commodities), but the mathematical machinery — Itô calculus, risk-neutral valuation — is universal.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#the-time-value-of-money",
+    "href": "chapters/01-financial-markets.html#the-time-value-of-money",
+    "title": "2  Financial markets",
+    "section": "2.5 The time value of money",
+    "text": "2.5 The time value of money\nThe single most important simple idea in finance:\n\nThe discount factor \\(P(t, T)\\) is the value at time \\(t\\) of receiving 1 unit of currency with certainty at future time \\(T\\). In a deterministic-rate world with continuously compounded rate \\(r\\), \\[P(t, T) = e^{-r(T - t)}.\\]\n\n\nThe present value at time \\(0\\) of a deterministic cash flow \\((c_1, c_2, \\ldots, c_n)\\) paid at times \\((t_1, \\ldots, t_n)\\) is \\[PV_0 = \\sum_{i=1}^{n} c_i\\,P(0, t_i).\\]",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#arbitrage",
+    "href": "chapters/01-financial-markets.html#arbitrage",
+    "title": "2  Financial markets",
+    "section": "2.6 Arbitrage",
+    "text": "2.6 Arbitrage\nThe concept that structures every derivative-pricing argument in the rest of the course:\n\nAn arbitrage is a self-financing trading strategy \\(H\\) such that the initial portfolio value is zero, the final value is non-negative with probability one, and strictly positive with positive probability: \\[V_0^H = 0,\\quad V_T^H \\geq 0 \\text{ a.s.},\\quad P(V_T^H &gt; 0) &gt; 0.\\]\n\n\nIn a well-functioning market, arbitrages cannot exist — or if they do, they are exploited so quickly by traders that they disappear on timescales below the observation resolution. Pricing models are required to be arbitrage-free: their prices must satisfy consistency relations that rule out riskless profit.\n\n\nConsider an equity \\(S\\) paying no dividends and a forward contract \\(F\\) maturing at \\(T\\) with strike \\(K\\). If \\(K &lt; S_0 e^{rT}\\), buy the forward, short-sell the equity, invest the proceeds at rate \\(r\\), and at \\(T\\) take delivery of the forward using the invested cash. Net cash flow: \\(S_0 e^{rT} - K &gt; 0\\) — arbitrage. Absence of arbitrage forces the forward price to equal \\(F = S_0 e^{rT}\\).",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#hedging",
+    "href": "chapters/01-financial-markets.html#hedging",
+    "title": "2  Financial markets",
+    "section": "2.7 Hedging",
+    "text": "2.7 Hedging\n\nHedging is the practice of offsetting the risk of one position with another instrument whose payoff moves in the opposite direction. A perfect hedge produces a portfolio whose value is deterministic (zero variance) over some time horizon.\n\nHedging turns out to be the dual of pricing: as we will see in Chapter 5, the Black–Scholes price of a European option is exactly the cost of the self-financing portfolio that perfectly replicates its payoff at maturity.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#regulated-versus-otc-markets",
+    "href": "chapters/01-financial-markets.html#regulated-versus-otc-markets",
+    "title": "2  Financial markets",
+    "section": "2.8 Regulated versus OTC markets",
+    "text": "2.8 Regulated versus OTC markets\nMost equity trading happens on regulated exchanges; most FX, credit and interest-rate derivative trading historically happened over-the-counter, bilaterally. After 2008 the trend has been strongly toward central clearing and standardisation:\n\nRemark. A CDS on a major sovereign now clears through ICE Clear Credit; a standardised interest-rate swap in the major currencies clears through LCH. Central clearing greatly reduces counterparty risk but concentrates it in the clearing house — a new form of systemic risk that regulators watch closely.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#exercises",
+    "href": "chapters/01-financial-markets.html#exercises",
+    "title": "2  Financial markets",
+    "section": "2.9 Exercises",
+    "text": "2.9 Exercises\n\nA stock is trading at \\(S_0 = 100\\). The 3-month risk-free rate is \\(r = 5\\%\\) (continuously compounded). What is the arbitrage-free forward price for delivery in 3 months?\n\n\nSolution. \\(F = S_0 e^{rT} = 100 \\cdot e^{0.05 \\cdot 0.25} \\approx 101.26\\).\n\n\nThe stock pays a discrete dividend \\(D\\) two months from now. How does the forward price change?\n\n\nSolution. \\(F = (S_0 - PV(D))e^{rT} = (S_0 - D e^{-rT_D})e^{rT}\\) where \\(T_D = 2/12\\). The forward is lower because the buyer of the forward does not receive the dividend, so its value must reflect the missed cash flow.\n\n\nTwo zero-coupon bonds trade in the market: one maturing in 1 year at price \\(B_1 = 98\\) and one in 2 years at \\(B_2 = 95\\). What are the implied 1-year and 2-year spot rates?\n\n\nSolution. \\(r_1 = -\\ln(B_1/100) = -\\ln 0.98 \\approx 2.02\\%\\); \\(r_2 = -\\tfrac12\\ln(B_2/100) = -\\tfrac12\\ln 0.95 \\approx 2.56\\%\\). The upward-sloping curve implies the market expects rates to rise (or a positive term premium).",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#callouts",
+    "href": "chapters/01-financial-markets.html#callouts",
+    "title": "2  Financial markets",
+    "section": "2.10 Callouts",
+    "text": "2.10 Callouts\n\n\n\n\n\n\nThe no-arbitrage principle is an idealisation. Real markets show occasional small arbitrages (basis mispricings, ETF NAV drift) that persist for milliseconds; they are exploited by high-frequency market-makers, not by us.\n\n\n\n\n\n\n\n\n\nWhenever you’re stuck on a pricing question, ask: “what portfolio has the same payoff?” If you can build a replicating portfolio, its cost is the price.\n\n\n\n\n\n\n\n\n\nDiscounting is at the risk-free rate only for deterministically-known cash flows. For risky flows the correct discount rate depends on the risk aversion of the investor and, in the risk-neutral world (Chapter 3), on the choice of numéraire.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/01-financial-markets.html#sources",
+    "href": "chapters/01-financial-markets.html#sources",
+    "title": "2  Financial markets",
+    "section": "2.11 Sources",
+    "text": "2.11 Sources\nProf. Fontana, Stochastic Finance slides, Chapter 1 (slides_1.pdf). Hull, Options, Futures, and Other Derivatives, Chapter 1.",
+    "crumbs": [
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>Financial markets</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html",
+    "href": "chapters/02-financial-derivatives.html",
+    "title": "3  Financial derivatives",
+    "section": "",
+    "text": "3.1 Classification\nA derivative is a contract whose payoff at maturity depends on the future value of some other observable — the underlying. This chapter introduces the classical derivatives (forwards, futures, options, swaps) and the four fundamental parity relations that any consistent pricing framework must respect.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html#classification",
+    "href": "chapters/02-financial-derivatives.html#classification",
+    "title": "3  Financial derivatives",
+    "section": "",
+    "text": "A derivative is a contract \\(C\\) with a specified payoff at (or before) a maturity date \\(T\\), where the payoff is a function of the price path \\(\\{S_t : 0 \\leq t \\leq T\\}\\) of an underlying \\(S\\). The set of possible derivatives is enormous; the ones traded in liquid markets fall into a small number of families.\n\n\nRemark (Terminology zoo). The two orthogonal axes of classification are the exercise style — European (only at \\(T\\)), American (any time \\(\\leq T\\)), Bermudan (a finite set of dates) — and the payoff structure — vanilla (call or put), digital, barrier, Asian, look-back, etc. In these notes we focus on European vanilla until Chapter 6.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html#forwards-and-futures",
+    "href": "chapters/02-financial-derivatives.html#forwards-and-futures",
+    "title": "3  Financial derivatives",
+    "section": "3.2 Forwards and futures",
+    "text": "3.2 Forwards and futures\n\nA forward is a bilateral contract to buy (long) or sell (short) an underlying \\(S\\) at time \\(T\\) at a pre-agreed forward price \\(F\\). The payoff at \\(T\\) for the long side is \\[V_T^{\\text{fwd}} = S_T - F.\\]\n\n\nUnder no-arbitrage in a market with constant risk-free rate \\(r\\) and no dividends, \\[F = S_0 e^{rT}.\\] With continuous dividends at rate \\(q\\), \\(F = S_0 e^{(r - q)T}\\); with FX, replace \\(q\\) by the foreign interest rate \\(r_f\\).\n\n\nA futures is an exchange-traded standardised forward with daily margining: gains and losses on the position are settled in cash every day. Because of margining the futures price is not identical to the forward price when interest rates are stochastic, but the difference is typically small (\\(&lt; 1\\) basis point on liquid contracts).",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html#options",
+    "href": "chapters/02-financial-derivatives.html#options",
+    "title": "3  Financial derivatives",
+    "section": "3.3 Options",
+    "text": "3.3 Options\n\nA European call on \\(S\\) with strike \\(K\\) and maturity \\(T\\) has payoff at \\(T\\) \\[C_T = (S_T - K)^+ = \\max(S_T - K, 0).\\] A European put has payoff \\(P_T = (K - S_T)^+\\).\nA call gives the buyer the right, not obligation to buy \\(S\\) at price \\(K\\) on date \\(T\\).\n\n\nAn investor buys a 6-month call on stock \\(S\\) with strike \\(K = 100\\), paying premium \\(C_0 = 5\\). At maturity, if \\(S_T = 120\\) the investor exercises: pay \\(K = 100\\), receive \\(S_T = 120\\), net gain \\(= 20 - 5 = 15\\) (excluding time value of premium). If \\(S_T = 90\\) the call expires worthless: loss = premium \\(= 5\\).\n\n\nFor European options on a non-dividend stock with strike \\(K\\) and maturity \\(T\\), \\[C_0 - P_0 = S_0 - K e^{-rT}.\\] This is a model-free no-arbitrage identity: the two portfolios “long call + short put” and “long stock + short zero-coupon bond of face \\(K\\)” have identical payoffs at \\(T\\).\n\n\nRemark. Put–call parity is one of the most useful identities in finance. It lets you infer put prices from call prices (or vice versa) without any pricing model, and it is the basis of conversion and reversal trading strategies used by market makers to lock in tiny mispricings.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html#swaps",
+    "href": "chapters/02-financial-derivatives.html#swaps",
+    "title": "3  Financial derivatives",
+    "section": "3.4 Swaps",
+    "text": "3.4 Swaps\n\nAn interest-rate swap is a bilateral contract to exchange, on a schedule of dates \\(T_1 &lt; T_2 &lt; \\ldots &lt; T_n\\), a stream of fixed-rate cash flows for a stream of floating-rate cash flows on a notional amount \\(N\\).\n\nThe fixed-leg cash flows are \\(N K \\Delta_i\\) at each \\(T_i\\) for some fixed rate \\(K\\); the floating-leg cash flows are \\(N L(T_{i-1}, T_i) \\Delta_i\\) where \\(L\\) is a market-observed reference rate (formerly LIBOR, now SOFR/€STR).\n\nThe par swap rate — the fixed rate \\(K^*\\) that makes the initial value of the swap zero — is \\[K^* = \\frac{P(0, T_0) - P(0, T_n)}{\\sum_{i=1}^{n} \\Delta_i\\,P(0, T_i)},\\] where \\(P(0, T)\\) is the discount factor to time \\(T\\).",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html#payoff-diagrams-and-structured-products",
+    "href": "chapters/02-financial-derivatives.html#payoff-diagrams-and-structured-products",
+    "title": "3  Financial derivatives",
+    "section": "3.5 Payoff diagrams and structured products",
+    "text": "3.5 Payoff diagrams and structured products\nComplex payoffs are conventionally described by their payoff diagram — payoff on the vertical axis vs \\(S_T\\) on the horizontal.\n\nA bull spread is long a call at strike \\(K_1\\) and short a call at strike \\(K_2 &gt; K_1\\), both with maturity \\(T\\). Its payoff is \\[V_T = (S_T - K_1)^+ - (S_T - K_2)^+ = \\min\\bigl(\\max(S_T - K_1, 0), K_2 - K_1\\bigr).\\] The buyer profits from a modest rise in \\(S\\) but caps the upside above \\(K_2\\). Cheaper than a single call.\n\n\nA straddle is long a call and a put at the same strike \\(K = S_0\\). Payoff: \\(|S_T - S_0|\\). Profits from any large move in either direction, regardless of sign — a pure volatility bet.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html#payoff-decomposition-and-static-hedging",
+    "href": "chapters/02-financial-derivatives.html#payoff-decomposition-and-static-hedging",
+    "title": "3  Financial derivatives",
+    "section": "3.6 Payoff decomposition and static hedging",
+    "text": "3.6 Payoff decomposition and static hedging\n\nAny twice-differentiable payoff \\(g(S_T)\\) can be replicated by a portfolio of a bond, a forward, and calls/puts of all strikes: \\[g(S_T) = g(F) + g'(F)(S_T - F) + \\int_0^F g''(K)(K - S_T)^+ dK + \\int_F^\\infty g''(K)(S_T - K)^+ dK ,\\] where \\(F\\) is any reference level (e.g. the forward price).\n\nThe Carr–Madan formula is the fundamental theorem of option replication: it tells you the option surface is a complete basis for payoff functions. This is the mathematical reason why variance swaps and other volatility products can be replicated by static portfolios of vanilla calls and puts.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html#option-greeks-preview",
+    "href": "chapters/02-financial-derivatives.html#option-greeks-preview",
+    "title": "3  Financial derivatives",
+    "section": "3.7 Option Greeks (preview)",
+    "text": "3.7 Option Greeks (preview)\nThe sensitivities of a derivative price to its inputs are called Greeks:\n\n\\(\\Delta = \\partial V/\\partial S\\): sensitivity to spot.\n\\(\\Gamma = \\partial^2 V/\\partial S^2\\): convexity in spot.\n\\(\\Theta = -\\partial V/\\partial t\\): time decay.\n\\(\\mathcal V = \\partial V/\\partial \\sigma\\): vega, sensitivity to volatility.\n\\(\\rho = \\partial V/\\partial r\\): sensitivity to interest rate.\n\nGreeks are what traders quote and hedge, not prices. Chapter 5 computes them in closed form for the Black–Scholes model.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html#exercises",
+    "href": "chapters/02-financial-derivatives.html#exercises",
+    "title": "3  Financial derivatives",
+    "section": "3.8 Exercises",
+    "text": "3.8 Exercises\n\nShow that the payoff of a long forward at price \\(F\\) equals the payoff of a long call minus a long put at strike \\(F\\): \\((S_T - F) = (S_T - F)^+ - (F - S_T)^+\\).\n\n\nSolution. Case 1: \\(S_T &gt; F\\). Left: \\(S_T - F &gt; 0\\). Right: \\((S_T - F) - 0 = S_T - F\\). ✓ Case 2: \\(S_T &lt; F\\). Left: \\(S_T - F &lt; 0\\). Right: \\(0 - (F - S_T) = S_T - F\\). ✓ So the identity holds for all \\(S_T\\). Rearranging is put–call parity in payoff form.\n\n\nA European call with strike \\(K = 100\\) and maturity \\(T = 1\\) year trades at \\(C_0 = 8\\); the corresponding put trades at \\(P_0 = 5\\). The spot is \\(S_0 = 102\\). What is the implied risk-free rate?\n\n\nSolution. Put–call parity: \\(C_0 - P_0 = S_0 - K e^{-rT}\\), so \\(8 - 5 = 102 - 100 e^{-r}\\), giving \\(e^{-r} = 0.99\\), i.e. \\(r \\approx 1.005\\%\\).\n\n\nUse the Carr–Madan formula to replicate the log payoff \\(\\ln(S_T / F)\\) with a portfolio of calls and puts.\n\n\nSolution. \\(g(S) = \\ln(S/F)\\): \\(g(F) = 0\\), \\(g'(F) = 1/F\\), \\(g''(K) = -1/K^2\\). The replication is \\[\\ln(S_T/F) = \\frac{S_T - F}{F} - \\int_0^F \\frac{(K - S_T)^+}{K^2} dK - \\int_F^\\infty \\frac{(S_T - K)^+}{K^2} dK.\\] This is the variance-swap replication formula: the log payoff is the crucial primitive in variance-swap pricing.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html#callouts",
+    "href": "chapters/02-financial-derivatives.html#callouts",
+    "title": "3  Financial derivatives",
+    "section": "3.9 Callouts",
+    "text": "3.9 Callouts\n\n\n\n\n\n\nPut–call parity is model-free: it holds whatever the true price process. Every option-pricing model must respect it, and this is a useful sanity check on numerical implementations.\n\n\n\n\n\n\n\n\n\nWhen designing a structured payoff, always draw the payoff diagram first. If the diagram looks “kinked” you need vanilla options; if it looks “smooth” you need a continuum of strikes.\n\n\n\n\n\n\n\n\n\nAmerican-style options cannot be replicated by static portfolios: their exercise boundary is stochastic. Chapters 3 and 5 briefly discuss the free-boundary problem for American options.\n\n\n\n\n\n\n\n\n\nOptions are quoted in implied volatility, not price. When a trader says “vol is up 2 vols” she means the Black–Scholes IV has moved by 200 bp — a bigger deal than a $2 change in spot.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/02-financial-derivatives.html#sources",
+    "href": "chapters/02-financial-derivatives.html#sources",
+    "title": "3  Financial derivatives",
+    "section": "3.10 Sources",
+    "text": "3.10 Sources\nProf. Fontana, Stochastic Finance slides, Chapter 2 (slides_2.pdf). Hull, Options, Futures, and Other Derivatives, Chapters 2, 9. Björk, Arbitrage Theory in Continuous Time, Chapter 6.",
+    "crumbs": [
+      "<span class='chapter-number'>3</span>  <span class='chapter-title'>Financial derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-binomial-model.html",
+    "href": "chapters/03-binomial-model.html",
+    "title": "4  The binomial model",
+    "section": "",
+    "text": "4.1 One-step binomial model\nThe simplest self-consistent framework in derivative pricing is the Cox–Ross–Rubinstein (CRR) binomial tree. It compresses the entire logic of no-arbitrage pricing into a discrete-time discrete-space model where every step can be checked by hand — and yet in the appropriate limit it recovers Black–Scholes. This chapter derives the one-step model, extends it to \\(n\\) steps, and shows how it converges to continuous time.\nProof. If \\(e^{rT} \\leq d\\), borrow \\(S_0\\) and buy the stock: at \\(T\\) pay back \\(S_0 e^{rT} \\leq S_0 d \\leq S_T\\), keep a non-negative surplus with strictly positive probability — arbitrage. Symmetrically for \\(e^{rT} \\geq u\\). Both inequalities together rule out sign-definite outcomes.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The binomial model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-binomial-model.html#one-step-binomial-model",
+    "href": "chapters/03-binomial-model.html#one-step-binomial-model",
+    "title": "4  The binomial model",
+    "section": "",
+    "text": "A one-step binomial market has:\n\nOne risky asset with initial price \\(S_0\\) and time-\\(T\\) price \\(S_T \\in \\{S_0 u, S_0 d\\}\\), where \\(u &gt; 1 &gt; d &gt; 0\\).\nOne risk-free asset (the money-market account) with price \\(B_t = e^{rt}\\) (so \\(B_0 = 1\\) and \\(B_T = e^{rT}\\)).\nA physical probability \\(p_u = P(S_T = S_0 u)\\) of the “up” state; \\(p_d = 1 - p_u\\).\n\n\n\nThe market is arbitrage-free iff \\(d &lt; e^{rT} &lt; u\\).",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The binomial model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-binomial-model.html#replicating-a-payoff",
+    "href": "chapters/03-binomial-model.html#replicating-a-payoff",
+    "title": "4  The binomial model",
+    "section": "4.2 Replicating a payoff",
+    "text": "4.2 Replicating a payoff\nSuppose we want to price a derivative with payoff \\(V_T = f(S_T) \\in \\{f(S_0 u), f(S_0 d)\\} = \\{V_u, V_d\\}\\).\n\nThere exist unique \\(\\Delta \\in \\mathbb R\\) and \\(\\beta \\in \\mathbb R\\) such that the portfolio “\\(\\Delta\\) shares of \\(S\\) + \\(\\beta\\) units of bond” matches the payoff in both states: \\[\\Delta = \\frac{V_u - V_d}{S_0(u - d)}, \\qquad \\beta = \\frac{u V_d - d V_u}{u - d}\\,e^{-rT}.\\] Hence the no-arbitrage price of the derivative at time \\(0\\) is \\[V_0 = \\Delta S_0 + \\beta = e^{-rT}\\bigl[q V_u + (1 - q)V_d\\bigr], \\qquad q = \\frac{e^{rT} - d}{u - d} \\in (0, 1).\\]\n\n\nRemark (Physical meaning). The quantity \\(q\\) has no relation to the physical probability \\(p_u\\); it is a synthetic weight determined entirely by \\(r\\), \\(u\\), \\(d\\). It is called the risk-neutral probability of the up state, and \\(V_0 = e^{-rT}\\mathbb E^{\\mathbb Q}[V_T]\\) where \\(\\mathbb Q\\) is the measure that assigns probability \\(q\\) to the up state.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The binomial model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-binomial-model.html#risk-neutral-valuation",
+    "href": "chapters/03-binomial-model.html#risk-neutral-valuation",
+    "title": "4  The binomial model",
+    "section": "4.3 Risk-neutral valuation",
+    "text": "4.3 Risk-neutral valuation\nThe one-step result generalises to any dimension and any tree structure:\n\nA finite-tree market is arbitrage-free iff there exists a probability measure \\(\\mathbb Q\\) (equivalent to \\(\\mathbb P\\)) under which the discounted asset price \\(\\tilde S_t = e^{-rt}S_t\\) is a martingale: \\[\\mathbb E^{\\mathbb Q}[\\tilde S_{t+1} \\mid \\mathcal F_t] = \\tilde S_t .\\] The market is complete — every payoff can be replicated — iff \\(\\mathbb Q\\) is unique.\n\n\nIn an arbitrage-free complete market, the no-arbitrage price at time \\(t\\) of a derivative with payoff \\(V_T\\) is \\[V_t = e^{-r(T - t)}\\,\\mathbb E^{\\mathbb Q}[V_T \\mid \\mathcal F_t] .\\]",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The binomial model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-binomial-model.html#multi-step-binomial-model",
+    "href": "chapters/03-binomial-model.html#multi-step-binomial-model",
+    "title": "4  The binomial model",
+    "section": "4.4 Multi-step binomial model",
+    "text": "4.4 Multi-step binomial model\nIterate the one-step model \\(n\\) times. The tree has \\(2^n\\) paths but only \\(n + 1\\) terminal nodes (the number of up moves determines \\(S_T\\)). At each internal node the local replication argument applies with the same \\((u, d, r)\\), so backwards induction gives the price at every node.\n\nFor a European payoff \\(V_T = f(S_T)\\) in an \\(n\\)-step CRR tree with step size \\(\\Delta t\\), \\[V_0 = e^{-rT} \\sum_{k = 0}^{n}\\binom{n}{k}q^k(1 - q)^{n - k}\\,f\\bigl(S_0 u^k d^{n - k}\\bigr),\\] where \\(q = (e^{r \\Delta t} - d)/(u - d)\\) is the one-step risk-neutral probability.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The binomial model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-binomial-model.html#american-options-and-the-free-boundary-problem",
+    "href": "chapters/03-binomial-model.html#american-options-and-the-free-boundary-problem",
+    "title": "4  The binomial model",
+    "section": "4.5 American options and the free-boundary problem",
+    "text": "4.5 American options and the free-boundary problem\nFor an American option the holder can exercise early. Pricing requires backwards induction with a comparison at each node between the immediate exercise value and the continuation value: \\[V(S, t) = \\max\\bigl(f(S),\\ e^{-r\\Delta t}[q V^u + (1 - q)V^d]\\bigr).\\]\n\nFor an American put on a non-dividend stock with strike \\(K\\): as spot falls below a stochastic early-exercise boundary \\(B(t)\\), immediate exercise beats holding. The boundary shrinks toward \\(K\\) as \\(t \\to T\\) (holding until maturity becomes safer as time runs out) and away from \\(K\\) at \\(t = 0\\). The exact form requires solving a free-boundary PDE; the binomial tree is the standard numerical method.\n\n\nRemark. An American call on a non-dividend stock is never exercised early — you always prefer the time value of the strike (invest \\(K\\) at rate \\(r\\)) plus the option to walk away. This is Merton’s classical no-early-exercise theorem.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The binomial model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-binomial-model.html#convergence-to-blackscholes",
+    "href": "chapters/03-binomial-model.html#convergence-to-blackscholes",
+    "title": "4  The binomial model",
+    "section": "4.6 Convergence to Black–Scholes",
+    "text": "4.6 Convergence to Black–Scholes\nTake the step size \\(\\Delta t = T/n \\to 0\\) and calibrate \\[u = e^{\\sigma\\sqrt{\\Delta t}}, \\qquad d = e^{-\\sigma\\sqrt{\\Delta t}} = 1/u.\\] Then the log return per step has variance \\(\\sigma^2 \\Delta t\\), so the cumulative log return \\(\\ln(S_T/S_0)\\) has variance \\(\\sigma^2 T\\) in the limit — matching the Black–Scholes model.\n\nLet \\(C_0^{(n)}\\) denote the CRR call price with \\(n\\) steps as above. Then \\[\\lim_{n \\to \\infty} C_0^{(n)} = S_0\\,\\Phi(d_1) - K e^{-rT}\\,\\Phi(d_2),\\] the Black–Scholes formula (Chapter 5), where \\(\\Phi\\) is the standard-normal CDF.\n\nProof idea. Invoke the central limit theorem for the \\(n\\)-step binomial: the log price converges in distribution to a Brownian motion with drift \\(r - \\sigma^2/2\\) and diffusion \\(\\sigma\\). Discounted-expectation of \\((S_T - K)^+\\) under the resulting log-normal distribution gives the BS formula.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The binomial model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-binomial-model.html#exercises",
+    "href": "chapters/03-binomial-model.html#exercises",
+    "title": "4  The binomial model",
+    "section": "4.7 Exercises",
+    "text": "4.7 Exercises\n\nA one-step binomial model has \\(S_0 = 100\\), \\(u = 1.2\\), \\(d = 0.9\\), \\(r = 5\\%\\), \\(T = 1\\) year. Price a European call with strike \\(K = 100\\).\n\n\nSolution. Risk-neutral probability: \\(q = (e^{0.05} - 0.9)/(1.2 - 0.9) \\approx 0.5085\\). Payoffs: \\(V_u = 20\\), \\(V_d = 0\\). Price: \\(V_0 = e^{-0.05}(0.5085 \\cdot 20 + 0.4915 \\cdot 0) \\approx 9.67\\). Delta: \\(\\Delta = 20/(100 \\cdot 0.3) \\approx 0.667\\).\n\n\nShow that for the CRR calibration \\(u = 1/d\\), the risk-neutral probability converges to \\(1/2\\) as \\(\\Delta t \\to 0\\) if the drift under \\(\\mathbb Q\\) is zero. Comment on the implication.\n\n\nSolution. \\(q = (e^{r\\Delta t} - d)/(u - d)\\). Taylor-expanding: \\(e^{r\\Delta t} \\approx 1 + r\\Delta t\\), \\(u \\approx 1 + \\sigma\\sqrt{\\Delta t} + \\sigma^2 \\Delta t/2\\), \\(d \\approx 1 - \\sigma\\sqrt{\\Delta t} + \\sigma^2\\Delta t/2\\). Leading order: \\(q \\approx 1/2 + (r - \\sigma^2/2)\\sqrt{\\Delta t}/(2\\sigma)\\). As \\(\\Delta t \\to 0\\) we recover \\(q = 1/2\\); the drift correction lives in higher-order terms.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The binomial model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-binomial-model.html#callouts",
+    "href": "chapters/03-binomial-model.html#callouts",
+    "title": "4  The binomial model",
+    "section": "4.8 Callouts",
+    "text": "4.8 Callouts\n\n\n\n\n\n\nThe binomial model is finite — no measure theory needed to state the fundamental theorem of asset pricing. This is why it is taught first: all the abstractions of Chapter 4 have their finite analogues here.\n\n\n\n\n\n\n\n\n\nFor pricing an American option numerically, the binomial tree is very hard to beat: it is trivial to code, easy to debug, and (with an appropriate number of steps) accurate to two decimal places. Only for high-dimensional or path-dependent options do more advanced techniques win.\n\n\n\n\n\n\n\n\n\nThe convergence of CRR to BS is \\(O(1/n)\\) but oscillatory: prices with different parities of \\(n\\) approach BS from opposite sides. Averaging two adjacent \\(n\\) values (Richardson extrapolation) gives \\(O(1/n^2)\\) convergence.\n\n\n\n\n\n\n\n\n\nRisk-neutral probability is a mathematical trick, not a prediction of what will happen. Do not tell a client that “the market thinks the up move has probability \\(q\\)”.",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The binomial model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/03-binomial-model.html#sources",
+    "href": "chapters/03-binomial-model.html#sources",
+    "title": "4  The binomial model",
+    "section": "4.9 Sources",
+    "text": "4.9 Sources\nProf. Fontana, Stochastic Finance slides, Chapter 3 (slides_3.pdf). Björk, Arbitrage Theory in Continuous Time, Chapter 2. Hull, Options, Futures, and Other Derivatives, Chapters 13–14. Original references: Cox, Ross & Rubinstein, Option pricing: a simplified approach, J. Fin. Econ. 7, 229 (1979).",
+    "crumbs": [
+      "<span class='chapter-number'>4</span>  <span class='chapter-title'>The binomial model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html",
+    "href": "chapters/04-brownian-motion.html",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "",
+    "text": "5.1 Brownian motion\nContinuous-time derivative pricing requires a continuous-time model of the underlying. The paradigm is Brownian motion, and the calculus that handles integrals against it is Itô’s calculus. This chapter is the mathematical backbone of everything from here on.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html#brownian-motion",
+    "href": "chapters/04-brownian-motion.html#brownian-motion",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "",
+    "text": "A standard Brownian motion \\(\\{W_t\\}_{t \\geq 0}\\) on a probability space \\((\\Omega, \\mathcal F, \\mathbb P)\\) is a stochastic process such that:\n\n\\(W_0 = 0\\) a.s.\nIncrements \\(W_t - W_s\\) are independent of \\(\\mathcal F_s\\) for \\(s &lt; t\\).\n\\(W_t - W_s \\sim \\mathcal N(0, t - s)\\) for \\(s \\leq t\\).\n\\(t \\mapsto W_t\\) is continuous a.s.\n\n\n\nFor standard Brownian motion:\n\nMartingale. \\(\\mathbb E[W_t \\mid \\mathcal F_s] = W_s\\) for \\(s \\leq t\\).\nQuadratic variation. For any \\(t &gt; 0\\), \\([W]_t = t\\): the (bracket) accumulates variance at rate one.\nNowhere differentiable. With probability one, \\(t \\mapsto W_t\\) is continuous but not differentiable at any point.\nScaling invariance. For any \\(c &gt; 0\\), \\(\\{c^{-1/2}W_{ct}\\}_{t \\geq 0}\\) is again a standard BM.\nReflection principle. For any \\(a &gt; 0\\), \\(P(\\max_{s \\leq t}W_s \\geq a) = 2 P(W_t \\geq a)\\).\n\n\n\nRemark (Physical origin). Brownian motion was named for the pollen-grain jiggling observed by botanist Robert Brown in 1827. Einstein (1905) derived the diffusion equation from the same phenomenon and set the microscopic mean-square displacement at \\(\\langle x^2\\rangle \\sim t\\). Kolmogorov (1933) axiomatised the mathematical object; Norbert Wiener (1923) constructed it — hence the name “Wiener process”.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html#filtrations-and-martingales",
+    "href": "chapters/04-brownian-motion.html#filtrations-and-martingales",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "5.2 Filtrations and martingales",
+    "text": "5.2 Filtrations and martingales\n\nA filtration \\(\\{\\mathcal F_t\\}_{t \\geq 0}\\) is an increasing family of \\(\\sigma\\)-algebras: \\(\\mathcal F_s \\subseteq \\mathcal F_t\\) for \\(s \\leq t\\). Intuitively \\(\\mathcal F_t\\) contains all information observable up to time \\(t\\). A process \\(X\\) is adapted to \\(\\{\\mathcal F_t\\}\\) if \\(X_t\\) is \\(\\mathcal F_t\\)-measurable for every \\(t\\).\n\n\nAn integrable adapted process \\(X\\) is a martingale with respect to \\(\\{\\mathcal F_t\\}\\) if \\(\\mathbb E[X_t \\mid \\mathcal F_s] = X_s\\) for all \\(s \\leq t\\). A supermartingale has \\(\\leq\\), a submartingale has \\(\\geq\\).\n\nMartingales formalise the “fair game” property: the best forecast of a martingale, given today’s information, is its current value.\n\nThe processes \\(W_t\\), \\(W_t^2 - t\\), and \\(\\exp(\\theta W_t - \\theta^2 t/2)\\) (the exponential martingale) are all martingales in the filtration generated by \\(W\\). These three are the building blocks of most calculations.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html#itô-integral",
+    "href": "chapters/04-brownian-motion.html#itô-integral",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "5.3 Itô integral",
+    "text": "5.3 Itô integral\nThe Itô integral \\(\\int_0^t H_s\\,dW_s\\) generalises the Riemann integral to integrators of unbounded variation, exploiting the fact that Brownian motion has finite quadratic variation.\n\nFor a piecewise-constant integrand \\(H_s = \\sum_{k}h_k \\mathbf 1_{(t_k, t_{k+1}]}(s)\\) with \\(h_k\\) \\(\\mathcal F_{t_k}\\)-measurable, the Itô integral is \\[\\int_0^t H_s\\,dW_s = \\sum_k h_k (W_{t_{k+1} \\wedge t} - W_{t_k \\wedge t}).\\] The definition extends by isometry to general square-integrable adapted \\(H\\).\n\n\nFor \\(H\\) square-integrable and adapted, \\[\\mathbb E\\left[\\left(\\int_0^t H_s\\,dW_s\\right)^2\\right] = \\mathbb E\\left[\\int_0^t H_s^2\\,ds\\right].\\] The Itô integral is a martingale with zero mean.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html#itôs-lemma",
+    "href": "chapters/04-brownian-motion.html#itôs-lemma",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "5.4 Itô’s lemma",
+    "text": "5.4 Itô’s lemma\nThe chain rule for stochastic calculus:\n\nLet \\(X_t\\) satisfy the SDE \\(dX_t = \\mu_t\\,dt + \\sigma_t\\,dW_t\\), and \\(f : [0, T] \\times \\mathbb R \\to \\mathbb R\\) be \\(C^{1,2}\\). Then \\[df(t, X_t) = \\left(\\partial_t f + \\mu_t\\,\\partial_x f + \\tfrac12 \\sigma_t^2\\,\\partial_x^2 f\\right)dt + \\sigma_t\\,\\partial_x f\\,dW_t .\\]\n\nThe correction term \\(\\tfrac12\\sigma_t^2 \\partial_x^2 f\\) is the signature of stochastic calculus: it arises because \\((dW_t)^2 = dt\\) at second order.\n\nApplying Itô to \\(S_t = S_0 \\exp(X_t)\\) with \\(dX_t = \\mu\\,dt + \\sigma\\,dW_t\\): with \\(f(x) = e^x\\) we get \\[dS_t = S_t\\bigl(\\mu + \\tfrac12 \\sigma^2\\bigr)dt + S_t\\,\\sigma\\,dW_t .\\] The natural log SDE has drift \\(\\mu\\); the level SDE has drift \\(\\mu + \\sigma^2/2\\) — the Itô correction.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html#sdes-and-their-solutions",
+    "href": "chapters/04-brownian-motion.html#sdes-and-their-solutions",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "5.5 SDEs and their solutions",
+    "text": "5.5 SDEs and their solutions\n\nAn Itô SDE with drift \\(b : [0, T] \\times \\mathbb R \\to \\mathbb R\\) and diffusion \\(\\sigma : [0, T] \\times \\mathbb R \\to \\mathbb R\\) is \\[dX_t = b(t, X_t)\\,dt + \\sigma(t, X_t)\\,dW_t, \\qquad X_0 = x_0 .\\] A strong solution is an \\(\\mathcal F_t\\)-adapted process \\(X_t\\) satisfying the integral form of the SDE.\n\n\nIf \\(b\\) and \\(\\sigma\\) are globally Lipschitz in \\(x\\) (uniformly in \\(t\\)) with linear growth, then the SDE has a unique strong solution on \\([0, T]\\).\n\n\n\\(dX_t = \\kappa(\\bar x - X_t)\\,dt + \\sigma\\,dW_t\\): mean-reverting Gaussian process. Explicit solution: \\[X_t = X_0 e^{-\\kappa t} + \\bar x(1 - e^{-\\kappa t}) + \\sigma \\int_0^t e^{-\\kappa(t - s)}\\,dW_s.\\] Asymptotic distribution \\(\\mathcal N(\\bar x, \\sigma^2/(2\\kappa))\\). The OU process is the workhorse of short-rate modelling (Chapter 8) and stochastic volatility (Chapter 7).",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html#girsanovs-theorem",
+    "href": "chapters/04-brownian-motion.html#girsanovs-theorem",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "5.6 Girsanov’s theorem",
+    "text": "5.6 Girsanov’s theorem\nThe bridge from the physical measure \\(\\mathbb P\\) to a risk-neutral measure \\(\\mathbb Q\\) is a measure change engineered by Girsanov:\n\nLet \\(\\theta_t\\) be adapted with \\(\\mathbb E\\bigl[\\exp(\\tfrac12\\int_0^T \\theta_s^2\\,ds)\\bigr] &lt; \\infty\\) (Novikov’s condition). Define the exponential martingale \\[Z_t = \\exp\\left(-\\int_0^t \\theta_s\\,dW_s - \\tfrac12 \\int_0^t \\theta_s^2\\,ds\\right),\\qquad \\mathbb E[Z_T] = 1.\\] Then \\(d\\mathbb Q / d\\mathbb P = Z_T\\) defines a probability measure \\(\\mathbb Q\\) equivalent to \\(\\mathbb P\\), and \\(\\tilde W_t = W_t + \\int_0^t \\theta_s\\,ds\\) is a standard \\(\\mathbb Q\\)-Brownian motion.\n\n\nIf \\(S\\) follows \\(dS_t = \\mu S_t\\,dt + \\sigma S_t\\,dW_t\\) under \\(\\mathbb P\\), then under \\(\\mathbb Q\\) defined by \\(\\theta = (\\mu - r)/\\sigma\\) the drift becomes \\(r\\): \\[dS_t = r S_t\\,dt + \\sigma S_t\\,d\\tilde W_t,\\] i.e. \\(S\\) is drifted at the risk-free rate — the essence of risk-neutral valuation.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html#fundamental-theorem-of-asset-pricing",
+    "href": "chapters/04-brownian-motion.html#fundamental-theorem-of-asset-pricing",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "5.7 Fundamental theorem of asset pricing",
+    "text": "5.7 Fundamental theorem of asset pricing\n\nAn arbitrage-free market with numéraire \\(B\\) admits an equivalent measure \\(\\mathbb Q\\) under which every discounted asset \\(S/B\\) is a \\(\\mathbb Q\\)-martingale. Completeness of the market corresponds to uniqueness of \\(\\mathbb Q\\).\n\n\nRemark. This is the deep, continuous-time analogue of the finite-tree FTAP of Chapter 3. Its proof uses Girsanov to convert away the drift and semi-martingale representation theorems to characterise the set of equivalent measures.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html#exercises",
+    "href": "chapters/04-brownian-motion.html#exercises",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "5.8 Exercises",
+    "text": "5.8 Exercises\n\nShow that \\(M_t = W_t^2 - t\\) is a martingale by direct computation.\n\n\nSolution. For \\(s &lt; t\\): \\(\\mathbb E[W_t^2 \\mid \\mathcal F_s] = \\mathbb E[(W_s + (W_t - W_s))^2 \\mid \\mathcal F_s] = W_s^2 + 2W_s\\mathbb E[W_t - W_s \\mid \\mathcal F_s] + \\mathbb E[(W_t - W_s)^2] = W_s^2 + 0 + (t - s)\\). So \\(\\mathbb E[M_t \\mid \\mathcal F_s] = W_s^2 + (t - s) - t = W_s^2 - s = M_s\\). ✓\n\n\nApply Itô’s lemma to compute \\(d(t W_t)\\). Deduce that \\(\\int_0^t s\\,dW_s = t W_t - \\int_0^t W_s\\,ds\\).\n\n\nSolution. \\(f(t, x) = t x\\): \\(\\partial_t f = x\\), \\(\\partial_x f = t\\), \\(\\partial_x^2 f = 0\\). So \\(d(t W_t) = W_t\\,dt + t\\,dW_t\\). Rearranging: \\(\\int_0^t s\\,dW_s = t W_t - \\int_0^t W_s\\,ds\\). This is integration by parts under the Itô rule.\n\n\nCompute the mean and variance of the Ornstein–Uhlenbeck solution starting from \\(X_0 = x_0\\). Verify convergence to the stationary distribution.\n\n\nSolution. \\(\\mathbb E[X_t] = x_0 e^{-\\kappa t} + \\bar x(1 - e^{-\\kappa t})\\); \\(\\text{Var}(X_t) = \\sigma^2 (1 - e^{-2\\kappa t})/(2\\kappa)\\). As \\(t \\to \\infty\\): \\(\\mathbb E \\to \\bar x\\), \\(\\text{Var} \\to \\sigma^2/(2\\kappa)\\). Gaussian stationary distribution \\(\\mathcal N(\\bar x, \\sigma^2/(2\\kappa))\\).",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html#callouts",
+    "href": "chapters/04-brownian-motion.html#callouts",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "5.9 Callouts",
+    "text": "5.9 Callouts\n\n\n\n\n\n\nItô’s lemma is not a chain rule of ordinary calculus with extra terms. The extra \\(\\tfrac12 \\sigma^2 \\partial_x^2 f\\,dt\\) arises because \\(dW\\) has magnitude \\(\\sqrt{dt}\\), so second-order terms contribute at first order.\n\n\n\n\n\n\n\n\n\nWhen solving an SDE by hand, first try to guess a function \\(Y_t = f(t, X_t)\\) that satisfies a simpler SDE (constant coefficients, or deterministic). This turns the problem into a straightforward integration.\n\n\n\n\n\n\n\n\n\nStratonovich integrals (\\(X \\circ dW\\)) and Itô integrals (\\(X\\,dW\\)) give different values for stochastic integrals. Finance uses Itô convention; classical physics often uses Stratonovich. Be careful when reading across disciplines.\n\n\n\n\n\n\n\n\n\nThe convergence of a Monte-Carlo Euler scheme for an SDE is weak: sample paths do not converge to the true path, only their laws do. If you need pathwise convergence, use a Milstein or higher-order scheme.",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/04-brownian-motion.html#sources",
+    "href": "chapters/04-brownian-motion.html#sources",
+    "title": "5  Brownian motion and stochastic calculus",
+    "section": "5.10 Sources",
+    "text": "5.10 Sources\nProf. Fontana, Stochastic Finance slides, Chapter 4 (slides_4.pdf). Björk, Arbitrage Theory in Continuous Time, Chapters 4–5. Karatzas & Shreve, Brownian Motion and Stochastic Calculus, 2nd ed., Springer (1998).",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Brownian motion and stochastic calculus</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html",
+    "href": "chapters/05-black-scholes-merton.html",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "",
+    "text": "6.1 The BSM assumptions\nWith Itô calculus in hand we can now derive the Black–Scholes–Merton (BSM) pricing formula — the most influential single result in modern finance. This chapter derives it two ways (PDE via delta-hedging; risk-neutral via Girsanov), computes the Greeks, and discusses the model’s spectacular successes and equally spectacular failures.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html#the-bsm-assumptions",
+    "href": "chapters/05-black-scholes-merton.html#the-bsm-assumptions",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "",
+    "text": "The Black–Scholes–Merton market consists of:\n\nOne risky asset with dynamics \\(dS_t = \\mu S_t\\,dt + \\sigma S_t\\,dW_t\\) under \\(\\mathbb P\\) (geometric Brownian motion), constant drift \\(\\mu\\) and volatility \\(\\sigma &gt; 0\\).\nOne risk-free money-market account \\(B_t = e^{rt}\\) with constant \\(r\\).\nNo dividends, no transaction costs, no taxes, unlimited borrowing and lending at rate \\(r\\), and continuous trading.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html#delta-hedging-derivation",
+    "href": "chapters/05-black-scholes-merton.html#delta-hedging-derivation",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "6.2 Delta-hedging derivation",
+    "text": "6.2 Delta-hedging derivation\nLet \\(V(t, S)\\) be the value of a self-financing portfolio that replicates a derivative with terminal payoff \\(V(T, S_T) = f(S_T)\\).\n\nThe value \\(V(t, S)\\) of a European derivative in the BSM market satisfies the parabolic PDE \\[\\partial_t V + r S \\partial_S V + \\tfrac12 \\sigma^2 S^2 \\partial_S^2 V - r V = 0, \\qquad V(T, S) = f(S).\\]\n\nProof. Consider the portfolio \\(\\Pi = V - \\Delta S\\) with \\(\\Delta = \\partial_S V\\). Applying Itô’s lemma to \\(V(t, S_t)\\) and using \\(dS = \\mu S\\,dt + \\sigma S\\,dW\\), \\[dV = (\\partial_t V + \\mu S \\partial_S V + \\tfrac12 \\sigma^2 S^2 \\partial_S^2 V)dt + \\sigma S \\partial_S V\\,dW .\\] Choosing \\(\\Delta = \\partial_S V\\) kills the \\(dW\\) term in \\(d\\Pi\\). The remaining portfolio must earn the risk-free rate (no-arbitrage), \\(d\\Pi = r\\Pi\\,dt\\). Rearranging gives the PDE.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html#blackscholes-formula-call",
+    "href": "chapters/05-black-scholes-merton.html#blackscholes-formula-call",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "6.3 Black–Scholes formula (call)",
+    "text": "6.3 Black–Scholes formula (call)\n\nThe value at time \\(t\\) of a European call with strike \\(K\\) and maturity \\(T\\) in the BSM market is \\[C(t, S) = S\\,\\Phi(d_1) - K e^{-r(T - t)}\\,\\Phi(d_2),\\] where \\(\\Phi\\) is the standard normal CDF and \\[d_{1,2} = \\frac{\\ln(S/K) + (r \\pm \\tfrac12 \\sigma^2)(T - t)}{\\sigma\\sqrt{T - t}}.\\]\n\nProof. Under the risk-neutral measure \\(\\mathbb Q\\), \\(dS = rS\\,dt + \\sigma S\\,d\\tilde W\\), so \\(S_T = S_t \\exp((r - \\sigma^2/2)(T - t) + \\sigma(\\tilde W_T - \\tilde W_t))\\). The pricing formula \\(C = e^{-r(T-t)}\\mathbb E^{\\mathbb Q}[(S_T - K)^+ \\mid \\mathcal F_t]\\) evaluates by a Gaussian integral to the stated form.\n\nBy put–call parity (Chapter 2): \\[P(t, S) = K e^{-r(T-t)}\\Phi(-d_2) - S\\Phi(-d_1) .\\]",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html#the-greeks",
+    "href": "chapters/05-black-scholes-merton.html#the-greeks",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "6.4 The Greeks",
+    "text": "6.4 The Greeks\n\nFor the BSM call price above, the sensitivities are:\n\n\\(\\Delta = \\partial_S C = \\Phi(d_1)\\)\n\\(\\Gamma = \\partial_S^2 C = \\phi(d_1)/(S\\sigma\\sqrt{T - t})\\)\n\\(\\Theta = \\partial_t C = -\\dfrac{S\\phi(d_1)\\sigma}{2\\sqrt{T - t}} - r K e^{-r(T-t)}\\Phi(d_2)\\)\n\\(\\mathcal V = \\partial_\\sigma C = S\\phi(d_1)\\sqrt{T - t}\\)\n\\(\\rho = \\partial_r C = K(T-t)e^{-r(T-t)}\\Phi(d_2)\\)\n\nwhere \\(\\phi = \\Phi'\\) is the standard normal PDF.\n\n\nRemark (Greeks in practice). \n\nDelta is between \\(0\\) and \\(1\\) for a call; a trader who is long 100 shares hedges by selling \\(100/\\Delta\\) calls.\nGamma peaks at the strike near maturity and is what makes delta-hedging expensive: rebalancing costs scale as \\(\\int_0^T \\tfrac12 \\sigma^2 S_t^2 \\Gamma\\,dt\\) in expectation.\nVega measures exposure to volatility misspecification; sign is always positive for vanilla options.\nTheta is the “rent” the option holder pays for the time value of the position.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html#implied-volatility-and-the-smile",
+    "href": "chapters/05-black-scholes-merton.html#implied-volatility-and-the-smile",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "6.5 Implied volatility and the smile",
+    "text": "6.5 Implied volatility and the smile\nThe BSM formula is invertible in \\(\\sigma\\): given a market price \\(C^{mkt}\\), there is a unique \\(\\sigma^{IV}\\) such that \\(C^{BSM}(\\sigma^{IV}) = C^{mkt}\\).\n\nThe implied volatility \\(\\sigma^{IV}(K, T)\\) of an option with strike \\(K\\) and maturity \\(T\\) is the \\(\\sigma\\) that makes the BSM formula match the market price.\n\nIf the BSM model were correct, \\(\\sigma^{IV}\\) would be constant across strikes and maturities. In practice it is not:\n\nFor equity index options (SPX, EURO STOXX 50), the implied volatility surface shows a skew: OTM puts have higher IV than ATM options, which have higher IV than OTM calls. The shape is roughly a smile for FX and a skew for equities. This is direct evidence that the BSM assumptions — constant \\(\\sigma\\), log-normal \\(S\\) — are wrong.\n\nThe volatility surface is the central object of modern derivative markets. Chapter 7 studies models that reproduce it.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html#model-successes-and-failures",
+    "href": "chapters/05-black-scholes-merton.html#model-successes-and-failures",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "6.6 Model successes and failures",
+    "text": "6.6 Model successes and failures\n\nRemark (What BSM got right). BSM’s contribution is not the formula per se but the methodology: relative pricing by no-arbitrage replication. Every derivative-pricing model in the last 50 years is built on this foundation. The Black–Scholes formula itself remains the universal quotation mechanism (via implied volatility), even though no professional trader believes the model.\n\n\nRemark (What BSM got wrong). \n\nFat tails. Equity log-returns have kurtosis \\(&gt; 3\\): extreme moves happen more often than log-normality predicts.\nStochastic volatility. \\(\\sigma\\) itself is a random variable that clusters in time (GARCH effects, ARCH regressions).\nJumps. Real prices jump — corporate news, macro announcements — and continuous diffusion cannot capture that.\nCorrelation risk. BSM prices individual options; the correlation between options of different strikes matters for structured products and is not in the model.\n\nThe 1987 crash, the 1998 LTCM collapse, and the 2008 crisis all involved losses that the standard BSM framework significantly underestimated.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html#feynmankac-and-pricing-pdes",
+    "href": "chapters/05-black-scholes-merton.html#feynmankac-and-pricing-pdes",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "6.7 Feynman–Kac and pricing PDEs",
+    "text": "6.7 Feynman–Kac and pricing PDEs\nThe link between PDE and probabilistic pricing is the Feynman–Kac theorem:\n\nLet \\(u(t, x)\\) solve the parabolic PDE \\[\\partial_t u + \\tfrac12 \\sigma^2 x^2 \\partial_x^2 u + r x\\partial_x u - r u = 0, \\qquad u(T, x) = f(x).\\] Then \\[u(t, x) = e^{-r(T - t)}\\mathbb E^{\\mathbb Q}\\bigl[f(X_T) \\mid X_t = x\\bigr],\\] where \\(dX_s = r X_s\\,ds + \\sigma X_s\\,d\\tilde W_s\\) under \\(\\mathbb Q\\).\n\nFeynman–Kac is the two-way street between the PDE and the risk-neutral expectation: you can solve either representation, whichever is more convenient.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html#exercises",
+    "href": "chapters/05-black-scholes-merton.html#exercises",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "6.8 Exercises",
+    "text": "6.8 Exercises\n\nShow that the BSM call price satisfies \\(C \\to \\max(S - K e^{-r(T-t)}, 0)\\) as \\(\\sigma \\to 0\\), and \\(C \\to S\\) as \\(\\sigma \\to \\infty\\). Interpret physically.\n\n\nSolution. \\(\\sigma \\to 0\\): \\(d_1, d_2 \\to \\pm\\infty\\) depending on the sign of \\(\\ln(S/K) + r(T - t)\\). If \\(S &gt; K e^{-r(T-t)}\\), \\(\\Phi(d_1)\\to 1\\), \\(\\Phi(d_2) \\to 1\\): \\(C \\to S - Ke^{-r(T-t)}\\). If \\(S &lt; K e^{-r(T-t)}\\), both \\(\\to 0\\): \\(C \\to 0\\). Union: intrinsic value.\n\\(\\sigma \\to \\infty\\): \\(d_1 \\to \\infty\\) and \\(d_2 \\to -\\infty\\): \\(\\Phi(d_1) \\to 1\\), \\(\\Phi(d_2) \\to 0\\): \\(C \\to S\\). Physical interpretation: infinite volatility makes every strike equally likely, so the call is worth its underlying (the strike is worth nothing in expectation).\n\n\nDerive the vega \\(\\mathcal V = \\partial_\\sigma C\\) by differentiating the BSM formula directly, and verify \\(\\mathcal V = S\\phi(d_1)\\sqrt{T - t}\\).\n\n\nSolution. \\(\\partial_\\sigma d_1 = \\sqrt{T-t} - d_1/\\sigma\\), \\(\\partial_\\sigma d_2 = -\\sqrt{T - t} - d_2/\\sigma\\). Chain rule: \\(\\partial_\\sigma C = S\\phi(d_1)\\partial_\\sigma d_1 - Ke^{-r(T-t)}\\phi(d_2)\\partial_\\sigma d_2\\). Using the identity \\(S\\phi(d_1) = Ke^{-r(T-t)}\\phi(d_2)\\) (from the Gaussian densities and the definition of \\(d_1, d_2\\)), the two terms combine to \\(S\\phi(d_1)\\sqrt{T - t}\\).\n\n\nA trader is long a call with \\(\\Delta = 0.7\\), \\(\\Gamma = 0.02\\). She wants to be delta-neutral. How many shares does she need to short? If the stock moves by \\(\\Delta S = 1\\), what is her P&L (ignoring theta)?\n\n\nSolution. Short 0.7 shares per option. After a move of \\(\\Delta S = 1\\): the call gains approximately \\(\\Delta \\cdot \\Delta S + \\tfrac12 \\Gamma (\\Delta S)^2 = 0.7 + 0.01 = 0.71\\). The short-stock position loses \\(0.7 \\cdot 1 = 0.7\\). Net P&L \\(= 0.71 - 0.7 = 0.01\\): positive because \\(\\Gamma &gt; 0\\). Gamma is the source of the positive convexity of a long-option position.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html#callouts",
+    "href": "chapters/05-black-scholes-merton.html#callouts",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "6.9 Callouts",
+    "text": "6.9 Callouts\n\n\n\n\n\n\nThe Black–Scholes formula is one of the most-tested equations in finance. Any implementation that produces a positive price, positive vega, and reproduces put–call parity is likely correct; anything else is buggy.\n\n\n\n\n\n\n\n\n\nImplied volatility is the language of options trading. Prices vary with spot; IVs vary with fear. Learning to think in IV terms is the single biggest step from student to trader.\n\n\n\n\n\n\n\n\n\nDelta-hedging is a dynamic strategy: the option seller must trade continuously to remain hedged. Discrete rebalancing introduces a P&L variance proportional to \\(\\sigma^2 S^2 \\Gamma^2 \\Delta t\\) — an unavoidable cost.\n\n\n\n\n\n\n\n\n\nEvery BSM Greek assumes the model is right. In a stochastic-volatility world (Chapter 7), the “true” vega differs from the BSM vega, and the extra Greeks (vanna, volga, vomma) matter for FX and structured products.",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/05-black-scholes-merton.html#sources",
+    "href": "chapters/05-black-scholes-merton.html#sources",
+    "title": "6  The Black–Scholes–Merton model",
+    "section": "6.10 Sources",
+    "text": "6.10 Sources\nProf. Fontana, Stochastic Finance slides, Chapter 5 (slides_5.pdf and bs.pdf). Björk, Arbitrage Theory in Continuous Time, Chapters 7–8. Hull, Options, Futures, and Other Derivatives, Chapters 15–19. Original references: Black & Scholes, The pricing of options and corporate liabilities, J. Pol. Econ. 81, 637 (1973); Merton, Theory of rational option pricing, Bell J. Econ. 4, 141 (1973).",
+    "crumbs": [
+      "<span class='chapter-number'>6</span>  <span class='chapter-title'>The Black–Scholes–Merton model</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-monte-carlo-methods.html",
+    "href": "chapters/06-monte-carlo-methods.html",
+    "title": "7  Monte Carlo methods for derivatives",
+    "section": "",
+    "text": "7.1 Why Monte Carlo?\nThe Black–Scholes PDE admits a closed-form solution only for the simplest payoffs on the simplest underlyings. For anything more realistic — path-dependent payoffs (Asian, look-back), high-dimensional baskets, or non-Gaussian dynamics — the only tractable route is Monte Carlo. This chapter is about how to do it well.\nThe risk-neutral pricing formula \\(V_0 = e^{-rT}\\mathbb E^{\\mathbb Q}[f(\\mathbf S_T)]\\) is an expectation. Monte Carlo replaces it with a sample average:\nThe rate \\(1/\\sqrt N\\) is the dimension-independent advantage of Monte Carlo over quadrature. For a 10-basket option, quadrature needs \\(M^{10}\\) points where \\(M\\) is per-dimension resolution; Monte Carlo needs \\(\\sim 10^6\\) for 2-3 significant digits regardless of the basket size.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Monte Carlo methods for derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-monte-carlo-methods.html#why-monte-carlo",
+    "href": "chapters/06-monte-carlo-methods.html#why-monte-carlo",
+    "title": "7  Monte Carlo methods for derivatives",
+    "section": "",
+    "text": "Given \\(N\\) i.i.d. samples \\(\\mathbf S_T^{(1)}, \\ldots, \\mathbf S_T^{(N)}\\) drawn from the \\(\\mathbb Q\\)-distribution of the terminal state, \\[\\widehat V_0 = e^{-rT}\\,\\frac{1}{N}\\sum_{i=1}^{N} f\\bigl(\\mathbf S_T^{(i)}\\bigr).\\] By the CLT, \\(\\widehat V_0 \\to V_0\\) with error \\(O(\\sigma_f/\\sqrt N)\\), independent of the dimension of \\(\\mathbf S\\).",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Monte Carlo methods for derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-monte-carlo-methods.html#simulating-gbm",
+    "href": "chapters/06-monte-carlo-methods.html#simulating-gbm",
+    "title": "7  Monte Carlo methods for derivatives",
+    "section": "7.2 Simulating GBM",
+    "text": "7.2 Simulating GBM\nFor a single log-normal underlying under \\(\\mathbb Q\\), \\(S_T = S_0 \\exp((r - \\sigma^2/2)T + \\sigma\\sqrt T\\,Z)\\) with \\(Z \\sim \\mathcal N(0, 1)\\). Simulation is trivial: draw \\(Z\\) once per path.\nFor a path-dependent option we need the whole trajectory. The Euler–Maruyama scheme with step \\(\\Delta t\\):\n\nFor \\(dX_t = b(X_t)dt + \\sigma(X_t)dW_t\\) with \\(X_0 = x_0\\), generate the discrete trajectory \\[X_{t + \\Delta t} = X_t + b(X_t)\\Delta t + \\sigma(X_t)\\sqrt{\\Delta t}\\,Z_t, \\quad Z_t \\sim \\mathcal N(0, 1)\\text{ i.i.d.}\\] For GBM, this is \\[S_{t + \\Delta t} = S_t(1 + r\\Delta t + \\sigma \\sqrt{\\Delta t}\\,Z_t).\\]\n\n\nRemark (Log-scheme). For GBM it is better to simulate \\(\\ln S\\) rather than \\(S\\), so the scheme has exact increments and works at any \\(\\Delta t\\): \\[\\ln S_{t + \\Delta t} = \\ln S_t + (r - \\sigma^2/2)\\Delta t + \\sigma\\sqrt{\\Delta t}\\,Z_t .\\] This avoids the small-Δt bias of the level scheme.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Monte Carlo methods for derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-monte-carlo-methods.html#variance-reduction",
+    "href": "chapters/06-monte-carlo-methods.html#variance-reduction",
+    "title": "7  Monte Carlo methods for derivatives",
+    "section": "7.3 Variance reduction",
+    "text": "7.3 Variance reduction\nThe Monte Carlo error is \\(\\sigma_f/\\sqrt N\\). Halving the error means \\(4\\times\\) more samples — very expensive. Variance reduction techniques exploit structure of the problem to reduce \\(\\sigma_f\\) instead.\n\n7.3.1 Antithetic variates\n\nSimulate paths in pairs: \\(\\mathbf Z^{(i)}\\) and \\(-\\mathbf Z^{(i)}\\). The estimator \\[\\widehat V^{av} = \\frac{1}{N}\\sum_i \\tfrac12\\bigl[f(\\mathbf S_T(\\mathbf Z^{(i)})) + f(\\mathbf S_T(-\\mathbf Z^{(i)}))\\bigr]\\] is unbiased. If \\(f\\) is monotone in each coordinate of \\(\\mathbf Z\\), the pair has negative correlation and the variance is reduced by up to \\(50\\%\\).\n\n\n\n7.3.2 Control variates\n\nSuppose \\(Y = f(\\mathbf S_T)\\) is the target and \\(Y' = g(\\mathbf S_T)\\) is a variable with known expectation \\(\\mathbb E^{\\mathbb Q}[Y'] = \\mu'\\). Then for any \\(\\beta\\), \\[\\widehat V^{cv} = \\frac{1}{N}\\sum_i \\bigl[Y^{(i)} - \\beta(Y'^{(i)} - \\mu')\\bigr]\\] is unbiased with variance \\(\\text{Var}(\\widehat V^{cv}) = \\text{Var}(Y)(1 - \\rho^2)\\), minimised at \\(\\beta^* = \\text{Cov}(Y, Y')/\\text{Var}(Y')\\). If \\(Y'\\) is chosen close to \\(Y\\) (\\(\\rho \\approx 1\\)) the variance reduction is dramatic.\n\n\nFor an arithmetic-average Asian call \\(\\mathbb E^{\\mathbb Q}[(\\bar S_T - K)^+]\\), the analogous geometric-average call has a closed form (log-normal average). Use it as \\(Y'\\); typical variance reduction factor \\(\\sim 50\\times\\).\n\n\n\n7.3.3 Importance sampling\n\nSuppose the payoff \\(f\\) is non-zero only on a rare event (\\(f(\\mathbf S_T) &gt; 0\\) has probability \\(\\epsilon \\ll 1\\)). Under a change of measure \\(\\mathbb Q \\to \\tilde{\\mathbb Q}\\) with density \\(L = d\\tilde{\\mathbb Q}/d\\mathbb Q\\), \\[\\mathbb E^{\\mathbb Q}[f(\\mathbf S_T)] = \\mathbb E^{\\tilde{\\mathbb Q}}[f(\\mathbf S_T)/L(\\mathbf S_T)] .\\] If \\(\\tilde{\\mathbb Q}\\) concentrates on the region where \\(f &gt; 0\\), the variance of the transformed estimator drops sharply.\n\n\nFor a deep OTM call, \\(q = P^{\\mathbb Q}(S_T &gt; K)\\) is tiny; the Monte Carlo estimator has variance \\(\\sim K^2 q\\). Shift the drift of the log-price by \\(\\mu \\to \\mu + \\delta\\) under an importance measure — this brings more sample paths into the money and can reduce variance by orders of magnitude.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Monte Carlo methods for derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-monte-carlo-methods.html#low-discrepancy-sequences",
+    "href": "chapters/06-monte-carlo-methods.html#low-discrepancy-sequences",
+    "title": "7  Monte Carlo methods for derivatives",
+    "section": "7.4 Low-discrepancy sequences",
+    "text": "7.4 Low-discrepancy sequences\nSobol’ or Halton sequences are deterministic sequences whose empirical distribution is more uniform than random samples. Using them in place of pseudo-random numbers gives quasi-Monte Carlo (QMC):\n\nFor a function \\(f\\) of bounded Hardy–Krause variation, the QMC error using an \\(N\\)-point low-discrepancy sequence is bounded by \\[|\\widehat V^{QMC} - V| \\leq V(f)\\,D_N^*, \\qquad D_N^* = O((\\log N)^d/N),\\] essentially \\(O(1/N)\\) up to logarithmic factors, versus \\(O(1/\\sqrt N)\\) for random Monte Carlo.\n\n\nRemark. QMC is asymptotically faster than plain Monte Carlo but requires “smooth” integrands. For payoffs with kinks (a vanilla call at the strike) the gain is modest; for smooth payoffs (average-strike Asians) the gain can be huge.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Monte Carlo methods for derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-monte-carlo-methods.html#american-options-longstaffschwartz",
+    "href": "chapters/06-monte-carlo-methods.html#american-options-longstaffschwartz",
+    "title": "7  Monte Carlo methods for derivatives",
+    "section": "7.5 American options: Longstaff–Schwartz",
+    "text": "7.5 American options: Longstaff–Schwartz\nMonte Carlo natively handles European options. American options require a policy choice at every node — an early-exercise rule — that cannot be found by forward simulation alone. The Longstaff–Schwartz algorithm (2001) fits this policy by regression:\n\nFor an American option with payoff \\(f_t\\):\n\nSimulate \\(N\\) paths \\(S^{(i)}_0, \\ldots, S^{(i)}_T\\) under \\(\\mathbb Q\\).\nAt maturity \\(T\\), set the continuation value \\(V^{(i)}_T = f_T(S_T^{(i)})\\).\nIterating backwards from \\(t = T - \\Delta t\\) to \\(0\\):\n\nRegress the discounted future value \\(e^{-r\\Delta t} V_{t+\\Delta t}^{(i)}\\) on a basis of functions of \\(S_t^{(i)}\\) (typically polynomial), giving an estimated continuation value \\(\\hat V^{cont}_t(S)\\).\nSet \\(V^{(i)}_t = \\max(f_t(S^{(i)}_t), \\hat V^{cont}_t(S^{(i)}_t))\\).\n\nReturn \\(V_0 = \\frac{1}{N}\\sum_i V^{(i)}_0\\).\n\n\n\nFor an American put on a non-dividend stock, a quadratic regression basis \\(\\{1, S, S^2\\}\\) typically suffices to price to \\(\\sim 1\\%\\). The optimal exercise boundary is recovered as the level \\(S^*\\) at which immediate exercise equals continuation.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Monte Carlo methods for derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-monte-carlo-methods.html#sensitivities-and-greeks-by-monte-carlo",
+    "href": "chapters/06-monte-carlo-methods.html#sensitivities-and-greeks-by-monte-carlo",
+    "title": "7  Monte Carlo methods for derivatives",
+    "section": "7.6 Sensitivities and Greeks by Monte Carlo",
+    "text": "7.6 Sensitivities and Greeks by Monte Carlo\nEstimating derivatives of \\(V\\) with respect to inputs (Greeks) requires care.\n\nFor a smooth payoff \\(f\\), differentiate inside the expectation: \\[\\partial_\\theta V = \\mathbb E^{\\mathbb Q}\\bigl[\\partial_\\theta f(S_T(\\theta))\\bigr] .\\] Estimated by MC as \\(\\frac{1}{N}\\sum_i \\partial_\\theta f(S_T^{(i)}(\\theta))\\). Fast but requires \\(f\\) smooth (fails at the strike of a vanilla call).\n\n\nFor any payoff \\(f\\), use the identity \\[\\partial_\\theta V = \\mathbb E^{\\mathbb Q}\\bigl[f(S_T)\\cdot \\partial_\\theta \\log p(S_T; \\theta)\\bigr] .\\] The score function \\(\\partial_\\theta \\log p\\) absorbs the derivative into the density; the payoff is not differentiated. Works for any payoff but has higher variance.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Monte Carlo methods for derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-monte-carlo-methods.html#exercises",
+    "href": "chapters/06-monte-carlo-methods.html#exercises",
+    "title": "7  Monte Carlo methods for derivatives",
+    "section": "7.7 Exercises",
+    "text": "7.7 Exercises\n\nEstimate the value of a European call with \\(S_0 = 100\\), \\(K = 100\\), \\(r = 5\\%\\), \\(\\sigma = 20\\%\\), \\(T = 1\\) using Monte Carlo with \\(N = 10^4\\). Compare with the Black–Scholes formula and the antithetic-variate estimator.\n\n\nSolution. BS: \\(d_1 = (0.05 + 0.02)/0.2 = 0.35\\), \\(\\Phi(d_1) = 0.637\\); \\(d_2 = 0.15\\), \\(\\Phi(d_2) = 0.560\\); \\(C_{BS} = 100 \\cdot 0.637 - 100 e^{-0.05} \\cdot 0.560 = 10.4506\\). Plain MC with \\(10^4\\) paths typically gives \\(\\hat C = 10.4 \\pm 0.3\\) (95% CI). Antithetic MC gives \\(\\hat C = 10.44 \\pm 0.2\\): about \\(30\\%\\) variance reduction because the call payoff is monotone in \\(Z\\).\n\n\nFor the Asian call with payoff \\((\\bar S - K)^+\\) where \\(\\bar S = \\frac{1}{n}\\sum_{i=1}^n S_{t_i}\\): derive the corresponding geometric-average call, express its price in closed form, and use it as a control variate.\n\n\nSolution. Geometric average: \\(S^g = \\bigl(\\prod S_{t_i}\\bigr)^{1/n}\\). Under GBM, \\(\\ln S^g\\) is Gaussian with easily-computed mean and variance, so the geometric Asian call has a closed-form BSM-like formula (with adjusted volatility \\(\\sigma\\sqrt{(2n + 1)/(6(n + 1))}\\) and adjusted drift). Using the geometric price as \\(Y'\\) in the control-variate estimator for the arithmetic price gives variance reduction factor \\(\\sim 50\\)–\\(100\\).",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Monte Carlo methods for derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-monte-carlo-methods.html#callouts",
+    "href": "chapters/06-monte-carlo-methods.html#callouts",
+    "title": "7  Monte Carlo methods for derivatives",
+    "section": "7.8 Callouts",
+    "text": "7.8 Callouts\n\n\n\n\n\n\nMonte Carlo pricing is the workhorse of quantitative finance because it scales to problems that no closed-form or PDE method can touch: high-dimensional baskets, complex payoffs, multi-factor rate models.\n\n\n\n\n\n\n\n\n\nAlways report a Monte Carlo estimate with its standard error. A price of “\\(10.45\\)” from \\(N = 10^4\\) paths is meaningless without knowing the CI is \\(\\pm 0.3\\) (say).\n\n\n\n\n\n\n\n\n\nFor high-dimensional integrands, plain Monte Carlo is unbeatable in scaling with dimension, but variance reduction can beat it by a large constant. In production, always implement at least one variance-reduction technique.\n\n\n\n\n\n\n\n\n\nQMC’s superior convergence rate requires smoothness of the integrand — often destroyed by kinked payoffs and by high-dimensional effective dimensions (path-dependent options). Do not assume QMC always beats MC.\n\n\n\n\n\n\n\n\n\nNaive finite-difference Greeks ((V(θ + h) - V(θ - h))/(2h) with two independent Monte-Carlo runs) have worse variance than the value itself. Always use pathwise or common-random-number techniques.",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Monte Carlo methods for derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/06-monte-carlo-methods.html#sources",
+    "href": "chapters/06-monte-carlo-methods.html#sources",
+    "title": "7  Monte Carlo methods for derivatives",
+    "section": "7.9 Sources",
+    "text": "7.9 Sources\nProf. Fontana, Stochastic Finance slides, Chapter 6 (slides_6.pdf). Standard reference: Paul Glasserman, Monte Carlo Methods in Financial Engineering, Springer (2003). Longstaff–Schwartz reference: Longstaff & Schwartz, Valuing American options by simulation: a simple least-squares approach, Rev. Fin. Studies 14, 113 (2001).",
+    "crumbs": [
+      "<span class='chapter-number'>7</span>  <span class='chapter-title'>Monte Carlo methods for derivatives</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html",
+    "href": "chapters/07-volatility-modeling.html",
+    "title": "8  Volatility modelling",
+    "section": "",
+    "text": "8.1 The implied-volatility surface\nBlack–Scholes assumes constant volatility. The volatility surface says otherwise. This chapter discusses the two main families of models that repair BSM: local volatility (Dupire) and stochastic volatility (Heston, SABR), together with their strengths, weaknesses, and calibration practice.\nEmpirical facts:",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html#the-implied-volatility-surface",
+    "href": "chapters/07-volatility-modeling.html#the-implied-volatility-surface",
+    "title": "8  Volatility modelling",
+    "section": "",
+    "text": "The implied-volatility surface is the two-dimensional function \\((K, T) \\mapsto \\sigma^{IV}(K, T)\\) obtained by inverting the BSM formula on quoted option prices. In equity markets it is quoted vs log-moneyness \\(\\ln(K/F)\\) and time to maturity \\(T\\); in FX vs delta.\n\n\n\nSkew for equities: IV falls with strike (OTM puts more expensive than OTM calls, reflecting crash fears).\nSmile for FX: IV is symmetric around ATM with wings up.\nTerm structure. Smile flattens with maturity (converging to a level slightly above ATM).\nNon-parallel movements. The whole surface moves; it does not translate rigidly.\n\n\nRemark. Reproducing the surface at \\(t = 0\\) is necessary but not sufficient. A good model must also reproduce the dynamics of the surface — how skew changes when spot moves, how ATM vol responds to level. This is what separates local vol (bad dynamics) from stochastic vol (good).",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html#local-volatility-dupire",
+    "href": "chapters/07-volatility-modeling.html#local-volatility-dupire",
+    "title": "8  Volatility modelling",
+    "section": "8.2 Local volatility (Dupire)",
+    "text": "8.2 Local volatility (Dupire)\nThe idea: rather than assume \\(\\sigma\\) constant, let it depend on both spot and time, \\(\\sigma = \\sigma_L(S, t)\\). Under a chosen function \\(\\sigma_L\\), GBM becomes \\[dS_t = r S_t\\,dt + \\sigma_L(S_t, t)\\,S_t\\,dW_t.\\]\n\nGiven a full arbitrage-free surface of European call prices \\(C(K, T)\\), the unique local volatility function that matches it is \\[\\sigma_L^2(K, T) = \\frac{2\\,\\partial_T C + 2rK\\,\\partial_K C}{K^2\\,\\partial_K^2 C}.\\]\n\nProof sketch. Use the forward Kolmogorov equation for the risk-neutral density \\(\\rho(K, T)\\): \\(\\partial_T \\rho = -\\partial_K(rK\\rho) + \\tfrac12\\partial_K^2(\\sigma_L^2 K^2 \\rho)\\). Multiply by the payoff \\((S_T - K)^+\\) and integrate; identify boundary terms with \\(\\partial_T C\\) and internal terms with \\(\\partial_K^2 C\\).\n\nRemark (Interpretation). The Dupire formula turns the pricing surface into a calibration surface: it says every arbitrage-free market has one local vol that reproduces it. In practice the formula is applied to interpolated/smoothed IV surfaces; the raw finite differences are extremely noisy.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html#local-volatility-weaknesses",
+    "href": "chapters/07-volatility-modeling.html#local-volatility-weaknesses",
+    "title": "8  Volatility modelling",
+    "section": "8.3 Local volatility: weaknesses",
+    "text": "8.3 Local volatility: weaknesses\n\nLocal vol implies “sticky-strike” behaviour: as spot moves the IV at fixed strike stays constant. Real markets are closer to “sticky-delta”: as spot moves the whole smile moves with it. This mismatch means the local-vol dynamics are wrong even if its calibration is perfect at \\(t = 0\\).\n\nForward-starting options (cliquets, resettable Asians) are the diagnostic where local-vol failures are dramatic: local vol under-prices these products by 30–50%. This is why stochastic volatility models were introduced.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html#stochastic-volatility-heston",
+    "href": "chapters/07-volatility-modeling.html#stochastic-volatility-heston",
+    "title": "8  Volatility modelling",
+    "section": "8.4 Stochastic volatility: Heston",
+    "text": "8.4 Stochastic volatility: Heston\n\nThe Heston model is \\[\\begin{aligned}\ndS_t &= r S_t\\,dt + \\sqrt{v_t}\\,S_t\\,dW_t^{(S)},\\\\\ndv_t &= \\kappa(\\bar v - v_t)\\,dt + \\sigma_v \\sqrt{v_t}\\,dW_t^{(v)},\n\\end{aligned}\\] with \\(\\text{corr}(dW^{(S)}, dW^{(v)}) = \\rho\\). The variance follows a mean-reverting CIR process.\n\n\nThe characteristic function of \\(\\ln S_T\\) under Heston is \\[\\phi(u) = \\exp\\bigl(C(u, T) + D(u, T)v_0 + iu \\ln S_0\\bigr),\\] with \\(C, D\\) solvable in closed form (Riccati ODEs). European call prices follow by Fourier inversion (Carr–Madan).\n\n\nRemark. The Heston model is the standard analytically-tractable stochastic-volatility model. Its five parameters \\((\\kappa, \\bar v, \\sigma_v, \\rho, v_0)\\) are calibrated jointly to reproduce the surface. Correlation \\(\\rho &lt; 0\\) generates the equity skew; \\(\\sigma_v\\) controls the smile curvature.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html#stochastic-volatility-sabr",
+    "href": "chapters/07-volatility-modeling.html#stochastic-volatility-sabr",
+    "title": "8  Volatility modelling",
+    "section": "8.5 Stochastic volatility: SABR",
+    "text": "8.5 Stochastic volatility: SABR\nFor FX and interest-rate applications, the SABR model is standard:\n\n\\[\\begin{aligned}\ndF_t &= \\alpha_t F_t^\\beta\\,dW_t^{(F)},\\\\\nd\\alpha_t &= \\nu \\alpha_t\\,dW_t^{(\\alpha)},\n\\end{aligned}\\] with correlation \\(\\rho\\). Parameter \\(\\beta \\in [0, 1]\\) tunes between normal (\\(\\beta = 0\\)) and log-normal (\\(\\beta = 1\\)).\n\n\nFor SABR the implied volatility \\(\\sigma^{IV}(K, T)\\) is given approximately by \\[\\sigma^{IV}(K, T) \\approx \\frac{\\alpha}{(FK)^{(1-\\beta)/2}\\,z(K,F)}\\cdot\\bigl[1 + O(T)\\bigr],\\] with an explicit correction \\(z\\) in terms of \\(\\ln(F/K)\\). This lets calibration be done analytically without PDE or Monte Carlo — the reason SABR is universal in swaptions markets.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html#rough-volatility-2010s",
+    "href": "chapters/07-volatility-modeling.html#rough-volatility-2010s",
+    "title": "8  Volatility modelling",
+    "section": "8.6 Rough volatility (2010s)",
+    "text": "8.6 Rough volatility (2010s)\nA more recent line of work (Gatheral, Jaisson, Rosenbaum, 2014) argues volatility is rougher than a diffusion — the log-vol process has Hurst exponent \\(H \\approx 0.1\\), i.e. is closer to fractional Brownian motion than to standard BM.\n\nRemark (Rough Bergomi model). The rough Bergomi model \\[d\\ln v_t = \\eta\\,\\int_0^t (t - s)^{H - 1/2}\\,dW_s^{(v)}\\] fits the SPX volatility surface with only three parameters. Rough vol is the state of the art but hard to simulate; Monte-Carlo methods with clever variance reduction are the current tool.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html#calibration",
+    "href": "chapters/07-volatility-modeling.html#calibration",
+    "title": "8  Volatility modelling",
+    "section": "8.7 Calibration",
+    "text": "8.7 Calibration\nReal-world model calibration:\n\nCalibration is the process of choosing model parameters \\(\\boldsymbol\\theta\\) to minimise the pricing error on a chosen set of instruments: \\[\\boldsymbol\\theta^* = \\arg\\min_{\\boldsymbol\\theta} \\sum_i w_i\\bigl(C^{model}(K_i, T_i; \\boldsymbol\\theta) - C^{mkt}(K_i, T_i)\\bigr)^2 .\\] Weights \\(w_i\\) typically scale inversely with quote widths and vega.\n\nStandard pitfalls: over-fitting to too many strikes; parameter instability from day to day; local minima in the objective. Practical calibration workflows use good initial guesses (e.g. ATM-quoted vols), staged optimisation (fit ATM first, then smile), and regularisation.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html#exercises",
+    "href": "chapters/07-volatility-modeling.html#exercises",
+    "title": "8  Volatility modelling",
+    "section": "8.8 Exercises",
+    "text": "8.8 Exercises\n\nFor the Heston model with \\(\\kappa = 2\\), \\(\\bar v = 0.04\\), \\(\\sigma_v = 0.3\\), \\(\\rho = -0.7\\), \\(v_0 = 0.04\\), and \\(S_0 = 100\\), \\(r = 3\\%\\), \\(T = 1\\), simulate \\(10^4\\) paths via Euler scheme (with reflection to keep \\(v \\geq 0\\)) and price a European ATM call. Compare with the Fourier-inversion price.\n\n\nSolution. Euler with \\(\\Delta t = 1/252\\) and reflection (\\(v \\to |v|\\)) gives \\(\\hat C \\approx 6.78 \\pm 0.15\\). The exact price (Fourier) is \\(C^{Heston} \\approx 6.82\\). The reflection scheme has a small bias due to the CIR boundary at zero; a Milstein or QE scheme (Andersen 2008) is preferred for accuracy.\n\n\nCompute the local-volatility function from a simple parametric IV surface \\(\\sigma^{IV}(K, T) = 0.2 - 0.1(\\ln(K/F))\\) (linear skew). What is \\(\\sigma_L(K = F, T)\\)?\n\n\nSolution. Directly applying Dupire: at \\(K = F\\) the surface has \\(\\sigma^{IV} = 0.2\\); the skew derivatives combined with the Dupire formula give \\(\\sigma_L^2 \\approx (0.2)^2 + O(\\text{skew}^2)\\), so \\(\\sigma_L(F, T) \\approx 0.2\\). Away from the money, \\(\\sigma_L\\) is roughly twice the slope of the IV skew: this “\\(\\sigma_L \\approx 2 \\sigma^{IV}\\)” rule is Derman’s classical mnemonic for rough estimation.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html#callouts",
+    "href": "chapters/07-volatility-modeling.html#callouts",
+    "title": "8  Volatility modelling",
+    "section": "8.9 Callouts",
+    "text": "8.9 Callouts\n\n\n\n\n\n\nLocal vol and stochastic vol are complementary: local vol calibrates the smile perfectly but has wrong dynamics; stoch vol has right dynamics but doesn’t calibrate perfectly. Practitioners often use a hybrid local–stochastic vol (LSV) model to get both.\n\n\n\n\n\n\n\n\n\nWhen calibrating Heston, start from the ATM term structure to fit \\(\\bar v, \\kappa, v_0\\); then fit the smile to determine \\(\\sigma_v, \\rho\\). Trying to fit everything jointly is unstable.\n\n\n\n\n\n\n\n\n\nStochastic vol models can produce numerically-negative variance in Euler simulations. Always use variance-preserving schemes (Andersen QE, exact simulation of CIR) for production.\n\n\n\n\n\n\n\n\n\nImplied vol is a quote, not a physical parameter. Modelling it directly (SVI, SSVI, rough Bergomi in IV space) is often more efficient than modelling the underlying process.",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/07-volatility-modeling.html#sources",
+    "href": "chapters/07-volatility-modeling.html#sources",
+    "title": "8  Volatility modelling",
+    "section": "8.10 Sources",
+    "text": "8.10 Sources\nProf. Fontana, Stochastic Finance slides, Chapter 7 (slides_7.pdf). Jim Gatheral, The Volatility Surface: A Practitioner’s Guide, Wiley (2006). Original references: Heston, A closed-form solution for options with stochastic volatility, Rev. Fin. Studies 6, 327 (1993); Hagan et al., Managing smile risk, Wilmott (2002).",
+    "crumbs": [
+      "<span class='chapter-number'>8</span>  <span class='chapter-title'>Volatility modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/08-interest-rate-modeling.html",
+    "href": "chapters/08-interest-rate-modeling.html",
+    "title": "9  Interest rate modelling",
+    "section": "",
+    "text": "9.1 The short rate\nModelling interest rates is at once the oldest and the most subtle problem in derivative pricing. Rates are the numéraire, so their model matters even if you only price equity options. This chapter surveys the classical one-factor short-rate models, the HJM framework, LIBOR/SOFR market models, and the post-2008 multi-curve reality.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Interest rate modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/08-interest-rate-modeling.html#the-short-rate",
+    "href": "chapters/08-interest-rate-modeling.html#the-short-rate",
+    "title": "9  Interest rate modelling",
+    "section": "",
+    "text": "The short rate \\(r_t\\) is the annualised interest rate applicable to an instantaneous loan at time \\(t\\). The money-market account grows as \\(dB_t = r_t B_t\\,dt\\), so \\(B_t = \\exp\\bigl(\\int_0^t r_s\\,ds\\bigr)\\).\n\n\nThe zero-coupon bond \\(P(t, T)\\) is the value at time \\(t\\) of receiving 1 at time \\(T\\). Under the risk-neutral measure with numéraire \\(B\\), \\[P(t, T) = \\mathbb E^{\\mathbb Q}\\bigl[e^{-\\int_t^T r_s\\,ds}\\bigm|\\mathcal F_t\\bigr] .\\] The yield is \\(y(t, T) = -\\frac{1}{T - t}\\ln P(t, T)\\); the forward rate is \\(f(t, T) = -\\partial_T \\ln P(t, T)\\).",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Interest rate modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/08-interest-rate-modeling.html#vasicek-and-cir-models",
+    "href": "chapters/08-interest-rate-modeling.html#vasicek-and-cir-models",
+    "title": "9  Interest rate modelling",
+    "section": "9.2 Vasicek and CIR models",
+    "text": "9.2 Vasicek and CIR models\nThe two classic one-factor short-rate models:\n\nThe Vasicek model posits an Ornstein–Uhlenbeck short rate under \\(\\mathbb Q\\): \\[dr_t = \\kappa(\\theta - r_t)\\,dt + \\sigma\\,dW_t^{\\mathbb Q} .\\] The short rate is Gaussian and mean-reverting; unfortunately it can go negative.\n\n\nUnder Vasicek, \\[P(t, T) = A(t, T)\\exp(-B(t, T)r_t),\\] with \\(B(t, T) = (1 - e^{-\\kappa(T - t)})/\\kappa\\) and \\(A(t, T)\\) an explicit function of \\(\\kappa, \\theta, \\sigma\\). The forward-rate curve is \\[f(t, T) = e^{-\\kappa(T - t)}r_t + \\theta(1 - e^{-\\kappa(T - t)}) - \\frac{\\sigma^2}{2\\kappa^2}(1 - e^{-\\kappa(T - t)})^2 .\\]\n\n\nThe CIR model solves the negative-rate problem with a square-root diffusion: \\[dr_t = \\kappa(\\theta - r_t)\\,dt + \\sigma\\sqrt{r_t}\\,dW_t^{\\mathbb Q} .\\] For \\(2\\kappa\\theta \\geq \\sigma^2\\) (Feller condition) the process stays strictly positive. Zero-coupon bond prices are still affine in \\(r_t\\).\n\n\nRemark. Since 2015 several major currencies (EUR, JPY, CHF) have exhibited negative short rates. The Vasicek model, once considered defective for allowing negative rates, is now correct in this respect; the CIR model, once considered “safe”, is inconsistent with observed data.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Interest rate modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/08-interest-rate-modeling.html#the-hjm-framework",
+    "href": "chapters/08-interest-rate-modeling.html#the-hjm-framework",
+    "title": "9  Interest rate modelling",
+    "section": "9.3 The HJM framework",
+    "text": "9.3 The HJM framework\nRather than model the short rate, Heath–Jarrow–Morton (1992) model the entire forward-rate curve \\(\\{f(t, T) : T \\geq t\\}\\) directly:\n\nUnder HJM, the forward-rate curve evolves as \\[df(t, T) = \\alpha(t, T)\\,dt + \\boldsymbol\\sigma(t, T)^\\top\\,d\\mathbf W_t,\\] with \\(d\\mathbf W_t\\) a \\(d\\)-dimensional Brownian motion. HJM is the framework in which every interest-rate model can be stated.\n\n\nFor the discounted bond prices to be martingales, the drift \\(\\alpha\\) is not free but determined by \\(\\boldsymbol\\sigma\\): \\[\\alpha(t, T) = \\boldsymbol\\sigma(t, T)^\\top\\int_t^T \\boldsymbol\\sigma(t, u)\\,du .\\] This is the celebrated HJM drift condition: choosing the volatility structure \\(\\boldsymbol\\sigma\\) fully specifies the model.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Interest rate modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/08-interest-rate-modeling.html#libor-market-model",
+    "href": "chapters/08-interest-rate-modeling.html#libor-market-model",
+    "title": "9  Interest rate modelling",
+    "section": "9.4 LIBOR market model",
+    "text": "9.4 LIBOR market model\nFor pricing swaptions and caps, the natural quantity is not the instantaneous forward rate but the forward LIBOR \\(L(t; T_i, T_{i+1})\\) over a discrete tenor.\n\nUnder the \\(T_{i+1}\\)-forward measure, each forward LIBOR \\(L_i(t)\\) evolves as a log-normal: \\[dL_i(t) = \\sigma_i(t) L_i(t)\\,dW_t^{T_{i+1}} .\\] Different \\(L_i\\) are driven by correlated Brownians. The joint dynamics is determined by the volatility profile \\(\\{\\sigma_i\\}\\) and the correlation matrix.\n\n\nUnder LMM, a caplet payoff \\((L(T_i; T_i, T_{i+1}) - K)^+\\) is priced by Black’s formula: \\[Caplet_0 = P(0, T_{i+1})\\bigl[L_i(0)\\Phi(d_1) - K \\Phi(d_2)\\bigr]\\cdot \\delta_i,\\] with \\(d_{1,2}\\) as in BSM but on the forward rate.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Interest rate modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/08-interest-rate-modeling.html#post-2008-multi-curve",
+    "href": "chapters/08-interest-rate-modeling.html#post-2008-multi-curve",
+    "title": "9  Interest rate modelling",
+    "section": "9.5 Post-2008: multi-curve",
+    "text": "9.5 Post-2008: multi-curve\nBefore 2008, the market used a single “zero curve” for both discounting and forward-rate projection. The LIBOR-OIS basis blew out during the crisis (LIBOR reflects bank credit risk; OIS is closer to risk-free), and the market switched to a multi-curve framework:\n\n\nDiscount curve. Built from OIS swap rates; used to discount all cash flows.\nProjection curves. One per LIBOR tenor (1M, 3M, 6M, 12M); used to project future coupons.\n\nThe two are related but not identical, and their basis (LIBOR – OIS) is stochastic and priced separately.\n\n\nRemark (After LIBOR). LIBOR is being phased out globally (2021–2023). Replacement rates are: SOFR (USD), €STR (EUR), SONIA (GBP), SARON (CHF), TONAR (JPY). Each is an overnight rate averaged over accrual periods — a very different animal from term LIBOR. The transition has forced a repricing of trillions of dollars of derivatives.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Interest rate modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/08-interest-rate-modeling.html#rfrs-and-backwards-looking-rates",
+    "href": "chapters/08-interest-rate-modeling.html#rfrs-and-backwards-looking-rates",
+    "title": "9  Interest rate modelling",
+    "section": "9.6 RFRs and backwards-looking rates",
+    "text": "9.6 RFRs and backwards-looking rates\n\nAn RFR is an overnight interest rate benchmark based on actual transactions (SOFR is the volume-weighted median of overnight repos on US Treasury collateral). Unlike LIBOR, RFRs are backward-looking: the rate for a period \\([T_{i-1}, T_i]\\) is \\[R_i = \\frac{1}{T_i - T_{i-1}}\\int_{T_{i-1}}^{T_i} r_s\\,ds .\\] The rate is not known until \\(T_i\\).\n\n\nA SOFR-based coupon over 3 months compounds daily overnight rates: \\[R^{comp} = \\prod_{k = 1}^{n}(1 + r_{t_k} \\delta_k) - 1,\\] paid at the end of the accrual period. The uncertainty until the last day makes hedging non-trivial and forces a partial lookback convention (paying a couple of days after \\(T_i\\)) in practice.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Interest rate modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/08-interest-rate-modeling.html#exercises",
+    "href": "chapters/08-interest-rate-modeling.html#exercises",
+    "title": "9  Interest rate modelling",
+    "section": "9.7 Exercises",
+    "text": "9.7 Exercises\n\nDerive the ZCB price formula for the Vasicek model by direct calculation of \\(\\mathbb E^{\\mathbb Q}[\\exp(-\\int_t^T r_s\\,ds)]\\).\n\n\nSolution. Since \\(r_s\\) is Gaussian under Vasicek, \\(\\int_t^T r_s\\,ds\\) is Gaussian with mean \\(\\mu(T-t) + (r_t - \\mu)B\\) and variance \\(\\sigma^2\\int_t^T B(s, T)^2\\,ds\\). The expectation of \\(\\exp\\) of a Gaussian equals \\(\\exp\\) of mean plus half variance. Substitute and identify with the affine form.\n\n\nShow that in a flat, upward-sloping yield curve \\(y(T) = y_0 + s T\\) the forward rate is \\(f(T) = y_0 + 2 s T\\) — twice the slope of the yield curve.\n\n\nSolution. \\(P(0, T) = e^{-y(T)T} = e^{-(y_0 T + s T^2)}\\), so \\(-\\ln P = y_0 T + s T^2\\); forward rate \\(f(T) = \\partial_T(y_0 T + s T^2) = y_0 + 2sT\\). This is the “forward slope is twice the yield slope” rule.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Interest rate modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/08-interest-rate-modeling.html#callouts",
+    "href": "chapters/08-interest-rate-modeling.html#callouts",
+    "title": "9  Interest rate modelling",
+    "section": "9.8 Callouts",
+    "text": "9.8 Callouts\n\n\n\n\n\n\nShort-rate models are elegant but ill-suited to modern rate markets: they cannot fit the volatility surface of caps and swaptions jointly. LMM or HJM is required in practice.\n\n\n\n\n\n\n\n\n\nWhen calibrating a rate model, always match the yield curve exactly first; a rate model that misprices vanilla bonds is worthless. Sensitivity to skew is a distant second-order concern.\n\n\n\n\n\n\n\n\n\nThe LIBOR transition is the biggest single change to derivative markets since Black–Scholes. Any code that still hard-codes LIBOR discounting is broken; every derivative pricer had to be rewritten in 2021–2023.\n\n\n\n\n\n\n\n\n\nNegative rates break the CIR and log-normal LMM models. If you’re going to price European rate options in a negative-rate regime, use a normal (Bachelier) model on the forward rate rather than a log-normal.",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Interest rate modelling</span>"
+    ]
+  },
+  {
+    "objectID": "chapters/08-interest-rate-modeling.html#sources",
+    "href": "chapters/08-interest-rate-modeling.html#sources",
+    "title": "9  Interest rate modelling",
+    "section": "9.9 Sources",
+    "text": "9.9 Sources\nProf. Fontana, Stochastic Finance slides, Chapter 8 (slides_8.pdf) and the practical RFR_Practical.pdf. Musiela & Rutkowski, Martingale Methods in Financial Modelling, Chapters 11–12, 15. Post-LIBOR reference: Andersen & Piterbarg, Interest Rate Modeling, Vols. 1–3, Atlantic Financial Press (2010, updated 2021).",
+    "crumbs": [
+      "<span class='chapter-number'>9</span>  <span class='chapter-title'>Interest rate modelling</span>"
+    ]
+  }
+]

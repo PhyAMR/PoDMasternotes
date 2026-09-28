@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Financial derivatives – Stochastic Finance</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/03-binomial-model.html" rel="next">
+<link href="../chapters/01-financial-markets.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-1b3e43c72e8be34557c75123b0b69e0d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-06cab4b7a74e6b8bc7e13e0b702b8751.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/02-financial-derivatives.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Financial derivatives</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Stochastic Finance</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">About these notes</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-financial-markets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Financial markets</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-financial-derivatives.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Financial derivatives</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-binomial-model.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The binomial model</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-brownian-motion.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Brownian motion and stochastic calculus</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-black-scholes-merton.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">The Black–Scholes–Merton model</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-monte-carlo-methods.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Monte Carlo methods for derivatives</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-volatility-modeling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Volatility modelling</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-interest-rate-modeling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Interest rate modelling</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#classification" id="toc-classification" class="nav-link active" data-scroll-target="#classification"><span class="header-section-number">3.1</span> Classification</a></li>
+  <li><a href="#forwards-and-futures" id="toc-forwards-and-futures" class="nav-link" data-scroll-target="#forwards-and-futures"><span class="header-section-number">3.2</span> Forwards and futures</a></li>
+  <li><a href="#options" id="toc-options" class="nav-link" data-scroll-target="#options"><span class="header-section-number">3.3</span> Options</a></li>
+  <li><a href="#swaps" id="toc-swaps" class="nav-link" data-scroll-target="#swaps"><span class="header-section-number">3.4</span> Swaps</a></li>
+  <li><a href="#payoff-diagrams-and-structured-products" id="toc-payoff-diagrams-and-structured-products" class="nav-link" data-scroll-target="#payoff-diagrams-and-structured-products"><span class="header-section-number">3.5</span> Payoff diagrams and structured products</a></li>
+  <li><a href="#payoff-decomposition-and-static-hedging" id="toc-payoff-decomposition-and-static-hedging" class="nav-link" data-scroll-target="#payoff-decomposition-and-static-hedging"><span class="header-section-number">3.6</span> Payoff decomposition and static hedging</a></li>
+  <li><a href="#option-greeks-preview" id="toc-option-greeks-preview" class="nav-link" data-scroll-target="#option-greeks-preview"><span class="header-section-number">3.7</span> Option Greeks (preview)</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">3.8</span> Exercises</a></li>
+  <li><a href="#callouts" id="toc-callouts" class="nav-link" data-scroll-target="#callouts"><span class="header-section-number">3.9</span> Callouts</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">3.10</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Financial derivatives</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>A derivative is a contract whose payoff at maturity depends on the future value of some other observable — the <em>underlying</em>. This chapter introduces the classical derivatives (forwards, futures, options, swaps) and the four fundamental parity relations that any consistent pricing framework must respect.</p>
+<section id="classification" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="classification"><span class="header-section-number">3.1</span> Classification</h2>
+<div class="definition" name="Financial derivative">
+<p>A <strong>derivative</strong> is a contract <span class="math inline">\(C\)</span> with a specified payoff at (or before) a maturity date <span class="math inline">\(T\)</span>, where the payoff is a function of the price path <span class="math inline">\(\{S_t : 0 \leq t \leq T\}\)</span> of an underlying <span class="math inline">\(S\)</span>. The set of possible derivatives is enormous; the ones traded in liquid markets fall into a small number of families.</p>
+</div>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em> (Terminology zoo). </span>The two orthogonal axes of classification are the <em>exercise style</em> — European (only at <span class="math inline">\(T\)</span>), American (any time <span class="math inline">\(\leq T\)</span>), Bermudan (a finite set of dates) — and the <em>payoff structure</em> — vanilla (call or put), digital, barrier, Asian, look-back, etc. In these notes we focus on European vanilla until Chapter 6.</p>
+</div>
+</section>
+<section id="forwards-and-futures" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="forwards-and-futures"><span class="header-section-number">3.2</span> Forwards and futures</h2>
+<div class="definition" name="Forward contract">
+<p>A <strong>forward</strong> is a bilateral contract to buy (long) or sell (short) an underlying <span class="math inline">\(S\)</span> at time <span class="math inline">\(T\)</span> at a pre-agreed <em>forward price</em> <span class="math inline">\(F\)</span>. The payoff at <span class="math inline">\(T\)</span> for the long side is <span class="math display">\[V_T^{\text{fwd}} = S_T - F.\]</span></p>
+</div>
+<div class="proposition" name="Arbitrage-free forward price">
+<p>Under no-arbitrage in a market with constant risk-free rate <span class="math inline">\(r\)</span> and no dividends, <span class="math display">\[F = S_0 e^{rT}.\]</span> With continuous dividends at rate <span class="math inline">\(q\)</span>, <span class="math inline">\(F = S_0 e^{(r - q)T}\)</span>; with FX, replace <span class="math inline">\(q\)</span> by the foreign interest rate <span class="math inline">\(r_f\)</span>.</p>
+</div>
+<div class="definition" name="Futures contract">
+<p>A <strong>futures</strong> is an exchange-traded standardised forward with <em>daily margining</em>: gains and losses on the position are settled in cash every day. Because of margining the futures price is not identical to the forward price when interest rates are stochastic, but the difference is typically small (<span class="math inline">\(&lt; 1\)</span> basis point on liquid contracts).</p>
+</div>
+</section>
+<section id="options" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="options"><span class="header-section-number">3.3</span> Options</h2>
+<div class="definition" name="European call and put">
+<p>A <strong>European call</strong> on <span class="math inline">\(S\)</span> with strike <span class="math inline">\(K\)</span> and maturity <span class="math inline">\(T\)</span> has payoff at <span class="math inline">\(T\)</span> <span class="math display">\[C_T = (S_T - K)^+ = \max(S_T - K, 0).\]</span> A <strong>European put</strong> has payoff <span class="math inline">\(P_T = (K - S_T)^+\)</span>.</p>
+<p>A call gives the buyer the <em>right, not obligation</em> to buy <span class="math inline">\(S\)</span> at price <span class="math inline">\(K\)</span> on date <span class="math inline">\(T\)</span>.</p>
+</div>
+<div class="example" name="Call option intuition">
+<p>An investor buys a 6-month call on stock <span class="math inline">\(S\)</span> with strike <span class="math inline">\(K = 100\)</span>, paying premium <span class="math inline">\(C_0 = 5\)</span>. At maturity, if <span class="math inline">\(S_T = 120\)</span> the investor exercises: pay <span class="math inline">\(K = 100\)</span>, receive <span class="math inline">\(S_T = 120\)</span>, net gain <span class="math inline">\(= 20 - 5 = 15\)</span> (excluding time value of premium). If <span class="math inline">\(S_T = 90\)</span> the call expires worthless: loss = premium <span class="math inline">\(= 5\)</span>.</p>
+</div>
+<div class="proposition" name="Put–call parity">
+<p>For European options on a non-dividend stock with strike <span class="math inline">\(K\)</span> and maturity <span class="math inline">\(T\)</span>, <span class="math display">\[C_0 - P_0 = S_0 - K e^{-rT}.\]</span> This is a <em>model-free</em> no-arbitrage identity: the two portfolios “long call + short put” and “long stock + short zero-coupon bond of face <span class="math inline">\(K\)</span>” have identical payoffs at <span class="math inline">\(T\)</span>.</p>
+</div>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em>. </span>Put–call parity is one of the most useful identities in finance. It lets you infer put prices from call prices (or vice versa) without any pricing model, and it is the basis of <em>conversion</em> and <em>reversal</em> trading strategies used by market makers to lock in tiny mispricings.</p>
+</div>
+</section>
+<section id="swaps" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="swaps"><span class="header-section-number">3.4</span> Swaps</h2>
+<div class="definition" name="Interest-rate swap">
+<p>An <strong>interest-rate swap</strong> is a bilateral contract to exchange, on a schedule of dates <span class="math inline">\(T_1 &lt; T_2 &lt; \ldots &lt; T_n\)</span>, a stream of fixed-rate cash flows for a stream of floating-rate cash flows on a notional amount <span class="math inline">\(N\)</span>.</p>
+</div>
+<p>The fixed-leg cash flows are <span class="math inline">\(N K \Delta_i\)</span> at each <span class="math inline">\(T_i\)</span> for some fixed rate <span class="math inline">\(K\)</span>; the floating-leg cash flows are <span class="math inline">\(N L(T_{i-1}, T_i) \Delta_i\)</span> where <span class="math inline">\(L\)</span> is a market-observed reference rate (formerly LIBOR, now SOFR/€STR).</p>
+<div class="proposition" name="Swap fixed rate">
+<p>The par swap rate — the fixed rate <span class="math inline">\(K^*\)</span> that makes the initial value of the swap zero — is <span class="math display">\[K^* = \frac{P(0, T_0) - P(0, T_n)}{\sum_{i=1}^{n} \Delta_i\,P(0, T_i)},\]</span> where <span class="math inline">\(P(0, T)\)</span> is the discount factor to time <span class="math inline">\(T\)</span>.</p>
+</div>
+</section>
+<section id="payoff-diagrams-and-structured-products" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="payoff-diagrams-and-structured-products"><span class="header-section-number">3.5</span> Payoff diagrams and structured products</h2>
+<p>Complex payoffs are conventionally described by their <strong>payoff diagram</strong> — payoff on the vertical axis vs <span class="math inline">\(S_T\)</span> on the horizontal.</p>
+<div class="example" name="Bull spread">
+<p>A <strong>bull spread</strong> is long a call at strike <span class="math inline">\(K_1\)</span> and short a call at strike <span class="math inline">\(K_2 &gt; K_1\)</span>, both with maturity <span class="math inline">\(T\)</span>. Its payoff is <span class="math display">\[V_T = (S_T - K_1)^+ - (S_T - K_2)^+ = \min\bigl(\max(S_T - K_1, 0), K_2 - K_1\bigr).\]</span> The buyer profits from a modest rise in <span class="math inline">\(S\)</span> but caps the upside above <span class="math inline">\(K_2\)</span>. Cheaper than a single call.</p>
+</div>
+<div class="example" name="Straddle">
+<p>A <strong>straddle</strong> is long a call and a put at the same strike <span class="math inline">\(K = S_0\)</span>. Payoff: <span class="math inline">\(|S_T - S_0|\)</span>. Profits from any large move in either direction, regardless of sign — a pure <em>volatility</em> bet.</p>
+</div>
+</section>
+<section id="payoff-decomposition-and-static-hedging" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="payoff-decomposition-and-static-hedging"><span class="header-section-number">3.6</span> Payoff decomposition and static hedging</h2>
+<div class="theorem" name="Carr–Madan formula">
+<p>Any twice-differentiable payoff <span class="math inline">\(g(S_T)\)</span> can be replicated by a portfolio of a bond, a forward, and calls/puts of all strikes: <span class="math display">\[g(S_T) = g(F) + g'(F)(S_T - F) + \int_0^F g''(K)(K - S_T)^+ dK + \int_F^\infty g''(K)(S_T - K)^+ dK ,\]</span> where <span class="math inline">\(F\)</span> is any reference level (e.g.&nbsp;the forward price).</p>
+</div>
+<p>The Carr–Madan formula is the <em>fundamental theorem of option replication</em>: it tells you the option surface is a <em>complete</em> basis for payoff functions. This is the mathematical reason why variance swaps and other volatility products can be replicated by static portfolios of vanilla calls and puts.</p>
+</section>
+<section id="option-greeks-preview" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="option-greeks-preview"><span class="header-section-number">3.7</span> Option Greeks (preview)</h2>
+<p>The sensitivities of a derivative price to its inputs are called <em>Greeks</em>:</p>
+<ul>
+<li><span class="math inline">\(\Delta = \partial V/\partial S\)</span>: sensitivity to spot.</li>
+<li><span class="math inline">\(\Gamma = \partial^2 V/\partial S^2\)</span>: convexity in spot.</li>
+<li><span class="math inline">\(\Theta = -\partial V/\partial t\)</span>: time decay.</li>
+<li><span class="math inline">\(\mathcal V = \partial V/\partial \sigma\)</span>: vega, sensitivity to volatility.</li>
+<li><span class="math inline">\(\rho = \partial V/\partial r\)</span>: sensitivity to interest rate.</li>
+</ul>
+<p>Greeks are what traders quote and hedge, not prices. Chapter 5 computes them in closed form for the Black–Scholes model.</p>
+</section>
+<section id="exercises" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="exercises"><span class="header-section-number">3.8</span> Exercises</h2>
+<div class="exercise">
+<p>Show that the payoff of a long forward at price <span class="math inline">\(F\)</span> equals the payoff of a long call minus a long put at strike <span class="math inline">\(F\)</span>: <span class="math inline">\((S_T - F) = (S_T - F)^+ - (F - S_T)^+\)</span>.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Case 1: <span class="math inline">\(S_T &gt; F\)</span>. Left: <span class="math inline">\(S_T - F &gt; 0\)</span>. Right: <span class="math inline">\((S_T - F) - 0 = S_T - F\)</span>. ✓ Case 2: <span class="math inline">\(S_T &lt; F\)</span>. Left: <span class="math inline">\(S_T - F &lt; 0\)</span>. Right: <span class="math inline">\(0 - (F - S_T) = S_T - F\)</span>. ✓ So the identity holds for all <span class="math inline">\(S_T\)</span>. Rearranging is put–call parity in payoff form.</p>
+</div>
+<div class="exercise">
+<p>A European call with strike <span class="math inline">\(K = 100\)</span> and maturity <span class="math inline">\(T = 1\)</span> year trades at <span class="math inline">\(C_0 = 8\)</span>; the corresponding put trades at <span class="math inline">\(P_0 = 5\)</span>. The spot is <span class="math inline">\(S_0 = 102\)</span>. What is the implied risk-free rate?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Put–call parity: <span class="math inline">\(C_0 - P_0 = S_0 - K e^{-rT}\)</span>, so <span class="math inline">\(8 - 5 = 102 - 100 e^{-r}\)</span>, giving <span class="math inline">\(e^{-r} = 0.99\)</span>, i.e.&nbsp;<span class="math inline">\(r \approx 1.005\%\)</span>.</p>
+</div>
+<div class="exercise">
+<p>Use the Carr–Madan formula to replicate the log payoff <span class="math inline">\(\ln(S_T / F)\)</span> with a portfolio of calls and puts.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><span class="math inline">\(g(S) = \ln(S/F)\)</span>: <span class="math inline">\(g(F) = 0\)</span>, <span class="math inline">\(g'(F) = 1/F\)</span>, <span class="math inline">\(g''(K) = -1/K^2\)</span>. The replication is <span class="math display">\[\ln(S_T/F) = \frac{S_T - F}{F} - \int_0^F \frac{(K - S_T)^+}{K^2} dK - \int_F^\infty \frac{(S_T - K)^+}{K^2} dK.\]</span> This is the <em>variance-swap replication</em> formula: the log payoff is the crucial primitive in variance-swap pricing.</p>
+</div>
+</section>
+<section id="callouts" class="level2" data-number="3.9">
+<h2 data-number="3.9" class="anchored" data-anchor-id="callouts"><span class="header-section-number">3.9</span> Callouts</h2>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>Put–call parity is <em>model-free</em>: it holds whatever the true price process. Every option-pricing model must respect it, and this is a useful sanity check on numerical implementations.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-tip">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>When designing a structured payoff, always draw the payoff diagram first. If the diagram looks “kinked” you need vanilla options; if it looks “smooth” you need a continuum of strikes.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-warning">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>American-style options cannot be replicated by static portfolios: their exercise boundary is stochastic. Chapters 3 and 5 briefly discuss the free-boundary problem for American options.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>Options are quoted in <em>implied volatility</em>, not price. When a trader says “vol is up 2 vols” she means the Black–Scholes IV has moved by 200 bp — a bigger deal than a $2 change in spot.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="sources" class="level2" data-number="3.10">
+<h2 data-number="3.10" class="anchored" data-anchor-id="sources"><span class="header-section-number">3.10</span> Sources</h2>
+<p>Prof.&nbsp;Fontana, <em>Stochastic Finance</em> slides, Chapter 2 (<code>slides_2.pdf</code>). Hull, <em>Options, Futures, and Other Derivatives</em>, Chapters 2, 9. Björk, <em>Arbitrage Theory in Continuous Time</em>, Chapter 6.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+        for (let i=0; i<detailsSrc.length; i++) {
+          const details = detailsSrc[i].parentElement;
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/01-financial-markets.html" class="pagination-link" aria-label="Financial markets">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Financial markets</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/03-binomial-model.html" class="pagination-link" aria-label="The binomial model">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">The binomial model</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Financial derivatives"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>A derivative is a contract whose payoff at maturity depends on the future value of some other observable — the *underlying*. This chapter introduces the classical derivatives (forwards, futures, options, swaps) and the four fundamental parity relations that any consistent pricing framework must respect.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Classification</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Financial derivative"}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>A **derivative** is a contract $C$ with a specified payoff at (or before) a maturity date $T$, where the payoff is a function of the price path $<span class="sc">\{</span>S_t : 0 \leq t \leq T<span class="sc">\}</span>$ of an underlying $S$. The set of possible derivatives is enormous; the ones traded in liquid markets fall into a small number of families.</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>::: {.remark name="Terminology zoo"}</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>The two orthogonal axes of classification are the *exercise style* — European (only at $T$), American (any time $\leq T$), Bermudan (a finite set of dates) — and the *payoff structure* — vanilla (call or put), digital, barrier, Asian, look-back, etc. In these notes we focus on European vanilla until Chapter 6.</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## Forwards and futures</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Forward contract"}</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>A **forward** is a bilateral contract to buy (long) or sell (short) an underlying $S$ at time $T$ at a pre-agreed *forward price* $F$. The payoff at $T$ for the long side is</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>$$V_T^{\text{fwd}} = S_T - F.$$</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>::: {.proposition name="Arbitrage-free forward price"}</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>Under no-arbitrage in a market with constant risk-free rate $r$ and no dividends,</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>$$F = S_0 e^{rT}.$$</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>With continuous dividends at rate $q$, $F = S_0 e^{(r - q)T}$; with FX, replace $q$ by the foreign interest rate $r_f$.</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Futures contract"}</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>A **futures** is an exchange-traded standardised forward with *daily margining*: gains and losses on the position are settled in cash every day. Because of margining the futures price is not identical to the forward price when interest rates are stochastic, but the difference is typically small ($&lt; 1$ basis point on liquid contracts).</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">## Options</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>::: {.definition name="European call and put"}</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>A **European call** on $S$ with strike $K$ and maturity $T$ has payoff at $T$</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>$$C_T = (S_T - K)^+ = \max(S_T - K, 0).$$</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>A **European put** has payoff $P_T = (K - S_T)^+$.</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>A call gives the buyer the *right, not obligation* to buy $S$ at price $K$ on date $T$.</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>::: {.example name="Call option intuition"}</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>An investor buys a 6-month call on stock $S$ with strike $K = 100$, paying premium $C_0 = 5$. At maturity, if $S_T = 120$ the investor exercises: pay $K = 100$, receive $S_T = 120$, net gain $= 20 - 5 = 15$ (excluding time value of premium). If $S_T = 90$ the call expires worthless: loss = premium $= 5$.</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>::: {.proposition name="Put–call parity"}</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>For European options on a non-dividend stock with strike $K$ and maturity $T$,</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>$$C_0 - P_0 = S_0 - K e^{-rT}.$$</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>This is a *model-free* no-arbitrage identity: the two portfolios "long call + short put" and "long stock + short zero-coupon bond of face $K$" have identical payoffs at $T$.</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>::: {.remark}</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>Put–call parity is one of the most useful identities in finance. It lets you infer put prices from call prices (or vice versa) without any pricing model, and it is the basis of *conversion* and *reversal* trading strategies used by market makers to lock in tiny mispricings.</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="fu">## Swaps</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Interest-rate swap"}</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>An **interest-rate swap** is a bilateral contract to exchange, on a schedule of dates $T_1 &lt; T_2 &lt; \ldots &lt; T_n$, a stream of fixed-rate cash flows for a stream of floating-rate cash flows on a notional amount $N$.</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>The fixed-leg cash flows are $N K \Delta_i$ at each $T_i$ for some fixed rate $K$; the floating-leg cash flows are $N L(T_{i-1}, T_i) \Delta_i$ where $L$ is a market-observed reference rate (formerly LIBOR, now SOFR/€STR).</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>::: {.proposition name="Swap fixed rate"}</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>The par swap rate — the fixed rate $K^*$ that makes the initial value of the swap zero — is</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>$$K^* = \frac{P(0, T_0) - P(0, T_n)}{\sum_{i=1}^{n} \Delta_i\,P(0, T_i)},$$</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>where $P(0, T)$ is the discount factor to time $T$.</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="fu">## Payoff diagrams and structured products</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>Complex payoffs are conventionally described by their **payoff diagram** — payoff on the vertical axis vs $S_T$ on the horizontal.</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>::: {.example name="Bull spread"}</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>A **bull spread** is long a call at strike $K_1$ and short a call at strike $K_2 &gt; K_1$, both with maturity $T$. Its payoff is</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>$$V_T = (S_T - K_1)^+ - (S_T - K_2)^+ = \min\bigl(\max(S_T - K_1, 0), K_2 - K_1\bigr).$$</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>The buyer profits from a modest rise in $S$ but caps the upside above $K_2$. Cheaper than a single call.</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>::: {.example name="Straddle"}</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>A **straddle** is long a call and a put at the same strike $K = S_0$. Payoff: $|S_T - S_0|$. Profits from any large move in either direction, regardless of sign — a pure *volatility* bet.</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="fu">## Payoff decomposition and static hedging</span></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Carr–Madan formula"}</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>Any twice-differentiable payoff $g(S_T)$ can be replicated by a portfolio of a bond, a forward, and calls/puts of all strikes:</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>$$g(S_T) = g(F) + g'(F)(S_T - F) + \int_0^F g''(K)(K - S_T)^+ dK + \int_F^\infty g''(K)(S_T - K)^+ dK ,$$</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>where $F$ is any reference level (e.g.\ the forward price).</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>The Carr–Madan formula is the *fundamental theorem of option replication*: it tells you the option surface is a *complete* basis for payoff functions. This is the mathematical reason why variance swaps and other volatility products can be replicated by static portfolios of vanilla calls and puts.</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="fu">## Option Greeks (preview)</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>The sensitivities of a derivative price to its inputs are called *Greeks*:</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\Delta = \partial V/\partial S$: sensitivity to spot.</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\Gamma = \partial^2 V/\partial S^2$: convexity in spot.</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\Theta = -\partial V/\partial t$: time decay.</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\mathcal V = \partial V/\partial \sigma$: vega, sensitivity to volatility.</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>$\rho = \partial V/\partial r$: sensitivity to interest rate.</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>Greeks are what traders quote and hedge, not prices. Chapter 5 computes them in closed form for the Black–Scholes model.</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>Show that the payoff of a long forward at price $F$ equals the payoff of a long call minus a long put at strike $F$: $(S_T - F) = (S_T - F)^+ - (F - S_T)^+$.</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>Case 1: $S_T &gt; F$. Left: $S_T - F &gt; 0$. Right: $(S_T - F) - 0 = S_T - F$. ✓</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>Case 2: $S_T &lt; F$. Left: $S_T - F &lt; 0$. Right: $0 - (F - S_T) = S_T - F$. ✓</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>So the identity holds for all $S_T$. Rearranging is put–call parity in payoff form.</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>A European call with strike $K = 100$ and maturity $T = 1$ year trades at $C_0 = 8$; the corresponding put trades at $P_0 = 5$. The spot is $S_0 = 102$. What is the implied risk-free rate?</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>Put–call parity: $C_0 - P_0 = S_0 - K e^{-rT}$, so $8 - 5 = 102 - 100 e^{-r}$, giving $e^{-r} = 0.99$, i.e.\ $r \approx 1.005\%$.</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>Use the Carr–Madan formula to replicate the log payoff $\ln(S_T / F)$ with a portfolio of calls and puts.</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>$g(S) = \ln(S/F)$: $g(F) = 0$, $g'(F) = 1/F$, $g''(K) = -1/K^2$. The replication is</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>$$\ln(S_T/F) = \frac{S_T - F}{F} - \int_0^F \frac{(K - S_T)^+}{K^2} dK - \int_F^\infty \frac{(S_T - K)^+}{K^2} dK.$$</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>This is the *variance-swap replication* formula: the log payoff is the crucial primitive in variance-swap pricing.</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a><span class="fu">## Callouts</span></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>Put–call parity is *model-free*: it holds whatever the true price process. Every option-pricing model must respect it, and this is a useful sanity check on numerical implementations.</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>When designing a structured payoff, always draw the payoff diagram first. If the diagram looks "kinked" you need vanilla options; if it looks "smooth" you need a continuum of strikes.</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>::: {.callout-warning}</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>American-style options cannot be replicated by static portfolios: their exercise boundary is stochastic. Chapters 3 and 5 briefly discuss the free-boundary problem for American options.</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>Options are quoted in *implied volatility*, not price. When a trader says "vol is up 2 vols" she means the Black–Scholes IV has moved by 200 bp — a bigger deal than a $2 change in spot.</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>Prof. Fontana, *Stochastic Finance* slides, Chapter 2 (`slides_2.pdf`). Hull, *Options, Futures, and Other Derivatives*, Chapters 2, 9. Björk, *Arbitrage Theory in Continuous Time*, Chapter 6.</span></code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>
