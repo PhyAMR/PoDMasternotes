@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>22&nbsp; Lab: Kafka, and Kafka + Spark – Management and Analysis of Physics Datasets — Module B</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../labs/08-dask-dataframes.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-12757e4b7af482b2d9c5bd8860d2b707.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-3fda7689cb8c4ed59160d7ff94eb8d4f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/00-running-labs.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/09-kafka.html"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Lab: Kafka, and Kafka + Spark</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Management and Analysis of Physics Datasets — Module B</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Management</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Data Management</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-datasets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">From Data to Datasets</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-storage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Storage</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-reliability-security.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reliability and Security</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-file-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">File System</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-distributed-file-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Distributed File System</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-nosql-databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">NoSQL Databases</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Processing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-processing-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Processing and Concurrency</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-distributed-processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Distributed Processing and MapReduce</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-spark.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Apache Spark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Dask</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-kafka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Apache Kafka</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Labs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/00-running-labs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Running the labs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/01-mysql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Lab: MySQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/02-parallel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Lab: Threads and processes in Python</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/03-spark-rdd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Lab: Spark 1, RDDs and map-reduce</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/04-spark-dataframes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Lab: Spark 2, DataFrames and the dimuon spectrum</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/05-spark-streaming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Lab: Spark 3, Structured Streaming</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/06-dask-delayed.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lab: Dask 1, delayed and futures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/07-dask-bags.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Lab: Dask 2, Bags</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/08-dask-dataframes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Lab: Dask 3, DataFrames</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/09-kafka.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Lab: Kafka, and Kafka + Spark</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-idea-behind-it" id="toc-the-idea-behind-it" class="nav-link active" data-scroll-target="#the-idea-behind-it"><span class="header-section-number">22.1</span> The idea behind it</a></li>
+  <li><a href="#before-you-start" id="toc-before-you-start" class="nav-link" data-scroll-target="#before-you-start"><span class="header-section-number">22.2</span> Before you start</a></li>
+  <li><a href="#kafka-in-one-picture" id="toc-kafka-in-one-picture" class="nav-link" data-scroll-target="#kafka-in-one-picture"><span class="header-section-number">22.3</span> Kafka in one picture</a></li>
+  <li><a href="#part-1-from-the-shell-on-the-broker" id="toc-part-1-from-the-shell-on-the-broker" class="nav-link" data-scroll-target="#part-1-from-the-shell-on-the-broker"><span class="header-section-number">22.4</span> Part 1: from the shell (on the broker)</a></li>
+  <li><a href="#part-2-producing-from-python-producer.ipynb" id="toc-part-2-producing-from-python-producer.ipynb" class="nav-link" data-scroll-target="#part-2-producing-from-python-producer.ipynb"><span class="header-section-number">22.5</span> Part 2: producing from Python (<code>Producer.ipynb</code>)</a></li>
+  <li><a href="#part-3-consuming-consumer.ipynb" id="toc-part-3-consuming-consumer.ipynb" class="nav-link" data-scroll-target="#part-3-consuming-consumer.ipynb"><span class="header-section-number">22.6</span> Part 3: consuming (<code>Consumer.ipynb</code>)</a></li>
+  <li><a href="#part-4-consumer-groups-consumer.ipynb-consumergroup.ipynb" id="toc-part-4-consumer-groups-consumer.ipynb-consumergroup.ipynb" class="nav-link" data-scroll-target="#part-4-consumer-groups-consumer.ipynb-consumergroup.ipynb"><span class="header-section-number">22.7</span> Part 4: consumer groups (<code>Consumer.ipynb</code> + <code>ConsumerGroup.ipynb</code>)</a></li>
+  <li><a href="#part-5-kafka-as-spark-source-and-sink-kafkaspark_structuredstreaming.ipynb" id="toc-part-5-kafka-as-spark-source-and-sink-kafkaspark_structuredstreaming.ipynb" class="nav-link" data-scroll-target="#part-5-kafka-as-spark-source-and-sink-kafkaspark_structuredstreaming.ipynb"><span class="header-section-number">22.8</span> Part 5: Kafka as Spark source and sink (<code>KafkaSpark_StructuredStreaming.ipynb</code>)</a></li>
+  <li><a href="#on-a-real-cluster" id="toc-on-a-real-cluster" class="nav-link" data-scroll-target="#on-a-real-cluster"><span class="header-section-number">22.9</span> On a real cluster</a></li>
+  <li><a href="#wrap-up" id="toc-wrap-up" class="nav-link" data-scroll-target="#wrap-up"><span class="header-section-number">22.10</span> Wrap up</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/00-running-labs.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/09-kafka.html"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Lab: Kafka, and Kafka + Spark</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-lab-kafka" class="quarto-section-identifier"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Lab: Kafka, and Kafka + Spark</span></span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Lab at a glance
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Notebooks</strong> (in <code>code/kafka/notebooks/</code>, used <em>together</em>, in this order):
+<ol type="1">
+<li><code>Producer.ipynb</code>: topics and producing messages</li>
+<li><code>Consumer.ipynb</code>: reading them back, partitions, consumer groups</li>
+<li><code>ConsumerGroup.ipynb</code>: a second consumer, run alongside notebook 2</li>
+<li><code>KafkaSpark_StructuredStreaming.ipynb</code>: Spark reads from and writes to Kafka</li>
+</ol></li>
+<li><strong>Stack:</strong> the Spark stack plus <code>kafka-broker</code> (one broker, no replication), see <a href="../labs/00-running-labs.html">Running the labs</a></li>
+<li><strong>Theory:</strong> <a href="../chapters/12-kafka.html">Apache Kafka</a>: topics, partitions, offsets, consumer groups; <a href="../labs/05-spark-streaming.html">Spark Structured Streaming</a></li>
+<li><strong>You will:</strong> publish and consume messages from the shell and from Python, see how partitions and consumer groups split the work, and rebuild the fraud detector with Kafka as source and sink</li>
+</ul>
+</div>
+</div>
+<section id="the-idea-behind-it" class="level2" data-number="22.1">
+<h2 data-number="22.1" class="anchored" data-anchor-id="the-idea-behind-it"><span class="header-section-number">22.1</span> The idea behind it</h2>
+<ul>
+<li><strong>Decoupling with a log.</strong> Producers and consumers never know about each other; the broker stores an ordered, durable log in between. New consumers can be added later and replay history, and a slow consumer does not slow down producers. This is the backbone of <em>event-driven</em> architectures.</li>
+<li><strong>Partitions are the unit of parallelism and ordering</strong>, as in Spark: more partitions allow more consumers in parallel, and order is guaranteed only inside one partition. The key decides the partition, so you choose the key for the ordering you need (e.g.&nbsp;per user).</li>
+<li><strong>Replication for fault tolerance.</strong> Each partition has a leader and followers on other brokers (<a href="../chapters/12-kafka.html">theory</a>). This lab uses one broker, so <code>replication_factor=1</code>, i.e.&nbsp;no fault tolerance at all.</li>
+<li><strong>Delivery semantics.</strong> At-most-once, at-least-once or exactly-once depend on <em>when</em> offsets are committed relative to processing, and on whether writes are idempotent.</li>
+</ul>
+</section>
+<section id="before-you-start" class="level2" data-number="22.2">
+<h2 data-number="22.2" class="anchored" data-anchor-id="before-you-start"><span class="header-section-number">22.2</span> Before you start</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> code/kafka</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose up <span class="at">--scale</span> spark-worker=2     <span class="co"># the README advises at most 2 workers</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The broker is reachable <strong>inside</strong> the Docker network as <code>kafka-broker:9092</code>; it is not published to your laptop, so everything (shell tools, Python clients, Spark) runs in a container.</p>
+<p>Notebook 1 installs the client library with <code>!pip install kafka-python</code>. It lives in the container, so you need to repeat it after every <code>docker compose down</code>.</p>
+</section>
+<section id="kafka-in-one-picture" class="level2" data-number="22.3">
+<h2 data-number="22.3" class="anchored" data-anchor-id="kafka-in-one-picture"><span class="header-section-number">22.3</span> Kafka in one picture</h2>
+<p>Kafka is a <strong>log</strong>, not a queue. A <em>topic</em> is split into <em>partitions</em>; each partition is an append-only, ordered list of records, and each record gets a position, the <em>offset</em>. Producers append to the end. Consumers read from wherever they like and remember their offset. <strong>Reading does not delete anything</strong>, so many independent consumers can read the same data, at different speeds, now or later. Producers and consumers never talk to each other, only to the broker. That decoupling is the whole point.</p>
+</section>
+<section id="part-1-from-the-shell-on-the-broker" class="level2" data-number="22.4">
+<h2 data-number="22.4" class="anchored" data-anchor-id="part-1-from-the-shell-on-the-broker"><span class="header-section-number">22.4</span> Part 1: from the shell (on the broker)</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec kafka-broker bash</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$KAFKA_HOME</span>/bin</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--list</span>     <span class="at">--bootstrap-server</span> kafka-broker:9092</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--create</span>   <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--describe</span> <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Then open <strong>two</strong> shells on the broker, one for each side:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-console-producer.sh</span> <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-console-consumer.sh</span> <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092 <span class="at">--from-beginning</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Type in the producer and lines appear in the consumer. Start the consumer <em>without</em> <code>--from-beginning</code> and it only shows new messages; <em>with</em> it, it replays everything. The data was kept even though nobody was reading.</p>
+<p><code>--bootstrap-server</code> is just an entry point: the client asks that broker for the cluster layout, then talks to whichever broker leads each partition.</p>
+</section>
+<section id="part-2-producing-from-python-producer.ipynb" class="level2" data-number="22.5">
+<h2 data-number="22.5" class="anchored" data-anchor-id="part-2-producing-from-python-producer.ipynb"><span class="header-section-number">22.5</span> Part 2: producing from Python (<code>Producer.ipynb</code>)</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaProducer</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>producer <span class="op">=</span> KafkaProducer(bootstrap_servers<span class="op">=</span>[<span class="st">'kafka-broker:9092'</span>])</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>producer.send(<span class="st">'my_awesome_topic'</span>, <span class="st">b'message 1'</span>)    <span class="co"># returns a future: queued, NOT sent yet</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>producer.flush()                                   <span class="co"># force the queue out now</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>send</code> is <strong>asynchronous</strong>: messages are buffered and sent in batches, which is how Kafka reaches high throughput. If a script exits right after <code>send</code> without <code>flush()</code> (or <code>close()</code>), the messages may never leave. Values (and keys) are <strong>bytes</strong>: you choose the serialisation, e.g.&nbsp;<code>json.dumps(d).encode()</code>.</p>
+<p>Close the producer and create a new one: the topic and its messages are unaffected, because producers are disposable.</p>
+<p><strong>Keys.</strong> <code>producer.send(topic, key=b'user42', value=...)</code>. The key is hashed to choose the partition, so <strong>all messages with the same key go to the same partition, in order</strong>. Without a key, the producer spreads messages over partitions.</p>
+<p><strong>Admin API.</strong> Creating topics from Python, with a chosen number of partitions:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka.admin <span class="im">import</span> KafkaAdminClient, NewTopic</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>admin <span class="op">=</span> KafkaAdminClient(bootstrap_servers<span class="op">=</span>[<span class="st">'kafka-broker:9092'</span>])</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>admin.create_topics([NewTopic(name<span class="op">=</span><span class="st">'a_partitioned_topic'</span>, num_partitions<span class="op">=</span><span class="dv">2</span>, replication_factor<span class="op">=</span><span class="dv">1</span>)])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>admin.list_topics()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>replication_factor=1</code> because there is a single broker; on a real cluster you would use 3. The notebook ends by sending 20 fake transactions (the JSON from the <a href="../labs/05-spark-streaming.html">Spark streaming lab</a>) to <code>a_partitioned_topic</code>, and creating a <code>results</code> topic for later.</p>
+</section>
+<section id="part-3-consuming-consumer.ipynb" class="level2" data-number="22.6">
+<h2 data-number="22.6" class="anchored" data-anchor-id="part-3-consuming-consumer.ipynb"><span class="header-section-number">22.6</span> Part 3: consuming (<code>Consumer.ipynb</code>)</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaConsumer</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>consumer <span class="op">=</span> KafkaConsumer(bootstrap_servers<span class="op">=</span>[<span class="st">'kafka-broker:9092'</span>],</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                         consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)   <span class="co"># stop iterating after 10 s without messages</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>consumer.subscribe([<span class="st">'my_awesome_topic'</span>])</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> msg <span class="kw">in</span> consumer:                                   <span class="co"># polls the broker</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(msg.partition, msg.offset, msg.key, msg.value)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Without <code>consumer_timeout_ms</code> the <code>for</code> loop never ends (a consumer waits for new data forever), so interrupt the kernel to stop it.</p>
+<p>Each record carries its <strong>partition</strong>, <strong>offset</strong>, <strong>timestamp</strong>, <strong>key</strong> and <strong>value</strong>. <code>consumer.seek_to_beginning()</code> moves the offset back to 0 and the topic is read again, the Python version of <code>--from-beginning</code>.</p>
+<p>On <code>a_partitioned_topic</code> you see messages from partitions 0 and 1 interleaved: <strong>order is guaranteed only within a partition</strong>, never across the topic.</p>
+<p><strong>Reading one partition only.</strong> Instead of <code>subscribe</code> (let Kafka decide), <code>assign</code> picks partitions by hand:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> TopicPartition</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>c0 <span class="op">=</span> KafkaConsumer(bootstrap_servers<span class="op">=</span>[<span class="st">'kafka-broker:9092'</span>], consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>c0.assign([TopicPartition(<span class="st">'a_partitioned_topic'</span>, <span class="dv">0</span>)])</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>c0.seek_to_beginning()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="part-4-consumer-groups-consumer.ipynb-consumergroup.ipynb" class="level2" data-number="22.7">
+<h2 data-number="22.7" class="anchored" data-anchor-id="part-4-consumer-groups-consumer.ipynb-consumergroup.ipynb"><span class="header-section-number">22.7</span> Part 4: consumer groups (<code>Consumer.ipynb</code> + <code>ConsumerGroup.ipynb</code>)</h2>
+<p>Consumers that share a <code>group_id</code> <strong>split the partitions</strong> of a topic between them: each partition is read by exactly one member of the group. This is how Kafka scales reading.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>consumer_one <span class="op">=</span> KafkaConsumer(bootstrap_servers<span class="op">=</span>[<span class="st">'kafka-broker:9092'</span>],</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                             client_id<span class="op">=</span><span class="st">'consumer_one'</span>, group_id<span class="op">=</span><span class="st">'my_group'</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                             auto_offset_reset<span class="op">=</span><span class="st">'earliest'</span>, consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>consumer_one.subscribe([<span class="st">'a_partitioned_topic'</span>])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Create <code>consumer_two</code> with the same <code>group_id</code> in <code>ConsumerGroup.ipynb</code>, then run both read loops <strong>at the same time</strong> (they are separate kernels, i.e.&nbsp;separate processes):</p>
+<ul>
+<li><code>consumer_one.assignment()</code> and <code>consumer_two.assignment()</code> show <strong>one partition each</strong>: the group rebalanced.</li>
+<li>Each prints only its partition’s messages.</li>
+<li>Stop one, and after a rebalance the other takes over both partitions.</li>
+<li>A consumer in a <em>different</em> group would get <strong>all</strong> messages again: groups are independent readers.</li>
+</ul>
+<p><code>auto_offset_reset='earliest'</code> applies only when the group has no stored offset yet (start from the beginning instead of only new messages). Afterwards the group’s committed offsets win, so a second run continues where the group stopped.</p>
+</section>
+<section id="part-5-kafka-as-spark-source-and-sink-kafkaspark_structuredstreaming.ipynb" class="level2" data-number="22.8">
+<h2 data-number="22.8" class="anchored" data-anchor-id="part-5-kafka-as-spark-source-and-sink-kafkaspark_structuredstreaming.ipynb"><span class="header-section-number">22.8</span> Part 5: Kafka as Spark source and sink (<code>KafkaSpark_StructuredStreaming.ipynb</code>)</h2>
+<p>The fraud detector from <a href="../labs/05-spark-streaming.html">Spark 3</a>, with the socket replaced by Kafka on both ends:</p>
+<pre><code>Producer.ipynb ──► topic a_partitioned_topic ──► Spark (parse, count flags per user) ──► topic results ──► Consumer.ipynb</code></pre>
+<p>The Kafka connector is not part of core Spark; it is downloaded when the session starts:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>.config(<span class="st">"spark.jars.packages"</span>, <span class="st">"org.apache.spark:spark-sql-kafka-0-10_2.13:4.1.1"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>.config(<span class="st">"spark.sql.shuffle.partitions"</span>, <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Source.</strong> Same <code>readStream</code>, different <code>format</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>raw <span class="op">=</span> (spark.readStream.<span class="bu">format</span>(<span class="st">"kafka"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"kafka.bootstrap.servers"</span>, <span class="st">"kafka-broker:9092"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"subscribe"</span>, <span class="st">"a_partitioned_topic"</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"startingOffsets"</span>, <span class="st">"latest"</span>)      <span class="co"># only messages arriving from now on</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>            .load())</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>raw.printSchema()    <span class="co"># key, value (binary), topic, partition, offset, timestamp, ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Kafka rows are binary key/value plus metadata, so the value is cast to string before parsing the JSON:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>parsed <span class="op">=</span> raw.select(from_json(col(<span class="st">"value"</span>).cast(<span class="st">"string"</span>), schema).alias(<span class="st">"data"</span>)).select(<span class="st">"data.*"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Because of <code>startingOffsets = latest</code>, <strong>re-run the sending cell in <code>Producer.ipynb</code> after starting the query</strong>, or you will see nothing. The console output appears in the Jupyter container log, as in Spark 3.</p>
+<p><strong>Transform.</strong> Identical to Spark 3, except that the output must look like a Kafka record: a <code>key</code> and a <code>value</code> column, both strings or bytes:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sus <span class="op">=</span> (parsed.where(col(<span class="st">'flag'</span>) <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>             .withColumn(<span class="st">'id'</span>, concat(col(<span class="st">'name'</span>), col(<span class="st">'surname'</span>)))</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>             .groupBy(<span class="st">'id'</span>).count().where(col(<span class="st">'count'</span>) <span class="op">&gt;</span> <span class="dv">1</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>             .withColumn(<span class="st">'fraud'</span>, lit(<span class="dv">1</span>))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>             .select(col(<span class="st">'id'</span>).alias(<span class="st">'key'</span>), col(<span class="st">'fraud'</span>).cast(StringType()).alias(<span class="st">'value'</span>)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><strong>Sink.</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> (sus.writeStream.outputMode(<span class="st">"update"</span>).<span class="bu">format</span>(<span class="st">"kafka"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"kafka.bootstrap.servers"</span>, <span class="st">"kafka-broker:9092"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"topic"</span>, <span class="st">"results"</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"checkpointLocation"</span>, <span class="st">"checkpoint"</span>)   <span class="co"># required for the Kafka sink</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>            .start())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <strong>checkpoint</strong> directory is where Spark records which input offsets it has processed and its aggregation state, so a restarted query continues instead of starting over. It is created in the notebooks folder; delete it to start from scratch.</p>
+<p>Finally, the last section of <code>Consumer.ipynb</code> subscribes to <code>results</code> and prints an “alert” for each flagged user: a third, independent application reacting to Spark’s output. For end-to-end <strong>exactly-once</strong> behaviour you would also need idempotent or transactional writes on the sink side (see the <a href="../chapters/12-kafka.html">theory</a>); this lab’s pipeline is at-least-once.</p>
+</section>
+<section id="on-a-real-cluster" class="level2" data-number="22.9">
+<h2 data-number="22.9" class="anchored" data-anchor-id="on-a-real-cluster"><span class="header-section-number">22.9</span> On a real cluster</h2>
+<ul>
+<li><strong>At least 3 brokers</strong>, topics with <code>replication_factor=3</code>, and producers with <code>acks="all"</code> (a write is confirmed only once in-sync replicas have it), together with <code>min.insync.replicas=2</code>. This configuration survives losing a broker without losing data.</li>
+<li><strong>Security</strong>: the commented-out producer/consumer examples in the notebooks (<code>security_protocol="SSL"</code>, <code>ssl_cafile=...</code>) are what a real cluster looks like: TLS plus client certificates or SASL credentials.</li>
+<li><strong>Retention</strong>: logs are deleted after a time or size limit (<code>retention.ms</code>), or <em>compacted</em> to keep the last value per key. Kafka is a buffer and a history, not a permanent archive.</li>
+<li><strong>Consumer lag</strong> (latest offset − committed offset per partition) is the key health metric: if it grows, consumers can’t keep up, so add consumers (up to the number of partitions) or partitions.</li>
+<li>Managed Kafka (AWS MSK, Confluent Cloud) handles brokers and upgrades; the client code is the same as in the notebooks, with different <code>bootstrap_servers</code> and credentials.</li>
+</ul>
+</section>
+<section id="wrap-up" class="level2" data-number="22.10">
+<h2 data-number="22.10" class="anchored" data-anchor-id="wrap-up"><span class="header-section-number">22.10</span> Wrap up</h2>
+<p><code>query.stop()</code>, <code>spark.stop()</code>, then <code>docker compose down</code>.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Takeaways
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>A topic is a set of append-only, partitioned logs; reading does not consume, and consumers track offsets.</li>
+<li><code>send</code> is asynchronous: <code>flush()</code> before exiting.</li>
+<li>Same key → same partition → ordered; no global order across partitions.</li>
+<li>Within a group, partitions are shared out (scaling); across groups, everyone gets everything (fan-out).</li>
+<li>Spark reads Kafka with <code>readStream.format("kafka")</code> and writes back with key/value columns and a checkpoint.</li>
+</ul>
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../labs/08-dask-dataframes.html" class="pagination-link" aria-label="Lab: Dask 3, DataFrames">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Lab: Dask 3, DataFrames</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">  enabled: false</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Lab: Kafka, and Kafka + Spark {#sec-lab-kafka}</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Lab at a glance</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Notebooks** (in <span class="in">`code/kafka/notebooks/`</span>, used *together*, in this order):</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="ss">  1. </span><span class="in">`Producer.ipynb`</span>: topics and producing messages</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="ss">  2. </span><span class="in">`Consumer.ipynb`</span>: reading them back, partitions, consumer groups</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="ss">  3. </span><span class="in">`ConsumerGroup.ipynb`</span>: a second consumer, run alongside notebook 2</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="ss">  4. </span><span class="in">`KafkaSpark_StructuredStreaming.ipynb`</span>: Spark reads from and writes to Kafka</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Stack:** the Spark stack plus <span class="in">`kafka-broker`</span> (one broker, no replication), see <span class="co">[</span><span class="ot">Running the labs</span><span class="co">](00-running-labs.qmd)</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Theory:** <span class="co">[</span><span class="ot">Apache Kafka</span><span class="co">](../chapters/12-kafka.qmd)</span>: topics, partitions, offsets, consumer groups; <span class="co">[</span><span class="ot">Spark Structured Streaming</span><span class="co">](05-spark-streaming.qmd)</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**You will:** publish and consume messages from the shell and from Python, see how partitions and consumer groups split the work, and rebuild the fraud detector with Kafka as source and sink</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="fu">## The idea behind it</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Decoupling with a log.** Producers and consumers never know about each other; the broker stores an ordered, durable log in between. New consumers can be added later and replay history, and a slow consumer does not slow down producers. This is the backbone of *event-driven* architectures.</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Partitions are the unit of parallelism and ordering**, as in Spark: more partitions allow more consumers in parallel, and order is guaranteed only inside one partition. The key decides the partition, so you choose the key for the ordering you need (e.g. per user).</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Replication for fault tolerance.** Each partition has a leader and followers on other brokers (<span class="co">[</span><span class="ot">theory</span><span class="co">](../chapters/12-kafka.qmd)</span>). This lab uses one broker, so <span class="in">`replication_factor=1`</span>, i.e. no fault tolerance at all.</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Delivery semantics.** At-most-once, at-least-once or exactly-once depend on *when* offsets are committed relative to processing, and on whether writes are idempotent.</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## Before you start</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> code/kafka</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose up <span class="at">--scale</span> spark-worker=2     <span class="co"># the README advises at most 2 workers</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>The broker is reachable **inside** the Docker network as <span class="in">`kafka-broker:9092`</span>; it is not published to your laptop, so everything (shell tools, Python clients, Spark) runs in a container.</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>Notebook 1 installs the client library with <span class="in">`!pip install kafka-python`</span>. It lives in the container, so you need to repeat it after every <span class="in">`docker compose down`</span>.</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## Kafka in one picture</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>Kafka is a **log**, not a queue.</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>A *topic* is split into *partitions*; each partition is an append-only, ordered list of records, and each record gets a position, the *offset*.</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>Producers append to the end. Consumers read from wherever they like and remember their offset. **Reading does not delete anything**, so many independent consumers can read the same data, at different speeds, now or later.</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>Producers and consumers never talk to each other, only to the broker. That decoupling is the whole point.</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 1: from the shell (on the broker)</span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> compose exec kafka-broker bash</span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$KAFKA_HOME</span>/bin</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--list</span>     <span class="at">--bootstrap-server</span> kafka-broker:9092</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--create</span>   <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092</span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-topics.sh</span> <span class="at">--describe</span> <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092</span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>Then open **two** shells on the broker, one for each side:</span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a><span class="in">```bash</span></span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-console-producer.sh</span> <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092</span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a><span class="ex">./kafka-console-consumer.sh</span> <span class="at">--topic</span> my_awesome_topic <span class="at">--bootstrap-server</span> kafka-broker:9092 <span class="at">--from-beginning</span></span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>Type in the producer and lines appear in the consumer.</span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>Start the consumer *without* `--from-beginning` and it only shows new messages; *with* it, it replays everything. The data was kept even though nobody was reading.</span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a><span class="in">`--bootstrap-server`</span> is just an entry point: the client asks that broker for the cluster layout, then talks to whichever broker leads each partition.</span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 2: producing from Python (`Producer.ipynb`)</span></span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-69"><a href="#cb15-69" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb15-70"><a href="#cb15-70" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaProducer</span>
+<span id="cb15-71"><a href="#cb15-71" aria-hidden="true" tabindex="-1"></a>producer <span class="op">=</span> KafkaProducer(bootstrap_servers<span class="op">=</span>[<span class="st">'kafka-broker:9092'</span>])</span>
+<span id="cb15-72"><a href="#cb15-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-73"><a href="#cb15-73" aria-hidden="true" tabindex="-1"></a>producer.send(<span class="st">'my_awesome_topic'</span>, <span class="st">b'message 1'</span>)    <span class="co"># returns a future: queued, NOT sent yet</span></span>
+<span id="cb15-74"><a href="#cb15-74" aria-hidden="true" tabindex="-1"></a>producer.flush()                                   <span class="co"># force the queue out now</span></span>
+<span id="cb15-75"><a href="#cb15-75" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-76"><a href="#cb15-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-77"><a href="#cb15-77" aria-hidden="true" tabindex="-1"></a><span class="in">`send`</span> is **asynchronous**: messages are buffered and sent in batches, which is how Kafka reaches high throughput.</span>
+<span id="cb15-78"><a href="#cb15-78" aria-hidden="true" tabindex="-1"></a>If a script exits right after <span class="in">`send`</span> without <span class="in">`flush()`</span> (or <span class="in">`close()`</span>), the messages may never leave.</span>
+<span id="cb15-79"><a href="#cb15-79" aria-hidden="true" tabindex="-1"></a>Values (and keys) are **bytes**: you choose the serialisation, e.g. <span class="in">`json.dumps(d).encode()`</span>.</span>
+<span id="cb15-80"><a href="#cb15-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-81"><a href="#cb15-81" aria-hidden="true" tabindex="-1"></a>Close the producer and create a new one: the topic and its messages are unaffected, because producers are disposable.</span>
+<span id="cb15-82"><a href="#cb15-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-83"><a href="#cb15-83" aria-hidden="true" tabindex="-1"></a>**Keys.** <span class="in">`producer.send(topic, key=b'user42', value=...)`</span>.</span>
+<span id="cb15-84"><a href="#cb15-84" aria-hidden="true" tabindex="-1"></a>The key is hashed to choose the partition, so **all messages with the same key go to the same partition, in order**. Without a key, the producer spreads messages over partitions.</span>
+<span id="cb15-85"><a href="#cb15-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-86"><a href="#cb15-86" aria-hidden="true" tabindex="-1"></a>**Admin API.** Creating topics from Python, with a chosen number of partitions:</span>
+<span id="cb15-87"><a href="#cb15-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-88"><a href="#cb15-88" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb15-89"><a href="#cb15-89" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka.admin <span class="im">import</span> KafkaAdminClient, NewTopic</span>
+<span id="cb15-90"><a href="#cb15-90" aria-hidden="true" tabindex="-1"></a>admin <span class="op">=</span> KafkaAdminClient(bootstrap_servers<span class="op">=</span>[<span class="st">'kafka-broker:9092'</span>])</span>
+<span id="cb15-91"><a href="#cb15-91" aria-hidden="true" tabindex="-1"></a>admin.create_topics([NewTopic(name<span class="op">=</span><span class="st">'a_partitioned_topic'</span>, num_partitions<span class="op">=</span><span class="dv">2</span>, replication_factor<span class="op">=</span><span class="dv">1</span>)])</span>
+<span id="cb15-92"><a href="#cb15-92" aria-hidden="true" tabindex="-1"></a>admin.list_topics()</span>
+<span id="cb15-93"><a href="#cb15-93" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-94"><a href="#cb15-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-95"><a href="#cb15-95" aria-hidden="true" tabindex="-1"></a><span class="in">`replication_factor=1`</span> because there is a single broker; on a real cluster you would use 3.</span>
+<span id="cb15-96"><a href="#cb15-96" aria-hidden="true" tabindex="-1"></a>The notebook ends by sending 20 fake transactions (the JSON from the <span class="co">[</span><span class="ot">Spark streaming lab</span><span class="co">](05-spark-streaming.qmd)</span>) to <span class="in">`a_partitioned_topic`</span>, and creating a <span class="in">`results`</span> topic for later.</span>
+<span id="cb15-97"><a href="#cb15-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-98"><a href="#cb15-98" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 3: consuming (`Consumer.ipynb`)</span></span>
+<span id="cb15-99"><a href="#cb15-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-100"><a href="#cb15-100" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb15-101"><a href="#cb15-101" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> KafkaConsumer</span>
+<span id="cb15-102"><a href="#cb15-102" aria-hidden="true" tabindex="-1"></a>consumer <span class="op">=</span> KafkaConsumer(bootstrap_servers<span class="op">=</span>[<span class="st">'kafka-broker:9092'</span>],</span>
+<span id="cb15-103"><a href="#cb15-103" aria-hidden="true" tabindex="-1"></a>                         consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)   <span class="co"># stop iterating after 10 s without messages</span></span>
+<span id="cb15-104"><a href="#cb15-104" aria-hidden="true" tabindex="-1"></a>consumer.subscribe([<span class="st">'my_awesome_topic'</span>])</span>
+<span id="cb15-105"><a href="#cb15-105" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> msg <span class="kw">in</span> consumer:                                   <span class="co"># polls the broker</span></span>
+<span id="cb15-106"><a href="#cb15-106" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(msg.partition, msg.offset, msg.key, msg.value)</span>
+<span id="cb15-107"><a href="#cb15-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-108"><a href="#cb15-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-109"><a href="#cb15-109" aria-hidden="true" tabindex="-1"></a>Without <span class="in">`consumer_timeout_ms`</span> the <span class="in">`for`</span> loop never ends (a consumer waits for new data forever), so interrupt the kernel to stop it.</span>
+<span id="cb15-110"><a href="#cb15-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-111"><a href="#cb15-111" aria-hidden="true" tabindex="-1"></a>Each record carries its **partition**, **offset**, **timestamp**, **key** and **value**.</span>
+<span id="cb15-112"><a href="#cb15-112" aria-hidden="true" tabindex="-1"></a><span class="in">`consumer.seek_to_beginning()`</span> moves the offset back to 0 and the topic is read again, the Python version of <span class="in">`--from-beginning`</span>.</span>
+<span id="cb15-113"><a href="#cb15-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-114"><a href="#cb15-114" aria-hidden="true" tabindex="-1"></a>On <span class="in">`a_partitioned_topic`</span> you see messages from partitions 0 and 1 interleaved: **order is guaranteed only within a partition**, never across the topic.</span>
+<span id="cb15-115"><a href="#cb15-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-116"><a href="#cb15-116" aria-hidden="true" tabindex="-1"></a>**Reading one partition only.** Instead of <span class="in">`subscribe`</span> (let Kafka decide), <span class="in">`assign`</span> picks partitions by hand:</span>
+<span id="cb15-117"><a href="#cb15-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-118"><a href="#cb15-118" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb15-119"><a href="#cb15-119" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> kafka <span class="im">import</span> TopicPartition</span>
+<span id="cb15-120"><a href="#cb15-120" aria-hidden="true" tabindex="-1"></a>c0 <span class="op">=</span> KafkaConsumer(bootstrap_servers<span class="op">=</span>[<span class="st">'kafka-broker:9092'</span>], consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)</span>
+<span id="cb15-121"><a href="#cb15-121" aria-hidden="true" tabindex="-1"></a>c0.assign([TopicPartition(<span class="st">'a_partitioned_topic'</span>, <span class="dv">0</span>)])</span>
+<span id="cb15-122"><a href="#cb15-122" aria-hidden="true" tabindex="-1"></a>c0.seek_to_beginning()</span>
+<span id="cb15-123"><a href="#cb15-123" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-124"><a href="#cb15-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-125"><a href="#cb15-125" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 4: consumer groups (`Consumer.ipynb` + `ConsumerGroup.ipynb`)</span></span>
+<span id="cb15-126"><a href="#cb15-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-127"><a href="#cb15-127" aria-hidden="true" tabindex="-1"></a>Consumers that share a <span class="in">`group_id`</span> **split the partitions** of a topic between them: each partition is read by exactly one member of the group. This is how Kafka scales reading.</span>
+<span id="cb15-128"><a href="#cb15-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-129"><a href="#cb15-129" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb15-130"><a href="#cb15-130" aria-hidden="true" tabindex="-1"></a>consumer_one <span class="op">=</span> KafkaConsumer(bootstrap_servers<span class="op">=</span>[<span class="st">'kafka-broker:9092'</span>],</span>
+<span id="cb15-131"><a href="#cb15-131" aria-hidden="true" tabindex="-1"></a>                             client_id<span class="op">=</span><span class="st">'consumer_one'</span>, group_id<span class="op">=</span><span class="st">'my_group'</span>,</span>
+<span id="cb15-132"><a href="#cb15-132" aria-hidden="true" tabindex="-1"></a>                             auto_offset_reset<span class="op">=</span><span class="st">'earliest'</span>, consumer_timeout_ms<span class="op">=</span><span class="dv">10000</span>)</span>
+<span id="cb15-133"><a href="#cb15-133" aria-hidden="true" tabindex="-1"></a>consumer_one.subscribe([<span class="st">'a_partitioned_topic'</span>])</span>
+<span id="cb15-134"><a href="#cb15-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-135"><a href="#cb15-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-136"><a href="#cb15-136" aria-hidden="true" tabindex="-1"></a>Create <span class="in">`consumer_two`</span> with the same <span class="in">`group_id`</span> in <span class="in">`ConsumerGroup.ipynb`</span>, then run both read loops **at the same time** (they are separate kernels, i.e. separate processes):</span>
+<span id="cb15-137"><a href="#cb15-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-138"><a href="#cb15-138" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`consumer_one.assignment()`</span> and <span class="in">`consumer_two.assignment()`</span> show **one partition each**: the group rebalanced.</span>
+<span id="cb15-139"><a href="#cb15-139" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Each prints only its partition's messages.</span>
+<span id="cb15-140"><a href="#cb15-140" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Stop one, and after a rebalance the other takes over both partitions.</span>
+<span id="cb15-141"><a href="#cb15-141" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A consumer in a *different* group would get **all** messages again: groups are independent readers.</span>
+<span id="cb15-142"><a href="#cb15-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-143"><a href="#cb15-143" aria-hidden="true" tabindex="-1"></a><span class="in">`auto_offset_reset='earliest'`</span> applies only when the group has no stored offset yet (start from the beginning instead of only new messages). Afterwards the group's committed offsets win, so a second run continues where the group stopped.</span>
+<span id="cb15-144"><a href="#cb15-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-145"><a href="#cb15-145" aria-hidden="true" tabindex="-1"></a><span class="fu">## Part 5: Kafka as Spark source and sink (`KafkaSpark_StructuredStreaming.ipynb`)</span></span>
+<span id="cb15-146"><a href="#cb15-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-147"><a href="#cb15-147" aria-hidden="true" tabindex="-1"></a>The fraud detector from <span class="co">[</span><span class="ot">Spark 3</span><span class="co">](05-spark-streaming.qmd)</span>, with the socket replaced by Kafka on both ends:</span>
+<span id="cb15-148"><a href="#cb15-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-149"><a href="#cb15-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-150"><a href="#cb15-150" aria-hidden="true" tabindex="-1"></a><span class="in">Producer.ipynb ──► topic a_partitioned_topic ──► Spark (parse, count flags per user) ──► topic results ──► Consumer.ipynb</span></span>
+<span id="cb15-151"><a href="#cb15-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-152"><a href="#cb15-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-153"><a href="#cb15-153" aria-hidden="true" tabindex="-1"></a>The Kafka connector is not part of core Spark; it is downloaded when the session starts:</span>
+<span id="cb15-154"><a href="#cb15-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-155"><a href="#cb15-155" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb15-156"><a href="#cb15-156" aria-hidden="true" tabindex="-1"></a>.config(<span class="st">"spark.jars.packages"</span>, <span class="st">"org.apache.spark:spark-sql-kafka-0-10_2.13:4.1.1"</span>)</span>
+<span id="cb15-157"><a href="#cb15-157" aria-hidden="true" tabindex="-1"></a>.config(<span class="st">"spark.sql.shuffle.partitions"</span>, <span class="dv">4</span>)</span>
+<span id="cb15-158"><a href="#cb15-158" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-159"><a href="#cb15-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-160"><a href="#cb15-160" aria-hidden="true" tabindex="-1"></a>**Source.** Same <span class="in">`readStream`</span>, different <span class="in">`format`</span>:</span>
+<span id="cb15-161"><a href="#cb15-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-162"><a href="#cb15-162" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb15-163"><a href="#cb15-163" aria-hidden="true" tabindex="-1"></a>raw <span class="op">=</span> (spark.readStream.<span class="bu">format</span>(<span class="st">"kafka"</span>)</span>
+<span id="cb15-164"><a href="#cb15-164" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"kafka.bootstrap.servers"</span>, <span class="st">"kafka-broker:9092"</span>)</span>
+<span id="cb15-165"><a href="#cb15-165" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"subscribe"</span>, <span class="st">"a_partitioned_topic"</span>)</span>
+<span id="cb15-166"><a href="#cb15-166" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"startingOffsets"</span>, <span class="st">"latest"</span>)      <span class="co"># only messages arriving from now on</span></span>
+<span id="cb15-167"><a href="#cb15-167" aria-hidden="true" tabindex="-1"></a>            .load())</span>
+<span id="cb15-168"><a href="#cb15-168" aria-hidden="true" tabindex="-1"></a>raw.printSchema()    <span class="co"># key, value (binary), topic, partition, offset, timestamp, ...</span></span>
+<span id="cb15-169"><a href="#cb15-169" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-170"><a href="#cb15-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a>Kafka rows are binary key/value plus metadata, so the value is cast to string before parsing the JSON:</span>
+<span id="cb15-172"><a href="#cb15-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-173"><a href="#cb15-173" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb15-174"><a href="#cb15-174" aria-hidden="true" tabindex="-1"></a>parsed <span class="op">=</span> raw.select(from_json(col(<span class="st">"value"</span>).cast(<span class="st">"string"</span>), schema).alias(<span class="st">"data"</span>)).select(<span class="st">"data.*"</span>)</span>
+<span id="cb15-175"><a href="#cb15-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-176"><a href="#cb15-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-177"><a href="#cb15-177" aria-hidden="true" tabindex="-1"></a>Because of <span class="in">`startingOffsets = latest`</span>, **re-run the sending cell in `Producer.ipynb` after starting the query**, or you will see nothing. The console output appears in the Jupyter container log, as in Spark 3.</span>
+<span id="cb15-178"><a href="#cb15-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-179"><a href="#cb15-179" aria-hidden="true" tabindex="-1"></a>**Transform.** Identical to Spark 3, except that the output must look like a Kafka record: a <span class="in">`key`</span> and a <span class="in">`value`</span> column, both strings or bytes:</span>
+<span id="cb15-180"><a href="#cb15-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-181"><a href="#cb15-181" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb15-182"><a href="#cb15-182" aria-hidden="true" tabindex="-1"></a>sus <span class="op">=</span> (parsed.where(col(<span class="st">'flag'</span>) <span class="op">==</span> <span class="dv">1</span>)</span>
+<span id="cb15-183"><a href="#cb15-183" aria-hidden="true" tabindex="-1"></a>             .withColumn(<span class="st">'id'</span>, concat(col(<span class="st">'name'</span>), col(<span class="st">'surname'</span>)))</span>
+<span id="cb15-184"><a href="#cb15-184" aria-hidden="true" tabindex="-1"></a>             .groupBy(<span class="st">'id'</span>).count().where(col(<span class="st">'count'</span>) <span class="op">&gt;</span> <span class="dv">1</span>)</span>
+<span id="cb15-185"><a href="#cb15-185" aria-hidden="true" tabindex="-1"></a>             .withColumn(<span class="st">'fraud'</span>, lit(<span class="dv">1</span>))</span>
+<span id="cb15-186"><a href="#cb15-186" aria-hidden="true" tabindex="-1"></a>             .select(col(<span class="st">'id'</span>).alias(<span class="st">'key'</span>), col(<span class="st">'fraud'</span>).cast(StringType()).alias(<span class="st">'value'</span>)))</span>
+<span id="cb15-187"><a href="#cb15-187" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-188"><a href="#cb15-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-189"><a href="#cb15-189" aria-hidden="true" tabindex="-1"></a>**Sink.**</span>
+<span id="cb15-190"><a href="#cb15-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-191"><a href="#cb15-191" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb15-192"><a href="#cb15-192" aria-hidden="true" tabindex="-1"></a>query <span class="op">=</span> (sus.writeStream.outputMode(<span class="st">"update"</span>).<span class="bu">format</span>(<span class="st">"kafka"</span>)</span>
+<span id="cb15-193"><a href="#cb15-193" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"kafka.bootstrap.servers"</span>, <span class="st">"kafka-broker:9092"</span>)</span>
+<span id="cb15-194"><a href="#cb15-194" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"topic"</span>, <span class="st">"results"</span>)</span>
+<span id="cb15-195"><a href="#cb15-195" aria-hidden="true" tabindex="-1"></a>            .option(<span class="st">"checkpointLocation"</span>, <span class="st">"checkpoint"</span>)   <span class="co"># required for the Kafka sink</span></span>
+<span id="cb15-196"><a href="#cb15-196" aria-hidden="true" tabindex="-1"></a>            .start())</span>
+<span id="cb15-197"><a href="#cb15-197" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb15-198"><a href="#cb15-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-199"><a href="#cb15-199" aria-hidden="true" tabindex="-1"></a>The **checkpoint** directory is where Spark records which input offsets it has processed and its aggregation state, so a restarted query continues instead of starting over. It is created in the notebooks folder; delete it to start from scratch.</span>
+<span id="cb15-200"><a href="#cb15-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-201"><a href="#cb15-201" aria-hidden="true" tabindex="-1"></a>Finally, the last section of <span class="in">`Consumer.ipynb`</span> subscribes to <span class="in">`results`</span> and prints an "alert" for each flagged user: a third, independent application reacting to Spark's output.</span>
+<span id="cb15-202"><a href="#cb15-202" aria-hidden="true" tabindex="-1"></a>For end-to-end **exactly-once** behaviour you would also need idempotent or transactional writes on the sink side (see the <span class="co">[</span><span class="ot">theory</span><span class="co">](../chapters/12-kafka.qmd)</span>); this lab's pipeline is at-least-once.</span>
+<span id="cb15-203"><a href="#cb15-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-204"><a href="#cb15-204" aria-hidden="true" tabindex="-1"></a><span class="fu">## On a real cluster</span></span>
+<span id="cb15-205"><a href="#cb15-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-206"><a href="#cb15-206" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**At least 3 brokers**, topics with <span class="in">`replication_factor=3`</span>, and producers with <span class="in">`acks="all"`</span> (a write is confirmed only once in-sync replicas have it), together with <span class="in">`min.insync.replicas=2`</span>. This configuration survives losing a broker without losing data.</span>
+<span id="cb15-207"><a href="#cb15-207" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Security**: the commented-out producer/consumer examples in the notebooks (<span class="in">`security_protocol="SSL"`</span>, <span class="in">`ssl_cafile=...`</span>) are what a real cluster looks like: TLS plus client certificates or SASL credentials.</span>
+<span id="cb15-208"><a href="#cb15-208" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Retention**: logs are deleted after a time or size limit (<span class="in">`retention.ms`</span>), or *compacted* to keep the last value per key. Kafka is a buffer and a history, not a permanent archive.</span>
+<span id="cb15-209"><a href="#cb15-209" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Consumer lag** (latest offset − committed offset per partition) is the key health metric: if it grows, consumers can't keep up, so add consumers (up to the number of partitions) or partitions.</span>
+<span id="cb15-210"><a href="#cb15-210" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Managed Kafka (AWS MSK, Confluent Cloud) handles brokers and upgrades; the client code is the same as in the notebooks, with different <span class="in">`bootstrap_servers`</span> and credentials.</span>
+<span id="cb15-211"><a href="#cb15-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-212"><a href="#cb15-212" aria-hidden="true" tabindex="-1"></a><span class="fu">## Wrap up</span></span>
+<span id="cb15-213"><a href="#cb15-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-214"><a href="#cb15-214" aria-hidden="true" tabindex="-1"></a><span class="in">`query.stop()`</span>, <span class="in">`spark.stop()`</span>, then <span class="in">`docker compose down`</span>.</span>
+<span id="cb15-215"><a href="#cb15-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-216"><a href="#cb15-216" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb15-217"><a href="#cb15-217" aria-hidden="true" tabindex="-1"></a><span class="fu">## Takeaways</span></span>
+<span id="cb15-218"><a href="#cb15-218" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>A topic is a set of append-only, partitioned logs; reading does not consume, and consumers track offsets.</span>
+<span id="cb15-219"><a href="#cb15-219" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`send`</span> is asynchronous: <span class="in">`flush()`</span> before exiting.</span>
+<span id="cb15-220"><a href="#cb15-220" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Same key → same partition → ordered; no global order across partitions.</span>
+<span id="cb15-221"><a href="#cb15-221" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Within a group, partitions are shared out (scaling); across groups, everyone gets everything (fan-out).</span>
+<span id="cb15-222"><a href="#cb15-222" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Spark reads Kafka with <span class="in">`readStream.format("kafka")`</span> and writes back with key/value columns and a checkpoint.</span>
+<span id="cb15-223"><a href="#cb15-223" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>9&nbsp; Classical and quantum Shannon theory – Quantum Information and Computing</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/10-quantum-key-distribution.html" rel="next">
+<link href="../chapters/08-quantum-operations-and-generalized-measurements.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-12757e4b7af482b2d9c5bd8860d2b707.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-3fda7689cb8c4ed59160d7ff94eb8d4f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/09-quantum-shannon-theory.html">Part II: Quantum information</a></li><li class="breadcrumb-item"><a href="../chapters/09-quantum-shannon-theory.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Classical and quantum Shannon theory</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Quantum Information and Computing</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About these notes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Quantum mechanics for quantum information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-qubits-and-measurement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Qubits and measurement</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-observables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Operators and observables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-mixed-states.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Mixed states and density operators</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-unitary-evolution-and-postulates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Unitary evolution and the postulates</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-composite-systems-and-entanglement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Composite systems and entanglement</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-bell-inequalities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Nonlocality and Bell inequalities</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-detecting-entanglement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Detecting entanglement</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-quantum-operations-and-generalized-measurements.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quantum operations and generalized measurements</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Quantum information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-quantum-shannon-theory.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Classical and quantum Shannon theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-quantum-key-distribution.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">No-cloning and quantum key distribution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-teleportation-and-entanglement-swapping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Teleportation and entanglement swapping</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: Quantum computation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-quantum-circuits-and-universality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Quantum circuits and universality</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-phase-estimation-and-shor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Fourier transform, phase estimation and Shor’s algorithm</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-grover-search.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Grover’s search algorithm</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-error-correction-and-implementations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Error correction and physical implementations</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#classical-information-theory-in-brief" id="toc-classical-information-theory-in-brief" class="nav-link active" data-scroll-target="#classical-information-theory-in-brief"><span class="header-section-number">9.1</span> Classical information theory in brief</a></li>
+  <li><a href="#von-neumann-entropy" id="toc-von-neumann-entropy" class="nav-link" data-scroll-target="#von-neumann-entropy"><span class="header-section-number">9.2</span> Von Neumann entropy</a></li>
+  <li><a href="#accessible-information-and-the-holevo-bound" id="toc-accessible-information-and-the-holevo-bound" class="nav-link" data-scroll-target="#accessible-information-and-the-holevo-bound"><span class="header-section-number">9.3</span> Accessible information and the Holevo bound</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">9.4</span> Exercises</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">9.5</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/09-quantum-shannon-theory.html">Part II: Quantum information</a></li><li class="breadcrumb-item"><a href="../chapters/09-quantum-shannon-theory.html"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Classical and quantum Shannon theory</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Classical and quantum Shannon theory</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>How much information does a quantum system carry? A qubit has a continuum of states, yet intuition suggests it cannot store more than one bit retrievably. This chapter recalls the classical entropies of Shannon — compression rate, mutual information, channel capacity — introduces their quantum counterpart, the <strong>von Neumann entropy</strong>, highlights where quantum and classical behaviour part ways (negative conditional entropy), and proves the operational answer: the <strong>Holevo bound</strong> on accessible information.</p>
+<section id="classical-information-theory-in-brief" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="classical-information-theory-in-brief"><span class="header-section-number">9.1</span> Classical information theory in brief</h2>
+<div class="definition" name="Shannon entropy">
+<p>For a random variable <span class="math inline">\(X\)</span> with distribution <span class="math inline">\(p_x\)</span>, <span class="math display">\[H(X) = -\sum_x p_x\log_2 p_x .\]</span></p>
+</div>
+<p><span class="math inline">\(H(X)\)</span> is the average surprise of an outcome and, operationally, the <strong>compression rate</strong>: by Shannon’s <strong>noiseless coding theorem</strong>, <span class="math inline">\(n\)</span> i.i.d. copies of <span class="math inline">\(X\)</span> can be compressed into about <span class="math inline">\(nH(X)\)</span> bits and no fewer, for <span class="math inline">\(n \to \infty\)</span>. It ranges from <span class="math inline">\(0\)</span> (deterministic) to <span class="math inline">\(\log_2|X|\)</span> (uniform). For a binary variable with <span class="math inline">\(p(1) = Q\)</span> it is the <strong>binary entropy</strong> <span class="math inline">\(h_2(Q) = -Q\log_2 Q - (1-Q)\log_2(1-Q)\)</span>.</p>
+<p>For two variables:</p>
+<ul>
+<li><strong>joint entropy</strong> <span class="math inline">\(H(X, Y) = -\sum_{x,y}p_{xy}\log_2 p_{xy}\)</span>;</li>
+<li><strong>conditional entropy</strong> <span class="math inline">\(H(X|Y) = H(X,Y) - H(Y)\)</span>: the additional bits needed to specify <span class="math inline">\(X\)</span> when <span class="math inline">\(Y\)</span> is known — the residual ignorance about <span class="math inline">\(X\)</span>;</li>
+<li><strong>mutual information</strong> <span class="math inline">\(I(X:Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)\)</span>: how much learning <span class="math inline">\(Y\)</span> reduces the bits needed to specify <span class="math inline">\(X\)</span>.</li>
+</ul>
+<p><img src="../Grafiche/_inline_cache/bb187ab9fc126edb.svg" class="tikz-figure img-fluid" alt=""></p>
+<p><em>Figure: entropies of two variables. The union is <span class="math inline">\(H(X,Y)\)</span>; classically every region is non-negative.</em></p>
+<div class="theorem" name="Noisy channel coding theorem">
+<p>A channel defined by conditional probabilities <span class="math inline">\(p(y|x)\)</span> has <strong>capacity</strong> <span class="math display">\[C = \max_{p_x} I(X:Y).\]</span> Every rate <span class="math inline">\(R &lt; C\)</span> can be transmitted with vanishing error probability, and no rate <span class="math inline">\(R &gt; C\)</span> can.</p>
+</div>
+<p>For the binary symmetric channel with flip probability <span class="math inline">\(Q\)</span>, <span class="math inline">\(C = 1 - h_2(Q)\)</span>, achieved by uniform inputs. This formula reappears in QKD as the information Alice and Bob share through a channel with error rate <span class="math inline">\(Q\)</span>.</p>
+</section>
+<section id="von-neumann-entropy" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="von-neumann-entropy"><span class="header-section-number">9.2</span> Von Neumann entropy</h2>
+<div class="definition" name="Von Neumann entropy">
+<p><span class="math display">\[S(\hat\rho) = -\mathrm{Tr}[\hat\rho\log_2\hat\rho] = -\sum_j\lambda_j\log_2\lambda_j,\]</span> where <span class="math inline">\(\lambda_j\)</span> are the eigenvalues of <span class="math inline">\(\hat\rho\)</span>: the Shannon entropy of its spectrum.</p>
+</div>
+<div class="proposition" name="Properties">
+<ol type="1">
+<li><span class="math inline">\(S(\hat\rho) = 0\)</span> iff <span class="math inline">\(\hat\rho\)</span> is pure.</li>
+<li><strong>Unitary invariance:</strong> <span class="math inline">\(S(\hat U\hat\rho\hat U^\dagger) = S(\hat\rho)\)</span>.</li>
+<li><span class="math inline">\(0 \leq S(\hat\rho) \leq \log_2 d\)</span>, with the maximum for <span class="math inline">\(\hat{\mathbb 1}/d\)</span>.</li>
+<li><strong>Concavity:</strong> <span class="math inline">\(S(\sum_k p_k\hat\rho_k) \geq \sum_k p_k S(\hat\rho_k)\)</span> — mixing increases ignorance.</li>
+<li><strong>Subadditivity:</strong> <span class="math inline">\(S(AB) \leq S(A) + S(B)\)</span>, with equality iff <span class="math inline">\(\hat\rho_{AB} = \hat\rho_A\otimes\hat\rho_B\)</span> (as for Shannon entropy).</li>
+<li><strong>Araki–Lieb (triangle) inequality:</strong> <span class="math inline">\(S(AB) \geq |S(A) - S(B)|\)</span>.</li>
+<li>For a <strong>pure bipartite state</strong>, <span class="math inline">\(S(A) = S(B)\)</span> (both reduced states have the Schmidt coefficients as spectrum).</li>
+</ol>
+</div>
+<p>For a qubit with Bloch vector <span class="math inline">\(\vec r\)</span>, <span class="math inline">\(S = h_2\bigl(\tfrac{1 + |\vec r|}{2}\bigr)\)</span>.</p>
+<p>Point 6 departs from the classical relation <span class="math inline">\(H(X,Y) \geq \max(H(X), H(Y))\)</span>. For a Bell state, <span class="math inline">\(S(AB) = 0\)</span> while <span class="math inline">\(S(A) = S(B) = 1\)</span>: the whole is less uncertain than its parts. Consequently the <strong>quantum conditional entropy</strong> <span class="math display">\[S(A|B) = S(AB) - S(B)\]</span> can be <strong>negative</strong>: <span class="math inline">\(S(A|B) = -1\)</span> for a Bell state. Negative conditional entropy is a signature of entanglement (it is impossible for separable states) and has an operational meaning in quantum state merging. For pure states, <span class="math inline">\(S(A) = S(B)\)</span> is the standard measure of entanglement, the <strong>entanglement entropy</strong>.</p>
+<div class="definition" name="Quantum mutual information">
+<p><span class="math inline">\(I(A:B) = S(A) + S(B) - S(AB) \geq 0\)</span>. For a Bell state <span class="math inline">\(I(A:B) = 2\)</span>: twice the classical maximum for two bits.</p>
+</div>
+</section>
+<section id="accessible-information-and-the-holevo-bound" class="level2" data-number="9.3">
+<h2 data-number="9.3" class="anchored" data-anchor-id="accessible-information-and-the-holevo-bound"><span class="header-section-number">9.3</span> Accessible information and the Holevo bound</h2>
+<p>Alice encodes a classical letter <span class="math inline">\(x\)</span> (probability <span class="math inline">\(p_x\)</span>) into a state <span class="math inline">\(\hat\rho_x\)</span> and sends it to Bob, who performs a POVM <span class="math inline">\(\{\hat F_y\}\)</span>. The outcome statistics are <span class="math inline">\(p(y|x) = \mathrm{Tr}[\hat F_y\hat\rho_x]\)</span> (after the channel, if any). The <strong>accessible information</strong> is the best mutual information Bob can achieve: <span class="math display">\[I_{acc} = \max_{\{\hat F_y\}} I(X:Y) = \max_{\{\hat F_y\}}\bigl[H(Y) - H(Y|X)\bigr].\]</span></p>
+<div class="theorem" name="Holevo bound (1973)">
+<p>For the ensemble <span class="math inline">\(\{p_x, \hat\rho_x\}\)</span> with average state <span class="math inline">\(\hat\rho = \sum_x p_x\hat\rho_x\)</span>, <span class="math display">\[I_{acc} \leq \chi \equiv S(\hat\rho) - \sum_x p_x S(\hat\rho_x).\]</span></p>
+</div>
+<p>Since <span class="math inline">\(\chi \leq S(\hat\rho) \leq \log_2 d\)</span>, <strong>by sending <span class="math inline">\(n\)</span> qubits Alice can convey at most <span class="math inline">\(n\)</span> bits of classical information</strong> — despite the continuum of states a qubit can occupy. For pure states <span class="math inline">\(\chi = S(\hat\rho)\)</span>, and the bound coincides with Schumacher’s quantum compression rate. The bound is generally not attained by measuring letter by letter, but it is achievable asymptotically with block coding (Holevo–Schumacher–Westmoreland).</p>
+<div class="example" name="Two non-orthogonal pure states">
+<p>Alice sends <span class="math inline">\(\ket{\theta_{0,1}} = \cos\tfrac\theta2\ket 0 \pm \sin\tfrac\theta2\ket 1\)</span> with equal probabilities. The average state is diagonal, <span class="math inline">\(\hat\rho = \cos^2\tfrac\theta2\ket 0\bra 0 + \sin^2\tfrac\theta2\ket 1\bra 1\)</span>, so <span class="math display">\[\chi = S(\hat\rho) = h_2\Bigl(\cos^2\frac\theta2\Bigr) \leq 1 .\]</span> Bob measures with a projective measurement <span class="math inline">\(\hat\Pi_\pm = \tfrac12(\hat{\mathbb 1} \pm \vec n\cdot\hat{\vec\sigma})\)</span>; by symmetry the optimum is <span class="math inline">\(\vec n = \hat x\)</span>, for which <span class="math inline">\(p(\pm|\theta_0) = \tfrac12(1 \pm \sin\theta)\)</span>: a binary symmetric channel with error <span class="math inline">\(\tfrac12(1 - \sin\theta)\)</span>, so <span class="math display">\[I(X:Y) = 1 - h_2\Bigl(\frac{1 - \sin\theta}{2}\Bigr) \leq h_2\Bigl(\frac{1 + \cos\theta}{2}\Bigr) = \chi,\]</span> with equality only for orthogonal states (<span class="math inline">\(\theta = \pi/2\)</span>), where both equal <span class="math inline">\(1\)</span>.</p>
+</div>
+<div class="example" name="The trine">
+<p>Alice sends <span class="math inline">\(\ket{\phi_0} = \ket 0\)</span>, <span class="math inline">\(\ket{\phi_{1,2}} = \tfrac12\ket 0 \pm \tfrac{\sqrt3}{2}\ket 1\)</span> with probability <span class="math inline">\(\tfrac13\)</span> each — three states at <span class="math inline">\(120°\)</span> on a great circle of the Bloch sphere. Since <span class="math inline">\(\hat\rho = \hat{\mathbb 1}/2\)</span>, the Holevo quantity is <span class="math inline">\(\chi = 1\)</span>. The optimal measurement is the “anti-trine” POVM <span class="math display">\[\hat F_y = \tfrac23\ket{\phi_y^\perp}\bra{\phi_y^\perp},\]</span> with <span class="math inline">\(\ket{\phi_0^\perp} = \ket 1\)</span>, <span class="math inline">\(\ket{\phi_{1,2}^\perp} = \tfrac{\sqrt3}{2}\ket 0 \mp \tfrac12\ket 1\)</span>. Outcome <span class="math inline">\(y\)</span> <em>excludes</em> state <span class="math inline">\(y\)</span>: <span class="math inline">\(p(y|x) = 0\)</span> for <span class="math inline">\(y = x\)</span> and <span class="math inline">\(\tfrac12\)</span> otherwise. Then <span class="math inline">\(H(X) = H(Y) = \log_2 3\)</span> and <span class="math inline">\(H(X,Y) = \log_2 3 + 1\)</span>, giving <span class="math display">\[I_{acc} = \log_2 3 - 1 \approx 0.585 &lt; \chi = 1 .\]</span> A three-outcome POVM on a qubit beats any two-outcome projective measurement here — a concrete advantage of generalized measurements.</p>
+</div>
+</section>
+<section id="exercises" class="level2" data-number="9.4">
+<h2 data-number="9.4" class="anchored" data-anchor-id="exercises"><span class="header-section-number">9.4</span> Exercises</h2>
+<div class="exercise">
+<p>Compute <span class="math inline">\(S(A)\)</span>, <span class="math inline">\(S(B)\)</span>, <span class="math inline">\(S(AB)\)</span>, <span class="math inline">\(S(A|B)\)</span> and <span class="math inline">\(I(A:B)\)</span> for the Werner state <span class="math inline">\(\hat\rho_W = p\ket{\Psi^-}\bra{\Psi^-} + (1-p)\hat{\mathbb 1}/4\)</span> and find when <span class="math inline">\(S(A|B) &lt; 0\)</span>.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Marginals are <span class="math inline">\(\hat{\mathbb 1}/2\)</span>: <span class="math inline">\(S(A) = S(B) = 1\)</span>. Eigenvalues of <span class="math inline">\(\hat\rho_W\)</span>: <span class="math inline">\(\tfrac{1 + 3p}{4}\)</span> once and <span class="math inline">\(\tfrac{1-p}{4}\)</span> three times, so <span class="math inline">\(S(AB) = -\tfrac{1+3p}{4}\log_2\tfrac{1+3p}{4} - \tfrac{3(1-p)}{4}\log_2\tfrac{1-p}{4}\)</span>. Then <span class="math inline">\(S(A|B) = S(AB) - 1\)</span> and <span class="math inline">\(I(A:B) = 2 - S(AB)\)</span>. <span class="math inline">\(S(A|B) &lt; 0\)</span> iff <span class="math inline">\(S(AB) &lt; 1\)</span>, which happens for <span class="math inline">\(p \gtrsim 0.75\)</span> — a stricter condition than entanglement (<span class="math inline">\(p &gt; \tfrac13\)</span>): negative conditional entropy implies entanglement, not vice versa.</p>
+</div>
+<div class="exercise">
+<p>Show that for the BB84 states <span class="math inline">\(\{\ket 0, \ket 1, \ket +, \ket -\}\)</span> sent with equal probability, <span class="math inline">\(\chi = 1\)</span>, and that Bob measuring in the <span class="math inline">\(z\)</span> basis obtains <span class="math inline">\(I(X:Y) = \tfrac12\)</span> bit about the four-valued letter.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><span class="math inline">\(\hat\rho = \hat{\mathbb 1}/2\)</span> and all states are pure: <span class="math inline">\(\chi = 1\)</span>. Measuring <span class="math inline">\(z\)</span>: for <span class="math inline">\(x \in \{0, 1\}\)</span> Bob learns <span class="math inline">\(x\)</span>; for <span class="math inline">\(x \in \{+, -\}\)</span> he gets a uniformly random bit. <span class="math inline">\(H(X) = 2\)</span>, <span class="math inline">\(H(X|Y) = 1.5\)</span> (given <span class="math inline">\(y\)</span>, <span class="math inline">\(x\)</span> is <span class="math inline">\(y\)</span> with probability <span class="math inline">\(\tfrac12\)</span> or one of <span class="math inline">\(\pm\)</span> with probability <span class="math inline">\(\tfrac14\)</span> each), so <span class="math inline">\(I = 0.5\)</span> bit — far below <span class="math inline">\(\chi\)</span>, and still below the <span class="math inline">\(1\)</span> bit Bob could get if the basis were announced.</p>
+</div>
+</section>
+<section id="sources" class="level2" data-number="9.5">
+<h2 data-number="9.5" class="anchored" data-anchor-id="sources"><span class="header-section-number">9.5</span> Sources</h2>
+<p>Prof.&nbsp;Vallone, <em>Quantum Information and Computing</em>, lecture 11 (POVM, classical information theory recap, von Neumann entropy and its properties, quantum mutual information, accessible information and the Holevo bound, the examples with two and three non-orthogonal states) and exercise sheet <code>exercise1</code> (accessible information of the trine). Nielsen &amp; Chuang, Chapters 11–12. Preskill, <em>Lecture Notes</em>, Chapter 10. Benenti, Casati &amp; Strini, Vol. I, Chapter 5. Original reference: A. Holevo, Probl. Peredachi Inf. <strong>9</strong>, 3 (1973).</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/08-quantum-operations-and-generalized-measurements.html" class="pagination-link" aria-label="Quantum operations and generalized measurements">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quantum operations and generalized measurements</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/10-quantum-key-distribution.html" class="pagination-link" aria-label="No-cloning and quantum key distribution">
+        <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">No-cloning and quantum key distribution</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Classical and quantum Shannon theory"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>How much information does a quantum system carry? A qubit has a continuum of states, yet intuition suggests it cannot store more than one bit retrievably. This chapter recalls the classical entropies of Shannon — compression rate, mutual information, channel capacity — introduces their quantum counterpart, the **von Neumann entropy**, highlights where quantum and classical behaviour part ways (negative conditional entropy), and proves the operational answer: the **Holevo bound** on accessible information.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Classical information theory in brief</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Shannon entropy"}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>For a random variable $X$ with distribution $p_x$,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>$$H(X) = -\sum_x p_x\log_2 p_x .$$</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>$H(X)$ is the average surprise of an outcome and, operationally, the **compression rate**: by Shannon's **noiseless coding theorem**, $n$ i.i.d. copies of $X$ can be compressed into about $nH(X)$ bits and no fewer, for $n \to \infty$. It ranges from $0$ (deterministic) to $\log_2|X|$ (uniform). For a binary variable with $p(1) = Q$ it is the **binary entropy** $h_2(Q) = -Q\log_2 Q - (1-Q)\log_2(1-Q)$.</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>For two variables:</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**joint entropy** $H(X, Y) = -\sum_{x,y}p_{xy}\log_2 p_{xy}$;</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**conditional entropy** $H(X|Y) = H(X,Y) - H(Y)$: the additional bits needed to specify $X$ when $Y$ is known — the residual ignorance about $X$;</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**mutual information** $I(X:Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) = H(X) + H(Y) - H(X,Y)$: how much learning $Y$ reduces the bits needed to specify $X$.</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="in">```{=latex}</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="in">\begin{center}</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="in">\begin{tikzpicture}[font=\small, line width=0.4pt]</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (0,0) circle (1.5);</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (1.6,0) circle (1.5);</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="in">  \node at (-0.75,0) {$H(X|Y)$};</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="in">  \node at (0.8,0) {$I(X{:}Y)$};</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="in">  \node at (2.35,0) {$H(Y|X)$};</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="in">  \node at (-0.6,1.75) {$H(X)$};</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="in">  \node at (2.2,1.75) {$H(Y)$};</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="in">\end{tikzpicture}</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="in">\end{center}</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>*Figure: entropies of two variables. The union is $H(X,Y)$; classically every region is non-negative.*</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Noisy channel coding theorem"}</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>A channel defined by conditional probabilities $p(y|x)$ has **capacity**</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>$$C = \max_{p_x} I(X:Y).$$</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>Every rate $R &lt; C$ can be transmitted with vanishing error probability, and no rate $R &gt; C$ can.</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>For the binary symmetric channel with flip probability $Q$, $C = 1 - h_2(Q)$, achieved by uniform inputs. This formula reappears in QKD as the information Alice and Bob share through a channel with error rate $Q$.</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="fu">## Von Neumann entropy</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Von Neumann entropy"}</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>$$S(\hat\rho) = -\mathrm{Tr}<span class="co">[</span><span class="ot">\hat\rho\log_2\hat\rho</span><span class="co">]</span> = -\sum_j\lambda_j\log_2\lambda_j,$$</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>where $\lambda_j$ are the eigenvalues of $\hat\rho$: the Shannon entropy of its spectrum.</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>::: {.proposition name="Properties"}</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>$S(\hat\rho) = 0$ iff $\hat\rho$ is pure.</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Unitary invariance:** $S(\hat U\hat\rho\hat U^\dagger) = S(\hat\rho)$.</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>$0 \leq S(\hat\rho) \leq \log_2 d$, with the maximum for $\hat{\mathbb 1}/d$.</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Concavity:** $S(\sum_k p_k\hat\rho_k) \geq \sum_k p_k S(\hat\rho_k)$ — mixing increases ignorance.</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Subadditivity:** $S(AB) \leq S(A) + S(B)$, with equality iff $\hat\rho_{AB} = \hat\rho_A\otimes\hat\rho_B$ (as for Shannon entropy).</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Araki–Lieb (triangle) inequality:** $S(AB) \geq |S(A) - S(B)|$.</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>For a **pure bipartite state**, $S(A) = S(B)$ (both reduced states have the Schmidt coefficients as spectrum).</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>For a qubit with Bloch vector $\vec r$, $S = h_2\bigl(\tfrac{1 + |\vec r|}{2}\bigr)$.</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>Point 6 departs from the classical relation $H(X,Y) \geq \max(H(X), H(Y))$. For a Bell state, $S(AB) = 0$ while $S(A) = S(B) = 1$: the whole is less uncertain than its parts. Consequently the **quantum conditional entropy**</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>$$S(A|B) = S(AB) - S(B)$$</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>can be **negative**: $S(A|B) = -1$ for a Bell state. Negative conditional entropy is a signature of entanglement (it is impossible for separable states) and has an operational meaning in quantum state merging. For pure states, $S(A) = S(B)$ is the standard measure of entanglement, the **entanglement entropy**.</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Quantum mutual information"}</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>$I(A:B) = S(A) + S(B) - S(AB) \geq 0$. For a Bell state $I(A:B) = 2$: twice the classical maximum for two bits.</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a><span class="fu">## Accessible information and the Holevo bound</span></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>Alice encodes a classical letter $x$ (probability $p_x$) into a state $\hat\rho_x$ and sends it to Bob, who performs a POVM $<span class="sc">\{</span>\hat F_y<span class="sc">\}</span>$. The outcome statistics are $p(y|x) = \mathrm{Tr}<span class="co">[</span><span class="ot">\hat F_y\hat\rho_x</span><span class="co">]</span>$ (after the channel, if any). The **accessible information** is the best mutual information Bob can achieve:</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>$$I_{acc} = \max_{<span class="sc">\{</span>\hat F_y<span class="sc">\}</span>} I(X:Y) = \max_{<span class="sc">\{</span>\hat F_y<span class="sc">\}</span>}\bigl<span class="co">[</span><span class="ot">H(Y) - H(Y|X)\bigr</span><span class="co">]</span>.$$</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Holevo bound (1973)"}</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>For the ensemble $<span class="sc">\{</span>p_x, \hat\rho_x<span class="sc">\}</span>$ with average state $\hat\rho = \sum_x p_x\hat\rho_x$,</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>$$I_{acc} \leq \chi \equiv S(\hat\rho) - \sum_x p_x S(\hat\rho_x).$$</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>Since $\chi \leq S(\hat\rho) \leq \log_2 d$, **by sending $n$ qubits Alice can convey at most $n$ bits of classical information** — despite the continuum of states a qubit can occupy. For pure states $\chi = S(\hat\rho)$, and the bound coincides with Schumacher's quantum compression rate. The bound is generally not attained by measuring letter by letter, but it is achievable asymptotically with block coding (Holevo–Schumacher–Westmoreland).</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>::: {.example name="Two non-orthogonal pure states"}</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>Alice sends $\ket{\theta_{0,1}} = \cos\tfrac\theta2\ket 0 \pm \sin\tfrac\theta2\ket 1$ with equal probabilities. The average state is diagonal, $\hat\rho = \cos^2\tfrac\theta2\ket 0\bra 0 + \sin^2\tfrac\theta2\ket 1\bra 1$, so</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>$$\chi = S(\hat\rho) = h_2\Bigl(\cos^2\frac\theta2\Bigr) \leq 1 .$$</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>Bob measures with a projective measurement $\hat\Pi_\pm = \tfrac12(\hat{\mathbb 1} \pm \vec n\cdot\hat{\vec\sigma})$; by symmetry the optimum is $\vec n = \hat x$, for which $p(\pm|\theta_0) = \tfrac12(1 \pm \sin\theta)$: a binary symmetric channel with error $\tfrac12(1 - \sin\theta)$, so</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>$$I(X:Y) = 1 - h_2\Bigl(\frac{1 - \sin\theta}{2}\Bigr) \leq h_2\Bigl(\frac{1 + \cos\theta}{2}\Bigr) = \chi,$$</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>with equality only for orthogonal states ($\theta = \pi/2$), where both equal $1$.</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>::: {.example name="The trine"}</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>Alice sends $\ket{\phi_0} = \ket 0$, $\ket{\phi_{1,2}} = \tfrac12\ket 0 \pm \tfrac{\sqrt3}{2}\ket 1$ with probability $\tfrac13$ each — three states at $120°$ on a great circle of the Bloch sphere. Since $\hat\rho = \hat{\mathbb 1}/2$, the Holevo quantity is $\chi = 1$. The optimal measurement is the "anti-trine" POVM</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>$$\hat F_y = \tfrac23\ket{\phi_y^\perp}\bra{\phi_y^\perp},$$</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>with $\ket{\phi_0^\perp} = \ket 1$, $\ket{\phi_{1,2}^\perp} = \tfrac{\sqrt3}{2}\ket 0 \mp \tfrac12\ket 1$. Outcome $y$ *excludes* state $y$: $p(y|x) = 0$ for $y = x$ and $\tfrac12$ otherwise. Then $H(X) = H(Y) = \log_2 3$ and $H(X,Y) = \log_2 3 + 1$, giving</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>$$I_{acc} = \log_2 3 - 1 \approx 0.585 &lt; \chi = 1 .$$</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>A three-outcome POVM on a qubit beats any two-outcome projective measurement here — a concrete advantage of generalized measurements.</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>Compute $S(A)$, $S(B)$, $S(AB)$, $S(A|B)$ and $I(A:B)$ for the Werner state $\hat\rho_W = p\ket{\Psi^-}\bra{\Psi^-} + (1-p)\hat{\mathbb 1}/4$ and find when $S(A|B) &lt; 0$.</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>Marginals are $\hat{\mathbb 1}/2$: $S(A) = S(B) = 1$. Eigenvalues of $\hat\rho_W$: $\tfrac{1 + 3p}{4}$ once and $\tfrac{1-p}{4}$ three times, so $S(AB) = -\tfrac{1+3p}{4}\log_2\tfrac{1+3p}{4} - \tfrac{3(1-p)}{4}\log_2\tfrac{1-p}{4}$. Then $S(A|B) = S(AB) - 1$ and $I(A:B) = 2 - S(AB)$. $S(A|B) &lt; 0$ iff $S(AB) &lt; 1$, which happens for $p \gtrsim 0.75$ — a stricter condition than entanglement ($p &gt; \tfrac13$): negative conditional entropy implies entanglement, not vice versa.</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>Show that for the BB84 states $<span class="sc">\{</span>\ket 0, \ket 1, \ket +, \ket -<span class="sc">\}</span>$ sent with equal probability, $\chi = 1$, and that Bob measuring in the $z$ basis obtains $I(X:Y) = \tfrac12$ bit about the four-valued letter.</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>$\hat\rho = \hat{\mathbb 1}/2$ and all states are pure: $\chi = 1$. Measuring $z$: for $x \in <span class="sc">\{</span>0, 1<span class="sc">\}</span>$ Bob learns $x$; for $x \in <span class="sc">\{</span>+, -<span class="sc">\}</span>$ he gets a uniformly random bit. $H(X) = 2$, $H(X|Y) = 1.5$ (given $y$, $x$ is $y$ with probability $\tfrac12$ or one of $\pm$ with probability $\tfrac14$ each), so $I = 0.5$ bit — far below $\chi$, and still below the $1$ bit Bob could get if the basis were announced.</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>Prof. Vallone, *Quantum Information and Computing*, lecture 11 (POVM, classical information theory recap, von Neumann entropy and its properties, quantum mutual information, accessible information and the Holevo bound, the examples with two and three non-orthogonal states) and exercise sheet `exercise1` (accessible information of the trine). Nielsen &amp; Chuang, Chapters 11–12. Preskill, *Lecture Notes*, Chapter 10. Benenti, Casati &amp; Strini, Vol. I, Chapter 5. Original reference: A. Holevo, Probl. Peredachi Inf. **9**, 3 (1973).</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

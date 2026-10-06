@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>21&nbsp; Lab: Dask 3, DataFrames – Management and Analysis of Physics Datasets — Module B</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../labs/09-kafka.html" rel="next">
+<link href="../labs/07-dask-bags.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-12757e4b7af482b2d9c5bd8860d2b707.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-3fda7689cb8c4ed59160d7ff94eb8d4f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/00-running-labs.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/08-dask-dataframes.html"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Lab: Dask 3, DataFrames</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Management and Analysis of Physics Datasets — Module B</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Data Management</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Data Management</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-datasets.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">From Data to Datasets</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-storage.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Storage</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-reliability-security.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reliability and Security</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-file-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">File System</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-distributed-file-system.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Distributed File System</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Databases</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-nosql-databases.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">NoSQL Databases</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Processing</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-processing-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Processing and Concurrency</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-distributed-processing.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Distributed Processing and MapReduce</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-spark.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Apache Spark</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-dask.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Dask</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-kafka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Apache Kafka</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Labs</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/00-running-labs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Running the labs</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/01-mysql.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Lab: MySQL</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/02-parallel.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Lab: Threads and processes in Python</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/03-spark-rdd.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Lab: Spark 1, RDDs and map-reduce</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/04-spark-dataframes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Lab: Spark 2, DataFrames and the dimuon spectrum</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/05-spark-streaming.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Lab: Spark 3, Structured Streaming</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/06-dask-delayed.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Lab: Dask 1, delayed and futures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/07-dask-bags.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Lab: Dask 2, Bags</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/08-dask-dataframes.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Lab: Dask 3, DataFrames</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../labs/09-kafka.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Lab: Kafka, and Kafka + Spark</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-idea-behind-it" id="toc-the-idea-behind-it" class="nav-link active" data-scroll-target="#the-idea-behind-it"><span class="header-section-number">21.1</span> The idea behind it</a></li>
+  <li><a href="#what-a-dask-dataframe-is" id="toc-what-a-dask-dataframe-is" class="nav-link" data-scroll-target="#what-a-dask-dataframe-is"><span class="header-section-number">21.2</span> What a Dask DataFrame is</a></li>
+  <li><a href="#loading" id="toc-loading" class="nav-link" data-scroll-target="#loading"><span class="header-section-number">21.3</span> Loading</a>
+  <ul class="collapse">
+  <li><a href="#type-inference-pitfall" id="toc-type-inference-pitfall" class="nav-link" data-scroll-target="#type-inference-pitfall"><span class="header-section-number">21.3.1</span> Type inference pitfall</a></li>
+  </ul></li>
+  <li><a href="#cheap-and-expensive-operations" id="toc-cheap-and-expensive-operations" class="nav-link" data-scroll-target="#cheap-and-expensive-operations"><span class="header-section-number">21.4</span> Cheap and expensive operations</a></li>
+  <li><a href="#share-work-one-dask.compute-for-several-results" id="toc-share-work-one-dask.compute-for-several-results" class="nav-link" data-scroll-target="#share-work-one-dask.compute-for-several-results"><span class="header-section-number">21.5</span> Share work: one <code>dask.compute</code> for several results</a></li>
+  <li><a href="#exercise-the-dimuon-spectrum-in-dask" id="toc-exercise-the-dimuon-spectrum-in-dask" class="nav-link" data-scroll-target="#exercise-the-dimuon-spectrum-in-dask"><span class="header-section-number">21.6</span> Exercise: the dimuon spectrum in Dask</a></li>
+  <li><a href="#on-a-real-cluster" id="toc-on-a-real-cluster" class="nav-link" data-scroll-target="#on-a-real-cluster"><span class="header-section-number">21.7</span> On a real cluster</a></li>
+  <li><a href="#wrap-up" id="toc-wrap-up" class="nav-link" data-scroll-target="#wrap-up"><span class="header-section-number">21.8</span> Wrap up</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../labs/00-running-labs.html">Labs</a></li><li class="breadcrumb-item"><a href="../labs/08-dask-dataframes.html"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Lab: Dask 3, DataFrames</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-lab-dask3" class="quarto-section-identifier"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Lab: Dask 3, DataFrames</span></span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Lab at a glance
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><strong>Notebook:</strong> <code>code/dask/notebooks/Lecture3.ipynb</code> (solutions: <code>Lecture3_solutions.ipynb</code>)</li>
+<li><strong>Data:</strong> <code>datasets/accounts_csv/</code>, <code>datasets/nycflights/</code>, <code>datasets/dimuon/</code> (all under <code>code/dask/notebooks/</code>)</li>
+<li><strong>Stack:</strong> same as <a href="../labs/06-dask-delayed.html">Dask 1</a></li>
+<li><strong>Theory:</strong> <a href="../chapters/11-dask.html">Dask</a>; compare with <a href="../labs/04-spark-dataframes.html">Spark 2</a></li>
+<li><strong>You will:</strong> load many CSVs as one DataFrame, fix wrongly inferred types, see which pandas operations are cheap and which are expensive when distributed, share work between computations, and redo the dimuon analysis in Dask</li>
+</ul>
+</div>
+</div>
+<section id="the-idea-behind-it" class="level2" data-number="21.1">
+<h2 data-number="21.1" class="anchored" data-anchor-id="the-idea-behind-it"><span class="header-section-number">21.1</span> The idea behind it</h2>
+<ul>
+<li><strong>Horizontal partitioning of tables.</strong> A large table is split by rows into chunks that each fit in one worker’s memory; operations that work row-by-row or per-chunk parallelise perfectly, and operations that need a global view (sorting, global positions) don’t.</li>
+<li><strong>The index as the partitioning key.</strong> Dask can track the min/max index of each partition (its <em>divisions</em>). With a sorted index, lookups and joins on it touch only the relevant partitions, while on any other column they need a shuffle. This is the same idea as partition pruning in Spark and sharding by key in <a href="../chapters/07-nosql-databases.html">NoSQL databases</a>.</li>
+<li><strong>Common sub-expression sharing</strong>: merging graphs (<code>dask.compute(a, b)</code>) avoids recomputing shared steps, the same optimisation a SQL planner does.</li>
+</ul>
+</section>
+<section id="what-a-dask-dataframe-is" class="level2" data-number="21.2">
+<h2 data-number="21.2" class="anchored" data-anchor-id="what-a-dask-dataframe-is"><span class="header-section-number">21.2</span> What a Dask DataFrame is</h2>
+<p>A Dask DataFrame is <strong>many pandas DataFrames</strong>, the <em>partitions</em>, split along the index (row-wise, i.e.&nbsp;<em>horizontal</em> partitioning) and spread over the workers. Every operation you call is translated into the same pandas operation on each partition, plus whatever is needed to combine the results. The API is almost the pandas one, but the costs are different, and the lab is mostly about learning those costs.</p>
+</section>
+<section id="loading" class="level2" data-number="21.3">
+<h2 data-number="21.3" class="anchored" data-anchor-id="loading"><span class="header-section-number">21.3</span> Loading</h2>
+<p>In pandas, reading many files means a loop and <code>pd.concat</code> into one in-memory table. In Dask, a glob is enough:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> dask, dask.dataframe <span class="im">as</span> dd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>dask.config.<span class="bu">set</span>({<span class="st">'dataframe.query-planning'</span>: <span class="va">True</span>})   <span class="co"># enable the query optimiser (default in recent Dask)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> dd.read_csv(<span class="st">'datasets/accounts_csv/accounts.*.csv'</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(df)       <span class="co"># triggers work: len() of every partition, then a sum</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>df            <span class="co"># structure only: columns, dtypes, npartitions</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.repartition(npartitions<span class="op">=</span><span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>By default you get roughly one partition per file, which is often not what you want. The number of partitions is <strong>your</strong> responsibility, as in <a href="../labs/07-dask-bags.html">Dask 2</a>.</p>
+<p>Unlike Spark, Dask DataFrames historically did <strong>no query optimisation</strong>: you got exactly the operations you wrote, in that order. The newer query planner adds some (e.g.&nbsp;pushing column selections and filters down), which is why the notebook makes sure it is on.</p>
+<section id="type-inference-pitfall" class="level3" data-number="21.3.1">
+<h3 data-number="21.3.1" class="anchored" data-anchor-id="type-inference-pitfall"><span class="header-section-number">21.3.1</span> Type inference pitfall</h3>
+<p>Dask infers dtypes from a <strong>sample at the start</strong> of the data, then enforces them on all partitions. In <code>nycflights</code>, <code>CRSElapsedTime</code> and <code>TailNum</code> look like integers in the first rows but are not later, so <code>head()</code> works and <code>tail()</code> (a different partition) fails.</p>
+<p>Fix it by stating the types:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> dd.read_csv(<span class="st">'datasets/nycflights/*.csv'</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                 dtype<span class="op">=</span>{<span class="st">'TailNum'</span>: <span class="bu">str</span>, <span class="st">'CRSElapsedTime'</span>: <span class="bu">float</span>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Alternatives are a larger <code>sample=</code> or <code>assume_missing=True</code> (treat integer columns as floats, so they may contain NaN), but explicit dtypes are the robust fix.</p>
+<p>Building a date column from three columns also needs <code>meta</code>, which tells Dask the output type without computing anything:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Date'</span>] <span class="op">=</span> dd.to_datetime(df.rename(columns<span class="op">=</span>{<span class="st">'Year'</span>: <span class="st">'year'</span>, <span class="st">'Month'</span>: <span class="st">'month'</span>, <span class="st">'DayofMonth'</span>: <span class="st">'day'</span>})</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                              [[<span class="st">'year'</span>, <span class="st">'month'</span>, <span class="st">'day'</span>]],</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                            meta<span class="op">=</span>pd.Series(dtype<span class="op">=</span><span class="st">"datetime64[ns]"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+<section id="cheap-and-expensive-operations" class="level2" data-number="21.4">
+<h2 data-number="21.4" class="anchored" data-anchor-id="cheap-and-expensive-operations"><span class="header-section-number">21.4</span> Cheap and expensive operations</h2>
+<p><strong>Cheap</strong> (each partition works alone, then small results are combined):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df.DepDelay.<span class="bu">max</span>().compute()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df[df.UniqueCarrier <span class="op">==</span> <span class="st">'UA'</span>].ArrDelay.mean().compute()</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>df.groupby([<span class="st">'Origin'</span>, <span class="st">'Dest'</span>]).AirTime.<span class="bu">max</span>().compute()</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>df.groupby([<span class="st">'Origin'</span>, <span class="st">'Dest'</span>])[<span class="st">'AirTime'</span>].aggregate([<span class="st">'mean'</span>, <span class="st">'std'</span>]).compute()</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>df.loc[df[<span class="st">'Dest'</span>] <span class="op">==</span> <span class="st">'DEN'</span>, [<span class="st">'UniqueCarrier'</span>]].compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../imgs/dask_max.png" class="img-fluid figure-img" style="width:60.0%"></p>
+<figcaption>Task graph of <code>max()</code>: a max per partition, then a max of maxes.</figcaption>
+</figure>
+</div>
+<p>Group-by aggregations are still reasonably fast: partial aggregates per partition, then a combine. The result lands in <strong>one</strong> partition; if it is large, <code>split_out=</code> spreads it.</p>
+<p><strong>Not available or expensive:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Operation</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>df.iloc[0:10]</code> (row positions)</td>
+<td><strong>raises</strong>: partitions don’t know their global row numbers. <code>iloc[:, cols]</code> (columns only) works</td>
+</tr>
+<tr class="even">
+<td><code>set_index(col)</code></td>
+<td>needs a <strong>full sort</strong> of the data across workers</td>
+</tr>
+<tr class="odd">
+<td><code>sort_values</code>, joins on a non-index column</td>
+<td>full shuffle</td>
+</tr>
+<tr class="even">
+<td><code>df.compute()</code> on everything</td>
+<td>brings all data to the client, so only after reducing it</td>
+</tr>
+</tbody>
+</table>
+<p>The typical workflow is therefore: <strong>bag</strong> to clean the raw input, <strong>Dask DataFrame</strong> to filter and reduce the bulk, then <strong>pandas</strong> (<code>.compute()</code>) on the small result for anything order-dependent or fiddly.</p>
+<p>After an unavoidable expensive step, persist the result so later operations don’t repeat it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ua_den <span class="op">=</span> df[(df.UniqueCarrier <span class="op">==</span> <span class="st">'UA'</span>) <span class="op">&amp;</span> (df.Dest <span class="op">==</span> <span class="st">'DEN'</span>)].set_index(<span class="st">'Date'</span>)   <span class="co"># sort happens here</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>ua_den.ArrDelay.rolling(<span class="st">'5D'</span>).mean().compute()     <span class="co"># time-based rolling needs the datetime index</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="share-work-one-dask.compute-for-several-results" class="level2" data-number="21.5">
+<h2 data-number="21.5" class="anchored" data-anchor-id="share-work-one-dask.compute-for-several-results"><span class="header-section-number">21.5</span> Share work: one <code>dask.compute</code> for several results</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.persist()                      <span class="co"># keep the parsed data in worker memory (not in place!)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>non_cancelled <span class="op">=</span> df[df.Cancelled <span class="op">==</span> <span class="dv">0</span>]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>mean_delay <span class="op">=</span> non_cancelled.DepDelay.mean()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>std_delay  <span class="op">=</span> non_cancelled.DepDelay.std()</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>mean_delay.compute()<span class="op">;</span> std_delay.compute()             <span class="co"># two graphs, common steps done twice</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>dask.compute(mean_delay, std_delay)                   <span class="co"># one merged graph: ~half the time</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../imgs/dask_mean-std.png" class="img-fluid figure-img" style="width:70.0%"></p>
+<figcaption>Merged graph: reading, filtering and the shared sums/counts are computed once and feed both results.</figcaption>
+</figure>
+</div>
+</section>
+<section id="exercise-the-dimuon-spectrum-in-dask" class="level2" data-number="21.6">
+<h2 data-number="21.6" class="anchored" data-anchor-id="exercise-the-dimuon-spectrum-in-dask"><span class="header-section-number">21.6</span> Exercise: the dimuon spectrum in Dask</h2>
+<p>The same analysis as <a href="../labs/04-spark-dataframes.html">Spark 2</a>, built from the Dask pieces. The JSON files are already in <code>code/dask/notebooks/datasets/dimuon</code> in the fork; the notebook’s instruction to copy them over from <code>spark/</code> is only needed on a fresh upstream checkout.</p>
+<ol type="1">
+<li><p><strong>Read and parse with a bag</strong>: each file is one JSON <em>array</em> of events, so parse and flatten:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>events <span class="op">=</span> db.read_text(<span class="st">'datasets/dimuon/*.json'</span>, files_per_partition<span class="op">=</span><span class="dv">4</span>).<span class="bu">map</span>(json.loads).flatten()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong>Events per sample</strong> with <code>foldby</code> (count per key, as in Dask 2):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>events.foldby(key<span class="op">=</span><span class="st">'sample'</span>, binop<span class="op">=</span><span class="kw">lambda</span> n, _: n <span class="op">+</span> <span class="dv">1</span>, initial<span class="op">=</span><span class="dv">0</span>, combine<span class="op">=</span>add, combine_initial<span class="op">=</span><span class="dv">0</span>).compute()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong>Muon multiplicity</strong> per sample: <code>filter</code> on <code>sample</code>, <code>pluck('nMuon')</code>, <code>compute()</code>, histogram in matplotlib.</p></li>
+<li><p><strong>Select and flatten to a DataFrame</strong>: two muons, opposite charge, then one flat dict per event:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> (events.<span class="bu">filter</span>(<span class="kw">lambda</span> e: e[<span class="st">'nMuon'</span>] <span class="op">==</span> <span class="dv">2</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>            .<span class="bu">filter</span>(<span class="kw">lambda</span> e: e[<span class="st">'Muons'</span>][<span class="dv">0</span>][<span class="st">'charge'</span>] <span class="op">==</span> <span class="op">-</span>e[<span class="st">'Muons'</span>][<span class="dv">1</span>][<span class="st">'charge'</span>])</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>            .<span class="bu">map</span>(flatten_records)          <span class="co"># {'sample', 'E1', 'px1', ..., 'pz2'}</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>            .to_dataframe())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong>Features are plain pandas-style column arithmetic</strong> (lazy):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'pT1'</span>] <span class="op">=</span> np.sqrt(df.px1<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> df.py1<span class="op">**</span><span class="dv">2</span>)<span class="op">;</span>  df[<span class="st">'pT2'</span>] <span class="op">=</span> np.sqrt(df.px2<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> df.py2<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df.pT1 <span class="op">&gt;</span> <span class="dv">15</span>) <span class="op">&amp;</span> (df.pT2 <span class="op">&gt;</span> <span class="dv">15</span>)]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'E'</span>] <span class="op">=</span> df.E1 <span class="op">+</span> df.E2<span class="op">;</span>  df[<span class="st">'Px'</span>] <span class="op">=</span> df.px1 <span class="op">+</span> df.px2  <span class="co"># ... Py, Pz</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'M'</span>] <span class="op">=</span> np.sqrt(df.E<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> (df.Px<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> df.Py<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> df.Pz<span class="op">**</span><span class="dv">2</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div></li>
+<li><p><strong>Reduce, then go to pandas</strong> for plotting: <code>df[['sample', 'M', 'pT1', 'pT2']].compute()</code>.</p></li>
+</ol>
+<p>Compared with Spark: no UDF machinery, since numpy works directly on the columns because every partition <em>is</em> a pandas DataFrame.</p>
+</section>
+<section id="on-a-real-cluster" class="level2" data-number="21.7">
+<h2 data-number="21.7" class="anchored" data-anchor-id="on-a-real-cluster"><span class="header-section-number">21.7</span> On a real cluster</h2>
+<ul>
+<li>Use <strong>Parquet</strong> on object storage: <code>dd.read_parquet("s3://bucket/flights/", columns=[...], filters=[("Year", "&gt;=", 2000)])</code> reads only the needed columns and row groups, and the stored schema removes the dtype-inference problem entirely.</li>
+<li>Set the index <strong>once</strong> (expensive) and save the result partitioned by it, so later jobs get the divisions for free.</li>
+<li>Size partitions to roughly 100 MB–1 GB in memory; check with <code>df.memory_usage_per_partition().compute()</code>. Workers that run out of memory spill to disk and slow down dramatically.</li>
+<li>The “bag → Dask DataFrame → pandas” pattern is how most Python data platforms are built: distributed tools for the heavy reduction, single-machine tools for the final, small result.</li>
+</ul>
+</section>
+<section id="wrap-up" class="level2" data-number="21.8">
+<h2 data-number="21.8" class="anchored" data-anchor-id="wrap-up"><span class="header-section-number">21.8</span> Wrap up</h2>
+<p><code>client.close()</code>, then <code>docker compose down</code>.</p>
+<div class="callout callout-style-simple callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Takeaways
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Dask DataFrame = row-wise partitions that are each a pandas DataFrame.</li>
+<li>State dtypes explicitly; inference only looks at the beginning of the data.</li>
+<li>Per-partition operations and group-by aggregations are cheap; <code>iloc</code>, <code>set_index</code>, sorting and non-index joins are not.</li>
+<li><code>persist</code> after expensive steps; compute related results together with <code>dask.compute(...)</code>.</li>
+<li>Bag (clean) → Dask DataFrame (reduce) → pandas (finish).</li>
+</ul>
+</div>
+</div>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../labs/07-dask-bags.html" class="pagination-link" aria-label="Lab: Dask 2, Bags">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Lab: Dask 2, Bags</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../labs/09-kafka.html" class="pagination-link" aria-label="Lab: Kafka, and Kafka + Spark">
+        <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Lab: Kafka, and Kafka + Spark</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">  enabled: false</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># Lab: Dask 3, DataFrames {#sec-lab-dask3}</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="fu">## Lab at a glance</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Notebook:** <span class="in">`code/dask/notebooks/Lecture3.ipynb`</span> (solutions: <span class="in">`Lecture3_solutions.ipynb`</span>)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Data:** <span class="in">`datasets/accounts_csv/`</span>, <span class="in">`datasets/nycflights/`</span>, <span class="in">`datasets/dimuon/`</span> (all under <span class="in">`code/dask/notebooks/`</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Stack:** same as <span class="co">[</span><span class="ot">Dask 1</span><span class="co">](06-dask-delayed.qmd)</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Theory:** <span class="co">[</span><span class="ot">Dask</span><span class="co">](../chapters/11-dask.qmd)</span>; compare with <span class="co">[</span><span class="ot">Spark 2</span><span class="co">](04-spark-dataframes.qmd)</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**You will:** load many CSVs as one DataFrame, fix wrongly inferred types, see which pandas operations are cheap and which are expensive when distributed, share work between computations, and redo the dimuon analysis in Dask</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## The idea behind it</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Horizontal partitioning of tables.** A large table is split by rows into chunks that each fit in one worker's memory; operations that work row-by-row or per-chunk parallelise perfectly, and operations that need a global view (sorting, global positions) don't.</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**The index as the partitioning key.** Dask can track the min/max index of each partition (its *divisions*). With a sorted index, lookups and joins on it touch only the relevant partitions, while on any other column they need a shuffle. This is the same idea as partition pruning in Spark and sharding by key in <span class="co">[</span><span class="ot">NoSQL databases</span><span class="co">](../chapters/07-nosql-databases.qmd)</span>.</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Common sub-expression sharing**: merging graphs (<span class="in">`dask.compute(a, b)`</span>) avoids recomputing shared steps, the same optimisation a SQL planner does.</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="fu">## What a Dask DataFrame is</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>A Dask DataFrame is **many pandas DataFrames**, the *partitions*, split along the index (row-wise, i.e. *horizontal* partitioning) and spread over the workers.</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>Every operation you call is translated into the same pandas operation on each partition, plus whatever is needed to combine the results.</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>The API is almost the pandas one, but the costs are different, and the lab is mostly about learning those costs.</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Loading</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>In pandas, reading many files means a loop and <span class="in">`pd.concat`</span> into one in-memory table. In Dask, a glob is enough:</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> dask, dask.dataframe <span class="im">as</span> dd</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>dask.config.<span class="bu">set</span>({<span class="st">'dataframe.query-planning'</span>: <span class="va">True</span>})   <span class="co"># enable the query optimiser (default in recent Dask)</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> dd.read_csv(<span class="st">'datasets/accounts_csv/accounts.*.csv'</span>)</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(df)       <span class="co"># triggers work: len() of every partition, then a sum</span></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>df            <span class="co"># structure only: columns, dtypes, npartitions</span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.repartition(npartitions<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>By default you get roughly one partition per file, which is often not what you want. The number of partitions is **your** responsibility, as in <span class="co">[</span><span class="ot">Dask 2</span><span class="co">](07-dask-bags.qmd)</span>.</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>Unlike Spark, Dask DataFrames historically did **no query optimisation**: you got exactly the operations you wrote, in that order. The newer query planner adds some (e.g. pushing column selections and filters down), which is why the notebook makes sure it is on.</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a><span class="fu">### Type inference pitfall</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>Dask infers dtypes from a **sample at the start** of the data, then enforces them on all partitions.</span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>In <span class="in">`nycflights`</span>, <span class="in">`CRSElapsedTime`</span> and <span class="in">`TailNum`</span> look like integers in the first rows but are not later, so <span class="in">`head()`</span> works and <span class="in">`tail()`</span> (a different partition) fails.</span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>Fix it by stating the types:</span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> dd.read_csv(<span class="st">'datasets/nycflights/*.csv'</span>,</span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>                 dtype<span class="op">=</span>{<span class="st">'TailNum'</span>: <span class="bu">str</span>, <span class="st">'CRSElapsedTime'</span>: <span class="bu">float</span>})</span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>Alternatives are a larger <span class="in">`sample=`</span> or <span class="in">`assume_missing=True`</span> (treat integer columns as floats, so they may contain NaN), but explicit dtypes are the robust fix.</span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>Building a date column from three columns also needs <span class="in">`meta`</span>, which tells Dask the output type without computing anything:</span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Date'</span>] <span class="op">=</span> dd.to_datetime(df.rename(columns<span class="op">=</span>{<span class="st">'Year'</span>: <span class="st">'year'</span>, <span class="st">'Month'</span>: <span class="st">'month'</span>, <span class="st">'DayofMonth'</span>: <span class="st">'day'</span>})</span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>                              [[<span class="st">'year'</span>, <span class="st">'month'</span>, <span class="st">'day'</span>]],</span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>                            meta<span class="op">=</span>pd.Series(dtype<span class="op">=</span><span class="st">"datetime64[ns]"</span>))</span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a><span class="fu">## Cheap and expensive operations</span></span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>**Cheap** (each partition works alone, then small results are combined):</span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>df.DepDelay.<span class="bu">max</span>().compute()</span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>df[df.UniqueCarrier <span class="op">==</span> <span class="st">'UA'</span>].ArrDelay.mean().compute()</span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a>df.groupby([<span class="st">'Origin'</span>, <span class="st">'Dest'</span>]).AirTime.<span class="bu">max</span>().compute()</span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a>df.groupby([<span class="st">'Origin'</span>, <span class="st">'Dest'</span>])[<span class="st">'AirTime'</span>].aggregate([<span class="st">'mean'</span>, <span class="st">'std'</span>]).compute()</span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a>df.loc[df[<span class="st">'Dest'</span>] <span class="op">==</span> <span class="st">'DEN'</span>, [<span class="st">'UniqueCarrier'</span>]].compute()</span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a><span class="al">![Task graph of `max()`: a max per partition, then a max of maxes.](../imgs/dask_max.png)</span>{width=60%}</span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a>Group-by aggregations are still reasonably fast: partial aggregates per partition, then a combine. The result lands in **one** partition; if it is large, <span class="in">`split_out=`</span> spreads it.</span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a>**Not available or expensive:**</span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Operation <span class="pp">|</span> Why <span class="pp">|</span></span>
+<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a><span class="pp">|---|---|</span></span>
+<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`df.iloc[0:10]`</span> (row positions) <span class="pp">|</span> **raises**: partitions don't know their global row numbers. <span class="in">`iloc[:, cols]`</span> (columns only) works <span class="pp">|</span></span>
+<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`set_index(col)`</span> <span class="pp">|</span> needs a **full sort** of the data across workers <span class="pp">|</span></span>
+<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`sort_values`</span>, joins on a non-index column <span class="pp">|</span> full shuffle <span class="pp">|</span></span>
+<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="in">`df.compute()`</span> on everything <span class="pp">|</span> brings all data to the client, so only after reducing it <span class="pp">|</span></span>
+<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a>The typical workflow is therefore: **bag** to clean the raw input, **Dask DataFrame** to filter and reduce the bulk, then **pandas** (<span class="in">`.compute()`</span>) on the small result for anything order-dependent or fiddly.</span>
+<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a>After an unavoidable expensive step, persist the result so later operations don't repeat it:</span>
+<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a>ua_den <span class="op">=</span> df[(df.UniqueCarrier <span class="op">==</span> <span class="st">'UA'</span>) <span class="op">&amp;</span> (df.Dest <span class="op">==</span> <span class="st">'DEN'</span>)].set_index(<span class="st">'Date'</span>)   <span class="co"># sort happens here</span></span>
+<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a>ua_den.ArrDelay.rolling(<span class="st">'5D'</span>).mean().compute()     <span class="co"># time-based rolling needs the datetime index</span></span>
+<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## Share work: one `dask.compute` for several results</span></span>
+<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.persist()                      <span class="co"># keep the parsed data in worker memory (not in place!)</span></span>
+<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a>non_cancelled <span class="op">=</span> df[df.Cancelled <span class="op">==</span> <span class="dv">0</span>]</span>
+<span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a>mean_delay <span class="op">=</span> non_cancelled.DepDelay.mean()</span>
+<span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a>std_delay  <span class="op">=</span> non_cancelled.DepDelay.std()</span>
+<span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a>mean_delay.compute()<span class="op">;</span> std_delay.compute()             <span class="co"># two graphs, common steps done twice</span></span>
+<span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a>dask.compute(mean_delay, std_delay)                   <span class="co"># one merged graph: ~half the time</span></span>
+<span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb11-114"><a href="#cb11-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-115"><a href="#cb11-115" aria-hidden="true" tabindex="-1"></a><span class="al">![Merged graph: reading, filtering and the shared sums/counts are computed once and feed both results.](../imgs/dask_mean-std.png)</span>{width=70%}</span>
+<span id="cb11-116"><a href="#cb11-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-117"><a href="#cb11-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercise: the dimuon spectrum in Dask</span></span>
+<span id="cb11-118"><a href="#cb11-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-119"><a href="#cb11-119" aria-hidden="true" tabindex="-1"></a>The same analysis as <span class="co">[</span><span class="ot">Spark 2</span><span class="co">](04-spark-dataframes.qmd)</span>, built from the Dask pieces. The JSON files are already in <span class="in">`code/dask/notebooks/datasets/dimuon`</span> in the fork; the notebook's instruction to copy them over from <span class="in">`spark/`</span> is only needed on a fresh upstream checkout.</span>
+<span id="cb11-120"><a href="#cb11-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-121"><a href="#cb11-121" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Read and parse with a bag**: each file is one JSON *array* of events, so parse and flatten:</span>
+<span id="cb11-122"><a href="#cb11-122" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
+<span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a>   events <span class="op">=</span> db.read_text(<span class="st">'datasets/dimuon/*.json'</span>, files_per_partition<span class="op">=</span><span class="dv">4</span>).<span class="bu">map</span>(json.loads).flatten()</span>
+<span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Events per sample** with <span class="in">`foldby`</span> (count per key, as in Dask 2):</span>
+<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
+<span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a>   events.foldby(key<span class="op">=</span><span class="st">'sample'</span>, binop<span class="op">=</span><span class="kw">lambda</span> n, _: n <span class="op">+</span> <span class="dv">1</span>, initial<span class="op">=</span><span class="dv">0</span>, combine<span class="op">=</span>add, combine_initial<span class="op">=</span><span class="dv">0</span>).compute()</span>
+<span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Muon multiplicity** per sample: <span class="in">`filter`</span> on <span class="in">`sample`</span>, <span class="in">`pluck('nMuon')`</span>, <span class="in">`compute()`</span>, histogram in matplotlib.</span>
+<span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Select and flatten to a DataFrame**: two muons, opposite charge, then one flat dict per event:</span>
+<span id="cb11-131"><a href="#cb11-131" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
+<span id="cb11-132"><a href="#cb11-132" aria-hidden="true" tabindex="-1"></a>   df <span class="op">=</span> (events.<span class="bu">filter</span>(<span class="kw">lambda</span> e: e[<span class="st">'nMuon'</span>] <span class="op">==</span> <span class="dv">2</span>)</span>
+<span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a>               .<span class="bu">filter</span>(<span class="kw">lambda</span> e: e[<span class="st">'Muons'</span>][<span class="dv">0</span>][<span class="st">'charge'</span>] <span class="op">==</span> <span class="op">-</span>e[<span class="st">'Muons'</span>][<span class="dv">1</span>][<span class="st">'charge'</span>])</span>
+<span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a>               .<span class="bu">map</span>(flatten_records)          <span class="co"># {'sample', 'E1', 'px1', ..., 'pz2'}</span></span>
+<span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a>               .to_dataframe())</span>
+<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Features are plain pandas-style column arithmetic** (lazy):</span>
+<span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a>   <span class="in">```python</span></span>
+<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a>   df[<span class="st">'pT1'</span>] <span class="op">=</span> np.sqrt(df.px1<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> df.py1<span class="op">**</span><span class="dv">2</span>)<span class="op">;</span>  df[<span class="st">'pT2'</span>] <span class="op">=</span> np.sqrt(df.px2<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> df.py2<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a>   df <span class="op">=</span> df[(df.pT1 <span class="op">&gt;</span> <span class="dv">15</span>) <span class="op">&amp;</span> (df.pT2 <span class="op">&gt;</span> <span class="dv">15</span>)]</span>
+<span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a>   df[<span class="st">'E'</span>] <span class="op">=</span> df.E1 <span class="op">+</span> df.E2<span class="op">;</span>  df[<span class="st">'Px'</span>] <span class="op">=</span> df.px1 <span class="op">+</span> df.px2  <span class="co"># ... Py, Pz</span></span>
+<span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a>   df[<span class="st">'M'</span>] <span class="op">=</span> np.sqrt(df.E<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> (df.Px<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> df.Py<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> df.Pz<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb11-143"><a href="#cb11-143" aria-hidden="true" tabindex="-1"></a>   <span class="in">```</span></span>
+<span id="cb11-144"><a href="#cb11-144" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>**Reduce, then go to pandas** for plotting: <span class="in">`df[['sample', 'M', 'pT1', 'pT2']].compute()`</span>.</span>
+<span id="cb11-145"><a href="#cb11-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-146"><a href="#cb11-146" aria-hidden="true" tabindex="-1"></a>Compared with Spark: no UDF machinery, since numpy works directly on the columns because every partition *is* a pandas DataFrame.</span>
+<span id="cb11-147"><a href="#cb11-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-148"><a href="#cb11-148" aria-hidden="true" tabindex="-1"></a><span class="fu">## On a real cluster</span></span>
+<span id="cb11-149"><a href="#cb11-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-150"><a href="#cb11-150" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use **Parquet** on object storage: <span class="in">`dd.read_parquet("s3://bucket/flights/", columns=[...], filters=[("Year", "&gt;=", 2000)])`</span> reads only the needed columns and row groups, and the stored schema removes the dtype-inference problem entirely.</span>
+<span id="cb11-151"><a href="#cb11-151" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Set the index **once** (expensive) and save the result partitioned by it, so later jobs get the divisions for free.</span>
+<span id="cb11-152"><a href="#cb11-152" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Size partitions to roughly 100 MB–1 GB in memory; check with <span class="in">`df.memory_usage_per_partition().compute()`</span>. Workers that run out of memory spill to disk and slow down dramatically.</span>
+<span id="cb11-153"><a href="#cb11-153" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>The "bag → Dask DataFrame → pandas" pattern is how most Python data platforms are built: distributed tools for the heavy reduction, single-machine tools for the final, small result.</span>
+<span id="cb11-154"><a href="#cb11-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-155"><a href="#cb11-155" aria-hidden="true" tabindex="-1"></a><span class="fu">## Wrap up</span></span>
+<span id="cb11-156"><a href="#cb11-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-157"><a href="#cb11-157" aria-hidden="true" tabindex="-1"></a><span class="in">`client.close()`</span>, then <span class="in">`docker compose down`</span>.</span>
+<span id="cb11-158"><a href="#cb11-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-159"><a href="#cb11-159" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb11-160"><a href="#cb11-160" aria-hidden="true" tabindex="-1"></a><span class="fu">## Takeaways</span></span>
+<span id="cb11-161"><a href="#cb11-161" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Dask DataFrame = row-wise partitions that are each a pandas DataFrame.</span>
+<span id="cb11-162"><a href="#cb11-162" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>State dtypes explicitly; inference only looks at the beginning of the data.</span>
+<span id="cb11-163"><a href="#cb11-163" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Per-partition operations and group-by aggregations are cheap; <span class="in">`iloc`</span>, <span class="in">`set_index`</span>, sorting and non-index joins are not.</span>
+<span id="cb11-164"><a href="#cb11-164" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`persist`</span> after expensive steps; compute related results together with <span class="in">`dask.compute(...)`</span>.</span>
+<span id="cb11-165"><a href="#cb11-165" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Bag (clean) → Dask DataFrame (reduce) → pandas (finish).</span>
+<span id="cb11-166"><a href="#cb11-166" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

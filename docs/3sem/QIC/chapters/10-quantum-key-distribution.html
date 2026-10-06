@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>10&nbsp; No-cloning and quantum key distribution – Quantum Information and Computing</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/11-teleportation-and-entanglement-swapping.html" rel="next">
+<link href="../chapters/09-quantum-shannon-theory.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-12757e4b7af482b2d9c5bd8860d2b707.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-3fda7689cb8c4ed59160d7ff94eb8d4f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/09-quantum-shannon-theory.html">Part II: Quantum information</a></li><li class="breadcrumb-item"><a href="../chapters/10-quantum-key-distribution.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">No-cloning and quantum key distribution</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Quantum Information and Computing</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About these notes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Quantum mechanics for quantum information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-qubits-and-measurement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Qubits and measurement</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-observables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Operators and observables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-mixed-states.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Mixed states and density operators</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-unitary-evolution-and-postulates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Unitary evolution and the postulates</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-composite-systems-and-entanglement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Composite systems and entanglement</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-bell-inequalities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Nonlocality and Bell inequalities</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-detecting-entanglement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Detecting entanglement</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-quantum-operations-and-generalized-measurements.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quantum operations and generalized measurements</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Quantum information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-quantum-shannon-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Classical and quantum Shannon theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-quantum-key-distribution.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">No-cloning and quantum key distribution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-teleportation-and-entanglement-swapping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Teleportation and entanglement swapping</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: Quantum computation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-quantum-circuits-and-universality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Quantum circuits and universality</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-phase-estimation-and-shor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Fourier transform, phase estimation and Shor’s algorithm</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-grover-search.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Grover’s search algorithm</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-error-correction-and-implementations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Error correction and physical implementations</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#why-quantum-cryptography" id="toc-why-quantum-cryptography" class="nav-link active" data-scroll-target="#why-quantum-cryptography"><span class="header-section-number">10.1</span> Why quantum cryptography</a></li>
+  <li><a href="#the-no-cloning-theorem" id="toc-the-no-cloning-theorem" class="nav-link" data-scroll-target="#the-no-cloning-theorem"><span class="header-section-number">10.2</span> The no-cloning theorem</a></li>
+  <li><a href="#the-bb84-protocol" id="toc-the-bb84-protocol" class="nav-link" data-scroll-target="#the-bb84-protocol"><span class="header-section-number">10.3</span> The BB84 protocol</a></li>
+  <li><a href="#general-structure-and-security" id="toc-general-structure-and-security" class="nav-link" data-scroll-target="#general-structure-and-security"><span class="header-section-number">10.4</span> General structure and security</a></li>
+  <li><a href="#a-zoo-of-protocols" id="toc-a-zoo-of-protocols" class="nav-link" data-scroll-target="#a-zoo-of-protocols"><span class="header-section-number">10.5</span> A zoo of protocols</a></li>
+  <li><a href="#secret-key-rates" id="toc-secret-key-rates" class="nav-link" data-scroll-target="#secret-key-rates"><span class="header-section-number">10.6</span> Secret key rates</a></li>
+  <li><a href="#implementations" id="toc-implementations" class="nav-link" data-scroll-target="#implementations"><span class="header-section-number">10.7</span> Implementations</a></li>
+  <li><a href="#quantum-random-number-generators" id="toc-quantum-random-number-generators" class="nav-link" data-scroll-target="#quantum-random-number-generators"><span class="header-section-number">10.8</span> Quantum random number generators</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">10.9</span> Exercises</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">10.10</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/09-quantum-shannon-theory.html">Part II: Quantum information</a></li><li class="breadcrumb-item"><a href="../chapters/10-quantum-key-distribution.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">No-cloning and quantum key distribution</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">No-cloning and quantum key distribution</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Quantum mechanics forbids copying an unknown state and guarantees that measuring disturbs. Turned around, these limitations become a security guarantee: any eavesdropper on a quantum channel leaves traces. <strong>Quantum key distribution</strong> (QKD) exploits this to let two parties grow a shared secret key whose security rests on physics, not on computational assumptions. This chapter proves the no-cloning theorem, describes BB84 and its descendants, computes secret-key rates, discusses real implementations (lossy channels, weak laser pulses, decoy states), and closes with quantum random number generation.</p>
+<section id="why-quantum-cryptography" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="why-quantum-cryptography"><span class="header-section-number">10.1</span> Why quantum cryptography</h2>
+<p>Classical public-key cryptography (RSA, Diffie–Hellman) relies on problems believed to be computationally hard. A classical algorithmic breakthrough could break it, and a quantum computer <em>will</em> break RSA (Shor’s algorithm, Chapter 13). Post-quantum cryptography replaces the hard problems; QKD replaces the assumption altogether.</p>
+<div class="definition" name="One-time pad">
+<p>To encrypt an <span class="math inline">\(n\)</span>-bit message <span class="math inline">\(m\)</span>, Alice adds bitwise (XOR) an <span class="math inline">\(n\)</span>-bit uniformly random key <span class="math inline">\(k\)</span>: <span class="math inline">\(c = m \oplus k\)</span>. Bob decrypts with <span class="math inline">\(m = c \oplus k\)</span>. If the key is secret, random, as long as the message and never reused, the ciphertext is statistically independent of the message (Shannon, 1949): perfect secrecy.</p>
+</div>
+<p>The problem is distributing the key. QKD solves exactly this: it lets Alice and Bob <strong>exchange random and secret keys</strong>, which are then used in a one-time pad or another symmetric cipher.</p>
+</section>
+<section id="the-no-cloning-theorem" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="the-no-cloning-theorem"><span class="header-section-number">10.2</span> The no-cloning theorem</h2>
+<div class="theorem" name="No-cloning (Wootters–Zurek, Dieks, 1982)">
+<p>There is no unitary <span class="math inline">\(\hat U\)</span> and fixed blank state <span class="math inline">\(\ket e\)</span> such that <span class="math inline">\(\hat U\ket\psi\ket e = \ket\psi\ket\psi\)</span> for every state <span class="math inline">\(\ket\psi\)</span>.</p>
+</div>
+<p><em>Proof.</em> Suppose it worked for <span class="math inline">\(\ket\psi\)</span> and <span class="math inline">\(\ket\phi\)</span>. Taking the scalar product of <span class="math inline">\(\hat U\ket\psi\ket e = \ket\psi\ket\psi\)</span> with <span class="math inline">\(\hat U\ket\phi\ket e = \ket\phi\ket\phi\)</span> and using unitarity, <span class="math display">\[\braket{\phi|\psi}\braket{e|e} = \braket{\phi|\psi}^2 \quad\Longrightarrow\quad \braket{\phi|\psi} \in \{0, 1\}.\]</span> Only identical or orthogonal states can be cloned by the same machine. <span class="math inline">\(\square\)</span></p>
+<p>(Allowing ancillas and measurements, i.e.&nbsp;general channels, does not help.) Orthogonal states <em>can</em> be copied — that is classical information. The theorem is consistent with no-signalling: a cloner would let Bob distinguish Alice’s choice of basis on half of an entangled pair, allowing superluminal communication.</p>
+</section>
+<section id="the-bb84-protocol" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="the-bb84-protocol"><span class="header-section-number">10.3</span> The BB84 protocol</h2>
+<p><img src="../Grafiche/_inline_cache/4fa5743d0b229d62.svg" class="tikz-figure img-fluid" alt=""></p>
+<p><em>Figure: QKD setting. Eve can do anything to the quantum signals, but can only listen to the authenticated classical channel.</em></p>
+<p>The <strong>quantum channel</strong> is public and not authenticated: Eve can interact with the signals arbitrarily. The <strong>classical channel</strong> is public but authenticated: Eve can read but not modify the messages (authentication needs a short pre-shared key, so QKD is really <em>key growing</em>).</p>
+<div class="definition" name="BB84 (Bennett–Brassard, 1984)">
+<ol type="1">
+<li>For each signal Alice picks a random bit and a random basis, <span class="math inline">\(Z = \{\ket 0, \ket 1\}\)</span> or <span class="math inline">\(X = \{\ket +, \ket -\}\)</span>, and sends the corresponding state (e.g.&nbsp;polarisation <span class="math inline">\(H/V\)</span> or <span class="math inline">\(D/A\)</span>).</li>
+<li>Bob measures each signal in a randomly chosen basis <span class="math inline">\(Z\)</span> or <span class="math inline">\(X\)</span>.</li>
+<li><strong>Sifting:</strong> over the classical channel they announce the bases (not the bits) and keep only the rounds with matching bases — about half.</li>
+<li><strong>Parameter estimation:</strong> they reveal a random subset of the sifted bits to estimate the <strong>quantum bit error rate</strong> (QBER) <span class="math inline">\(Q\)</span>.</li>
+<li><strong>Error correction</strong> and <strong>privacy amplification</strong> turn the remaining bits into a shorter, identical and secret key.</li>
+</ol>
+</div>
+<div class="example" name="Intercept-resend attack">
+<p>Eve measures each photon in a random basis and resends the state she found. With probability <span class="math inline">\(\tfrac12\)</span> she guesses the right basis and causes no error; with probability <span class="math inline">\(\tfrac12\)</span> she uses the wrong basis, resends a state of the wrong basis, and Bob (in the sifted rounds) gets a random result — an error with probability <span class="math inline">\(\tfrac12\)</span>. The QBER becomes <span class="math inline">\(\tfrac12\cdot\tfrac12 = 25\%\)</span>, and Eve is detected. Any attempt to gain information disturbs the states, because the two bases are non-commuting (mutually unbiased) and the states cannot be cloned.</p>
+</div>
+<p><strong>Efficient BB84.</strong> Nothing forces the bases to be equally likely. Alice and Bob use <span class="math inline">\(Z\)</span> with probability <span class="math inline">\(p_z \to 1\)</span> for key generation and <span class="math inline">\(X\)</span> with small probability <span class="math inline">\(p_x = 1 - p_z\)</span> to detect Eve; the sifting probability <span class="math inline">\(p_z^2\)</span> approaches <span class="math inline">\(1\)</span> instead of <span class="math inline">\(\tfrac12\)</span>.</p>
+</section>
+<section id="general-structure-and-security" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="general-structure-and-security"><span class="header-section-number">10.4</span> General structure and security</h2>
+<p><strong>Prepare-and-measure</strong> protocols encode a string <span class="math inline">\(S_n = (s_1, \dots, s_n)\)</span> into <span class="math inline">\(\ket{\Psi(S_n)}_A\)</span>, usually <span class="math inline">\(\ket{\psi(s_1)}\otimes\dots\otimes\ket{\psi(s_n)}\)</span>; the channel <span class="math inline">\(\mathcal E\)</span> (including Eve) delivers <span class="math inline">\(\mathcal E(\ket{\Psi(S_n)})\)</span>; Bob decodes with a POVM. Security requires a set of <strong>non-orthogonal states</strong>: orthogonal states could be copied. <strong>Entanglement-based</strong> protocols distribute <span class="math inline">\(\ket\Phi = \tfrac{1}{\sqrt d}\sum_{S_n}\ket{S_n}_A\otimes\ket{\Psi(S_n)}_B\)</span>; measuring her half, Alice remotely prepares Bob’s state. The two pictures are equivalent; in particular no key can be extracted from an entanglement-breaking channel.</p>
+<p>After the measurements Alice and Bob hold correlated <strong>raw keys</strong>. Classical post-processing — parameter estimation, sifting (yielding <span class="math inline">\(N\)</span> <strong>sifted</strong> bits, partially correlated and partially secret), error correction, privacy amplification (yielding <span class="math inline">\(\ell\)</span> secret bits) — defines the <strong>secret fraction</strong> <span class="math display">\[r = \lim_{N\to\infty}\frac{\ell}{N}.\]</span></p>
+<div class="definition" name="Composable $\varepsilon$-security">
+<p>A key <span class="math inline">\(K\)</span> is <strong><span class="math inline">\(\varepsilon\)</span>-secure</strong> if the joint state of key and Eve is <span class="math inline">\(\varepsilon\)</span>-close in trace distance to an ideal key — uniform and uncorrelated with Eve: <span class="math display">\[\bigl\|\hat\rho_{KE} - \hat\tau_K\otimes\hat\rho_E\bigr\|_1 \leq \varepsilon .\]</span></p>
+</div>
+<p>The definition is <strong>composable</strong>: an <span class="math inline">\(\varepsilon\)</span>-secure key used in an <span class="math inline">\(\varepsilon'\)</span>-secure task gives an <span class="math inline">\((\varepsilon + \varepsilon')\)</span>-secure procedure, whatever the application.</p>
+<p>QKD can achieve <strong>unconditional security</strong>, under explicit conditions: Eve cannot intrude into Alice’s and Bob’s devices; their random number generators are trusted; the classical channel is authenticated; the devices are trusted and characterised. Attacks on real systems target these assumptions (detector blinding, Trojan horses) — the motivation for device-independent and measurement-device-independent QKD.</p>
+</section>
+<section id="a-zoo-of-protocols" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="a-zoo-of-protocols"><span class="header-section-number">10.5</span> A zoo of protocols</h2>
+<ul>
+<li><strong>E91 / BBM92</strong> (Ekert 1991; Bennett, Brassard, Mermin 1992): the entangled version of BB84. A source distributes singlets (any Bell state works); both parties measure <span class="math inline">\(Z\)</span> or <span class="math inline">\(X\)</span> (with <span class="math inline">\(p_z \to 1\)</span>); key from <span class="math inline">\(Z_AZ_B\)</span> rounds after Bob flips his bits; Eve detected from <span class="math inline">\(X_AX_B\)</span> rounds (Ekert’s original version tests a CHSH inequality instead).</li>
+<li><strong>SARG04</strong> (Scarani, Acín, Ribordy, Gisin): the same four states as BB84 but a different encoding — bit <span class="math inline">\(0\)</span> is the <span class="math inline">\(Z\)</span> basis, bit <span class="math inline">\(1\)</span> the <span class="math inline">\(X\)</span> basis. Alice announces a pair of non-orthogonal states containing the one she sent; Bob keeps only conclusive results (cf.&nbsp;unambiguous discrimination, Chapter 8). It is more robust against photon-number-splitting attacks.</li>
+<li><strong>B92</strong> uses just two non-orthogonal states and an unambiguous-discrimination measurement.</li>
+<li><strong>Six-state protocol:</strong> three mutually unbiased bases <span class="math inline">\(X, Y, Z\)</span>. Channel estimation becomes tomographically complete and Eve’s information is more constrained.</li>
+<li><strong>Qudit protocols:</strong> generalised Pauli operators <span class="math inline">\(\hat U_{jk} = \sum_n e^{2\pi i nk/d}\ket{n + j}\bra n\)</span> define bases in dimension <span class="math inline">\(d\)</span>. The two-basis protocol uses eigenstates of <span class="math inline">\(\hat U_{01}\)</span> and <span class="math inline">\(\hat U_{10}\)</span>; for prime <span class="math inline">\(d\)</span>, eigenstates of <span class="math inline">\(\hat U_{01}\)</span> and <span class="math inline">\(\hat U_{1k}\)</span> give <span class="math inline">\(d+1\)</span> <strong>mutually unbiased bases</strong> (<span class="math inline">\(|\braket{e_i|f_j}|^2 = 1/d\)</span>). Higher dimension means more bits per photon and more noise tolerance.</li>
+<li><strong>Continuous-variable</strong> protocols encode in field quadratures measured by homodyne detection.</li>
+<li><strong>Distributed-phase-reference</strong> protocols — <strong>DPS</strong> (differential phase shift: bits in the phase difference <span class="math inline">\(0, \pi\)</span> of consecutive coherent pulses, decoded by an unbalanced interferometer) and <strong>COW</strong> (coherent one-way: bits in the time slot of a pulse, security from monitoring coherence between successive non-empty pulses).</li>
+<li><strong>Round-robin DPS</strong> (“no-disturbance”): a superposition of <span class="math inline">\(L\)</span> pulses with phases <span class="math inline">\(\pm1\)</span>; Bob measures the XOR of two random pulses. Eve’s information is bounded <em>regardless of the disturbance</em> she causes.</li>
+</ul>
+</section>
+<section id="secret-key-rates" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="secret-key-rates"><span class="header-section-number">10.6</span> Secret key rates</h2>
+<p>In the asymptotic limit and for one-way post-processing (Csiszár–Körner, Devetak–Winter), <span class="math display">\[r = I_{AB} - I_E, \qquad I_E = \min(I_{EA}, I_{EB}),\]</span> the information Alice and Bob share minus what Eve knows (with reverse reconciliation, Eve’s information on Bob’s string).</p>
+<p>Eve’s capabilities define the attack model: <strong>individual</strong> attacks (each signal attacked independently, ancillas measured before post-processing: <span class="math inline">\(I_E = \max I(A:E)\)</span>); <strong>collective</strong> attacks (ancillas stored in a quantum memory and measured collectively at the end: <span class="math inline">\(I_E = \max\chi(A:E)\)</span>, with <span class="math inline">\(\chi(A:E) = S(\hat\rho_E) - \sum_a p_a S(\hat\rho_{E|a})\)</span>); <strong>coherent</strong> attacks (no restriction). For the main protocols, the bound for coherent attacks coincides with the collective one (de Finetti arguments).</p>
+<div class="proposition" name="BB84 key rate">
+<p>With QBER <span class="math inline">\(Q\)</span>, <span class="math inline">\(I_{AB} = 1 - h_2(Q)\)</span>; real error correction leaks <span class="math inline">\(\mathrm{leak}_{EC} = f\,h_2(Q)\)</span> with efficiency <span class="math inline">\(f \geq 1\)</span>. Eve can gain information only by introducing errors, at most <span class="math inline">\(I_E = h_2(Q)\)</span>. Hence <span class="math display">\[r_{BB84} = 1 - f\,h_2(Q) - h_2(Q).\]</span></p>
+</div>
+<p>With <span class="math inline">\(f = 1\)</span>, <span class="math inline">\(r &gt; 0\)</span> iff <span class="math inline">\(h_2(Q) &lt; \tfrac12\)</span>, i.e.&nbsp;<strong><span class="math inline">\(Q &lt; 11\%\)</span></strong>. For the <strong>six-state protocol</strong> the same <span class="math inline">\(I_{AB}\)</span> holds but Eve knows less: <span class="math display">\[I_E(Q) = Q + (1 - Q)\,h_2\Bigl(\frac{1 - 3Q/2}{1 - Q}\Bigr),\]</span> and the threshold rises to about <span class="math inline">\(12.6\%\)</span>. For qudits, with <span class="math inline">\(h_d(Q) = -Q\log_2\frac{Q}{d-1} - (1-Q)\log_2(1-Q)\)</span>, the two-basis protocol gives <span class="math inline">\(r = \log_2 d - f h_d(Q) - h_d(Q)\)</span>, and the <span class="math inline">\((d+1)\)</span>-basis protocol tolerates even more noise.</p>
+</section>
+<section id="implementations" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="implementations"><span class="header-section-number">10.7</span> Implementations</h2>
+<p><strong>Encodings.</strong> <em>Polarisation</em> (<span class="math inline">\(\ket H, \ket V\)</span> and diagonals, or circular <span class="math inline">\(\ket{R,L} = \ket H \mp i\ket V\)</span>) is natural in free space. <em>Time-bin</em> encoding, <span class="math inline">\(\ket\psi = (\ket S + e^{i\varphi}\ket L)/\sqrt2\)</span> with <span class="math inline">\(S\)</span>/<span class="math inline">\(L\)</span> a short and a long path of an unbalanced interferometer, is robust in fibres; the relative phase carries the information. <em>Orbital angular momentum</em> (phase <span class="math inline">\(e^{im\phi}\)</span>, <span class="math inline">\(m \in \mathbb Z\)</span>) offers large <span class="math inline">\(d\)</span> for qudit protocols. Self-compensating polarisation encoders (e.g.&nbsp;the “POGNAC” Sagnac design) achieve intrinsic QBER below <span class="math inline">\(0.1\%\)</span>.</p>
+<p><strong>Channels.</strong> Transmission decays exponentially in fibre, <span class="math inline">\(t_{\text{fiber}} = t_0\,10^{-\alpha\ell/10}\)</span> with <span class="math inline">\(\alpha \approx 0.2\)</span> dB/km at 1550 nm, but only quadratically (diffraction) in vacuum, <span class="math inline">\(t_{\text{vacuum}} \propto 1/\ell^2\)</span>. Over <span class="math inline">\(1000\)</span> km, fibre losses are <span class="math inline">\(\sim 200\)</span> dB while a satellite link loses <span class="math inline">\(50\)</span>–<span class="math inline">\(80\)</span> dB: the motivation for space QKD (the Micius satellite, the European EuroQCI initiative). Atmospheric turbulence makes free-space transmission fluctuate (log-normal statistics), which adaptive selection of high-transmissivity windows can exploit.</p>
+<p><strong>Detectors.</strong> Single-photon detectors (avalanche photodiodes in Geiger mode, superconducting nanowires) are characterised by <strong>quantum efficiency</strong> <span class="math inline">\(\eta_B\)</span> (click probability per photon), <strong>dark-count</strong> probability <span class="math inline">\(p_d\)</span> (clicks without photons — noise that dominates at long distance), and <strong>dead time</strong>. These parameters are interdependent.</p>
+<p><strong>Weak coherent pulses.</strong> True single-photon sources are hard; attenuated lasers are used instead. A coherent state <span class="math inline">\(\ket\alpha = e^{-\mu/2}\sum_n\frac{\alpha^n}{\sqrt{n!}}\ket n\)</span> with mean photon number <span class="math inline">\(\mu = |\alpha|^2\)</span>, after phase randomisation, becomes a mixture of Fock states with Poisson weights: <span class="math display">\[\hat\rho = \int_0^{2\pi}\frac{d\theta}{2\pi}\ket{e^{i\theta}\sqrt\mu}\bra{e^{i\theta}\sqrt\mu} = \sum_n P_n(\mu)\ket n\bra n, \qquad P_n(\mu) = e^{-\mu}\frac{\mu^n}{n!}.\]</span> Multi-photon pulses enable the <strong>photon-number-splitting</strong> (PNS) attack: Eve measures the photon number, keeps one photon of every multi-photon pulse (learning the bit after basis reconciliation, without errors), and blocks single-photon pulses to keep the overall loss unchanged. The secret key comes only from single-photon events: <span class="math display">\[K = R_0 + R_1\bigl[1 - h_2(e_1)\bigr] - \mathrm{leak}_{EC}\]</span> (GLLP), where <span class="math inline">\(R_n\)</span> is the detection rate of <span class="math inline">\(n\)</span>-photon pulses and <span class="math inline">\(e_1\)</span> the single-photon error rate — quantities not directly measured. Pessimistic estimates make the rate drop quickly with distance.</p>
+<p><strong>Decoy states</strong> (Hwang; Lo, Ma, Chen; Wang, 2005) fix this. Alice randomly varies the intensity among a signal <span class="math inline">\(\mu\)</span> (e.g.&nbsp;<span class="math inline">\(0.5\)</span>), a decoy <span class="math inline">\(\nu\)</span> (e.g.&nbsp;<span class="math inline">\(0.1\)</span>) and vacuum. Let <span class="math inline">\(Y_n\)</span> be the <strong>yield</strong> of <span class="math inline">\(n\)</span>-photon pulses (probability of a click given <span class="math inline">\(n\)</span> photons were sent) and <span class="math inline">\(e_n\)</span> their error rate. Eve cannot tell which intensity an <span class="math inline">\(n\)</span>-photon pulse came from, so <span class="math inline">\(Y_n\)</span> and <span class="math inline">\(e_n\)</span> are the same for all intensities, while the measured <strong>gains</strong> and QBERs are Poisson mixtures, <span class="math inline">\(G_x = \sum_n P_n(x)Y_n\)</span> and <span class="math inline">\(E_x G_x = \sum_n P_n(x)\,e_nY_n\)</span>. The vacuum decoy measures <span class="math inline">\(Y_0\)</span>, and the other two give (Ma, Qi, Zhao, Lo, 2005) <span class="math display">\[Y_1 \geq Y_1^L = \frac{\mu}{\mu\nu - \nu^2}\Bigl[G_\nu e^{\nu} - G_\mu e^{\mu}\frac{\nu^2}{\mu^2} - \frac{\mu^2 - \nu^2}{\mu^2}Y_0\Bigr], \qquad e_1 \leq e_1^U = \frac{E_\nu G_\nu e^{\nu} - \tfrac12 Y_0}{Y_1^L\,\nu}.\]</span> The single-photon contribution to the key is then bounded with <span class="math inline">\(R_1 \geq \mu e^{-\mu}Y_1^L\)</span> and <span class="math inline">\(e_1 \leq e_1^U\)</span>, and the key rate approaches that of an ideal single-photon source. Decoy-state BB84 is the standard in commercial systems.</p>
+</section>
+<section id="quantum-random-number-generators" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="quantum-random-number-generators"><span class="header-section-number">10.8</span> Quantum random number generators</h2>
+<p>Random numbers are needed everywhere: cryptography (including QKD itself), simulation, gaming. <strong>Pseudo-random</strong> generators are deterministic algorithms — fast and simple, but periodic and possibly correlated; flawed generators (IBM’s RANDU, <span class="math inline">\(V_{k+1} = 65539\,V_k \bmod 2^{31}\)</span>) and deliberate backdoors (the NIST-certified Dual_EC_DRBG) have caused real damage. Classical physical generators (coins, thermal noise) are unpredictable only because of ignorance of initial conditions. “Anyone who attempts to generate random numbers by deterministic means is, of course, living in a state of sin” (von Neumann).</p>
+<p>A <strong>QRNG</strong> uses the intrinsic randomness of quantum measurement: outcomes are unpredictable even with complete knowledge of the state. For a trusted device measuring <span class="math inline">\(\ket\psi\)</span> in a basis <span class="math inline">\(\{\ket z\}\)</span>, the relevant quantity is the <strong>min-entropy</strong> <span class="math display">\[H_\infty(Z) = -\log_2\max_z P_z, \qquad P_z = |\braket{z|\psi}|^2,\]</span> related to the guessing probability <span class="math inline">\(p_{\text{guess}} = 2^{-H_\infty}\)</span>; randomness extractors distil about <span class="math inline">\(H_\infty\)</span> uniform bits per measurement.</p>
+<p>For security applications the source may be correlated with an adversary, who may even prepare it. The relevant quantity is the conditional min-entropy <span class="math inline">\(H_{\min}(Z|E)\)</span>. <strong>Source-device-independent</strong> QRNGs bound it without trusting the source, using an entropic uncertainty relation for mutually unbiased bases in dimension <span class="math inline">\(d\)</span> (Tomamichel–Renner): <span class="math display">\[H_{\min}(Z|E) + H_{\max}(X) \geq \log_2 d .\]</span> Randomly measuring in the conjugate basis <span class="math inline">\(X\)</span> (only to monitor) certifies the randomness of the <span class="math inline">\(Z\)</span> outcomes: <span class="math inline">\(H_{\min}(Z|E) \geq \log_2 d - 2\log_2\sum_x\sqrt{p_x}\)</span>. Implementations with heterodyne detection of the vacuum reach tens of Gbit/s of certified randomness. This answers the basic question “how do I distinguish <span class="math inline">\(\ket\psi = (\ket H + \ket V)/\sqrt 2\)</span> (quantum randomness) from <span class="math inline">\(\hat\rho = \tfrac12(\ket H\bra H + \ket V\bra V)\)</span> (classical noise)?” — by measuring in a second basis.</p>
+</section>
+<section id="exercises" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="exercises"><span class="header-section-number">10.9</span> Exercises</h2>
+<div class="exercise">
+<p>Eve performs intercept-resend on a fraction <span class="math inline">\(\eta\)</span> of the photons in BB84. What QBER does she cause and how much information does she get on the sifted key? Compare with the condition <span class="math inline">\(r &gt; 0\)</span>.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>On attacked photons the QBER is <span class="math inline">\(25\%\)</span>, so <span class="math inline">\(Q = \eta/4\)</span>. Eve’s measurement basis is right half the time, so she knows the bit on a fraction <span class="math inline">\(\eta/2\)</span> of the sifted key and nothing on the rest (a wrong-basis measurement is uncorrelated with Alice’s bit). Since <span class="math inline">\(h_2(Q)\)</span> upper-bounds Eve’s information in the security proof, <span class="math inline">\(r = 1 - 2h_2(\eta/4) &gt; 0\)</span> requires <span class="math inline">\(\eta/4 &lt; 0.11\)</span>, i.e.&nbsp;<span class="math inline">\(\eta &lt; 0.44\)</span>: beyond that, Alice and Bob abort.</p>
+</div>
+<div class="exercise">
+<p>Show that a QKD protocol using only two orthogonal states is insecure.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Orthogonal states can be perfectly distinguished and copied: Eve measures in the encoding basis, learns every bit, and resends an identical state, causing no errors. Security requires non-orthogonal states, for which any information gain implies disturbance.</p>
+</div>
+</section>
+<section id="sources" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="sources"><span class="header-section-number">10.10</span> Sources</h2>
+<p>Prof.&nbsp;Vallone, <em>Quantum Information and Computing</em>, lectures 12–14 and the decks <code>Vallone_QKD_lecture1</code> (one-time pad, BB84, intercept-resend, classical and quantum channels, post-processing, security), <code>Vallone_QKD_lecture13</code> (protocols and key rates), <code>Vallone_QKD_implementation_lecture14</code> (encodings, channels, detectors, weak coherent pulses, PNS, decoy states) and <code>Vallone_QI@DEI_2025.26lecture24</code> (QRNG, satellite quantum communication). Nielsen &amp; Chuang, Sections 12.1 and 12.6. Further reading: N. Gisin, G. Ribordy, W. Tittel and H. Zbinden, <em>Quantum cryptography</em>, Rev.&nbsp;Mod. Phys. <strong>74</strong>, 145 (2002); V. Scarani <em>et al.</em>, <em>The security of practical quantum key distribution</em>, Rev.&nbsp;Mod. Phys. <strong>81</strong>, 1301 (2009); W. Wootters and W. Zurek, Nature <strong>299</strong>, 802 (1982).</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/09-quantum-shannon-theory.html" class="pagination-link" aria-label="Classical and quantum Shannon theory">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Classical and quantum Shannon theory</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/11-teleportation-and-entanglement-swapping.html" class="pagination-link" aria-label="Teleportation and entanglement swapping">
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Teleportation and entanglement swapping</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "No-cloning and quantum key distribution"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Quantum mechanics forbids copying an unknown state and guarantees that measuring disturbs. Turned around, these limitations become a security guarantee: any eavesdropper on a quantum channel leaves traces. **Quantum key distribution** (QKD) exploits this to let two parties grow a shared secret key whose security rests on physics, not on computational assumptions. This chapter proves the no-cloning theorem, describes BB84 and its descendants, computes secret-key rates, discusses real implementations (lossy channels, weak laser pulses, decoy states), and closes with quantum random number generation.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Why quantum cryptography</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Classical public-key cryptography (RSA, Diffie–Hellman) relies on problems believed to be computationally hard. A classical algorithmic breakthrough could break it, and a quantum computer *will* break RSA (Shor's algorithm, Chapter 13). Post-quantum cryptography replaces the hard problems; QKD replaces the assumption altogether.</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>::: {.definition name="One-time pad"}</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>To encrypt an $n$-bit message $m$, Alice adds bitwise (XOR) an $n$-bit uniformly random key $k$: $c = m \oplus k$. Bob decrypts with $m = c \oplus k$. If the key is secret, random, as long as the message and never reused, the ciphertext is statistically independent of the message (Shannon, 1949): perfect secrecy.</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>The problem is distributing the key. QKD solves exactly this: it lets Alice and Bob **exchange random and secret keys**, which are then used in a one-time pad or another symmetric cipher.</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">## The no-cloning theorem</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="No-cloning (Wootters–Zurek, Dieks, 1982)"}</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>There is no unitary $\hat U$ and fixed blank state $\ket e$ such that $\hat U\ket\psi\ket e = \ket\psi\ket\psi$ for every state $\ket\psi$.</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>*Proof.* Suppose it worked for $\ket\psi$ and $\ket\phi$. Taking the scalar product of $\hat U\ket\psi\ket e = \ket\psi\ket\psi$ with $\hat U\ket\phi\ket e = \ket\phi\ket\phi$ and using unitarity,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>$$\braket{\phi|\psi}\braket{e|e} = \braket{\phi|\psi}^2 \quad\Longrightarrow\quad \braket{\phi|\psi} \in <span class="sc">\{</span>0, 1<span class="sc">\}</span>.$$</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>Only identical or orthogonal states can be cloned by the same machine. $\square$</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>(Allowing ancillas and measurements, i.e. general channels, does not help.) Orthogonal states *can* be copied — that is classical information. The theorem is consistent with no-signalling: a cloner would let Bob distinguish Alice's choice of basis on half of an entangled pair, allowing superluminal communication.</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## The BB84 protocol</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="in">```{=latex}</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="in">\begin{center}</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="in">\begin{tikzpicture}[font=\small, line width=0.4pt, &gt;=stealth]</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="in">  \node[draw, minimum width=1.2cm, minimum height=0.7cm] (A) at (0,0) {Alice};</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="in">  \node[draw, minimum width=1.2cm, minimum height=0.7cm] (B) at (6,0) {Bob};</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="in">  \node[draw, circle, inner sep=1.5pt] (E) at (3,1.1) {Eve};</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw[-&gt;] (A.east) ++(0,0.12) -- node[above, pos=0.25] {quantum} ++(4.8,0);</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw[&lt;-&gt;, dashed] (A.east) ++(0,-0.12) -- node[below] {classical} ++(4.8,0);</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw[densely dotted] (E) -- (3,0.12);</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="in">\end{tikzpicture}</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="in">\end{center}</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>*Figure: QKD setting. Eve can do anything to the quantum signals, but can only listen to the authenticated classical channel.*</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>The **quantum channel** is public and not authenticated: Eve can interact with the signals arbitrarily. The **classical channel** is public but authenticated: Eve can read but not modify the messages (authentication needs a short pre-shared key, so QKD is really *key growing*).</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>::: {.definition name="BB84 (Bennett–Brassard, 1984)"}</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>For each signal Alice picks a random bit and a random basis, $Z = <span class="sc">\{</span>\ket 0, \ket 1<span class="sc">\}</span>$ or $X = <span class="sc">\{</span>\ket +, \ket -<span class="sc">\}</span>$, and sends the corresponding state (e.g. polarisation $H/V$ or $D/A$).</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Bob measures each signal in a randomly chosen basis $Z$ or $X$.</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Sifting:** over the classical channel they announce the bases (not the bits) and keep only the rounds with matching bases — about half.</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Parameter estimation:** they reveal a random subset of the sifted bits to estimate the **quantum bit error rate** (QBER) $Q$.</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>**Error correction** and **privacy amplification** turn the remaining bits into a shorter, identical and secret key.</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>::: {.example name="Intercept-resend attack"}</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>Eve measures each photon in a random basis and resends the state she found. With probability $\tfrac12$ she guesses the right basis and causes no error; with probability $\tfrac12$ she uses the wrong basis, resends a state of the wrong basis, and Bob (in the sifted rounds) gets a random result — an error with probability $\tfrac12$. The QBER becomes $\tfrac12\cdot\tfrac12 = 25\%$, and Eve is detected. Any attempt to gain information disturbs the states, because the two bases are non-commuting (mutually unbiased) and the states cannot be cloned.</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>**Efficient BB84.** Nothing forces the bases to be equally likely. Alice and Bob use $Z$ with probability $p_z \to 1$ for key generation and $X$ with small probability $p_x = 1 - p_z$ to detect Eve; the sifting probability $p_z^2$ approaches $1$ instead of $\tfrac12$.</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="fu">## General structure and security</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>**Prepare-and-measure** protocols encode a string $S_n = (s_1, \dots, s_n)$ into $\ket{\Psi(S_n)}_A$, usually $\ket{\psi(s_1)}\otimes\dots\otimes\ket{\psi(s_n)}$; the channel $\mathcal E$ (including Eve) delivers $\mathcal E(\ket{\Psi(S_n)})$; Bob decodes with a POVM. Security requires a set of **non-orthogonal states**: orthogonal states could be copied. **Entanglement-based** protocols distribute $\ket\Phi = \tfrac{1}{\sqrt d}\sum_{S_n}\ket{S_n}_A\otimes\ket{\Psi(S_n)}_B$; measuring her half, Alice remotely prepares Bob's state. The two pictures are equivalent; in particular no key can be extracted from an entanglement-breaking channel.</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>After the measurements Alice and Bob hold correlated **raw keys**. Classical post-processing — parameter estimation, sifting (yielding $N$ **sifted** bits, partially correlated and partially secret), error correction, privacy amplification (yielding $\ell$ secret bits) — defines the **secret fraction**</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>$$r = \lim_{N\to\infty}\frac{\ell}{N}.$$</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Composable $\varepsilon$-security"}</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>A key $K$ is **$\varepsilon$-secure** if the joint state of key and Eve is $\varepsilon$-close in trace distance to an ideal key — uniform and uncorrelated with Eve:</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>$$\bigl<span class="sc">\|</span>\hat\rho_{KE} - \hat\tau_K\otimes\hat\rho_E\bigr<span class="sc">\|</span>_1 \leq \varepsilon .$$</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>The definition is **composable**: an $\varepsilon$-secure key used in an $\varepsilon'$-secure task gives an $(\varepsilon + \varepsilon')$-secure procedure, whatever the application.</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>QKD can achieve **unconditional security**, under explicit conditions: Eve cannot intrude into Alice's and Bob's devices; their random number generators are trusted; the classical channel is authenticated; the devices are trusted and characterised. Attacks on real systems target these assumptions (detector blinding, Trojan horses) — the motivation for device-independent and measurement-device-independent QKD.</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a><span class="fu">## A zoo of protocols</span></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**E91 / BBM92** (Ekert 1991; Bennett, Brassard, Mermin 1992): the entangled version of BB84. A source distributes singlets (any Bell state works); both parties measure $Z$ or $X$ (with $p_z \to 1$); key from $Z_AZ_B$ rounds after Bob flips his bits; Eve detected from $X_AX_B$ rounds (Ekert's original version tests a CHSH inequality instead).</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**SARG04** (Scarani, Acín, Ribordy, Gisin): the same four states as BB84 but a different encoding — bit $0$ is the $Z$ basis, bit $1$ the $X$ basis. Alice announces a pair of non-orthogonal states containing the one she sent; Bob keeps only conclusive results (cf. unambiguous discrimination, Chapter 8). It is more robust against photon-number-splitting attacks.</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**B92** uses just two non-orthogonal states and an unambiguous-discrimination measurement.</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Six-state protocol:** three mutually unbiased bases $X, Y, Z$. Channel estimation becomes tomographically complete and Eve's information is more constrained.</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Qudit protocols:** generalised Pauli operators $\hat U_{jk} = \sum_n e^{2\pi i nk/d}\ket{n + j}\bra n$ define bases in dimension $d$. The two-basis protocol uses eigenstates of $\hat U_{01}$ and $\hat U_{10}$; for prime $d$, eigenstates of $\hat U_{01}$ and $\hat U_{1k}$ give $d+1$ **mutually unbiased bases** ($|\braket{e_i|f_j}|^2 = 1/d$). Higher dimension means more bits per photon and more noise tolerance.</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Continuous-variable** protocols encode in field quadratures measured by homodyne detection.</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Distributed-phase-reference** protocols — **DPS** (differential phase shift: bits in the phase difference $0, \pi$ of consecutive coherent pulses, decoded by an unbalanced interferometer) and **COW** (coherent one-way: bits in the time slot of a pulse, security from monitoring coherence between successive non-empty pulses).</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Round-robin DPS** ("no-disturbance"): a superposition of $L$ pulses with phases $\pm1$; Bob measures the XOR of two random pulses. Eve's information is bounded *regardless of the disturbance* she causes.</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="fu">## Secret key rates</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>In the asymptotic limit and for one-way post-processing (Csiszár–Körner, Devetak–Winter),</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>$$r = I_{AB} - I_E, \qquad I_E = \min(I_{EA}, I_{EB}),$$</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>the information Alice and Bob share minus what Eve knows (with reverse reconciliation, Eve's information on Bob's string).</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>Eve's capabilities define the attack model: **individual** attacks (each signal attacked independently, ancillas measured before post-processing: $I_E = \max I(A:E)$); **collective** attacks (ancillas stored in a quantum memory and measured collectively at the end: $I_E = \max\chi(A:E)$, with $\chi(A:E) = S(\hat\rho_E) - \sum_a p_a S(\hat\rho_{E|a})$); **coherent** attacks (no restriction). For the main protocols, the bound for coherent attacks coincides with the collective one (de Finetti arguments).</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>::: {.proposition name="BB84 key rate"}</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>With QBER $Q$, $I_{AB} = 1 - h_2(Q)$; real error correction leaks $\mathrm{leak}_{EC} = f\,h_2(Q)$ with efficiency $f \geq 1$. Eve can gain information only by introducing errors, at most $I_E = h_2(Q)$. Hence</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>$$r_{BB84} = 1 - f\,h_2(Q) - h_2(Q).$$</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>With $f = 1$, $r &gt; 0$ iff $h_2(Q) &lt; \tfrac12$, i.e. **$Q &lt; 11\%$**. For the **six-state protocol** the same $I_{AB}$ holds but Eve knows less:</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>$$I_E(Q) = Q + (1 - Q)\,h_2\Bigl(\frac{1 - 3Q/2}{1 - Q}\Bigr),$$</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>and the threshold rises to about $12.6\%$. For qudits, with $h_d(Q) = -Q\log_2\frac{Q}{d-1} - (1-Q)\log_2(1-Q)$, the two-basis protocol gives $r = \log_2 d - f h_d(Q) - h_d(Q)$, and the $(d+1)$-basis protocol tolerates even more noise.</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a><span class="fu">## Implementations</span></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>**Encodings.** *Polarisation* ($\ket H, \ket V$ and diagonals, or circular $\ket{R,L} = \ket H \mp i\ket V$) is natural in free space. *Time-bin* encoding, $\ket\psi = (\ket S + e^{i\varphi}\ket L)/\sqrt2$ with $S$/$L$ a short and a long path of an unbalanced interferometer, is robust in fibres; the relative phase carries the information. *Orbital angular momentum* (phase $e^{im\phi}$, $m \in \mathbb Z$) offers large $d$ for qudit protocols. Self-compensating polarisation encoders (e.g. the "POGNAC" Sagnac design) achieve intrinsic QBER below $0.1\%$.</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>**Channels.** Transmission decays exponentially in fibre, $t_{\text{fiber}} = t_0\,10^{-\alpha\ell/10}$ with $\alpha \approx 0.2$ dB/km at 1550 nm, but only quadratically (diffraction) in vacuum, $t_{\text{vacuum}} \propto 1/\ell^2$. Over $1000$ km, fibre losses are $\sim 200$ dB while a satellite link loses $50$–$80$ dB: the motivation for space QKD (the Micius satellite, the European EuroQCI initiative). Atmospheric turbulence makes free-space transmission fluctuate (log-normal statistics), which adaptive selection of high-transmissivity windows can exploit.</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>**Detectors.** Single-photon detectors (avalanche photodiodes in Geiger mode, superconducting nanowires) are characterised by **quantum efficiency** $\eta_B$ (click probability per photon), **dark-count** probability $p_d$ (clicks without photons — noise that dominates at long distance), and **dead time**. These parameters are interdependent.</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>**Weak coherent pulses.** True single-photon sources are hard; attenuated lasers are used instead. A coherent state $\ket\alpha = e^{-\mu/2}\sum_n\frac{\alpha^n}{\sqrt{n!}}\ket n$ with mean photon number $\mu = |\alpha|^2$, after phase randomisation, becomes a mixture of Fock states with Poisson weights:</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>$$\hat\rho = \int_0^{2\pi}\frac{d\theta}{2\pi}\ket{e^{i\theta}\sqrt\mu}\bra{e^{i\theta}\sqrt\mu} = \sum_n P_n(\mu)\ket n\bra n, \qquad P_n(\mu) = e^{-\mu}\frac{\mu^n}{n!}.$$</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>Multi-photon pulses enable the **photon-number-splitting** (PNS) attack: Eve measures the photon number, keeps one photon of every multi-photon pulse (learning the bit after basis reconciliation, without errors), and blocks single-photon pulses to keep the overall loss unchanged. The secret key comes only from single-photon events:</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>$$K = R_0 + R_1\bigl<span class="co">[</span><span class="ot">1 - h_2(e_1)\bigr</span><span class="co">]</span> - \mathrm{leak}_{EC}$$</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>(GLLP), where $R_n$ is the detection rate of $n$-photon pulses and $e_1$ the single-photon error rate — quantities not directly measured. Pessimistic estimates make the rate drop quickly with distance.</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>**Decoy states** (Hwang; Lo, Ma, Chen; Wang, 2005) fix this. Alice randomly varies the intensity among a signal $\mu$ (e.g. $0.5$), a decoy $\nu$ (e.g. $0.1$) and vacuum. Let $Y_n$ be the **yield** of $n$-photon pulses (probability of a click given $n$ photons were sent) and $e_n$ their error rate. Eve cannot tell which intensity an $n$-photon pulse came from, so $Y_n$ and $e_n$ are the same for all intensities, while the measured **gains** and QBERs are Poisson mixtures, $G_x = \sum_n P_n(x)Y_n$ and $E_x G_x = \sum_n P_n(x)\,e_nY_n$. The vacuum decoy measures $Y_0$, and the other two give (Ma, Qi, Zhao, Lo, 2005)</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>$$Y_1 \geq Y_1^L = \frac{\mu}{\mu\nu - \nu^2}\Bigl<span class="co">[</span><span class="ot">G_\nu e^{\nu} - G_\mu e^{\mu}\frac{\nu^2}{\mu^2} - \frac{\mu^2 - \nu^2}{\mu^2}Y_0\Bigr</span><span class="co">]</span>, \qquad e_1 \leq e_1^U = \frac{E_\nu G_\nu e^{\nu} - \tfrac12 Y_0}{Y_1^L\,\nu}.$$</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>The single-photon contribution to the key is then bounded with $R_1 \geq \mu e^{-\mu}Y_1^L$ and $e_1 \leq e_1^U$, and the key rate approaches that of an ideal single-photon source. Decoy-state BB84 is the standard in commercial systems.</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="fu">## Quantum random number generators</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>Random numbers are needed everywhere: cryptography (including QKD itself), simulation, gaming. **Pseudo-random** generators are deterministic algorithms — fast and simple, but periodic and possibly correlated; flawed generators (IBM's RANDU, $V_{k+1} = 65539\,V_k \bmod 2^{31}$) and deliberate backdoors (the NIST-certified Dual<span class="sc">\_</span>EC<span class="sc">\_</span>DRBG) have caused real damage. Classical physical generators (coins, thermal noise) are unpredictable only because of ignorance of initial conditions. "Anyone who attempts to generate random numbers by deterministic means is, of course, living in a state of sin" (von Neumann).</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>A **QRNG** uses the intrinsic randomness of quantum measurement: outcomes are unpredictable even with complete knowledge of the state. For a trusted device measuring $\ket\psi$ in a basis $\{\ket z\}$, the relevant quantity is the **min-entropy**</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>$$H_\infty(Z) = -\log_2\max_z P_z, \qquad P_z = |\braket{z|\psi}|^2,$$</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>related to the guessing probability $p_{\text{guess}} = 2^{-H_\infty}$; randomness extractors distil about $H_\infty$ uniform bits per measurement.</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>For security applications the source may be correlated with an adversary, who may even prepare it. The relevant quantity is the conditional min-entropy $H_{\min}(Z|E)$. **Source-device-independent** QRNGs bound it without trusting the source, using an entropic uncertainty relation for mutually unbiased bases in dimension $d$ (Tomamichel–Renner):</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>$$H_{\min}(Z|E) + H_{\max}(X) \geq \log_2 d .$$</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>Randomly measuring in the conjugate basis $X$ (only to monitor) certifies the randomness of the $Z$ outcomes: $H_{\min}(Z|E) \geq \log_2 d - 2\log_2\sum_x\sqrt{p_x}$. Implementations with heterodyne detection of the vacuum reach tens of Gbit/s of certified randomness. This answers the basic question "how do I distinguish $\ket\psi = (\ket H + \ket V)/\sqrt 2$ (quantum randomness) from $\hat\rho = \tfrac12(\ket H\bra H + \ket V\bra V)$ (classical noise)?" — by measuring in a second basis.</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>Eve performs intercept-resend on a fraction $\eta$ of the photons in BB84. What QBER does she cause and how much information does she get on the sifted key? Compare with the condition $r &gt; 0$.</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>On attacked photons the QBER is $25\%$, so $Q = \eta/4$. Eve's measurement basis is right half the time, so she knows the bit on a fraction $\eta/2$ of the sifted key and nothing on the rest (a wrong-basis measurement is uncorrelated with Alice's bit). Since $h_2(Q)$ upper-bounds Eve's information in the security proof, $r = 1 - 2h_2(\eta/4) &gt; 0$ requires $\eta/4 &lt; 0.11$, i.e. $\eta &lt; 0.44$: beyond that, Alice and Bob abort.</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>Show that a QKD protocol using only two orthogonal states is insecure.</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>Orthogonal states can be perfectly distinguished and copied: Eve measures in the encoding basis, learns every bit, and resends an identical state, causing no errors. Security requires non-orthogonal states, for which any information gain implies disturbance.</span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>Prof. Vallone, *Quantum Information and Computing*, lectures 12–14 and the decks `Vallone_QKD_lecture1` (one-time pad, BB84, intercept-resend, classical and quantum channels, post-processing, security), `Vallone_QKD_lecture13` (protocols and key rates), `Vallone_QKD_implementation_lecture14` (encodings, channels, detectors, weak coherent pulses, PNS, decoy states) and `Vallone_QI@DEI_2025.26lecture24` (QRNG, satellite quantum communication). Nielsen &amp; Chuang, Sections 12.1 and 12.6. Further reading: N. Gisin, G. Ribordy, W. Tittel and H. Zbinden, *Quantum cryptography*, Rev. Mod. Phys. **74**, 145 (2002); V. Scarani *et al.*, *The security of practical quantum key distribution*, Rev. Mod. Phys. **81**, 1301 (2009); W. Wootters and W. Zurek, Nature **299**, 802 (1982).</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

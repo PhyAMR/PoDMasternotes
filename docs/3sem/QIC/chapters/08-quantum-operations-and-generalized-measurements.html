@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>8&nbsp; Quantum operations and generalized measurements – Quantum Information and Computing</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/09-quantum-shannon-theory.html" rel="next">
+<link href="../chapters/07-detecting-entanglement.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-12757e4b7af482b2d9c5bd8860d2b707.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-3fda7689cb8c4ed59160d7ff94eb8d4f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-qubits-and-measurement.html">Part I: Quantum mechanics for quantum information</a></li><li class="breadcrumb-item"><a href="../chapters/08-quantum-operations-and-generalized-measurements.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quantum operations and generalized measurements</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Quantum Information and Computing</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About these notes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Quantum mechanics for quantum information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-qubits-and-measurement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Qubits and measurement</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-observables.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Operators and observables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-mixed-states.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Mixed states and density operators</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-unitary-evolution-and-postulates.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Unitary evolution and the postulates</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-composite-systems-and-entanglement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Composite systems and entanglement</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-bell-inequalities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Nonlocality and Bell inequalities</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-detecting-entanglement.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Detecting entanglement</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-quantum-operations-and-generalized-measurements.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quantum operations and generalized measurements</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Quantum information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-quantum-shannon-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Classical and quantum Shannon theory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-quantum-key-distribution.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">No-cloning and quantum key distribution</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-teleportation-and-entanglement-swapping.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Teleportation and entanglement swapping</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: Quantum computation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-quantum-circuits-and-universality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Quantum circuits and universality</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-phase-estimation-and-shor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Fourier transform, phase estimation and Shor’s algorithm</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-grover-search.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Grover’s search algorithm</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-error-correction-and-implementations.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Error correction and physical implementations</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#from-unitaries-on-a-larger-system-to-superoperators" id="toc-from-unitaries-on-a-larger-system-to-superoperators" class="nav-link active" data-scroll-target="#from-unitaries-on-a-larger-system-to-superoperators"><span class="header-section-number">8.1</span> From unitaries on a larger system to superoperators</a></li>
+  <li><a href="#superoperators" id="toc-superoperators" class="nav-link" data-scroll-target="#superoperators"><span class="header-section-number">8.2</span> Superoperators</a></li>
+  <li><a href="#generalized-measurements" id="toc-generalized-measurements" class="nav-link" data-scroll-target="#generalized-measurements"><span class="header-section-number">8.3</span> Generalized measurements</a></li>
+  <li><a href="#postulates-for-interacting-systems" id="toc-postulates-for-interacting-systems" class="nav-link" data-scroll-target="#postulates-for-interacting-systems"><span class="header-section-number">8.4</span> Postulates for interacting systems</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">8.5</span> Exercises</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">8.6</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-qubits-and-measurement.html">Part I: Quantum mechanics for quantum information</a></li><li class="breadcrumb-item"><a href="../chapters/08-quantum-operations-and-generalized-measurements.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quantum operations and generalized measurements</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Quantum operations and generalized measurements</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>The postulates of Chapter 4 describe isolated systems. Real qubits interact with an environment: they decohere, lose energy, get entangled with ancillas. The same mathematics describes a system that is only <em>part</em> of a larger system evolving unitarily. This chapter derives the <strong>Kraus representation</strong> of the most general physical evolution (a quantum channel, or superoperator), characterises it axiomatically, and does the same for measurements: <strong>generalized measurements</strong> and <strong>POVMs</strong>, which can outperform projective measurements, for example in distinguishing non-orthogonal states.</p>
+<section id="from-unitaries-on-a-larger-system-to-superoperators" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="from-unitaries-on-a-larger-system-to-superoperators"><span class="header-section-number">8.1</span> From unitaries on a larger system to superoperators</h2>
+<p>Let the system <span class="math inline">\(A\)</span> start in <span class="math inline">\(\ket\psi_A\)</span> and an environment (or ancilla) <span class="math inline">\(B\)</span> in a fixed state <span class="math inline">\(\ket 0_B\)</span>, and let them interact through a unitary <span class="math inline">\(\hat U_{AB}\)</span>. Expanding the output in a basis <span class="math inline">\(\{\ket k_B\}\)</span> of <span class="math inline">\(B\)</span>, <span class="math display">\[\ket\Phi_{AB} = \hat U_{AB}\ket\psi_A\ket 0_B = \sum_{k=0}^{d_B-1}\bigl(\hat E_k\ket\psi_A\bigr)\ket k_B, \qquad \hat E_k = {}_B\!\braket{k|\hat U_{AB}|0}_B .\]</span> The state of <span class="math inline">\(A\)</span> alone is <span class="math display">\[\hat\rho_A' = \mathrm{Tr}_B\bigl[\ket\Phi_{AB}\bra\Phi\bigr] = \sum_k\hat E_k\,\hat\rho_A\,\hat E_k^\dagger, \qquad \sum_k\hat E_k^\dagger\hat E_k = \hat{\mathbb 1}_A,\]</span> where the normalisation follows from unitarity: <span class="math inline">\(\sum_k\hat E_k^\dagger\hat E_k = \braket{0|\hat U^\dagger\hat U|0}_B = \hat{\mathbb 1}\)</span>. By linearity the formula holds for mixed <span class="math inline">\(\hat\rho_A\)</span> too. The operators <span class="math inline">\(\hat E_k\)</span> are the <strong>Kraus operators</strong>.</p>
+<p><img src="../Grafiche/_inline_cache/7f2db65b80fcdd8d.svg" class="tikz-figure img-fluid" alt=""></p>
+<p><em>Figure: system and ancilla interact unitarily. Ignoring the ancilla gives a quantum channel on <span class="math inline">\(A\)</span>; measuring it gives a generalized measurement.</em></p>
+</section>
+<section id="superoperators" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="superoperators"><span class="header-section-number">8.2</span> Superoperators</h2>
+<div class="definition" name="Superoperator (quantum channel)">
+<p>A <strong>superoperator</strong> is a map <span class="math inline">\(\chi : \hat\rho \mapsto \hat\rho' = \chi(\hat\rho)\)</span> on density operators that is</p>
+<ol type="1">
+<li><strong>linear:</strong> <span class="math inline">\(\chi(p_1\hat\rho_1 + p_2\hat\rho_2) = p_1\chi(\hat\rho_1) + p_2\chi(\hat\rho_2)\)</span> (it respects mixtures);</li>
+<li><strong>Hermiticity preserving:</strong> <span class="math inline">\(\chi(\hat\rho)^\dagger = \chi(\hat\rho)\)</span>;</li>
+<li><strong>trace preserving:</strong> <span class="math inline">\(\mathrm{Tr}\,\chi(\hat\rho) = 1\)</span>;</li>
+<li><strong>completely positive:</strong> <span class="math inline">\(\hat{\mathbb 1}_R\otimes\chi\)</span> maps positive operators to positive operators for every reference system <span class="math inline">\(R\)</span>.</li>
+</ol>
+</div>
+<p>Complete positivity is stronger than positivity, and physically necessary: the system may be entangled with a distant partner <span class="math inline">\(R\)</span> untouched by the evolution, and the joint state must remain a state. The transpose is positive but not completely positive — applied to half of <span class="math inline">\(\ket{\Phi^+}\)</span> it produces an operator with a negative eigenvalue (the partial transpose of Chapter 7). It is not a physical evolution.</p>
+<div class="theorem" name="Kraus representation">
+<p>A map <span class="math inline">\(\chi\)</span> satisfies 1–4 if and only if it can be written as <span class="math display">\[\chi(\hat\rho) = \sum_k\hat E_k\,\hat\rho\,\hat E_k^\dagger, \qquad \sum_k\hat E_k^\dagger\hat E_k = \hat{\mathbb 1},\]</span> with at most <span class="math inline">\(d^2\)</span> Kraus operators. Every such map arises from a unitary on the system plus an ancilla (Stinespring dilation).</p>
+</div>
+<p>The Kraus operators are not unique: <span class="math inline">\(\{\hat E_k\}\)</span> and <span class="math inline">\(\{\hat F_j = \sum_k u_{jk}\hat E_k\}\)</span>, with <span class="math inline">\(u\)</span> unitary, describe the same channel — a different basis for the environment. A unitary evolution is the special case of a single Kraus operator.</p>
+<div class="example" name="Depolarizing channel">
+<p>With probability <span class="math inline">\(1 - p\)</span> the qubit is untouched; with probability <span class="math inline">\(p\)</span> it is replaced by the maximally mixed state: <span class="math display">\[\chi(\hat\rho) = (1 - p)\hat\rho + p\,\frac{\hat{\mathbb 1}}{2} = \Bigl(1 - \frac{3p}{4}\Bigr)\hat\rho + \frac p4\bigl(\hat\sigma_x\hat\rho\hat\sigma_x + \hat\sigma_y\hat\rho\hat\sigma_y + \hat\sigma_z\hat\rho\hat\sigma_z\bigr),\]</span> using <span class="math inline">\(\tfrac{\hat{\mathbb 1}}{2} = \tfrac14(\hat\rho + \sum_j\hat\sigma_j\hat\rho\hat\sigma_j)\)</span>. Kraus operators: <span class="math inline">\(\sqrt{1 - 3p/4}\,\hat{\mathbb 1}\)</span> and <span class="math inline">\(\tfrac{\sqrt p}{2}\hat\sigma_j\)</span>. On the Bloch ball, <span class="math inline">\(\vec r \mapsto (1-p)\vec r\)</span>: a uniform contraction towards the centre.</p>
+</div>
+<p>Other standard qubit channels: <strong>dephasing</strong> (<span class="math inline">\(\hat E_0 = \sqrt{1-p}\,\hat{\mathbb 1}\)</span>, <span class="math inline">\(\hat E_1 = \sqrt p\,\hat\sigma_z\)</span>; shrinks <span class="math inline">\(r_x, r_y\)</span>, keeps <span class="math inline">\(r_z\)</span> — loss of coherence, <span class="math inline">\(T_2\)</span>) and <strong>amplitude damping</strong> (<span class="math inline">\(\hat E_0 = \ket 0\bra 0 + \sqrt{1-\gamma}\ket 1\bra 1\)</span>, <span class="math inline">\(\hat E_1 = \sqrt\gamma\ket 0\bra 1\)</span>; relaxation of <span class="math inline">\(\ket 1\)</span> to <span class="math inline">\(\ket 0\)</span>, <span class="math inline">\(T_1\)</span>).</p>
+</section>
+<section id="generalized-measurements" class="level2" data-number="8.3">
+<h2 data-number="8.3" class="anchored" data-anchor-id="generalized-measurements"><span class="header-section-number">8.3</span> Generalized measurements</h2>
+<p>Measuring the ancilla instead of discarding it turns the same construction into a measurement on <span class="math inline">\(A\)</span>. If after <span class="math inline">\(\hat U_{AB}\ket\psi_A\ket 0_B = \sum_k\hat M_k\ket\psi_A\ket k_B\)</span> we measure <span class="math inline">\(B\)</span> with the projectors <span class="math inline">\(\hat P_k = \hat{\mathbb 1}_A\otimes\ket k\bra k_B\)</span>, outcome <span class="math inline">\(k\)</span> occurs with probability <span class="math display">\[p_k = \braket{\psi|\hat M_k^\dagger\hat M_k|\psi},\]</span> and <span class="math inline">\(A\)</span> is left in <span class="math inline">\(\hat M_k\ket\psi/\sqrt{p_k}\)</span>.</p>
+<div class="definition" name="Generalized measurement">
+<p>A <strong>generalized measurement</strong> is a set of operators <span class="math inline">\(\{\hat M_k\}\)</span> (not necessarily Hermitian, not necessarily projectors) with <span class="math display">\[\sum_k\hat M_k^\dagger\hat M_k = \hat{\mathbb 1}.\]</span> Outcome <span class="math inline">\(k\)</span> occurs with probability <span class="math inline">\(p_k = \mathrm{Tr}[\hat M_k^\dagger\hat M_k\hat\rho]\)</span>, and the post-measurement state is <span class="math inline">\(\hat\rho_k' = \hat M_k\hat\rho\hat M_k^\dagger/p_k\)</span>.</p>
+</div>
+<p>Projective measurements are the special case <span class="math inline">\(\hat M_k = \hat\Pi_k\)</span>. Conversely, the derivation shows that <strong>projective measurements plus unitaries are equivalent to generalized measurements, provided ancillary systems are added</strong> (Naimark’s theorem).</p>
+<div class="definition" name="POVM">
+<p>If only the outcome statistics matter, not the post-measurement state, a measurement is described by its <strong>POVM</strong> (positive operator-valued measure) elements <span class="math display">\[\hat F_k = \hat M_k^\dagger\hat M_k, \qquad \hat F_k \geq 0, \qquad \sum_k\hat F_k = \hat{\mathbb 1}, \qquad p_k = \mathrm{Tr}[\hat F_k\hat\rho].\]</span></p>
+</div>
+<p>Any set of positive operators summing to the identity is a valid POVM (take <span class="math inline">\(\hat M_k = \sqrt{\hat F_k}\)</span>). Unlike projectors, POVM elements need not be orthogonal, and there can be more outcomes than the dimension of the space.</p>
+<div class="example" name="Unambiguous discrimination of non-orthogonal states">
+<p>A source emits <span class="math inline">\(\ket 0\)</span> or <span class="math inline">\(\ket +\)</span>, which are not orthogonal: no measurement can identify them with certainty every time. A projective measurement always risks misidentification. The POVM <span class="math display">\[\hat F_+ = c\,\ket 1\bra 1, \qquad \hat F_0 = c\,\ket -\bra -, \qquad \hat F_? = \hat{\mathbb 1} - \hat F_+ - \hat F_0, \qquad c = \frac{1}{1 + |\braket{0|+}|} = 2 - \sqrt 2,\]</span> never errs: outcome “<span class="math inline">\(+\)</span>” can only occur for <span class="math inline">\(\ket +\)</span> (since <span class="math inline">\(\braket{1|0} = 0\)</span>), outcome “<span class="math inline">\(0\)</span>” only for <span class="math inline">\(\ket 0\)</span>; the price is an inconclusive outcome “?”. The success probability <span class="math inline">\(1 - |\braket{0|+}| = 1 - \tfrac{1}{\sqrt2} \approx 0.29\)</span> is optimal (Ivanovic–Dieks–Peres). This trick underlies the B92 and SARG04 QKD protocols (Chapter 10).</p>
+</div>
+</section>
+<section id="postulates-for-interacting-systems" class="level2" data-number="8.4">
+<h2 data-number="8.4" class="anchored" data-anchor-id="postulates-for-interacting-systems"><span class="header-section-number">8.4</span> Postulates for interacting systems</h2>
+<ol type="1">
+<li><strong>States</strong> are density operators <span class="math inline">\(\hat\rho\)</span>.</li>
+<li><strong>Evolution</strong> is described by superoperators, <span class="math inline">\(\chi(\hat\rho) = \sum_k\hat E_k\hat\rho\hat E_k^\dagger\)</span> with <span class="math inline">\(\sum_k\hat E_k^\dagger\hat E_k = \hat{\mathbb 1}\)</span>.</li>
+<li><strong>Measurements</strong> are sets <span class="math inline">\(\{\hat M_k\}\)</span> with <span class="math inline">\(\sum_k\hat M_k^\dagger\hat M_k = \hat{\mathbb 1}\)</span>; outcome <span class="math inline">\(k\)</span> has probability <span class="math inline">\(p_k = \mathrm{Tr}[\hat M_k^\dagger\hat M_k\hat\rho]\)</span>.</li>
+<li><strong>Collapse:</strong> after outcome <span class="math inline">\(k\)</span>, <span class="math inline">\(\hat\rho \mapsto \hat M_k\hat\rho\hat M_k^\dagger/p_k\)</span>.</li>
+</ol>
+<p>These are not new axioms: they follow from the isolated-system postulates applied to the system plus its environment.</p>
+</section>
+<section id="exercises" class="level2" data-number="8.5">
+<h2 data-number="8.5" class="anchored" data-anchor-id="exercises"><span class="header-section-number">8.5</span> Exercises</h2>
+<div class="exercise">
+<p>A qubit <span class="math inline">\(\ket\psi_A = \cos\tfrac\theta2\ket 0 + i\sin\tfrac\theta2\ket 1\)</span> interacts with a qutrit ancilla in <span class="math inline">\(\ket 0_B\)</span> via <span class="math inline">\(\hat U\ket 0\ket 0 = \tfrac12\ket 0(\ket 0 + \ket 2) + \tfrac{1}{\sqrt2}\ket 1\ket 2\)</span>, <span class="math inline">\(\hat U\ket 1\ket 0 = \tfrac12\ket 0(\ket 0 - \ket 2) + \tfrac{1}{\sqrt 2}\ket 1\ket 1\)</span>. (a) Find the Kraus operators. (b) The ancilla is measured in <span class="math inline">\(\{\ket 0, \ket 1, \ket 2\}\)</span>: find the outcome probabilities and the post-measurement state for outcome <span class="math inline">\(2\)</span>.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ol type="a">
+<li><span class="math inline">\(\hat E_k = \braket{k|\hat U|0}_B\)</span>: <span class="math inline">\(\hat E_0 = \tfrac12\ket 0(\bra 0 + \bra 1)\)</span>, <span class="math inline">\(\hat E_1 = \tfrac{1}{\sqrt2}\ket 1\bra 1\)</span>, <span class="math inline">\(\hat E_2 = \tfrac12\ket 0(\bra 0 - \bra 1) + \tfrac{1}{\sqrt2}\ket 1\bra 0\)</span>. One checks <span class="math inline">\(\sum_k\hat E_k^\dagger\hat E_k = \hat{\mathbb 1}\)</span>. (b) With <span class="math inline">\(c = \cos\tfrac\theta2\)</span>, <span class="math inline">\(s = \sin\tfrac\theta2\)</span>: <span class="math inline">\(\hat E_0\ket\psi = \tfrac12(c + is)\ket 0\)</span>, so <span class="math inline">\(p_0 = \tfrac14\)</span>; <span class="math inline">\(\hat E_1\ket\psi = \tfrac{is}{\sqrt2}\ket 1\)</span>, so <span class="math inline">\(p_1 = \tfrac{s^2}{2}\)</span>; <span class="math inline">\(\hat E_2\ket\psi = \tfrac12(c - is)\ket 0 + \tfrac{c}{\sqrt2}\ket 1\)</span>, so <span class="math inline">\(p_2 = \tfrac14 + \tfrac{c^2}{2}\)</span>. The post-measurement state for outcome 2 is <span class="math inline">\(\bigl[\tfrac12(c - is)\ket 0 + \tfrac{c}{\sqrt2}\ket 1\bigr]/\sqrt{p_2}\)</span>.</li>
+</ol>
+</div>
+<div class="exercise">
+<p>Show that the depolarizing channel contracts every Bloch vector by <span class="math inline">\(1 - p\)</span>, and that the dephasing channel maps <span class="math inline">\((r_x, r_y, r_z) \mapsto ((1-2p)r_x, (1-2p)r_y, r_z)\)</span>.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Depolarizing: <span class="math inline">\((1-p)\tfrac12(\hat{\mathbb 1} + \vec r\cdot\hat{\vec\sigma}) + p\tfrac{\hat{\mathbb 1}}2 = \tfrac12(\hat{\mathbb 1} + (1-p)\vec r\cdot\hat{\vec\sigma})\)</span>. Dephasing: <span class="math inline">\(\hat\sigma_z\hat\sigma_{x,y}\hat\sigma_z = -\hat\sigma_{x,y}\)</span> and <span class="math inline">\(\hat\sigma_z\hat\sigma_z\hat\sigma_z = \hat\sigma_z\)</span>, so <span class="math inline">\((1-p)\hat\rho + p\hat\sigma_z\hat\rho\hat\sigma_z\)</span> multiplies <span class="math inline">\(r_x, r_y\)</span> by <span class="math inline">\(1 - 2p\)</span> and leaves <span class="math inline">\(r_z\)</span>.</p>
+</div>
+</section>
+<section id="sources" class="level2" data-number="8.6">
+<h2 data-number="8.6" class="anchored" data-anchor-id="sources"><span class="header-section-number">8.6</span> Sources</h2>
+<p>Prof.&nbsp;Vallone, <em>Quantum Information and Computing</em>, lectures 10 (superoperators, Kraus representation, depolarizing channel, generalized measurements, postulates for interacting systems) and 11 (POVM, discrimination of non-orthogonal states), and the evaluated homework (exercise 2). Nielsen &amp; Chuang, Sections 2.2.3–2.2.6 and Chapter 8. Benenti, Casati &amp; Strini, Vol. I, Chapter 5. Preskill, <em>Lecture Notes</em>, Chapter 3.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/07-detecting-entanglement.html" class="pagination-link" aria-label="Detecting entanglement">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Detecting entanglement</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/09-quantum-shannon-theory.html" class="pagination-link" aria-label="Classical and quantum Shannon theory">
+        <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Classical and quantum Shannon theory</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Quantum operations and generalized measurements"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>The postulates of Chapter 4 describe isolated systems. Real qubits interact with an environment: they decohere, lose energy, get entangled with ancillas. The same mathematics describes a system that is only *part* of a larger system evolving unitarily. This chapter derives the **Kraus representation** of the most general physical evolution (a quantum channel, or superoperator), characterises it axiomatically, and does the same for measurements: **generalized measurements** and **POVMs**, which can outperform projective measurements, for example in distinguishing non-orthogonal states.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## From unitaries on a larger system to superoperators</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Let the system $A$ start in $\ket\psi_A$ and an environment (or ancilla) $B$ in a fixed state $\ket 0_B$, and let them interact through a unitary $\hat U_{AB}$. Expanding the output in a basis $<span class="sc">\{</span>\ket k_B<span class="sc">\}</span>$ of $B$,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>$$\ket\Phi_{AB} = \hat U_{AB}\ket\psi_A\ket 0_B = \sum_{k=0}^{d_B-1}\bigl(\hat E_k\ket\psi_A\bigr)\ket k_B, \qquad \hat E_k = {}_B\!\braket{k|\hat U_{AB}|0}_B .$$</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>The state of $A$ alone is</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>$$\hat\rho_A' = \mathrm{Tr}_B\bigl[\ket\Phi_{AB}\bra\Phi\bigr] = \sum_k\hat E_k\,\hat\rho_A\,\hat E_k^\dagger, \qquad \sum_k\hat E_k^\dagger\hat E_k = \hat{\mathbb 1}_A,$$</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>where the normalisation follows from unitarity: $\sum_k\hat E_k^\dagger\hat E_k = \braket{0|\hat U^\dagger\hat U|0}_B = \hat{\mathbb 1}$. By linearity the formula holds for mixed $\hat\rho_A$ too. The operators $\hat E_k$ are the **Kraus operators**.</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="in">```{=latex}</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="in">\begin{center}</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="in">\begin{tikzpicture}[font=\small, line width=0.4pt]</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (0,0.6) node[left] {$\hat\rho_A$} -- (1.2,0.6);</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (0,-0.6) node[left] {$\ket 0_B$} -- (1.2,-0.6);</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (1.2,-0.95) rectangle (2.4,0.95);</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="in">  \node at (1.8,0) {$\hat U_{AB}$};</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (2.4,0.6) -- (4.0,0.6) node[right] {$\hat\rho_A' = \sum_k \hat E_k\hat\rho_A\hat E_k^\dagger$};</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (2.4,-0.6) -- (3.2,-0.6);</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (3.2,-0.85) rectangle (3.75,-0.35);</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (3.27,-0.75) arc (160:20:0.21);</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (3.475,-0.75) -- (3.62,-0.45);</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="in">  \node[right] at (3.8,-0.6) {$k$ (or ignored)};</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="in">\end{tikzpicture}</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="in">\end{center}</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>*Figure: system and ancilla interact unitarily. Ignoring the ancilla gives a quantum channel on $A$; measuring it gives a generalized measurement.*</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">## Superoperators</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Superoperator (quantum channel)"}</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>A **superoperator** is a map $\chi : \hat\rho \mapsto \hat\rho' = \chi(\hat\rho)$ on density operators that is</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**linear:** $\chi(p_1\hat\rho_1 + p_2\hat\rho_2) = p_1\chi(\hat\rho_1) + p_2\chi(\hat\rho_2)$ (it respects mixtures);</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Hermiticity preserving:** $\chi(\hat\rho)^\dagger = \chi(\hat\rho)$;</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**trace preserving:** $\mathrm{Tr}\,\chi(\hat\rho) = 1$;</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**completely positive:** $\hat{\mathbb 1}_R\otimes\chi$ maps positive operators to positive operators for every reference system $R$.</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>Complete positivity is stronger than positivity, and physically necessary: the system may be entangled with a distant partner $R$ untouched by the evolution, and the joint state must remain a state. The transpose is positive but not completely positive — applied to half of $\ket{\Phi^+}$ it produces an operator with a negative eigenvalue (the partial transpose of Chapter 7). It is not a physical evolution.</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Kraus representation"}</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>A map $\chi$ satisfies 1–4 if and only if it can be written as</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>$$\chi(\hat\rho) = \sum_k\hat E_k\,\hat\rho\,\hat E_k^\dagger, \qquad \sum_k\hat E_k^\dagger\hat E_k = \hat{\mathbb 1},$$</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>with at most $d^2$ Kraus operators. Every such map arises from a unitary on the system plus an ancilla (Stinespring dilation).</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>The Kraus operators are not unique: $<span class="sc">\{</span>\hat E_k<span class="sc">\}</span>$ and $<span class="sc">\{</span>\hat F_j = \sum_k u_{jk}\hat E_k<span class="sc">\}</span>$, with $u$ unitary, describe the same channel — a different basis for the environment. A unitary evolution is the special case of a single Kraus operator.</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>::: {.example name="Depolarizing channel"}</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>With probability $1 - p$ the qubit is untouched; with probability $p$ it is replaced by the maximally mixed state:</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>$$\chi(\hat\rho) = (1 - p)\hat\rho + p\,\frac{\hat{\mathbb 1}}{2} = \Bigl(1 - \frac{3p}{4}\Bigr)\hat\rho + \frac p4\bigl(\hat\sigma_x\hat\rho\hat\sigma_x + \hat\sigma_y\hat\rho\hat\sigma_y + \hat\sigma_z\hat\rho\hat\sigma_z\bigr),$$</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>using $\tfrac{\hat{\mathbb 1}}{2} = \tfrac14(\hat\rho + \sum_j\hat\sigma_j\hat\rho\hat\sigma_j)$. Kraus operators: $\sqrt{1 - 3p/4}\,\hat{\mathbb 1}$ and $\tfrac{\sqrt p}{2}\hat\sigma_j$. On the Bloch ball, $\vec r \mapsto (1-p)\vec r$: a uniform contraction towards the centre.</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>Other standard qubit channels: **dephasing** ($\hat E_0 = \sqrt{1-p}\,\hat{\mathbb 1}$, $\hat E_1 = \sqrt p\,\hat\sigma_z$; shrinks $r_x, r_y$, keeps $r_z$ — loss of coherence, $T_2$) and **amplitude damping** ($\hat E_0 = \ket 0\bra 0 + \sqrt{1-\gamma}\ket 1\bra 1$, $\hat E_1 = \sqrt\gamma\ket 0\bra 1$; relaxation of $\ket 1$ to $\ket 0$, $T_1$).</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## Generalized measurements</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>Measuring the ancilla instead of discarding it turns the same construction into a measurement on $A$. If after $\hat U_{AB}\ket\psi_A\ket 0_B = \sum_k\hat M_k\ket\psi_A\ket k_B$ we measure $B$ with the projectors $\hat P_k = \hat{\mathbb 1}_A\otimes\ket k\bra k_B$, outcome $k$ occurs with probability</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>$$p_k = \braket{\psi|\hat M_k^\dagger\hat M_k|\psi},$$</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>and $A$ is left in $\hat M_k\ket\psi/\sqrt{p_k}$.</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Generalized measurement"}</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>A **generalized measurement** is a set of operators $<span class="sc">\{</span>\hat M_k<span class="sc">\}</span>$ (not necessarily Hermitian, not necessarily projectors) with</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>$$\sum_k\hat M_k^\dagger\hat M_k = \hat{\mathbb 1}.$$</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>Outcome $k$ occurs with probability $p_k = \mathrm{Tr}<span class="co">[</span><span class="ot">\hat M_k^\dagger\hat M_k\hat\rho</span><span class="co">]</span>$, and the post-measurement state is $\hat\rho_k' = \hat M_k\hat\rho\hat M_k^\dagger/p_k$.</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>Projective measurements are the special case $\hat M_k = \hat\Pi_k$. Conversely, the derivation shows that **projective measurements plus unitaries are equivalent to generalized measurements, provided ancillary systems are added** (Naimark's theorem).</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>::: {.definition name="POVM"}</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>If only the outcome statistics matter, not the post-measurement state, a measurement is described by its **POVM** (positive operator-valued measure) elements</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>$$\hat F_k = \hat M_k^\dagger\hat M_k, \qquad \hat F_k \geq 0, \qquad \sum_k\hat F_k = \hat{\mathbb 1}, \qquad p_k = \mathrm{Tr}<span class="co">[</span><span class="ot">\hat F_k\hat\rho</span><span class="co">]</span>.$$</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>Any set of positive operators summing to the identity is a valid POVM (take $\hat M_k = \sqrt{\hat F_k}$). Unlike projectors, POVM elements need not be orthogonal, and there can be more outcomes than the dimension of the space.</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>::: {.example name="Unambiguous discrimination of non-orthogonal states"}</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>A source emits $\ket 0$ or $\ket +$, which are not orthogonal: no measurement can identify them with certainty every time. A projective measurement always risks misidentification. The POVM</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>$$\hat F_+ = c\,\ket 1\bra 1, \qquad \hat F_0 = c\,\ket -\bra -, \qquad \hat F_? = \hat{\mathbb 1} - \hat F_+ - \hat F_0, \qquad c = \frac{1}{1 + |\braket{0|+}|} = 2 - \sqrt 2,$$</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>never errs: outcome "$+$" can only occur for $\ket +$ (since $\braket{1|0} = 0$), outcome "$0$" only for $\ket 0$; the price is an inconclusive outcome "?". The success probability $1 - |\braket{0|+}| = 1 - \tfrac{1}{\sqrt2} \approx 0.29$ is optimal (Ivanovic–Dieks–Peres). This trick underlies the B92 and SARG04 QKD protocols (Chapter 10).</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a><span class="fu">## Postulates for interacting systems</span></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**States** are density operators $\hat\rho$.</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Evolution** is described by superoperators, $\chi(\hat\rho) = \sum_k\hat E_k\hat\rho\hat E_k^\dagger$ with $\sum_k\hat E_k^\dagger\hat E_k = \hat{\mathbb 1}$.</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>**Measurements** are sets $<span class="sc">\{</span>\hat M_k<span class="sc">\}</span>$ with $\sum_k\hat M_k^\dagger\hat M_k = \hat{\mathbb 1}$; outcome $k$ has probability $p_k = \mathrm{Tr}<span class="co">[</span><span class="ot">\hat M_k^\dagger\hat M_k\hat\rho</span><span class="co">]</span>$.</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>**Collapse:** after outcome $k$, $\hat\rho \mapsto \hat M_k\hat\rho\hat M_k^\dagger/p_k$.</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>These are not new axioms: they follow from the isolated-system postulates applied to the system plus its environment.</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>A qubit $\ket\psi_A = \cos\tfrac\theta2\ket 0 + i\sin\tfrac\theta2\ket 1$ interacts with a qutrit ancilla in $\ket 0_B$ via</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>$\hat U\ket 0\ket 0 = \tfrac12\ket 0(\ket 0 + \ket 2) + \tfrac{1}{\sqrt2}\ket 1\ket 2$, $\hat U\ket 1\ket 0 = \tfrac12\ket 0(\ket 0 - \ket 2) + \tfrac{1}{\sqrt 2}\ket 1\ket 1$.</span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>(a) Find the Kraus operators. (b) The ancilla is measured in $<span class="sc">\{</span>\ket 0, \ket 1, \ket 2<span class="sc">\}</span>$: find the outcome probabilities and the post-measurement state for outcome $2$.</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>(a) $\hat E_k = \braket{k|\hat U|0}_B$: $\hat E_0 = \tfrac12\ket 0(\bra 0 + \bra 1)$, $\hat E_1 = \tfrac{1}{\sqrt2}\ket 1\bra 1$, $\hat E_2 = \tfrac12\ket 0(\bra 0 - \bra 1) + \tfrac{1}{\sqrt2}\ket 1\bra 0$. One checks $\sum_k\hat E_k^\dagger\hat E_k = \hat{\mathbb 1}$. (b) With $c = \cos\tfrac\theta2$, $s = \sin\tfrac\theta2$: $\hat E_0\ket\psi = \tfrac12(c + is)\ket 0$, so $p_0 = \tfrac14$; $\hat E_1\ket\psi = \tfrac{is}{\sqrt2}\ket 1$, so $p_1 = \tfrac{s^2}{2}$; $\hat E_2\ket\psi = \tfrac12(c - is)\ket 0 + \tfrac{c}{\sqrt2}\ket 1$, so $p_2 = \tfrac14 + \tfrac{c^2}{2}$. The post-measurement state for outcome 2 is $\bigl<span class="co">[</span><span class="ot">\tfrac12(c - is)\ket 0 + \tfrac{c}{\sqrt2}\ket 1\bigr</span><span class="co">]</span>/\sqrt{p_2}$.</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>Show that the depolarizing channel contracts every Bloch vector by $1 - p$, and that the dephasing channel maps $(r_x, r_y, r_z) \mapsto ((1-2p)r_x, (1-2p)r_y, r_z)$.</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>Depolarizing: $(1-p)\tfrac12(\hat{\mathbb 1} + \vec r\cdot\hat{\vec\sigma}) + p\tfrac{\hat{\mathbb 1}}2 = \tfrac12(\hat{\mathbb 1} + (1-p)\vec r\cdot\hat{\vec\sigma})$. Dephasing: $\hat\sigma_z\hat\sigma_{x,y}\hat\sigma_z = -\hat\sigma_{x,y}$ and $\hat\sigma_z\hat\sigma_z\hat\sigma_z = \hat\sigma_z$, so $(1-p)\hat\rho + p\hat\sigma_z\hat\rho\hat\sigma_z$ multiplies $r_x, r_y$ by $1 - 2p$ and leaves $r_z$.</span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>Prof. Vallone, *Quantum Information and Computing*, lectures 10 (superoperators, Kraus representation, depolarizing channel, generalized measurements, postulates for interacting systems) and 11 (POVM, discrimination of non-orthogonal states), and the evaluated homework (exercise 2). Nielsen &amp; Chuang, Sections 2.2.3–2.2.6 and Chapter 8. Benenti, Casati &amp; Strini, Vol. I, Chapter 5. Preskill, *Lecture Notes*, Chapter 3.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

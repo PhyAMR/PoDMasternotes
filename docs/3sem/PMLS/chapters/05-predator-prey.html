@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Two interacting species: predators, prey and noise – Physical Models of Living Systems</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/06-random-matrices-and-stability.html" rel="next">
+<link href="../chapters/04-spatial-temporal-patterns.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-12757e4b7af482b2d9c5bd8860d2b707.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-3fda7689cb8c4ed59160d7ff94eb8d4f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-introduction.html">Part I: Ecology</a></li><li class="breadcrumb-item"><a href="../chapters/05-predator-prey.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Two interacting species: predators, prey and noise</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Physical Models of Living Systems</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About these notes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Ecology</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction: living systems as complex systems</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-single-species-dynamics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Dynamics of a single species</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-neutral-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Many species: neutral theory and upscaling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-spatial-temporal-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Spatial and temporal patterns of biodiversity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-predator-prey.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Two interacting species: predators, prey and noise</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-random-matrices-and-stability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Many interacting species: random matrices and stability</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-mutualism-competition-resources.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Mutualism, competition for resources and metabolic scaling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Neuroscience</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-brain-and-spike-statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The brain as a complex system: measuring and describing neural activity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-single-neuron-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Single-neuron dynamics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-firing-rate-networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Firing-rate networks and Wilson–Cowan dynamics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-plasticity-and-hopfield.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Plasticity, learning and associative memory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-boltzmann-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Boltzmann machines and maximum entropy</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-brain-criticality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Whole-brain models and brain criticality</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: Physics of the cell</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-stochastic-gene-expression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">The cell and stochastic gene expression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-thermodynamics-and-molecular-motors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Life at the micro-scale: information, ratchets and molecular motors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16-genetic-circuits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Gene regulation and genetic circuits</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17-inferring-gene-networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Inferring gene interaction networks by maximum entropy</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/18-proteins-and-polymers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Proteins as physical objects: polymers, folding and the tube model</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#the-lotkavolterra-equations" id="toc-the-lotkavolterra-equations" class="nav-link active" data-scroll-target="#the-lotkavolterra-equations"><span class="header-section-number">5.1</span> The Lotka–Volterra equations</a>
+  <ul class="collapse">
+  <li><a href="#historical-model-and-its-conserved-quantity" id="toc-historical-model-and-its-conserved-quantity" class="nav-link" data-scroll-target="#historical-model-and-its-conserved-quantity"><span class="header-section-number">5.1.1</span> Historical model and its conserved quantity</a></li>
+  <li><a href="#self-limited-prey" id="toc-self-limited-prey" class="nav-link" data-scroll-target="#self-limited-prey"><span class="header-section-number">5.1.2</span> Self-limited prey</a></li>
+  <li><a href="#real-cycles" id="toc-real-cycles" class="nav-link" data-scroll-target="#real-cycles"><span class="header-section-number">5.1.3</span> Real cycles</a></li>
+  </ul></li>
+  <li><a href="#from-reactions-to-master-equations" id="toc-from-reactions-to-master-equations" class="nav-link" data-scroll-target="#from-reactions-to-master-equations"><span class="header-section-number">5.2</span> From reactions to master equations</a></li>
+  <li><a href="#a-stochastic-predatorprey-model" id="toc-a-stochastic-predatorprey-model" class="nav-link" data-scroll-target="#a-stochastic-predatorprey-model"><span class="header-section-number">5.3</span> A stochastic predator–prey model</a>
+  <ul class="collapse">
+  <li><a href="#microscopic-rules" id="toc-microscopic-rules" class="nav-link" data-scroll-target="#microscopic-rules"><span class="header-section-number">5.3.1</span> Microscopic rules</a></li>
+  <li><a href="#drift-and-diffusion" id="toc-drift-and-diffusion" class="nav-link" data-scroll-target="#drift-and-diffusion"><span class="header-section-number">5.3.2</span> Drift and diffusion</a></li>
+  <li><a href="#langevin-equations" id="toc-langevin-equations" class="nav-link" data-scroll-target="#langevin-equations"><span class="header-section-number">5.3.3</span> Langevin equations</a></li>
+  </ul></li>
+  <li><a href="#the-van-kampen-expansion-and-stochastic-amplification" id="toc-the-van-kampen-expansion-and-stochastic-amplification" class="nav-link" data-scroll-target="#the-van-kampen-expansion-and-stochastic-amplification"><span class="header-section-number">5.4</span> The van Kampen expansion and stochastic amplification</a>
+  <ul class="collapse">
+  <li><a href="#linear-noise-approximation" id="toc-linear-noise-approximation" class="nav-link" data-scroll-target="#linear-noise-approximation"><span class="header-section-number">5.4.1</span> Linear noise approximation</a></li>
+  <li><a href="#the-power-spectrum" id="toc-the-power-spectrum" class="nav-link" data-scroll-target="#the-power-spectrum"><span class="header-section-number">5.4.2</span> The power spectrum</a></li>
+  </ul></li>
+  <li><a href="#two-species-neutral-competition" id="toc-two-species-neutral-competition" class="nav-link" data-scroll-target="#two-species-neutral-competition"><span class="header-section-number">5.5</span> Two-species neutral competition</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">5.6</span> Exercises</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">5.7</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/01-introduction.html">Part I: Ecology</a></li><li class="breadcrumb-item"><a href="../chapters/05-predator-prey.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Two interacting species: predators, prey and noise</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Two interacting species: predators, prey and noise</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Introducing a single new species into an ecosystem (wolves into Yellowstone, a predatory fish into a lagoon) can reorganise the whole community through a <em>trophic cascade</em>. To understand how, we start with two species. This chapter treats the predator–prey problem twice. Deterministically, the Lotka–Volterra equations and their variants explain damped or sustained oscillations. Stochastically, a microscopic individual-based model shows that demographic noise, far from being a small correction, is <strong>resonantly amplified</strong> into large, persistent cycles. The machinery developed here (reaction schemes, multivariate master equations, the van Kampen system-size expansion, power spectra) is reused for neurons (Chapter 10) and for genes (Chapter 16).</p>
+<section id="the-lotkavolterra-equations" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="the-lotkavolterra-equations"><span class="header-section-number">5.1</span> The Lotka–Volterra equations</h2>
+<section id="historical-model-and-its-conserved-quantity" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="historical-model-and-its-conserved-quantity"><span class="header-section-number">5.1.1</span> Historical model and its conserved quantity</h3>
+<p>Lotka (1920) and Volterra (1926) wrote, independently, <span class="math display">\[\dot x = ax - bxy, \qquad \dot y = -cy + dxy,\]</span> for prey <span class="math inline">\(x\)</span> and predators <span class="math inline">\(y\)</span>. Volterra was prompted by his son-in-law, the biologist Umberto D’Ancona, who had noticed that the fraction of predatory fish in the markets of Trieste, Fiume and Venice rose during the First World War, when fishing stopped. Prey grow exponentially at rate <span class="math inline">\(a\)</span> when alone; predators die at rate <span class="math inline">\(c\)</span> without prey; encounters (mass action, rate <span class="math inline">\(\propto xy\)</span>) convert prey into predators.</p>
+<p>Besides the trivial equilibrium, there is a coexistence point <span class="math inline">\((x^*, y^*) = (c/d, a/b)\)</span>. The model has a <strong>conserved quantity</strong> <span class="math display">\[H(x, y) = dx - c\ln x + by - a\ln y, \qquad \dot H = 0,\]</span> so trajectories are closed orbits around <span class="math inline">\((x^*, y^*)\)</span>, whose amplitude is fixed by the initial condition: <strong>neutral cycles</strong>. The Jacobian at <span class="math inline">\((x^*, y^*)\)</span> has purely imaginary eigenvalues <span class="math inline">\(\pm i\sqrt{ac}\)</span>, giving small oscillations of period <span class="math inline">\(2\pi/\sqrt{ac}\)</span>. This is a structurally unstable situation: any perturbation of the equations (self-limitation, saturation, noise) turns the centres into spirals.</p>
+<p>Volterra’s model also explains D’Ancona’s observation. Fishing adds mortality <span class="math inline">\(f\)</span> to both species, <span class="math inline">\(a \to a - f\)</span> and <span class="math inline">\(c \to c + f\)</span>, so the time-averaged abundances (equal to the equilibrium values on a closed orbit) become <span class="math inline">\(\langle x\rangle = (c + f)/d\)</span>, <span class="math inline">\(\langle y\rangle = (a - f)/b\)</span>. Less fishing means <em>fewer</em> prey and <em>more</em> predators: <strong>Volterra’s principle</strong>.</p>
+</section>
+<section id="self-limited-prey" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="self-limited-prey"><span class="header-section-number">5.1.2</span> Self-limited prey</h3>
+<p>Adding logistic self-limitation to the prey gives <span class="math display">\[\dot x = \lambda x\Bigl(1 - \frac xk\Bigr) - pxy, \qquad \dot y = -\eta y + pxy .\]</span> The equilibria are <span class="math inline">\(z_1^* = (0, 0)\)</span>, <span class="math inline">\(z_3^* = (k, 0)\)</span> and the coexistence point <span class="math display">\[z_2^* = \Bigl(\frac\eta p,\ \frac\lambda p\Bigl(1 - \frac{\eta}{pk}\Bigr)\Bigr),\]</span> which is feasible (positive) iff <span class="math inline">\(pk &gt; \eta\)</span>: the prey at carrying capacity must sustain the predators. The Jacobian <span class="math inline">\(J = \begin{pmatrix}\lambda(1 - 2x/k) - py &amp; -px\\ py &amp; px - \eta\end{pmatrix}\)</span> gives:</p>
+<ul>
+<li>at <span class="math inline">\(z_1^*\)</span>, eigenvalues <span class="math inline">\(\lambda &gt; 0\)</span> and <span class="math inline">\(-\eta\)</span>: a saddle (unstable);</li>
+<li>at <span class="math inline">\(z_3^*\)</span>, eigenvalues <span class="math inline">\(-\lambda\)</span> and <span class="math inline">\(pk - \eta &gt; 0\)</span>: a saddle, unstable when coexistence is feasible;</li>
+<li>at <span class="math inline">\(z_2^*\)</span>, <span class="math display">\[J_2 = \begin{pmatrix}-\frac{\lambda\eta}{kp} &amp; -\eta\\ \lambda\bigl(1 - \frac{\eta}{pk}\bigr) &amp; 0\end{pmatrix}, \qquad \vartheta_{1,2} = \frac{1}{2kp}\Bigl[-\lambda\eta \pm \sqrt{\lambda\eta\bigl(\lambda\eta - 4kp(kp - \eta)\bigr)}\Bigr].\]</span></li>
+</ul>
+<p>Since <span class="math inline">\(\operatorname{tr}J_2 &lt; 0\)</span> and <span class="math inline">\(\det J_2 = \lambda\eta(1 - \eta/pk) &gt; 0\)</span>, <span class="math inline">\(z_2^*\)</span> is <strong>always stable</strong>. For large <span class="math inline">\(k\)</span> the discriminant is negative and the eigenvalues are complex: populations approach the equilibrium through <strong>damped oscillations</strong> with frequency <span class="math inline">\(\simeq\sqrt{\lambda\eta(1 - \eta/pk)}\)</span> and damping rate <span class="math inline">\(\lambda\eta/(2kp)\)</span>, which is small when <span class="math inline">\(k\)</span> is large.</p>
+</section>
+<section id="real-cycles" class="level3" data-number="5.1.3">
+<h3 data-number="5.1.3" class="anchored" data-anchor-id="real-cycles"><span class="header-section-number">5.1.3</span> Real cycles</h3>
+<p>Real predator–prey systems often oscillate for decades: the snowshoe hare and lynx pelts of the Hudson’s Bay Company, rodents, plankton in chemostats. The deterministic model above predicts that the oscillations die out. There are two classical ways out.</p>
+<ol type="1">
+<li><strong>Limit cycles.</strong> If predators saturate (Holling type II functional response, <span class="math inline">\(pxy \to \frac{pxy}{1 + hx}\)</span>), the coexistence equilibrium can lose stability through a <strong>Hopf bifurcation</strong> when the carrying capacity is increased. A stable limit cycle is born, with amplitude independent of initial conditions. Enriching the environment destabilises it: Rosenzweig’s <em>paradox of enrichment</em>.</li>
+<li><strong>Stochastic amplification.</strong> Even when the deterministic equilibrium is stable, the discreteness of individuals produces noise that excites the weakly damped oscillatory mode. The result is large, irregular but persistent cycles with a well-defined dominant frequency. This mechanism requires no fine tuning, and is the subject of the rest of the chapter.</li>
+</ol>
+</section>
+</section>
+<section id="from-reactions-to-master-equations" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="from-reactions-to-master-equations"><span class="header-section-number">5.2</span> From reactions to master equations</h2>
+<p>Individual-based models are best written as <strong>reaction schemes</strong>, as in chemistry. Consider <span class="math inline">\(N_s\)</span> types of “molecules” (individuals of different species, or empty sites) and <span class="math inline">\(M\)</span> reactions <span class="math inline">\(R_j\)</span>. Each reaction has:</p>
+<ul>
+<li>a <strong>state-change vector</strong> <span class="math inline">\(\mathbf v_j\)</span>: the change in the vector of abundances <span class="math inline">\(\mathbf x\)</span> when <span class="math inline">\(R_j\)</span> fires (e.g.&nbsp;<span class="math inline">\(B \to A + A\)</span> has <span class="math inline">\(\mathbf v = (+2, -1)\)</span>);</li>
+<li>a <strong>propensity</strong> <span class="math inline">\(a_j(\mathbf x)\)</span>: <span class="math inline">\(a_j\,\Delta t\)</span> is the probability that <span class="math inline">\(R_j\)</span> fires in <span class="math inline">\([t, t + \Delta t]\)</span>.</li>
+</ul>
+<p>For a unimolecular reaction <span class="math inline">\(A \to \cdots\)</span> with rate constant <span class="math inline">\(C_j\)</span>, <span class="math inline">\(a_j = C_jx_A\)</span>. For a bimolecular one, <span class="math inline">\(A + B \to \cdots\)</span>, <span class="math inline">\(a_j = C_jx_Ax_B/\Omega\)</span>, where <span class="math inline">\(\Omega\)</span> is the system size (volume, number of sites). Two molecules must meet, and in a larger volume they are less likely to. In general, a reaction involving <span class="math inline">\(k\)</span> reactants has <span class="math inline">\(a_j \propto x_1\cdots x_k/\Omega^{k-1}\)</span>, so propensities are <strong>extensive</strong>: <span class="math inline">\(a_j = \Omega\,\alpha_j(\mathbf x/\Omega)\)</span>. The master equation balances inflow from <span class="math inline">\(\mathbf x - \mathbf v_j\)</span> and outflow from <span class="math inline">\(\mathbf x\)</span>: <span class="math display">\[\frac{\partial P(\mathbf x, t)}{\partial t} = \sum_{j=1}^M\bigl[a_j(\mathbf x - \mathbf v_j)P(\mathbf x - \mathbf v_j, t) - a_j(\mathbf x)P(\mathbf x, t)\bigr],\]</span> and can be sampled exactly with the Gillespie algorithm of Chapter 2.</p>
+</section>
+<section id="a-stochastic-predatorprey-model" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="a-stochastic-predatorprey-model"><span class="header-section-number">5.3</span> A stochastic predator–prey model</h2>
+<section id="microscopic-rules" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="microscopic-rules"><span class="header-section-number">5.3.1</span> Microscopic rules</h3>
+<p>Following McKane and Newman (2005), consider <span class="math inline">\(N\)</span> sites, each empty (<span class="math inline">\(E\)</span>), occupied by a predator (<span class="math inline">\(A\)</span>) or by a prey (<span class="math inline">\(B\)</span>). Let <span class="math inline">\(n\)</span>, <span class="math inline">\(m\)</span> and <span class="math inline">\(e = N - n - m\)</span> be their numbers. Individuals interact as if well mixed (spatial effects neglected), through five reactions: <span class="math display">\[A \xrightarrow{d_1} E, \quad B + E \xrightarrow{b} B + B, \quad B \xrightarrow{d_2} E, \quad A + B \xrightarrow{p_2} A + E, \quad A + B \xrightarrow{p_1} A + A .\]</span> Predators die. Prey reproduce into empty sites and die. Predation either just removes the prey (<span class="math inline">\(p_2\)</span>) or also converts it into a new predator (<span class="math inline">\(p_1\)</span>). Choosing pairs at random, with a factor <span class="math inline">\(2\)</span> from the two orderings, the propensities are <span class="math display">\[T(n - 1, m \mid n, m) = d_1n, \qquad T(n, m + 1 \mid n, m) = 2b\,\frac{m\,e}{N},\]</span> <span class="math display">\[T(n, m - 1 \mid n, m) = d_2m + 2p_2\frac{nm}{N}, \qquad T(n + 1, m - 1 \mid n, m) = 2p_1\frac{nm}{N}.\]</span></p>
+</section>
+<section id="drift-and-diffusion" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="drift-and-diffusion"><span class="header-section-number">5.3.2</span> Drift and diffusion</h3>
+<p>With densities <span class="math inline">\(x = n/N\)</span> (predators) and <span class="math inline">\(y = m/N\)</span> (prey), each propensity is <span class="math inline">\(N\)</span> times a function of <span class="math inline">\((x, y)\)</span>. Expanding the master equation to second order in <span class="math inline">\(1/N\)</span> (with shift operators <span class="math inline">\(\mathbb E^\pm_A\)</span>, <span class="math inline">\(\mathbb E^\pm_B\)</span> as in Chapter 2) gives a two-dimensional Fokker–Planck equation <span class="math display">\[\partial_tP = -\sum_i\partial_i\bigl[A_iP\bigr] + \frac{1}{2N}\sum_{ij}\partial_i\partial_j\bigl[B_{ij}P\bigr].\]</span> The drift is the vector of average changes: <span class="math display">\[A_1 = 2p_1xy - d_1x, \qquad A_2 = 2by(1 - x - y) - d_2y - 2(p_1 + p_2)xy .\]</span> The diffusion matrix collects, for each reaction, <span class="math inline">\(\mathbf v_j\mathbf v_j^\top\)</span> weighted by its rate: <span class="math display">\[B = \begin{pmatrix} d_1x + 2p_1xy &amp; -2p_1xy\\ -2p_1xy &amp; 2by(1 - x - y) + d_2y + 2(p_1 + p_2)xy\end{pmatrix}.\]</span> The off-diagonal element is negative because the conversion reaction changes <span class="math inline">\(n\)</span> and <span class="math inline">\(m\)</span> in opposite directions, <span class="math inline">\(\mathbf v = (+1, -1)\)</span>. Noise in the two populations is correlated.</p>
+<p>As <span class="math inline">\(N \to \infty\)</span> the noise vanishes and the drift gives the <strong>mean-field equations</strong> <span class="math display">\[\dot x = 2p_1xy - d_1x, \qquad \dot y = ry\Bigl(1 - \frac yk\Bigr) - 2(p_1 + p_2 + b)\,xy, \qquad r = 2b - d_2, \quad k = \frac{2b - d_2}{2b},\]</span> a predator–prey system with logistic prey. Its interior equilibrium <span class="math display">\[y^* = \frac{d_1}{2p_1}, \qquad x^* = \frac{2b(1 - y^*) - d_2}{2(b + p_1 + p_2)}\]</span> is a stable focus, so the mean-field dynamics predicts damped oscillations and no cycles.</p>
+</section>
+<section id="langevin-equations" class="level3" data-number="5.3.3">
+<h3 data-number="5.3.3" class="anchored" data-anchor-id="langevin-equations"><span class="header-section-number">5.3.3</span> Langevin equations</h3>
+<p>The equivalent Langevin system is <span class="math display">\[\dot x = A_1 + \frac{1}{\sqrt N}\sum_jg_{1j}\xi_j, \qquad \dot y = A_2 + \frac{1}{\sqrt N}\sum_jg_{2j}\xi_j, \qquad \langle\xi_i(t)\xi_j(t')\rangle = \delta_{ij}\delta(t - t'),\]</span> where <span class="math inline">\(g\)</span> is any matrix with <span class="math inline">\(gg^\top = B\)</span>. For instance <span class="math inline">\(g = S^\top\Lambda^{1/2}S\)</span> from the diagonalisation <span class="math inline">\(B = S^\top\Lambda S\)</span>, or the Cholesky factor of <span class="math inline">\(B\)</span>. Only <span class="math inline">\(B\)</span> is physical; different square roots give the same statistics.</p>
+</section>
+</section>
+<section id="the-van-kampen-expansion-and-stochastic-amplification" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="the-van-kampen-expansion-and-stochastic-amplification"><span class="header-section-number">5.4</span> The van Kampen expansion and stochastic amplification</h2>
+<section id="linear-noise-approximation" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="linear-noise-approximation"><span class="header-section-number">5.4.1</span> Linear noise approximation</h3>
+<p>Fluctuations around the deterministic equilibrium are <span class="math inline">\(O(N^{-1/2})\)</span>. Following van Kampen, write <span class="math display">\[x(t) = x^* + \frac{\zeta_1(t)}{\sqrt N}, \qquad y(t) = y^* + \frac{\zeta_2(t)}{\sqrt N}.\]</span> Substituting and keeping the leading order, the drift contributes the Jacobian <span class="math inline">\(J = \partial\mathbf A/\partial\mathbf x\)</span> at <span class="math inline">\((x^*, y^*)\)</span>, and the noise amplitude is frozen at its equilibrium value: <span class="math display">\[\dot{\boldsymbol\zeta} = J\boldsymbol\zeta + \boldsymbol\eta(t), \qquad \langle\eta_i(t)\eta_j(t')\rangle = B_{ij}(x^*, y^*)\,\delta(t - t').\]</span> This is a multivariate Ornstein–Uhlenbeck process. The fluctuations are Gaussian, of size independent of <span class="math inline">\(N\)</span> in the rescaled variables, and their statistics follow from linear algebra. This is the <strong>linear noise approximation</strong>. It is exact to leading order in <span class="math inline">\(1/\sqrt N\)</span> around a stable fixed point.</p>
+</section>
+<section id="the-power-spectrum" class="level3" data-number="5.4.2">
+<h3 data-number="5.4.2" class="anchored" data-anchor-id="the-power-spectrum"><span class="header-section-number">5.4.2</span> The power spectrum</h3>
+<p>Fourier transforming, <span class="math inline">\((i\omega - J)\tilde{\boldsymbol\zeta}(\omega) = \tilde{\boldsymbol\eta}(\omega)\)</span> with <span class="math inline">\(\langle\tilde\eta_i(\omega)\tilde\eta^*_j(\omega')\rangle = B_{ij}\,2\pi\delta(\omega - \omega')\)</span>. The <strong>power spectrum</strong> <span class="math inline">\(P_i(\omega) = \langle|\tilde\zeta_i(\omega)|^2\rangle\)</span> (per unit frequency) is the diagonal of <span class="math display">\[\mathcal P(\omega) = (i\omega - J)^{-1}\,B\,(-i\omega - J^\top)^{-1}.\]</span> For two variables, with <span class="math inline">\(\Omega_0^2 = \det J\)</span> and <span class="math inline">\(\Gamma = -\operatorname{tr}J\)</span>, the denominator is <span class="math inline">\(|\det(i\omega - J)|^2 = (\omega^2 - \Omega_0^2)^2 + \Gamma^2\omega^2\)</span>, and solving the <span class="math inline">\(2\times2\)</span> system, <span class="math display">\[P_1(\omega) = \frac{\alpha_1 + B_{11}\,\omega^2}{(\omega^2 - \Omega_0^2)^2 + \Gamma^2\omega^2}, \qquad \alpha_1 = B_{11}J_{22}^2 - 2B_{12}J_{12}J_{22} + B_{22}J_{12}^2,\]</span> and similarly for <span class="math inline">\(P_2\)</span> with indices exchanged. For our model <span class="math inline">\(J_{11} = 0\)</span> at equilibrium (the predator equation is <span class="math inline">\(\dot x = x(2p_1y - d_1)\)</span>), so <span class="math inline">\(\Omega_0^2 = J_{12}|J_{21}|\)</span> and <span class="math inline">\(\Gamma = |J_{22}|\)</span>.</p>
+<p>This is the response of a <strong>damped harmonic oscillator</strong> with natural frequency <span class="math inline">\(\Omega_0\)</span> and damping <span class="math inline">\(\Gamma\)</span>, driven by white noise. When <span class="math inline">\(\Gamma \ll \Omega_0\)</span> (weak damping, as for a large carrying capacity) the spectrum has a sharp peak near <span class="math inline">\(\Omega_0\)</span>, of height <span class="math inline">\(\propto 1/(\Gamma^2\Omega_0^2)\)</span>. Demographic noise has power at all frequencies; the system filters it and amplifies the frequency of its own damped mode. The result is <strong>resonant amplification</strong> without external forcing and without fine tuning.</p>
+<div class="example" name="Numbers">
+<p>Take <span class="math inline">\(b = 0.1\)</span>, <span class="math inline">\(d_1 = 0.1\)</span>, <span class="math inline">\(d_2 = 0\)</span>, <span class="math inline">\(p_1 = 0.25\)</span>, <span class="math inline">\(p_2 = 0.05\)</span>. Then <span class="math inline">\(x^* = y^* = 0.2\)</span> and <span class="math display">\[J = \begin{pmatrix}0 &amp; 0.10\\ -0.16 &amp; -0.04\end{pmatrix}, \qquad B = \begin{pmatrix}0.040 &amp; -0.020\\ -0.020 &amp; 0.048\end{pmatrix}.\]</span> The eigenvalues are <span class="math inline">\(-0.02 \pm 0.125i\)</span>: a weakly damped focus with <span class="math inline">\(\Omega_0 = 0.126\)</span>, <span class="math inline">\(\Gamma = 0.04\)</span>. The predator spectrum peaks at <span class="math inline">\(\omega \simeq 0.125\)</span>, about <span class="math inline">\(27\)</span> times higher than at <span class="math inline">\(\omega = 0\)</span>. A direct simulation of the linear Langevin equations gives a peak at <span class="math inline">\(\omega \simeq 0.12\)</span>. Gillespie simulations of the full model with <span class="math inline">\(N\)</span> in the thousands show noisy cycles with this period, <span class="math inline">\(2\pi/0.125 \approx 50\)</span> time units, and amplitude <span class="math inline">\(\propto 1/\sqrt N\)</span> in density, i.e.&nbsp;<span class="math inline">\(\propto\sqrt N\)</span> in numbers of individuals.</p>
+</div>
+<p><img src="../Grafiche/_inline_cache/6b8c53cd6f53fd59.svg" class="tikz-figure img-fluid" alt=""></p>
+<p><em>Figure: predator power spectrum of the stochastic model (linear noise approximation), normalised to its zero-frequency value.</em></p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>Stochastic amplification is generic: whenever a stable fixed point of a large but finite system is a focus with weak damping, intrinsic noise produces quasi-cycles. The same mechanism explains oscillations in epidemics (measles, whooping cough), in biochemical networks (Chapter 16) and in neural populations (Chapter 10), where “noise-driven gamma oscillations” appear in Wilson–Cowan models.</p>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="two-species-neutral-competition" class="level2" data-number="5.5">
+<h2 data-number="5.5" class="anchored" data-anchor-id="two-species-neutral-competition"><span class="header-section-number">5.5</span> Two-species neutral competition</h2>
+<p>In the absence of interactions, two species competing for the same <span class="math inline">\(N\)</span> sites with identical rates perform a neutral <strong>voter model</strong> (or Moran process). At each event an individual dies and is replaced by the offspring of a random individual. The number <span class="math inline">\(n\)</span> of species <span class="math inline">\(A\)</span> is a birth–death chain with <span class="math inline">\(W^+(n) = W^-(n) = n(N - n)/N\)</span>: no drift, only noise. In the continuum limit <span class="math inline">\(x = n/N\)</span>, <span class="math display">\[\partial_tP = \frac{1}{N}\,\partial_x^2\bigl[x(1 - x)P\bigr],\]</span> so one species always fixates. The probability that <span class="math inline">\(A\)</span> wins is its initial fraction <span class="math inline">\(x_0\)</span> (the process is a martingale), and the mean fixation time is <span class="math inline">\(-N\bigl[x_0\ln x_0 + (1 - x_0)\ln(1 - x_0)\bigr]\)</span> generations. Neutral coexistence of two species is transient; long-term diversity requires speciation or immigration (Chapter 3) or stabilising interactions (Chapters 6–7).</p>
+</section>
+<section id="exercises" class="level2" data-number="5.6">
+<h2 data-number="5.6" class="anchored" data-anchor-id="exercises"><span class="header-section-number">5.6</span> Exercises</h2>
+<div class="exercise">
+<p><strong>(Conserved quantity)</strong> Show that <span class="math inline">\(H = dx - c\ln x + by - a\ln y\)</span> is conserved by the classical Lotka–Volterra equations, and that the time averages over a closed orbit equal the equilibrium values.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><span class="math inline">\(\dot H = (d - c/x)\dot x + (b - a/y)\dot y = (d - c/x)x(a - by) + (b - a/y)y(dx - c) = (dx - c)(a - by) + (by - a)(dx - c) = 0\)</span>. For the averages, <span class="math inline">\(\frac{d}{dt}\ln x = a - by\)</span>; integrating over a period <span class="math inline">\(T\)</span> gives <span class="math inline">\(0 = aT - b\int y\,dt\)</span>, so <span class="math inline">\(\langle y\rangle = a/b = y^*\)</span>. Similarly <span class="math inline">\(\langle x\rangle = c/d\)</span>.</p>
+</div>
+<div class="exercise">
+<p><strong>(Self-limited prey)</strong> For <span class="math inline">\(\lambda = 1\)</span>, <span class="math inline">\(\eta = 0.5\)</span>, <span class="math inline">\(p = 1\)</span>, <span class="math inline">\(k = 10\)</span>, find the coexistence equilibrium, its eigenvalues, and the period and decay time of the damped oscillations.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><span class="math inline">\(x^* = \eta/p = 0.5\)</span>, <span class="math inline">\(y^* = \frac\lambda p(1 - \frac{\eta}{pk}) = 0.95\)</span>. <span class="math inline">\(J_2 = \begin{pmatrix}-0.05 &amp; -0.5\\ 0.95 &amp; 0\end{pmatrix}\)</span>, with <span class="math inline">\(\operatorname{tr} = -0.05\)</span> and <span class="math inline">\(\det = 0.475\)</span>. Eigenvalues <span class="math inline">\(-0.025 \pm i\sqrt{0.475 - 0.000625} = -0.025 \pm 0.689i\)</span>. Period <span class="math inline">\(2\pi/0.689 = 9.1\)</span>; amplitude decay time <span class="math inline">\(1/0.025 = 40\)</span>. About four oscillations occur per decay time: on short records such dynamics look cyclic.</p>
+</div>
+<div class="exercise">
+<p><strong>(Drift and diffusion from reactions)</strong> For a general reaction scheme with propensities <span class="math inline">\(a_j = N\alpha_j(\mathbf x)\)</span> and state changes <span class="math inline">\(\mathbf v_j\)</span>, show that the Kramers–Moyal expansion gives <span class="math inline">\(\mathbf A = \sum_j\mathbf v_j\alpha_j\)</span> and <span class="math inline">\(B = \sum_j\mathbf v_j\mathbf v_j^\top\alpha_j\)</span>. Verify the predator–prey <span class="math inline">\(B\)</span>.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>The master equation is <span class="math inline">\(\partial_tP = N\sum_j[\alpha_j(\mathbf x - \mathbf v_j/N)P(\mathbf x - \mathbf v_j/N) - \alpha_jP]\)</span>. Expanding <span class="math inline">\(f(\mathbf x - \mathbf v_j/N) = f - \frac1N\mathbf v_j\cdot\nabla f + \frac{1}{2N^2}(\mathbf v_j\cdot\nabla)^2f\)</span> gives <span class="math inline">\(\partial_tP = -\nabla\cdot(\mathbf AP) + \frac{1}{2N}\sum_{kl}\partial_k\partial_l(B_{kl}P)\)</span> with the stated forms. For predator–prey: <span class="math inline">\(\mathbf v = (-1, 0)\)</span> rate <span class="math inline">\(d_1x\)</span>; <span class="math inline">\((0, +1)\)</span> rate <span class="math inline">\(2by(1 - x - y)\)</span>; <span class="math inline">\((0, -1)\)</span> rate <span class="math inline">\(d_2y + 2p_2xy\)</span>; <span class="math inline">\((+1, -1)\)</span> rate <span class="math inline">\(2p_1xy\)</span>. Then <span class="math inline">\(B_{11} = d_1x + 2p_1xy\)</span>, <span class="math inline">\(B_{22} = 2by(1 - x - y) + d_2y + 2p_2xy + 2p_1xy\)</span>, and <span class="math inline">\(B_{12} = -2p_1xy\)</span>, as in the text.</p>
+</div>
+<div class="exercise">
+<p><strong>(Power spectrum)</strong> Derive <span class="math inline">\(P_1(\omega)\)</span> for <span class="math inline">\(\dot{\boldsymbol\zeta} = J\boldsymbol\zeta + \boldsymbol\eta\)</span> with <span class="math inline">\(\langle\boldsymbol\eta\boldsymbol\eta^\top\rangle = B\delta(t - t')\)</span> and a general <span class="math inline">\(2\times2\)</span> <span class="math inline">\(J\)</span>. Where is the maximum when <span class="math inline">\(\Gamma \ll \Omega_0\)</span>?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><span class="math inline">\(\tilde\zeta_1 = \frac{(i\omega - J_{22})\tilde\eta_1 + J_{12}\tilde\eta_2}{D(\omega)}\)</span>, <span class="math inline">\(D = \det(i\omega - J) = \Omega_0^2 - \omega^2 + i\Gamma\omega\)</span>. Averaging <span class="math inline">\(|\tilde\zeta_1|^2\)</span>: <span class="math inline">\((\omega^2 + J_{22}^2)B_{11} + J_{12}^2B_{22} + 2\operatorname{Re}[(i\omega - J_{22})J_{12}]B_{12} = B_{11}\omega^2 + B_{11}J_{22}^2 - 2J_{12}J_{22}B_{12} + J_{12}^2B_{22}\)</span>, divided by <span class="math inline">\(|D|^2 = (\omega^2 - \Omega_0^2)^2 + \Gamma^2\omega^2\)</span>. For <span class="math inline">\(\Gamma \ll \Omega_0\)</span> the denominator is smallest at <span class="math inline">\(\omega^2 = \Omega_0^2 - \Gamma^2/2 \simeq \Omega_0^2\)</span>, where it equals <span class="math inline">\(\simeq\Gamma^2\Omega_0^2\)</span>. A sharp peak at the natural frequency, with width <span class="math inline">\(\simeq\Gamma\)</span>.</p>
+</div>
+<div class="exercise">
+<p><strong>(Simulation)</strong> Simulate the McKane–Newman model with the parameters of the example and <span class="math inline">\(N = 3200\)</span> using the Gillespie algorithm. Estimate the power spectrum of the predator density from a long trajectory and compare it with the linear-noise prediction. How does the amplitude of the cycles in numbers of individuals scale with <span class="math inline">\(N\)</span>?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>After a transient the densities fluctuate around <span class="math inline">\((0.2, 0.2)\)</span> with irregular oscillations of period <span class="math inline">\(\simeq 50\)</span>, predators lagging prey by about a quarter period. The periodogram, averaged over windows, peaks at <span class="math inline">\(\omega \simeq 0.125\)</span> and matches <span class="math inline">\(P_1(\omega)/N\)</span> within statistical error. Fluctuations in density scale as <span class="math inline">\(N^{-1/2}\)</span>, so in numbers of individuals they grow as <span class="math inline">\(\sqrt N\)</span>: the cycles never disappear in a finite system. Doubling <span class="math inline">\(N\)</span> leaves the rescaled spectrum unchanged.</p>
+</div>
+<div class="exercise">
+<p><strong>(Neutral fixation)</strong> For the two-species voter model, use the backward Kolmogorov equation <span class="math inline">\(\frac{x(1-x)}{N}\,\phi''(x) = 0\)</span> to show that the fixation probability of <span class="math inline">\(A\)</span> from fraction <span class="math inline">\(x_0\)</span> is <span class="math inline">\(x_0\)</span>. Then solve <span class="math inline">\(\frac{x(1 - x)}{N}T''(x) = -1\)</span> with <span class="math inline">\(T(0) = T(1) = 0\)</span> for the mean fixation time.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><span class="math inline">\(\phi'' = 0\)</span> with <span class="math inline">\(\phi(0) = 0\)</span>, <span class="math inline">\(\phi(1) = 1\)</span> gives <span class="math inline">\(\phi(x) = x\)</span>. For <span class="math inline">\(T\)</span>: <span class="math inline">\(T'' = -\frac{N}{x(1 - x)} = -N\bigl(\frac1x + \frac1{1 - x}\bigr)\)</span>; integrating twice with the boundary conditions, <span class="math inline">\(T(x) = -N[x\ln x + (1 - x)\ln(1 - x)]\)</span>. Starting from equal shares, <span class="math inline">\(T = N\ln2\)</span> generations: drift eliminates one of two equivalent species in a time proportional to the population size.</p>
+</div>
+</section>
+<section id="sources" class="level2" data-number="5.7">
+<h2 data-number="5.7" class="anchored" data-anchor-id="sources"><span class="header-section-number">5.7</span> Sources</h2>
+<p>Prof.&nbsp;S. Suweis, <em>PMLS Course Notes</em>, Sections 4.1–4.2; Lecture 5 slides (two-species models: Volterra equations, stability, stochastic microscopic model, Fokker–Planck, Langevin, van Kampen expansion, power spectrum). R. M. May, <em>Stability and Complexity in Model Ecosystems</em>, Princeton (1973), Chapter 2. A. J. McKane and T. J. Newman, <em>Predator–prey cycles from resonant amplification of demographic stochasticity</em>, PRL <strong>94</strong>, 218102 (2005). N. G. van Kampen, <em>Stochastic Processes in Physics and Chemistry</em>, Chapter 10. M. L. Rosenzweig, Science <strong>171</strong>, 385 (1971).</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/04-spatial-temporal-patterns.html" class="pagination-link" aria-label="Spatial and temporal patterns of biodiversity">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Spatial and temporal patterns of biodiversity</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/06-random-matrices-and-stability.html" class="pagination-link" aria-label="Many interacting species: random matrices and stability">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Many interacting species: random matrices and stability</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Two interacting species: predators, prey and noise"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Introducing a single new species into an ecosystem (wolves into Yellowstone, a predatory fish into a lagoon) can reorganise the whole community through a *trophic cascade*. To understand how, we start with two species. This chapter treats the predator–prey problem twice. Deterministically, the Lotka–Volterra equations and their variants explain damped or sustained oscillations. Stochastically, a microscopic individual-based model shows that demographic noise, far from being a small correction, is **resonantly amplified** into large, persistent cycles. The machinery developed here (reaction schemes, multivariate master equations, the van Kampen system-size expansion, power spectra) is reused for neurons (Chapter 10) and for genes (Chapter 16).</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## The Lotka–Volterra equations</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">### Historical model and its conserved quantity</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>Lotka (1920) and Volterra (1926) wrote, independently,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>$$\dot x = ax - bxy, \qquad \dot y = -cy + dxy,$$</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>for prey $x$ and predators $y$. Volterra was prompted by his son-in-law, the biologist Umberto D'Ancona, who had noticed that the fraction of predatory fish in the markets of Trieste, Fiume and Venice rose during the First World War, when fishing stopped. Prey grow exponentially at rate $a$ when alone; predators die at rate $c$ without prey; encounters (mass action, rate $\propto xy$) convert prey into predators.</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>Besides the trivial equilibrium, there is a coexistence point $(x^*, y^*) = (c/d, a/b)$. The model has a **conserved quantity**</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>$$H(x, y) = dx - c\ln x + by - a\ln y, \qquad \dot H = 0,$$</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>so trajectories are closed orbits around $(x^*, y^*)$, whose amplitude is fixed by the initial condition: **neutral cycles**. The Jacobian at $(x^*, y^*)$ has purely imaginary eigenvalues $\pm i\sqrt{ac}$, giving small oscillations of period $2\pi/\sqrt{ac}$. This is a structurally unstable situation: any perturbation of the equations (self-limitation, saturation, noise) turns the centres into spirals.</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>Volterra's model also explains D'Ancona's observation. Fishing adds mortality $f$ to both species, $a \to a - f$ and $c \to c + f$, so the time-averaged abundances (equal to the equilibrium values on a closed orbit) become $\langle x\rangle = (c + f)/d$, $\langle y\rangle = (a - f)/b$. Less fishing means *fewer* prey and *more* predators: **Volterra's principle**.</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="fu">### Self-limited prey</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>Adding logistic self-limitation to the prey gives</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>$$\dot x = \lambda x\Bigl(1 - \frac xk\Bigr) - pxy, \qquad \dot y = -\eta y + pxy .$$</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>The equilibria are $z_1^* = (0, 0)$, $z_3^* = (k, 0)$ and the coexistence point</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>$$z_2^* = \Bigl(\frac\eta p,\ \frac\lambda p\Bigl(1 - \frac{\eta}{pk}\Bigr)\Bigr),$$</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>which is feasible (positive) iff $pk &gt; \eta$: the prey at carrying capacity must sustain the predators. The Jacobian $J = \begin{pmatrix}\lambda(1 - 2x/k) - py &amp; -px<span class="sc">\\</span> py &amp; px - \eta\end{pmatrix}$ gives:</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>at $z_1^*$, eigenvalues $\lambda &gt; 0$ and $-\eta$: a saddle (unstable);</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>at $z_3^*$, eigenvalues $-\lambda$ and $pk - \eta &gt; 0$: a saddle, unstable when coexistence is feasible;</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>at $z_2^*$,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>$$J_2 = \begin{pmatrix}-\frac{\lambda\eta}{kp} &amp; -\eta\\ \lambda\bigl(1 - \frac{\eta}{pk}\bigr) &amp; 0\end{pmatrix}, \qquad \vartheta_{1,2} = \frac{1}{2kp}\Bigl<span class="co">[</span><span class="ot">-\lambda\eta \pm \sqrt{\lambda\eta\bigl(\lambda\eta - 4kp(kp - \eta)\bigr)}\Bigr</span><span class="co">]</span>.$$</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>Since $\operatorname{tr}J_2 &lt; 0$ and $\det J_2 = \lambda\eta(1 - \eta/pk) &gt; 0$, $z_2^*$ is **always stable**. For large $k$ the discriminant is negative and the eigenvalues are complex: populations approach the equilibrium through **damped oscillations** with frequency $\simeq\sqrt{\lambda\eta(1 - \eta/pk)}$ and damping rate $\lambda\eta/(2kp)$, which is small when $k$ is large.</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="fu">### Real cycles</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>Real predator–prey systems often oscillate for decades: the snowshoe hare and lynx pelts of the Hudson's Bay Company, rodents, plankton in chemostats. The deterministic model above predicts that the oscillations die out. There are two classical ways out.</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>**Limit cycles.** If predators saturate (Holling type II functional response, $pxy \to \frac{pxy}{1 + hx}$), the coexistence equilibrium can lose stability through a **Hopf bifurcation** when the carrying capacity is increased. A stable limit cycle is born, with amplitude independent of initial conditions. Enriching the environment destabilises it: Rosenzweig's *paradox of enrichment*.</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>**Stochastic amplification.** Even when the deterministic equilibrium is stable, the discreteness of individuals produces noise that excites the weakly damped oscillatory mode. The result is large, irregular but persistent cycles with a well-defined dominant frequency. This mechanism requires no fine tuning, and is the subject of the rest of the chapter.</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## From reactions to master equations</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>Individual-based models are best written as **reaction schemes**, as in chemistry. Consider $N_s$ types of "molecules" (individuals of different species, or empty sites) and $M$ reactions $R_j$. Each reaction has:</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a **state-change vector** $\mathbf v_j$: the change in the vector of abundances $\mathbf x$ when $R_j$ fires (e.g. $B \to A + A$ has $\mathbf v = (+2, -1)$);</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a **propensity** $a_j(\mathbf x)$: $a_j\,\Delta t$ is the probability that $R_j$ fires in $<span class="co">[</span><span class="ot">t, t + \Delta t</span><span class="co">]</span>$.</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>For a unimolecular reaction $A \to \cdots$ with rate constant $C_j$, $a_j = C_jx_A$. For a bimolecular one, $A + B \to \cdots$, $a_j = C_jx_Ax_B/\Omega$, where $\Omega$ is the system size (volume, number of sites). Two molecules must meet, and in a larger volume they are less likely to. In general, a reaction involving $k$ reactants has $a_j \propto x_1\cdots x_k/\Omega^{k-1}$, so propensities are **extensive**: $a_j = \Omega\,\alpha_j(\mathbf x/\Omega)$. The master equation balances inflow from $\mathbf x - \mathbf v_j$ and outflow from $\mathbf x$:</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>$$\frac{\partial P(\mathbf x, t)}{\partial t} = \sum_{j=1}^M\bigl<span class="co">[</span><span class="ot">a_j(\mathbf x - \mathbf v_j)P(\mathbf x - \mathbf v_j, t) - a_j(\mathbf x)P(\mathbf x, t)\bigr</span><span class="co">]</span>,$$</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>and can be sampled exactly with the Gillespie algorithm of Chapter 2.</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">## A stochastic predator–prey model</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="fu">### Microscopic rules</span></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>Following McKane and Newman (2005), consider $N$ sites, each empty ($E$), occupied by a predator ($A$) or by a prey ($B$). Let $n$, $m$ and $e = N - n - m$ be their numbers. Individuals interact as if well mixed (spatial effects neglected), through five reactions:</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>$$A \xrightarrow{d_1} E, \quad B + E \xrightarrow{b} B + B, \quad B \xrightarrow{d_2} E, \quad A + B \xrightarrow{p_2} A + E, \quad A + B \xrightarrow{p_1} A + A .$$</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>Predators die. Prey reproduce into empty sites and die. Predation either just removes the prey ($p_2$) or also converts it into a new predator ($p_1$). Choosing pairs at random, with a factor $2$ from the two orderings, the propensities are</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>$$T(n - 1, m \mid n, m) = d_1n, \qquad T(n, m + 1 \mid n, m) = 2b\,\frac{m\,e}{N},$$</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>$$T(n, m - 1 \mid n, m) = d_2m + 2p_2\frac{nm}{N}, \qquad T(n + 1, m - 1 \mid n, m) = 2p_1\frac{nm}{N}.$$</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="fu">### Drift and diffusion</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>With densities $x = n/N$ (predators) and $y = m/N$ (prey), each propensity is $N$ times a function of $(x, y)$. Expanding the master equation to second order in $1/N$ (with shift operators $\mathbb E^\pm_A$, $\mathbb E^\pm_B$ as in Chapter 2) gives a two-dimensional Fokker–Planck equation</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>$$\partial_tP = -\sum_i\partial_i\bigl<span class="co">[</span><span class="ot">A_iP\bigr</span><span class="co">]</span> + \frac{1}{2N}\sum_{ij}\partial_i\partial_j\bigl<span class="co">[</span><span class="ot">B_{ij}P\bigr</span><span class="co">]</span>.$$</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>The drift is the vector of average changes:</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>$$A_1 = 2p_1xy - d_1x, \qquad A_2 = 2by(1 - x - y) - d_2y - 2(p_1 + p_2)xy .$$</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>The diffusion matrix collects, for each reaction, $\mathbf v_j\mathbf v_j^\top$ weighted by its rate:</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>$$B = \begin{pmatrix} d_1x + 2p_1xy &amp; -2p_1xy<span class="sc">\\</span> -2p_1xy &amp; 2by(1 - x - y) + d_2y + 2(p_1 + p_2)xy\end{pmatrix}.$$</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>The off-diagonal element is negative because the conversion reaction changes $n$ and $m$ in opposite directions, $\mathbf v = (+1, -1)$. Noise in the two populations is correlated.</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>As $N \to \infty$ the noise vanishes and the drift gives the **mean-field equations**</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>$$\dot x = 2p_1xy - d_1x, \qquad \dot y = ry\Bigl(1 - \frac yk\Bigr) - 2(p_1 + p_2 + b)\,xy, \qquad r = 2b - d_2, \quad k = \frac{2b - d_2}{2b},$$</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>a predator–prey system with logistic prey. Its interior equilibrium</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>$$y^* = \frac{d_1}{2p_1}, \qquad x^* = \frac{2b(1 - y^*) - d_2}{2(b + p_1 + p_2)}$$</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>is a stable focus, so the mean-field dynamics predicts damped oscillations and no cycles.</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a><span class="fu">### Langevin equations</span></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>The equivalent Langevin system is</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>$$\dot x = A_1 + \frac{1}{\sqrt N}\sum_jg_{1j}\xi_j, \qquad \dot y = A_2 + \frac{1}{\sqrt N}\sum_jg_{2j}\xi_j, \qquad \langle\xi_i(t)\xi_j(t')\rangle = \delta_{ij}\delta(t - t'),$$</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>where $g$ is any matrix with $gg^\top = B$. For instance $g = S^\top\Lambda^{1/2}S$ from the diagonalisation $B = S^\top\Lambda S$, or the Cholesky factor of $B$. Only $B$ is physical; different square roots give the same statistics.</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="fu">## The van Kampen expansion and stochastic amplification</span></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="fu">### Linear noise approximation</span></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>Fluctuations around the deterministic equilibrium are $O(N^{-1/2})$. Following van Kampen, write</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>$$x(t) = x^* + \frac{\zeta_1(t)}{\sqrt N}, \qquad y(t) = y^* + \frac{\zeta_2(t)}{\sqrt N}.$$</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>Substituting and keeping the leading order, the drift contributes the Jacobian $J = \partial\mathbf A/\partial\mathbf x$ at $(x^*, y^*)$, and the noise amplitude is frozen at its equilibrium value:</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>$$\dot{\boldsymbol\zeta} = J\boldsymbol\zeta + \boldsymbol\eta(t), \qquad \langle\eta_i(t)\eta_j(t')\rangle = B_{ij}(x^*, y^*)\,\delta(t - t').$$</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>This is a multivariate Ornstein–Uhlenbeck process. The fluctuations are Gaussian, of size independent of $N$ in the rescaled variables, and their statistics follow from linear algebra. This is the **linear noise approximation**. It is exact to leading order in $1/\sqrt N$ around a stable fixed point.</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a><span class="fu">### The power spectrum</span></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>Fourier transforming, $(i\omega - J)\tilde{\boldsymbol\zeta}(\omega) = \tilde{\boldsymbol\eta}(\omega)$ with $\langle\tilde\eta_i(\omega)\tilde\eta^*_j(\omega')\rangle = B_{ij}\,2\pi\delta(\omega - \omega')$. The **power spectrum** $P_i(\omega) = \langle|\tilde\zeta_i(\omega)|^2\rangle$ (per unit frequency) is the diagonal of</span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>$$\mathcal P(\omega) = (i\omega - J)^{-1}\,B\,(-i\omega - J^\top)^{-1}.$$</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>For two variables, with $\Omega_0^2 = \det J$ and $\Gamma = -\operatorname{tr}J$, the denominator is $|\det(i\omega - J)|^2 = (\omega^2 - \Omega_0^2)^2 + \Gamma^2\omega^2$, and solving the $2\times2$ system,</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>$$P_1(\omega) = \frac{\alpha_1 + B_{11}\,\omega^2}{(\omega^2 - \Omega_0^2)^2 + \Gamma^2\omega^2}, \qquad \alpha_1 = B_{11}J_{22}^2 - 2B_{12}J_{12}J_{22} + B_{22}J_{12}^2,$$</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>and similarly for $P_2$ with indices exchanged. For our model $J_{11} = 0$ at equilibrium (the predator equation is $\dot x = x(2p_1y - d_1)$), so $\Omega_0^2 = J_{12}|J_{21}|$ and $\Gamma = |J_{22}|$.</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>This is the response of a **damped harmonic oscillator** with natural frequency $\Omega_0$ and damping $\Gamma$, driven by white noise. When $\Gamma \ll \Omega_0$ (weak damping, as for a large carrying capacity) the spectrum has a sharp peak near $\Omega_0$, of height $\propto 1/(\Gamma^2\Omega_0^2)$. Demographic noise has power at all frequencies; the system filters it and amplifies the frequency of its own damped mode. The result is **resonant amplification** without external forcing and without fine tuning.</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>::: {.example name="Numbers"}</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>Take $b = 0.1$, $d_1 = 0.1$, $d_2 = 0$, $p_1 = 0.25$, $p_2 = 0.05$. Then $x^* = y^* = 0.2$ and</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>$$J = \begin{pmatrix}0 &amp; 0.10<span class="sc">\\</span> -0.16 &amp; -0.04\end{pmatrix}, \qquad B = \begin{pmatrix}0.040 &amp; -0.020<span class="sc">\\</span> -0.020 &amp; 0.048\end{pmatrix}.$$</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>The eigenvalues are $-0.02 \pm 0.125i$: a weakly damped focus with $\Omega_0 = 0.126$, $\Gamma = 0.04$. The predator spectrum peaks at $\omega \simeq 0.125$, about $27$ times higher than at $\omega = 0$. A direct simulation of the linear Langevin equations gives a peak at $\omega \simeq 0.12$. Gillespie simulations of the full model with $N$ in the thousands show noisy cycles with this period, $2\pi/0.125 \approx 50$ time units, and amplitude $\propto 1/\sqrt N$ in density, i.e. $\propto\sqrt N$ in numbers of individuals.</span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="in">```{=latex}</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a><span class="in">\begin{center}</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a><span class="in">\begin{tikzpicture}[font=\small, line width=0.4pt, x=1.6cm, y=0.09cm]</span></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw[-&gt;] (0,0) -- (3.3,0) node[below] {$\omega/\Omega_0$};</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw[-&gt;] (0,0) -- (0,33) node[left] {$P_1(\omega)/P_1(0)$};</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw[line width=1pt, domain=0:3.1, samples=200] plot (\x, {(1+1.6667*\x*\x)/((\x*\x-1)^2+0.1*\x*\x)});</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw[densely dotted] (1,0) -- (1,26.7);</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="in">  \node[below] at (1,0) {$1$};</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="in">\end{tikzpicture}</span></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a><span class="in">\end{center}</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>*Figure: predator power spectrum of the stochastic model (linear noise approximation), normalised to its zero-frequency value.*</span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>Stochastic amplification is generic: whenever a stable fixed point of a large but finite system is a focus with weak damping, intrinsic noise produces quasi-cycles. The same mechanism explains oscillations in epidemics (measles, whooping cough), in biochemical networks (Chapter 16) and in neural populations (Chapter 10), where "noise-driven gamma oscillations" appear in Wilson–Cowan models.</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## Two-species neutral competition</span></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>In the absence of interactions, two species competing for the same $N$ sites with identical rates perform a neutral **voter model** (or Moran process). At each event an individual dies and is replaced by the offspring of a random individual. The number $n$ of species $A$ is a birth–death chain with $W^+(n) = W^-(n) = n(N - n)/N$: no drift, only noise. In the continuum limit $x = n/N$,</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>$$\partial_tP = \frac{1}{N}\,\partial_x^2\bigl<span class="co">[</span><span class="ot">x(1 - x)P\bigr</span><span class="co">]</span>,$$</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>so one species always fixates. The probability that $A$ wins is its initial fraction $x_0$ (the process is a martingale), and the mean fixation time is $-N\bigl<span class="co">[</span><span class="ot">x_0\ln x_0 + (1 - x_0)\ln(1 - x_0)\bigr</span><span class="co">]</span>$ generations. Neutral coexistence of two species is transient; long-term diversity requires speciation or immigration (Chapter 3) or stabilising interactions (Chapters 6–7).</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>**(Conserved quantity)** Show that $H = dx - c\ln x + by - a\ln y$ is conserved by the classical Lotka–Volterra equations, and that the time averages over a closed orbit equal the equilibrium values.</span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>$\dot H = (d - c/x)\dot x + (b - a/y)\dot y = (d - c/x)x(a - by) + (b - a/y)y(dx - c) = (dx - c)(a - by) + (by - a)(dx - c) = 0$. For the averages, $\frac{d}{dt}\ln x = a - by$; integrating over a period $T$ gives $0 = aT - b\int y\,dt$, so $\langle y\rangle = a/b = y^*$. Similarly $\langle x\rangle = c/d$.</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>**(Self-limited prey)** For $\lambda = 1$, $\eta = 0.5$, $p = 1$, $k = 10$, find the coexistence equilibrium, its eigenvalues, and the period and decay time of the damped oscillations.</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>$x^* = \eta/p = 0.5$, $y^* = \frac\lambda p(1 - \frac{\eta}{pk}) = 0.95$. $J_2 = \begin{pmatrix}-0.05 &amp; -0.5<span class="sc">\\</span> 0.95 &amp; 0\end{pmatrix}$, with $\operatorname{tr} = -0.05$ and $\det = 0.475$. Eigenvalues $-0.025 \pm i\sqrt{0.475 - 0.000625} = -0.025 \pm 0.689i$. Period $2\pi/0.689 = 9.1$; amplitude decay time $1/0.025 = 40$. About four oscillations occur per decay time: on short records such dynamics look cyclic.</span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>**(Drift and diffusion from reactions)** For a general reaction scheme with propensities $a_j = N\alpha_j(\mathbf x)$ and state changes $\mathbf v_j$, show that the Kramers–Moyal expansion gives $\mathbf A = \sum_j\mathbf v_j\alpha_j$ and $B = \sum_j\mathbf v_j\mathbf v_j^\top\alpha_j$. Verify the predator–prey $B$.</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>The master equation is $\partial_tP = N\sum_j<span class="co">[</span><span class="ot">\alpha_j(\mathbf x - \mathbf v_j/N)P(\mathbf x - \mathbf v_j/N) - \alpha_jP</span><span class="co">]</span>$. Expanding $f(\mathbf x - \mathbf v_j/N) = f - \frac1N\mathbf v_j\cdot\nabla f + \frac{1}{2N^2}(\mathbf v_j\cdot\nabla)^2f$ gives $\partial_tP = -\nabla\cdot(\mathbf AP) + \frac{1}{2N}\sum_{kl}\partial_k\partial_l(B_{kl}P)$ with the stated forms. For predator–prey: $\mathbf v = (-1, 0)$ rate $d_1x$; $(0, +1)$ rate $2by(1 - x - y)$; $(0, -1)$ rate $d_2y + 2p_2xy$; $(+1, -1)$ rate $2p_1xy$. Then $B_{11} = d_1x + 2p_1xy$, $B_{22} = 2by(1 - x - y) + d_2y + 2p_2xy + 2p_1xy$, and $B_{12} = -2p_1xy$, as in the text.</span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>**(Power spectrum)** Derive $P_1(\omega)$ for $\dot{\boldsymbol\zeta} = J\boldsymbol\zeta + \boldsymbol\eta$ with $\langle\boldsymbol\eta\boldsymbol\eta^\top\rangle = B\delta(t - t')$ and a general $2\times2$ $J$. Where is the maximum when $\Gamma \ll \Omega_0$?</span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>$\tilde\zeta_1 = \frac{(i\omega - J_{22})\tilde\eta_1 + J_{12}\tilde\eta_2}{D(\omega)}$, $D = \det(i\omega - J) = \Omega_0^2 - \omega^2 + i\Gamma\omega$. Averaging $|\tilde\zeta_1|^2$: $(\omega^2 + J_{22}^2)B_{11} + J_{12}^2B_{22} + 2\operatorname{Re}<span class="co">[</span><span class="ot">(i\omega - J_{22})J_{12}</span><span class="co">]</span>B_{12} = B_{11}\omega^2 + B_{11}J_{22}^2 - 2J_{12}J_{22}B_{12} + J_{12}^2B_{22}$, divided by $|D|^2 = (\omega^2 - \Omega_0^2)^2 + \Gamma^2\omega^2$. For $\Gamma \ll \Omega_0$ the denominator is smallest at $\omega^2 = \Omega_0^2 - \Gamma^2/2 \simeq \Omega_0^2$, where it equals $\simeq\Gamma^2\Omega_0^2$. A sharp peak at the natural frequency, with width $\simeq\Gamma$.</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>**(Simulation)** Simulate the McKane–Newman model with the parameters of the example and $N = 3200$ using the Gillespie algorithm. Estimate the power spectrum of the predator density from a long trajectory and compare it with the linear-noise prediction. How does the amplitude of the cycles in numbers of individuals scale with $N$?</span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>After a transient the densities fluctuate around $(0.2, 0.2)$ with irregular oscillations of period $\simeq 50$, predators lagging prey by about a quarter period. The periodogram, averaged over windows, peaks at $\omega \simeq 0.125$ and matches $P_1(\omega)/N$ within statistical error. Fluctuations in density scale as $N^{-1/2}$, so in numbers of individuals they grow as $\sqrt N$: the cycles never disappear in a finite system. Doubling $N$ leaves the rescaled spectrum unchanged.</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>**(Neutral fixation)** For the two-species voter model, use the backward Kolmogorov equation $\frac{x(1-x)}{N}\,\phi''(x) = 0$ to show that the fixation probability of $A$ from fraction $x_0$ is $x_0$. Then solve $\frac{x(1 - x)}{N}T''(x) = -1$ with $T(0) = T(1) = 0$ for the mean fixation time.</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>$\phi'' = 0$ with $\phi(0) = 0$, $\phi(1) = 1$ gives $\phi(x) = x$. For $T$: $T'' = -\frac{N}{x(1 - x)} = -N\bigl(\frac1x + \frac1{1 - x}\bigr)$; integrating twice with the boundary conditions, $T(x) = -N<span class="co">[</span><span class="ot">x\ln x + (1 - x)\ln(1 - x)</span><span class="co">]</span>$. Starting from equal shares, $T = N\ln2$ generations: drift eliminates one of two equivalent species in a time proportional to the population size.</span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>Prof. S. Suweis, *PMLS Course Notes*, Sections 4.1–4.2; Lecture 5 slides (two-species models: Volterra equations, stability, stochastic microscopic model, Fokker–Planck, Langevin, van Kampen expansion, power spectrum). R. M. May, *Stability and Complexity in Model Ecosystems*, Princeton (1973), Chapter 2. A. J. McKane and T. J. Newman, *Predator–prey cycles from resonant amplification of demographic stochasticity*, PRL **94**, 218102 (2005). N. G. van Kampen, *Stochastic Processes in Physics and Chemistry*, Chapter 10. M. L. Rosenzweig, Science **171**, 385 (1971).</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

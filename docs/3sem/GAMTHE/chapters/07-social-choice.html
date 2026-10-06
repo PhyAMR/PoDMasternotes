@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>7&nbsp; Social choice and voting – Game Theory</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/08-extensive-form-games.html" rel="next">
+<link href="../chapters/06-zero-sum-games.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-12757e4b7af482b2d9c5bd8860d2b707.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-3fda7689cb8c4ed59160d7ff94eb8d4f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/02-static-games-and-dominance.html">Part II: Static games of complete information</a></li><li class="breadcrumb-item"><a href="../chapters/07-social-choice.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Social choice and voting</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Game Theory</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About these notes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Rational decisions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-decision-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Rational decision making</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Static games of complete information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-static-games-and-dominance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Static games and dominance</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-nash-equilibrium.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Nash equilibrium</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-applications-of-nash-equilibrium.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Applications of Nash equilibrium</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-mixed-strategies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Mixed strategies and existence</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-zero-sum-games.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Security strategies and zero-sum games</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-social-choice.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Social choice and voting</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: Dynamic games of complete information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-extensive-form-games.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Extensive-form games</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-subgame-perfect-equilibrium.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Credibility and subgame perfection</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-multistage-and-repeated-games.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Multistage and repeated games</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-bargaining-and-dynamic-duopolies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Bargaining and dynamic duopolies</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part IV: Incomplete information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-bayesian-games.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian games</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-perfect-bayesian-equilibrium-and-signaling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Perfect Bayesian equilibrium and signaling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part V: Mechanisms and cooperation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-auctions-and-mechanism-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Auctions and mechanism design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-cooperative-games-and-bargaining.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Coalitions and axiomatic bargaining</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#constitutions" id="toc-constitutions" class="nav-link active" data-scroll-target="#constitutions"><span class="header-section-number">7.1</span> Constitutions</a></li>
+  <li><a href="#majority-rule-and-condorcet-cycles" id="toc-majority-rule-and-condorcet-cycles" class="nav-link" data-scroll-target="#majority-rule-and-condorcet-cycles"><span class="header-section-number">7.2</span> Majority rule and Condorcet cycles</a></li>
+  <li><a href="#electoral-systems-and-their-paradoxes" id="toc-electoral-systems-and-their-paradoxes" class="nav-link" data-scroll-target="#electoral-systems-and-their-paradoxes"><span class="header-section-number">7.3</span> Electoral systems and their paradoxes</a></li>
+  <li><a href="#agenda-setting-and-manipulation" id="toc-agenda-setting-and-manipulation" class="nav-link" data-scroll-target="#agenda-setting-and-manipulation"><span class="header-section-number">7.4</span> Agenda setting and manipulation</a></li>
+  <li><a href="#ways-out" id="toc-ways-out" class="nav-link" data-scroll-target="#ways-out"><span class="header-section-number">7.5</span> Ways out</a></li>
+  <li><a href="#voting-as-a-game" id="toc-voting-as-a-game" class="nav-link" data-scroll-target="#voting-as-a-game"><span class="header-section-number">7.6</span> Voting as a game</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">7.7</span> Exercises</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">7.8</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/02-static-games-and-dominance.html">Part II: Static games of complete information</a></li><li class="breadcrumb-item"><a href="../chapters/07-social-choice.html"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Social choice and voting</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Social choice and voting</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Chapter 1 showed that a single rational decision maker has a utility function. Can a <em>group</em> of rational individuals be summarised by a rational collective preference? The question matters well beyond elections: scheduling packets under several criteria, choosing among solutions of a multi-objective optimisation, or allocating resources by competing priorities are all “votes”. The answer, in the form of Arrow’s impossibility theorem, is essentially negative, and the paradoxes of voting systems show why.</p>
+<section id="constitutions" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="constitutions"><span class="header-section-number">7.1</span> Constitutions</h2>
+<p>Let <span class="math inline">\(\mathcal R(A)\)</span> be the set of rational preferences on a set of alternatives <span class="math inline">\(A\)</span>, and let <span class="math inline">\(n\)</span> individuals have preferences <span class="math inline">\((\succeq_1, \dots, \succeq_n)\)</span>, a <strong>profile</strong>.</p>
+<div class="definition" name="Constitution">
+<p>A <strong>constitution</strong> (social welfare function) is a map <span class="math inline">\(f : \mathcal R(A)^n \to \mathcal R(A)\)</span> turning every profile into a social preference <span class="math inline">\(\succeq = f(\succeq_1, \dots, \succeq_n)\)</span>. For <span class="math inline">\(Y \subseteq A\)</span>, <span class="math inline">\(\succeq|_Y = \succeq \cap (Y \times Y)\)</span> denotes the restriction to <span class="math inline">\(Y\)</span>.</p>
+</div>
+<div class="definition" name="Properties of constitutions">
+<ul>
+<li><strong>Independence of irrelevant alternatives (IIA):</strong> if two profiles agree on the pair <span class="math inline">\(\{a, b\}\)</span> for every individual, the social preferences agree on <span class="math inline">\(\{a, b\}\)</span>. Adding or removing other alternatives does not change how society ranks <span class="math inline">\(a\)</span> against <span class="math inline">\(b\)</span>.</li>
+<li><strong>Pareto efficiency:</strong> if <span class="math inline">\(a \succeq_i b\)</span> for every <span class="math inline">\(i\)</span>, then <span class="math inline">\(a \succeq b\)</span>.</li>
+<li><strong>Dictatorship:</strong> there is an individual <span class="math inline">\(i\)</span> such that <span class="math inline">\(a \succeq_i b\)</span> implies <span class="math inline">\(a \succeq b\)</span> for every profile.</li>
+<li><strong>Monotonicity:</strong> if one individual raises an alternative in their ranking, society does not rank it lower.</li>
+<li><strong>Non-imposition:</strong> every rational preference is the output of some profile (<span class="math inline">\(f\)</span> is surjective).</li>
+</ul>
+</div>
+<div class="theorem" name="Arrow, 1951">
+<p>With at least three alternatives, no constitution is simultaneously non-dictatorial, monotonic, IIA and non-imposed. Equivalently (1963 version): every Pareto-efficient constitution satisfying IIA is a dictatorship.</p>
+</div>
+</section>
+<section id="majority-rule-and-condorcet-cycles" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="majority-rule-and-condorcet-cycles"><span class="header-section-number">7.2</span> Majority rule and Condorcet cycles</h2>
+<p>With two candidates, majority rule is unproblematic. With three it can fail spectacularly:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">voter</th>
+<th style="text-align: center;">1</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">best</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">B</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">worst</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">A</td>
+</tr>
+</tbody>
+</table>
+<p>Pairwise, <span class="math inline">\(A\)</span> beats <span class="math inline">\(B\)</span> (voters 1, 2), <span class="math inline">\(B\)</span> beats <span class="math inline">\(C\)</span> (voters 1, 3), and <span class="math inline">\(C\)</span> beats <span class="math inline">\(A\)</span> (voters 2, 3). Majority preference is <strong>not transitive</strong>.</p>
+<div class="definition" name="Condorcet winner and cycle">
+<p>A candidate beating every other in pairwise majority contests is a <strong>Condorcet winner</strong>; one beaten by every other is a <strong>Condorcet loser</strong>. If no Condorcet winner exists, majority preference contains a <strong>Condorcet cycle</strong>.</p>
+</div>
+<p>Three-candidate profiles arise from two-candidate ones by inserting the third candidate somewhere in each voter’s ranking; depending on where it goes, the newcomer can become a Condorcet winner, a Condorcet loser, or close a cycle. Cycles cannot occur with two alternatives, but with random preferences their probability grows with the number of candidates:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">candidates \ voters</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">7</th>
+<th style="text-align: center;">9</th>
+<th style="text-align: center;"><span class="math inline">\(\infty\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">3</td>
+<td style="text-align: center;">5.6%</td>
+<td style="text-align: center;">6.9%</td>
+<td style="text-align: center;">7.5%</td>
+<td style="text-align: center;">7.8%</td>
+<td style="text-align: center;">8.8%</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">5</td>
+<td style="text-align: center;">16.0%</td>
+<td style="text-align: center;">20.0%</td>
+<td style="text-align: center;">21.5%</td>
+<td style="text-align: center;">23.0%</td>
+<td style="text-align: center;">25.1%</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">7</td>
+<td style="text-align: center;">23.9%</td>
+<td style="text-align: center;">29.9%</td>
+<td style="text-align: center;">30.5%</td>
+<td style="text-align: center;">34.2%</td>
+<td style="text-align: center;">36.9%</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\infty\)</span></td>
+<td style="text-align: center;">100%</td>
+<td style="text-align: center;">100%</td>
+<td style="text-align: center;">100%</td>
+<td style="text-align: center;">100%</td>
+<td style="text-align: center;">100%</td>
+</tr>
+</tbody>
+</table>
+<p>Real examples abound: fiscal policies ranked by liberals, anti-deficit voters and conservatives over combinations of taxes and spending; or traffic classes (voice over IP, video streaming, best-effort data) ranked by delay, loss and fairness criteria, each criterion being a “voter”.</p>
+</section>
+<section id="electoral-systems-and-their-paradoxes" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="electoral-systems-and-their-paradoxes"><span class="header-section-number">7.3</span> Electoral systems and their paradoxes</h2>
+<p><strong>Plurality voting:</strong> the candidate with the most first places wins. With <span class="math inline">\(9\)</span> voters</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">voters</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">best</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">B</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">worst</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">A</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(A\)</span> wins with <span class="math inline">\(4\)</span> first places, yet a majority prefers <span class="math inline">\(B\)</span> to <span class="math inline">\(A\)</span> and <span class="math inline">\(C\)</span> to <span class="math inline">\(A\)</span>, and <span class="math inline">\(B\)</span> is the Condorcet winner.</p>
+<p><strong>Two-round run-off:</strong> the top two meet in a ballot. With</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">voters</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">best</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">B</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">worst</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">A</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> reach the ballot and <span class="math inline">\(B\)</span> wins <span class="math inline">\(5\)</span>–<span class="math inline">\(4\)</span>, while the Condorcet winner <span class="math inline">\(C\)</span> does not even make it to the second round. Plurality and run-off favour polarised candidates over compromise ones.</p>
+<p><strong>Borda count:</strong> with <span class="math inline">\(M\)</span> candidates each voter gives <span class="math inline">\(M-1\)</span> points to the first, <span class="math inline">\(M-2\)</span> to the second, …, <span class="math inline">\(0\)</span> to the last. With</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">voters</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">best</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">B</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">worst</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">A</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(A\)</span> gets <span class="math inline">\(10\)</span>, <span class="math inline">\(B\)</span> <span class="math inline">\(12\)</span>, <span class="math inline">\(C\)</span> <span class="math inline">\(5\)</span>: <span class="math inline">\(B\)</span> wins although <span class="math inline">\(A\)</span> is the Condorcet winner. Borda also violates IIA dramatically. With four candidates</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">voters</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">best</td>
+<td style="text-align: center;">D</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">A</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">D</td>
+<td style="text-align: center;">B</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">D</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">worst</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">C</td>
+</tr>
+</tbody>
+</table>
+<p>the ranking is <span class="math inline">\(D\)</span> (21), <span class="math inline">\(A\)</span> (12), <span class="math inline">\(B\)</span> (11), <span class="math inline">\(C\)</span> (10). If <span class="math inline">\(D\)</span> withdraws, the scores become <span class="math inline">\(C\)</span> 10, <span class="math inline">\(B\)</span> 9, <span class="math inline">\(A\)</span> 8: the order of the remaining three is <em>entirely reversed</em>.</p>
+<p><strong>Approval voting:</strong> each voter approves <span class="math inline">\(N\)</span> candidates, one point each (<span class="math inline">\(N = 1\)</span> is plurality). With</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">voters</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">2</th>
+<th style="text-align: center;">1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">best</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">D</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">A</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">D</td>
+<td style="text-align: center;">B</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">D</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">worst</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">D</td>
+</tr>
+</tbody>
+</table>
+<p>top-2 approval elects <span class="math inline">\(B\)</span> (A 4, B 6, C 3, D 5), top-3 approval elects <span class="math inline">\(C\)</span> (A 4, B 6, C 9, D 8), plurality elects <span class="math inline">\(A\)</span>, and Borda elects <span class="math inline">\(D\)</span> (16 vs.&nbsp;14, 12, 12). Four systems, four winners.</p>
+<p><strong>Instant run-off:</strong> voters rank all candidates; the candidate with the fewest first places is repeatedly eliminated and their votes transferred. With</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">voters</th>
+<th style="text-align: center;">6</th>
+<th style="text-align: center;">5</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">best</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">B</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">A</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">worst</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">C</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(C\)</span> is eliminated first and <span class="math inline">\(A\)</span> wins with <span class="math inline">\(11\)</span> votes. If the last two voters <em>raise</em> <span class="math inline">\(A\)</span> to first place, <span class="math inline">\(B\)</span> is eliminated first, its four votes go to <span class="math inline">\(C\)</span>, and <span class="math inline">\(C\)</span> beats <span class="math inline">\(A\)</span> <span class="math inline">\(9\)</span>–<span class="math inline">\(8\)</span>. <strong><span class="math inline">\(A\)</span> loses because of increased support</strong> — a violation of monotonicity.</p>
+</section>
+<section id="agenda-setting-and-manipulation" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="agenda-setting-and-manipulation"><span class="header-section-number">7.4</span> Agenda setting and manipulation</h2>
+<p>Sequential pairwise votes look fair but are not under a Condorcet cycle. With <span class="math inline">\(A &gt; B &gt; C &gt; A\)</span>, “first <span class="math inline">\(A\)</span> vs.&nbsp;<span class="math inline">\(B\)</span>, then the winner vs.&nbsp;<span class="math inline">\(C\)</span>” elects <span class="math inline">\(C\)</span>; “first <span class="math inline">\(B\)</span> vs.&nbsp;<span class="math inline">\(C\)</span>, then the winner vs.&nbsp;<span class="math inline">\(A\)</span>” elects <span class="math inline">\(A\)</span>. Whoever sets the agenda chooses the winner. The power is not unlimited: a Condorcet loser <span class="math inline">\(D\)</span> can never win, and a Condorcet winner always does.</p>
+<p>Voters can also misreport. With</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">voters</th>
+<th style="text-align: center;">4</th>
+<th style="text-align: center;">3</th>
+<th style="text-align: center;">2</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">best</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">C</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">D</td>
+<td style="text-align: center;">A</td>
+<td style="text-align: center;">B</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">D</td>
+<td style="text-align: center;">D</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">worst</td>
+<td style="text-align: center;">B</td>
+<td style="text-align: center;">C</td>
+<td style="text-align: center;">A</td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">\(A\)</span> wins under plurality. Voters 8–9, for whom <span class="math inline">\(A\)</span> is the worst, can report <span class="math inline">\(B\)</span> first and make <span class="math inline">\(B\)</span> win. Voters 1–4 can pre-empt this by reporting <span class="math inline">\(C\)</span>, who then wins with only two sincere supporters; <span class="math inline">\(B\)</span>’s supporters can in turn switch to <span class="math inline">\(A\)</span>. The outcome depends on who cheats first.</p>
+<div class="definition" name="Strategy-proofness">
+<p>A social choice rule is <strong>strategy-proof</strong> (non-manipulable) if for every profile no individual <span class="math inline">\(j\)</span> obtains an outcome they strictly prefer by reporting <span class="math inline">\(\succeq_j'\)</span> instead of their true <span class="math inline">\(\succeq_j\)</span>.</p>
+</div>
+<div class="theorem" name="Gibbard–Satterthwaite">
+<p>With at least three alternatives, every strategy-proof social choice rule whose range includes every alternative is a dictatorship.</p>
+</div>
+</section>
+<section id="ways-out" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="ways-out"><span class="header-section-number">7.5</span> Ways out</h2>
+<p>No universally good system exists, but there are escape routes:</p>
+<ul>
+<li><strong>Weaken the axioms</strong> (e.g.&nbsp;drop IIA, as Borda does).</li>
+<li><strong>Restrict the domain</strong> of admissible profiles. Majority rule, <span class="math inline">\(a \succeq b \iff |\{i : a \succeq_i b\}| \geq |\{i : b \succeq_i a\}|\)</span>, is Pareto efficient, IIA and non-dictatorial, but in general not transitive because of Condorcet cycles — so it is not a constitution. On domains where cycles cannot occur it becomes one: Black (1948) showed this for <strong>single-peaked</strong> preferences (alternatives on a line, each voter preferring options closer to their ideal point), Sen (1966) gave more general conditions.</li>
+<li><strong>Change the ballot:</strong> approval voting with free choice of <span class="math inline">\(N\)</span>, or voting “for” and “against”.</li>
+</ul>
+<div class="callout callout-style-simple callout-tip">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>For engineering, the lesson is that aggregating several performance criteria into a single ranking is never neutral. Every scalarisation (weighted sums are Borda-like) embodies choices that can reverse rankings when an irrelevant option is added or removed.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="voting-as-a-game" class="level2" data-number="7.6">
+<h2 data-number="7.6" class="anchored" data-anchor-id="voting-as-a-game"><span class="header-section-number">7.6</span> Voting as a game</h2>
+<p>An election can itself be modelled as a static game: voters are players, ballots are strategies, and the rule maps profiles to outcomes. Three observations follow.</p>
+<ul>
+<li><strong>Two candidates:</strong> voting sincerely is weakly dominant, since your ballot matters only when it is pivotal, and then you want your favourite to win. The median voter result of Chapter 4 describes the candidates’ side of this game.</li>
+<li><strong>Three or more candidates:</strong> sincere voting is generally <em>not</em> an equilibrium. Under plurality, supporters of a hopeless candidate prefer to vote for the lesser evil among the front-runners, which is why plurality systems tend to two parties (<strong>Duverger’s law</strong>). Run-off systems invite subtler manipulation: supporting a weak opponent in the first round to meet them in the second.</li>
+<li><strong>Equilibrium is too permissive:</strong> with many voters no single ballot is pivotal, so <em>every</em> profile in which a candidate wins by two or more votes is a Nash equilibrium, including everyone voting for their least favourite. One must first delete weakly dominated ballots, or study coalitions of like-minded voters, as in the exercises.</li>
+</ul>
+<p>The Gibbard–Satterthwaite theorem guarantees that some profile always rewards misreporting. The useful question for a given rule is therefore <em>who</em> can manipulate, and whether the others can counter it. A <strong>Condorcet winner</strong>, when it exists, is robust: any coalition preferring another candidate is a minority in the head-to-head comparison.</p>
+</section>
+<section id="exercises" class="level2" data-number="7.7">
+<h2 data-number="7.7" class="anchored" data-anchor-id="exercises"><span class="header-section-number">7.7</span> Exercises</h2>
+<p>Problems from Badia and Marchioro (BM), Chapter 4.</p>
+<div class="exercise">
+<p><strong>(BM 4.8)</strong> Thirteen students elect a class representative by plurality among A, B, C. Preferences: students 1–5: <span class="math inline">\(A \succ B \succ C\)</span>; 6–9: <span class="math inline">\(B \succ C \succ A\)</span>; 10–12: <span class="math inline">\(C \succ B \succ A\)</span>; 13: <span class="math inline">\(C \succ A \succ B\)</span>. (a) Who wins with sincere voting? (b) How can students 10–12 manipulate the result? (c) Can A’s supporters counter?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ol type="a">
+<li>A <span class="math inline">\(5\)</span>, B <span class="math inline">\(4\)</span>, C <span class="math inline">\(4\)</span>: A wins. (b) Students 10–12 prefer B to A: voting B gives B <span class="math inline">\(7\)</span> votes and B wins. (c) A’s supporters could only block B by voting C, which would at best tie and which they dislike more than B. They have no counter. B is the <strong>Condorcet winner</strong> (B beats A <span class="math inline">\(7\)</span>–<span class="math inline">\(6\)</span> and C <span class="math inline">\(9\)</span>–<span class="math inline">\(4\)</span>), so the manipulation actually restores the majority’s choice.</li>
+</ol>
+</div>
+<div class="exercise">
+<p><strong>(BM 4.9)</strong> A two-round run-off among A (42%, <span class="math inline">\(B \succ C \succ D\)</span> after A), B (11%, <span class="math inline">\(A \succ C \succ D\)</span>), C (27%, <span class="math inline">\(B \succ D \succ A\)</span>), D (20%, <span class="math inline">\(C \succ B \succ A\)</span>). (a) Sincere outcome? (b) Best strategic vote for D’s supporters? (c) Who wins then, and can A’s supporters respond?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span></p>
+<ol type="a">
+<li>A and C reach the ballot; B’s voters prefer A, so A wins <span class="math inline">\(53\)</span>–<span class="math inline">\(47\)</span>. (b) D’s supporters prefer B to A: voting B in round one sends A and B to the ballot (B <span class="math inline">\(31\%\)</span>, C <span class="math inline">\(27\%\)</span>). (c) B wins the ballot with <span class="math inline">\(58\%\)</span> (everyone but A’s supporters): B is the Condorcet winner despite the fewest first preferences. A’s supporters cannot beat B head-to-head, so they must keep B out of the ballot. If <span class="math inline">\(7\)</span> of their <span class="math inline">\(42\)</span> points vote C in round one (A <span class="math inline">\(35\)</span>, C <span class="math inline">\(34\)</span>, B <span class="math inline">\(31\)</span>), A meets C again and wins <span class="math inline">\(53\)</span>–<span class="math inline">\(47\)</span>. Manipulation invites counter-manipulation, and the outcome depends on who coordinates better.</li>
+</ol>
+</div>
+<p>From the course material:</p>
+<div class="exercise">
+<p>Verify that in the instant run-off example the two voters who switch to <span class="math inline">\(A &gt; B &gt; C\)</span> cause <span class="math inline">\(A\)</span> to lose, and compute the Condorcet winner (if any) in both profiles.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Original: first places <span class="math inline">\(A\)</span> 6, <span class="math inline">\(C\)</span> 5, <span class="math inline">\(B\)</span> 6 → <span class="math inline">\(C\)</span> out, its 5 votes go to <span class="math inline">\(A\)</span> → <span class="math inline">\(A\)</span> 11. Pairwise: <span class="math inline">\(A\)</span> vs <span class="math inline">\(B\)</span>: <span class="math inline">\(6 + 5 = 11\)</span> prefer <span class="math inline">\(A\)</span>; <span class="math inline">\(A\)</span> vs <span class="math inline">\(C\)</span>: <span class="math inline">\(6 + 2 = 8\)</span> prefer <span class="math inline">\(A\)</span> vs <span class="math inline">\(9\)</span> prefer <span class="math inline">\(C\)</span>, so <span class="math inline">\(C\)</span> beats <span class="math inline">\(A\)</span>; <span class="math inline">\(B\)</span> vs <span class="math inline">\(C\)</span>: <span class="math inline">\(6+4+2=12\)</span> prefer <span class="math inline">\(B\)</span>. <span class="math inline">\(B &gt; C &gt; A\)</span> and <span class="math inline">\(A &gt; B\)</span>: a cycle, no Condorcet winner. Modified profile: first places <span class="math inline">\(A\)</span> 8, <span class="math inline">\(C\)</span> 5, <span class="math inline">\(B\)</span> 4 → <span class="math inline">\(B\)</span> out, its 4 votes go to <span class="math inline">\(C\)</span> → <span class="math inline">\(C\)</span> 9 beats <span class="math inline">\(A\)</span> 8. Pairwise: <span class="math inline">\(A &gt; B\)</span> (13–4), <span class="math inline">\(C &gt; A\)</span> (9–8), <span class="math inline">\(B &gt; C\)</span> (12–5): again a cycle.</p>
+</div>
+<div class="exercise">
+<p>Show that majority rule over three alternatives is transitive whenever all voters’ preferences are single-peaked on the order <span class="math inline">\(A &lt; B &lt; C\)</span>.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Single-peakedness on <span class="math inline">\(A&lt;B&lt;C\)</span> forbids <span class="math inline">\(B\)</span> being ranked last, leaving the orders <span class="math inline">\(ABC\)</span>, <span class="math inline">\(BAC\)</span>, <span class="math inline">\(BCA\)</span>, <span class="math inline">\(CBA\)</span>. A cycle <span class="math inline">\(A &gt; B &gt; C &gt; A\)</span> would need a strict majority with <span class="math inline">\(A\)</span> over <span class="math inline">\(B\)</span> (only <span class="math inline">\(ABC\)</span> voters) <em>and</em> a strict majority with <span class="math inline">\(C\)</span> over <span class="math inline">\(A\)</span> (only <span class="math inline">\(BCA\)</span>, <span class="math inline">\(CBA\)</span> voters): two disjoint groups, each larger than <span class="math inline">\(n/2\)</span> — impossible. The reverse cycle <span class="math inline">\(A &gt; C &gt; B &gt; A\)</span> needs a majority with <span class="math inline">\(C\)</span> over <span class="math inline">\(B\)</span> (only <span class="math inline">\(CBA\)</span>) and one with <span class="math inline">\(A\)</span> over <span class="math inline">\(C\)</span> (<span class="math inline">\(ABC\)</span>, <span class="math inline">\(BAC\)</span>), again disjoint. Hence no cycle exists and majority rule is transitive; in fact the median voter’s ranking decides every pairwise contest.</p>
+</div>
+</section>
+<section id="sources" class="level2" data-number="7.8">
+<h2 data-number="7.8" class="anchored" data-anchor-id="sources"><span class="header-section-number">7.8</span> Sources</h2>
+<p>Prof.&nbsp;Badia, <em>Game Theory</em> slides, deck <code>Gth2005</code> (constitutions, Arrow’s theorem, Condorcet cycles, electoral systems, agenda setting, manipulation, Gibbard–Satterthwaite, majority rule). Original references: K. Arrow, <em>Social Choice and Individual Values</em>, Wiley (1951); A. Gibbard, Econometrica <strong>41</strong>, 587 (1973); M. Satterthwaite, J. Econ. Theory <strong>10</strong>, 187 (1975); D. Black, J. Polit. Econ. <strong>56</strong>, 23 (1948). Exercises: L. Badia and T. Marchioro, <em>Game Theory: A Handbook of Problems and Exercises</em>, Esculapio (2022), Chapter 4.</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/06-zero-sum-games.html" class="pagination-link" aria-label="Security strategies and zero-sum games">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Security strategies and zero-sum games</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/08-extensive-form-games.html" class="pagination-link" aria-label="Extensive-form games">
+        <span class="nav-page-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Extensive-form games</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Social choice and voting"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Chapter 1 showed that a single rational decision maker has a utility function. Can a *group* of rational individuals be summarised by a rational collective preference? The question matters well beyond elections: scheduling packets under several criteria, choosing among solutions of a multi-objective optimisation, or allocating resources by competing priorities are all "votes". The answer, in the form of Arrow's impossibility theorem, is essentially negative, and the paradoxes of voting systems show why.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Constitutions</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Let $\mathcal R(A)$ be the set of rational preferences on a set of alternatives $A$, and let $n$ individuals have preferences $(\succeq_1, \dots, \succeq_n)$, a **profile**.</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Constitution"}</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>A **constitution** (social welfare function) is a map $f : \mathcal R(A)^n \to \mathcal R(A)$ turning every profile into a social preference $\succeq = f(\succeq_1, \dots, \succeq_n)$. For $Y \subseteq A$, $\succeq|_Y = \succeq \cap (Y \times Y)$ denotes the restriction to $Y$.</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Properties of constitutions"}</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Independence of irrelevant alternatives (IIA):** if two profiles agree on the pair $<span class="sc">\{</span>a, b<span class="sc">\}</span>$ for every individual, the social preferences agree on $<span class="sc">\{</span>a, b<span class="sc">\}</span>$. Adding or removing other alternatives does not change how society ranks $a$ against $b$.</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Pareto efficiency:** if $a \succeq_i b$ for every $i$, then $a \succeq b$.</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Dictatorship:** there is an individual $i$ such that $a \succeq_i b$ implies $a \succeq b$ for every profile.</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Monotonicity:** if one individual raises an alternative in their ranking, society does not rank it lower.</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Non-imposition:** every rational preference is the output of some profile ($f$ is surjective).</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Arrow, 1951"}</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>With at least three alternatives, no constitution is simultaneously non-dictatorial, monotonic, IIA and non-imposed. Equivalently (1963 version): every Pareto-efficient constitution satisfying IIA is a dictatorship.</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="fu">## Majority rule and Condorcet cycles</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>With two candidates, majority rule is unproblematic. With three it can fail spectacularly:</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> voter <span class="pp">|</span> 1 <span class="pp">|</span> 2 <span class="pp">|</span> 3 <span class="pp">|</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> best <span class="pp">|</span> A <span class="pp">|</span> C <span class="pp">|</span> B <span class="pp">|</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> B <span class="pp">|</span> A <span class="pp">|</span> C <span class="pp">|</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> worst <span class="pp">|</span> C <span class="pp">|</span> B <span class="pp">|</span> A <span class="pp">|</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>Pairwise, $A$ beats $B$ (voters 1, 2), $B$ beats $C$ (voters 1, 3), and $C$ beats $A$ (voters 2, 3). Majority preference is **not transitive**.</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Condorcet winner and cycle"}</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>A candidate beating every other in pairwise majority contests is a **Condorcet winner**; one beaten by every other is a **Condorcet loser**. If no Condorcet winner exists, majority preference contains a **Condorcet cycle**.</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>Three-candidate profiles arise from two-candidate ones by inserting the third candidate somewhere in each voter's ranking; depending on where it goes, the newcomer can become a Condorcet winner, a Condorcet loser, or close a cycle. Cycles cannot occur with two alternatives, but with random preferences their probability grows with the number of candidates:</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> candidates <span class="sc">\\</span> voters <span class="pp">|</span> 3 <span class="pp">|</span> 5 <span class="pp">|</span> 7 <span class="pp">|</span> 9 <span class="pp">|</span> $\infty$ <span class="pp">|</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 3 <span class="pp">|</span> 5.6% <span class="pp">|</span> 6.9% <span class="pp">|</span> 7.5% <span class="pp">|</span> 7.8% <span class="pp">|</span> 8.8% <span class="pp">|</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 5 <span class="pp">|</span> 16.0% <span class="pp">|</span> 20.0% <span class="pp">|</span> 21.5% <span class="pp">|</span> 23.0% <span class="pp">|</span> 25.1% <span class="pp">|</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 7 <span class="pp">|</span> 23.9% <span class="pp">|</span> 29.9% <span class="pp">|</span> 30.5% <span class="pp">|</span> 34.2% <span class="pp">|</span> 36.9% <span class="pp">|</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $\infty$ <span class="pp">|</span> 100% <span class="pp">|</span> 100% <span class="pp">|</span> 100% <span class="pp">|</span> 100% <span class="pp">|</span> 100% <span class="pp">|</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>Real examples abound: fiscal policies ranked by liberals, anti-deficit voters and conservatives over combinations of taxes and spending; or traffic classes (voice over IP, video streaming, best-effort data) ranked by delay, loss and fairness criteria, each criterion being a "voter".</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="fu">## Electoral systems and their paradoxes</span></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>**Plurality voting:** the candidate with the most first places wins. With $9$ voters</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> voters <span class="pp">|</span> 4 <span class="pp">|</span> 3 <span class="pp">|</span> 2 <span class="pp">|</span></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> best <span class="pp">|</span> A <span class="pp">|</span> B <span class="pp">|</span> C <span class="pp">|</span></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> B <span class="pp">|</span> C <span class="pp">|</span> B <span class="pp">|</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> worst <span class="pp">|</span> C <span class="pp">|</span> A <span class="pp">|</span> A <span class="pp">|</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>$A$ wins with $4$ first places, yet a majority prefers $B$ to $A$ and $C$ to $A$, and $B$ is the Condorcet winner.</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>**Two-round run-off:** the top two meet in a ballot. With</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> voters <span class="pp">|</span> 4 <span class="pp">|</span> 3 <span class="pp">|</span> 2 <span class="pp">|</span></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> best <span class="pp">|</span> A <span class="pp">|</span> B <span class="pp">|</span> C <span class="pp">|</span></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> C <span class="pp">|</span> C <span class="pp">|</span> B <span class="pp">|</span></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> worst <span class="pp">|</span> B <span class="pp">|</span> A <span class="pp">|</span> A <span class="pp">|</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>$A$ and $B$ reach the ballot and $B$ wins $5$–$4$, while the Condorcet winner $C$ does not even make it to the second round. Plurality and run-off favour polarised candidates over compromise ones.</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>**Borda count:** with $M$ candidates each voter gives $M-1$ points to the first, $M-2$ to the second, …, $0$ to the last. With</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> voters <span class="pp">|</span> 5 <span class="pp">|</span> 3 <span class="pp">|</span> 1 <span class="pp">|</span></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> best <span class="pp">|</span> A <span class="pp">|</span> B <span class="pp">|</span> C <span class="pp">|</span></span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> B <span class="pp">|</span> C <span class="pp">|</span> B <span class="pp">|</span></span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> worst <span class="pp">|</span> C <span class="pp">|</span> A <span class="pp">|</span> A <span class="pp">|</span></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>$A$ gets $10$, $B$ $12$, $C$ $5$: $B$ wins although $A$ is the Condorcet winner. Borda also violates IIA dramatically. With four candidates</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> voters <span class="pp">|</span> 5 <span class="pp">|</span> 2 <span class="pp">|</span> 2 <span class="pp">|</span></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> best <span class="pp">|</span> D <span class="pp">|</span> A <span class="pp">|</span> A <span class="pp">|</span></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> C <span class="pp">|</span> D <span class="pp">|</span> B <span class="pp">|</span></span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> B <span class="pp">|</span> B <span class="pp">|</span> D <span class="pp">|</span></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> worst <span class="pp">|</span> A <span class="pp">|</span> C <span class="pp">|</span> C <span class="pp">|</span></span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>the ranking is $D$ (21), $A$ (12), $B$ (11), $C$ (10). If $D$ withdraws, the scores become $C$ 10, $B$ 9, $A$ 8: the order of the remaining three is *entirely reversed*.</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>**Approval voting:** each voter approves $N$ candidates, one point each ($N = 1$ is plurality). With</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> voters <span class="pp">|</span> 3 <span class="pp">|</span> 3 <span class="pp">|</span> 2 <span class="pp">|</span> 1 <span class="pp">|</span></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> best <span class="pp">|</span> A <span class="pp">|</span> D <span class="pp">|</span> B <span class="pp">|</span> A <span class="pp">|</span></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> C <span class="pp">|</span> B <span class="pp">|</span> D <span class="pp">|</span> B <span class="pp">|</span></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> D <span class="pp">|</span> C <span class="pp">|</span> C <span class="pp">|</span> C <span class="pp">|</span></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> worst <span class="pp">|</span> B <span class="pp">|</span> A <span class="pp">|</span> A <span class="pp">|</span> D <span class="pp">|</span></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>top-2 approval elects $B$ (A 4, B 6, C 3, D 5), top-3 approval elects $C$ (A 4, B 6, C 9, D 8), plurality elects $A$, and Borda elects $D$ (16 vs. 14, 12, 12). Four systems, four winners.</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>**Instant run-off:** voters rank all candidates; the candidate with the fewest first places is repeatedly eliminated and their votes transferred. With</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> voters <span class="pp">|</span> 6 <span class="pp">|</span> 5 <span class="pp">|</span> 4 <span class="pp">|</span> 2 <span class="pp">|</span></span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> best <span class="pp">|</span> A <span class="pp">|</span> C <span class="pp">|</span> B <span class="pp">|</span> B <span class="pp">|</span></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> B <span class="pp">|</span> A <span class="pp">|</span> C <span class="pp">|</span> A <span class="pp">|</span></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> worst <span class="pp">|</span> C <span class="pp">|</span> B <span class="pp">|</span> A <span class="pp">|</span> C <span class="pp">|</span></span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>$C$ is eliminated first and $A$ wins with $11$ votes. If the last two voters *raise* $A$ to first place, $B$ is eliminated first, its four votes go to $C$, and $C$ beats $A$ $9$–$8$. **$A$ loses because of increased support** — a violation of monotonicity.</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="fu">## Agenda setting and manipulation</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>Sequential pairwise votes look fair but are not under a Condorcet cycle. With $A &gt; B &gt; C &gt; A$, "first $A$ vs. $B$, then the winner vs. $C$" elects $C$; "first $B$ vs. $C$, then the winner vs. $A$" elects $A$. Whoever sets the agenda chooses the winner. The power is not unlimited: a Condorcet loser $D$ can never win, and a Condorcet winner always does.</span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>Voters can also misreport. With</span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> voters <span class="pp">|</span> 4 <span class="pp">|</span> 3 <span class="pp">|</span> 2 <span class="pp">|</span></span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> best <span class="pp">|</span> A <span class="pp">|</span> B <span class="pp">|</span> C <span class="pp">|</span></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> D <span class="pp">|</span> A <span class="pp">|</span> B <span class="pp">|</span></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> C <span class="pp">|</span> D <span class="pp">|</span> D <span class="pp">|</span></span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> worst <span class="pp">|</span> B <span class="pp">|</span> C <span class="pp">|</span> A <span class="pp">|</span></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>$A$ wins under plurality. Voters 8–9, for whom $A$ is the worst, can report $B$ first and make $B$ win. Voters 1–4 can pre-empt this by reporting $C$, who then wins with only two sincere supporters; $B$'s supporters can in turn switch to $A$. The outcome depends on who cheats first.</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Strategy-proofness"}</span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>A social choice rule is **strategy-proof** (non-manipulable) if for every profile no individual $j$ obtains an outcome they strictly prefer by reporting $\succeq_j'$ instead of their true $\succeq_j$.</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Gibbard–Satterthwaite"}</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>With at least three alternatives, every strategy-proof social choice rule whose range includes every alternative is a dictatorship.</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ways out</span></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>No universally good system exists, but there are escape routes:</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Weaken the axioms** (e.g. drop IIA, as Borda does).</span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Restrict the domain** of admissible profiles. Majority rule, $a \succeq b \iff |\{i : a \succeq_i b\}| \geq |\{i : b \succeq_i a\}|$, is Pareto efficient, IIA and non-dictatorial, but in general not transitive because of Condorcet cycles — so it is not a constitution. On domains where cycles cannot occur it becomes one: Black (1948) showed this for **single-peaked** preferences (alternatives on a line, each voter preferring options closer to their ideal point), Sen (1966) gave more general conditions.</span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Change the ballot:** approval voting with free choice of $N$, or voting "for" and "against".</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>For engineering, the lesson is that aggregating several performance criteria into a single ranking is never neutral. Every scalarisation (weighted sums are Borda-like) embodies choices that can reverse rankings when an irrelevant option is added or removed.</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a><span class="fu">## Voting as a game</span></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>An election can itself be modelled as a static game: voters are players, ballots are strategies, and the rule maps profiles to outcomes. Three observations follow.</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Two candidates:** voting sincerely is weakly dominant, since your ballot matters only when it is pivotal, and then you want your favourite to win. The median voter result of Chapter 4 describes the candidates' side of this game.</span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Three or more candidates:** sincere voting is generally *not* an equilibrium. Under plurality, supporters of a hopeless candidate prefer to vote for the lesser evil among the front-runners, which is why plurality systems tend to two parties (**Duverger's law**). Run-off systems invite subtler manipulation: supporting a weak opponent in the first round to meet them in the second.</span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Equilibrium is too permissive:** with many voters no single ballot is pivotal, so *every* profile in which a candidate wins by two or more votes is a Nash equilibrium, including everyone voting for their least favourite. One must first delete weakly dominated ballots, or study coalitions of like-minded voters, as in the exercises.</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>The Gibbard–Satterthwaite theorem guarantees that some profile always rewards misreporting. The useful question for a given rule is therefore *who* can manipulate, and whether the others can counter it. A **Condorcet winner**, when it exists, is robust: any coalition preferring another candidate is a minority in the head-to-head comparison.</span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>Problems from Badia and Marchioro (BM), Chapter 4.</span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>**(BM 4.8)** Thirteen students elect a class representative by plurality among A, B, C. Preferences: students 1–5: $A \succ B \succ C$; 6–9: $B \succ C \succ A$; 10–12: $C \succ B \succ A$; 13: $C \succ A \succ B$. (a) Who wins with sincere voting? (b) How can students 10–12 manipulate the result? (c) Can A's supporters counter?</span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>(a) A $5$, B $4$, C $4$: A wins. (b) Students 10–12 prefer B to A: voting B gives B $7$ votes and B wins. (c) A's supporters could only block B by voting C, which would at best tie and which they dislike more than B. They have no counter. B is the **Condorcet winner** (B beats A $7$–$6$ and C $9$–$4$), so the manipulation actually restores the majority's choice.</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>**(BM 4.9)** A two-round run-off among A (42%, $B \succ C \succ D$ after A), B (11%, $A \succ C \succ D$), C (27%, $B \succ D \succ A$), D (20%, $C \succ B \succ A$). (a) Sincere outcome? (b) Best strategic vote for D's supporters? (c) Who wins then, and can A's supporters respond?</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>(a) A and C reach the ballot; B's voters prefer A, so A wins $53$–$47$. (b) D's supporters prefer B to A: voting B in round one sends A and B to the ballot (B $31\%$, C $27\%$). (c) B wins the ballot with $58\%$ (everyone but A's supporters): B is the Condorcet winner despite the fewest first preferences. A's supporters cannot beat B head-to-head, so they must keep B out of the ballot. If $7$ of their $42$ points vote C in round one (A $35$, C $34$, B $31$), A meets C again and wins $53$–$47$. Manipulation invites counter-manipulation, and the outcome depends on who coordinates better.</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>From the course material:</span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>Verify that in the instant run-off example the two voters who switch to $A &gt; B &gt; C$ cause $A$ to lose, and compute the Condorcet winner (if any) in both profiles.</span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>Original: first places $A$ 6, $C$ 5, $B$ 6 → $C$ out, its 5 votes go to $A$ → $A$ 11. Pairwise: $A$ vs $B$: $6 + 5 = 11$ prefer $A$; $A$ vs $C$: $6 + 2 = 8$ prefer $A$ vs $9$ prefer $C$, so $C$ beats $A$; $B$ vs $C$: $6+4+2=12$ prefer $B$. $B &gt; C &gt; A$ and $A &gt; B$: a cycle, no Condorcet winner. Modified profile: first places $A$ 8, $C$ 5, $B$ 4 → $B$ out, its 4 votes go to $C$ → $C$ 9 beats $A$ 8. Pairwise: $A &gt; B$ (13–4), $C &gt; A$ (9–8), $B &gt; C$ (12–5): again a cycle.</span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>Show that majority rule over three alternatives is transitive whenever all voters' preferences are single-peaked on the order $A &lt; B &lt; C$.</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>Single-peakedness on $A&lt;B&lt;C$ forbids $B$ being ranked last, leaving the orders $ABC$, $BAC$, $BCA$, $CBA$. A cycle $A &gt; B &gt; C &gt; A$ would need a strict majority with $A$ over $B$ (only $ABC$ voters) *and* a strict majority with $C$ over $A$ (only $BCA$, $CBA$ voters): two disjoint groups, each larger than $n/2$ — impossible. The reverse cycle $A &gt; C &gt; B &gt; A$ needs a majority with $C$ over $B$ (only $CBA$) and one with $A$ over $C$ ($ABC$, $BAC$), again disjoint. Hence no cycle exists and majority rule is transitive; in fact the median voter's ranking decides every pairwise contest.</span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>Prof. Badia, *Game Theory* slides, deck `Gth2005` (constitutions, Arrow's theorem, Condorcet cycles, electoral systems, agenda setting, manipulation, Gibbard–Satterthwaite, majority rule). Original references: K. Arrow, *Social Choice and Individual Values*, Wiley (1951); A. Gibbard, Econometrica **41**, 587 (1973); M. Satterthwaite, J. Econ. Theory **10**, 187 (1975); D. Black, J. Polit. Econ. **56**, 23 (1948). Exercises: L. Badia and T. Marchioro, *Game Theory: A Handbook of Problems and Exercises*, Esculapio (2022), Chapter 4.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

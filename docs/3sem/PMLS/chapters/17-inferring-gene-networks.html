@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>17&nbsp; Inferring gene interaction networks by maximum entropy – Physical Models of Living Systems</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/18-proteins-and-polymers.html" rel="next">
+<link href="../chapters/16-genetic-circuits.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-12757e4b7af482b2d9c5bd8860d2b707.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-3fda7689cb8c4ed59160d7ff94eb8d4f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/14-stochastic-gene-expression.html">Part III: Physics of the cell</a></li><li class="breadcrumb-item"><a href="../chapters/17-inferring-gene-networks.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Inferring gene interaction networks by maximum entropy</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Physical Models of Living Systems</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About these notes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Ecology</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction: living systems as complex systems</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-single-species-dynamics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Dynamics of a single species</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-neutral-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Many species: neutral theory and upscaling</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-spatial-temporal-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Spatial and temporal patterns of biodiversity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-predator-prey.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Two interacting species: predators, prey and noise</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-random-matrices-and-stability.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Many interacting species: random matrices and stability</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-mutualism-competition-resources.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Mutualism, competition for resources and metabolic scaling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Neuroscience</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-brain-and-spike-statistics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">The brain as a complex system: measuring and describing neural activity</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-single-neuron-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Single-neuron dynamics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-firing-rate-networks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Firing-rate networks and Wilson–Cowan dynamics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-plasticity-and-hopfield.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Plasticity, learning and associative memory</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-boltzmann-machines.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Boltzmann machines and maximum entropy</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-brain-criticality.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Whole-brain models and brain criticality</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: Physics of the cell</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-stochastic-gene-expression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">The cell and stochastic gene expression</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-thermodynamics-and-molecular-motors.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Life at the micro-scale: information, ratchets and molecular motors</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/16-genetic-circuits.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Gene regulation and genetic circuits</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/17-inferring-gene-networks.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Inferring gene interaction networks by maximum entropy</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/18-proteins-and-polymers.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Proteins as physical objects: polymers, folding and the tube model</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#gene-expression-data" id="toc-gene-expression-data" class="nav-link active" data-scroll-target="#gene-expression-data"><span class="header-section-number">17.1</span> Gene expression data</a></li>
+  <li><a href="#the-maximum-entropy-principle" id="toc-the-maximum-entropy-principle" class="nav-link" data-scroll-target="#the-maximum-entropy-principle"><span class="header-section-number">17.2</span> The maximum-entropy principle</a>
+  <ul class="collapse">
+  <li><a href="#continuous-expression-levels" id="toc-continuous-expression-levels" class="nav-link" data-scroll-target="#continuous-expression-levels"><span class="header-section-number">17.2.1</span> Continuous expression levels</a></li>
+  <li><a href="#the-undersampled-regime" id="toc-the-undersampled-regime" class="nav-link" data-scroll-target="#the-undersampled-regime"><span class="header-section-number">17.2.2</span> The undersampled regime</a></li>
+  <li><a href="#are-pairwise-interactions-enough" id="toc-are-pairwise-interactions-enough" class="nav-link" data-scroll-target="#are-pairwise-interactions-enough"><span class="header-section-number">17.2.3</span> Are pairwise interactions enough?</a></li>
+  </ul></li>
+  <li><a href="#binary-expression-and-the-ising-model" id="toc-binary-expression-and-the-ising-model" class="nav-link" data-scroll-target="#binary-expression-and-the-ising-model"><span class="header-section-number">17.3</span> Binary expression and the Ising model</a></li>
+  <li><a href="#a-kinetic-ising-model-for-single-cell-data" id="toc-a-kinetic-ising-model-for-single-cell-data" class="nav-link" data-scroll-target="#a-kinetic-ising-model-for-single-cell-data"><span class="header-section-number">17.4</span> A kinetic Ising model for single-cell data</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">17.5</span> Exercises</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">17.6</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/14-stochastic-gene-expression.html">Part III: Physics of the cell</a></li><li class="breadcrumb-item"><a href="../chapters/17-inferring-gene-networks.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Inferring gene interaction networks by maximum entropy</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Inferring gene interaction networks by maximum entropy</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Chapter 16 started from known regulatory interactions and predicted the dynamics. In practice the problem is reversed: we measure the expression of thousands of genes in many samples or single cells, and want to infer who regulates whom. This chapter treats network inference as a statistical-physics inverse problem. The <strong>maximum-entropy principle</strong> gives the least biased model that reproduces the measured means and correlations. For Gaussian data the inferred interaction matrix is the inverse of the covariance matrix, which separates direct interactions from indirect correlations. For binarised single-cell data, a kinetic (asymmetric) Ising model learned from time-ordered cells yields directed, signed networks able to predict the effect of perturbations.</p>
+<section id="gene-expression-data" class="level2" data-number="17.1">
+<h2 data-number="17.1" class="anchored" data-anchor-id="gene-expression-data"><span class="header-section-number">17.1</span> Gene expression data</h2>
+<p>A typical dataset is a matrix of counts <span class="math inline">\(n_{it}\)</span>: the number of mRNA reads of gene <span class="math inline">\(i = 1, \dots, N\)</span> in sample (or cell) <span class="math inline">\(t = 1, \dots, T\)</span>. Before analysis, raw counts are normalised for sequencing depth (<span class="math inline">\(\sum_in_{it}\)</span>) and gene length <span class="math inline">\(L_i\)</span>, and log-transformed: <span class="math display">\[x_{it} = \log\frac{n_{it}}{L_i\,\sum_jn_{jt}} \quad\text{(up to constants)}.\]</span> <strong>Bulk</strong> RNA-seq averages millions of cells per sample. <strong>Single-cell</strong> RNA-seq (scRNA-seq) measures individual cells, revealing heterogeneity and transitions between states, but each cell is measured only once (it is destroyed). Dynamics must be reconstructed from snapshots, e.g.&nbsp;by ordering cells along a <strong>pseudotime</strong> of differentiation.</p>
+<p>From the data we can estimate the means <span class="math inline">\(\langle x_i\rangle\)</span> and the pairwise correlations <span class="math inline">\(\langle x_ix_j\rangle\)</span>. Ideally we would like the full joint distribution <span class="math inline">\(p(x_1, \dots, x_N)\)</span>, but with <span class="math inline">\(N \sim 10^4\)</span> genes and <span class="math inline">\(T \ll\)</span> the number of possible states, it cannot be estimated directly. A principled proxy is needed.</p>
+</section>
+<section id="the-maximum-entropy-principle" class="level2" data-number="17.2">
+<h2 data-number="17.2" class="anchored" data-anchor-id="the-maximum-entropy-principle"><span class="header-section-number">17.2</span> The maximum-entropy principle</h2>
+<p>Among all distributions consistent with what we know, choose the one that assumes nothing else: the one maximising the entropy <span class="math inline">\(S[\rho] = -\sum_{\mathbf x}\rho(\mathbf x)\ln\rho(\mathbf x)\)</span> (Jaynes, 1957). Imposing normalisation, the means and the second moments, with Lagrange multipliers <span class="math inline">\(\nu\)</span>, <span class="math inline">\(\psi_i\)</span> and <span class="math inline">\(\lambda_{ij}\)</span>, <span class="math display">\[\mathcal S = S[\rho] - \nu\Bigl(\sum\rho - 1\Bigr) - \sum_i\psi_i\Bigl(\sum\rho\,x_i - \langle x_i\rangle\Bigr) - \sum_{i\leq j}\lambda_{ij}\Bigl(\sum\rho\,x_ix_j - \langle x_ix_j\rangle\Bigr).\]</span> Setting <span class="math inline">\(\delta\mathcal S/\delta\rho = 0\)</span>: <span class="math display">\[\rho(\mathbf x) = \frac1Z\exp\Bigl(-\boldsymbol\psi\cdot\mathbf x - \frac12\mathbf x^\top M\mathbf x\Bigr), \qquad M_{ij} = \lambda_{ij} + \lambda_{ji}.\]</span></p>
+<section id="continuous-expression-levels" class="level3" data-number="17.2.1">
+<h3 data-number="17.2.1" class="anchored" data-anchor-id="continuous-expression-levels"><span class="header-section-number">17.2.1</span> Continuous expression levels</h3>
+<p>For continuous <span class="math inline">\(x\)</span> the maximum-entropy distribution is a <strong>multivariate Gaussian</strong>. Completing the square, <span class="math inline">\(\mathbf y = \mathbf x + M^{-1}\boldsymbol\psi\)</span>, it is centred at <span class="math inline">\(\langle\mathbf x\rangle = -M^{-1}\boldsymbol\psi\)</span> with covariance <span class="math display">\[C_{ij} = \langle x_ix_j\rangle - \langle x_i\rangle\langle x_j\rangle = (M^{-1})_{ij} .\]</span> So the interaction matrix is the <strong>inverse of the covariance matrix</strong> (the precision matrix): <span class="math display">\[M = C^{-1} .\]</span> The model has <span class="math inline">\(N + N(N + 1)/2\)</span> parameters, exactly the number of constraints, and the “Hamiltonian” <span class="math inline">\(H = \frac12\mathbf x^\top M\mathbf x + \boldsymbol\psi\cdot\mathbf x\)</span> reads <span class="math inline">\(M_{ij}\)</span> as the effective <strong>interaction</strong> between genes <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>.</p>
+<div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>Correlation is not interaction. If gene <span class="math inline">\(A\)</span> regulates <span class="math inline">\(B\)</span> and <span class="math inline">\(B\)</span> regulates <span class="math inline">\(C\)</span>, then <span class="math inline">\(A\)</span> and <span class="math inline">\(C\)</span> are correlated although they do not interact directly. Biologists often build “co-expression networks” by thresholding correlations, which mixes direct and indirect effects. The inverse covariance removes the indirect contributions: <span class="math inline">\(M_{ij}\)</span> is proportional to the <strong>partial correlation</strong> of <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> given all other genes, and is zero when <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> are conditionally independent.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="the-undersampled-regime" class="level3" data-number="17.2.2">
+<h3 data-number="17.2.2" class="anchored" data-anchor-id="the-undersampled-regime"><span class="header-section-number">17.2.2</span> The undersampled regime</h3>
+<p>With <span class="math inline">\(T &lt; N\)</span> samples the empirical covariance matrix has rank at most <span class="math inline">\(T\)</span> and cannot be inverted. Lezon et al.&nbsp;(2006) used the spectral decomposition <span class="math display">\[C = \sum_{k=1}^N\omega_k\,\mathbf v^{(k)}\mathbf v^{(k)\top},\]</span> keeping only the <span class="math inline">\(T - 1\)</span> non-zero eigenvalues and defining the <strong>pseudo-inverse</strong> <span class="math inline">\(M = \sum_{k:\omega_k &gt; 0}\omega_k^{-1}\mathbf v^{(k)}\mathbf v^{(k)\top}\)</span>. Regularised alternatives (ridge, the graphical lasso with an <span class="math inline">\(\ell_1\)</span> penalty that favours sparse <span class="math inline">\(M\)</span>) are used in practice.</p>
+</section>
+<section id="are-pairwise-interactions-enough" class="level3" data-number="17.2.3">
+<h3 data-number="17.2.3" class="anchored" data-anchor-id="are-pairwise-interactions-enough"><span class="header-section-number">17.2.3</span> Are pairwise interactions enough?</h3>
+<p>The maximum-entropy model can be extended with three-body terms, <span class="math inline">\(H \supset \sum T_{ijk}x_ix_jx_k\)</span>. Applied to time series of yeast gene expression during the metabolic cycle, the distribution of inferred pairwise couplings is broad, while that of triplet couplings is narrowly centred on zero (Lezon et al., 2006): <strong>pairwise interactions dominate</strong>. Significance is assessed with a <strong>null model</strong>: shuffling the data table independently for each gene destroys correlations while preserving single-gene statistics, and couplings within the null distribution are discarded. The inferred networks show a hub-dominated structure, with modules matching functional categories (translation, transcription, cell division, mitochondria, ribosome biogenesis).</p>
+</section>
+</section>
+<section id="binary-expression-and-the-ising-model" class="level2" data-number="17.3">
+<h2 data-number="17.3" class="anchored" data-anchor-id="binary-expression-and-the-ising-model"><span class="header-section-number">17.3</span> Binary expression and the Ising model</h2>
+<p>For many purposes it is enough to know whether a gene is “on” or “off”. Binarising each gene’s expression relative to a threshold (e.g.&nbsp;half its maximum), <span class="math display">\[s_i(t) = \begin{cases}+1 &amp; x_i(t) \geq \frac12\max_tx_i\\ -1 &amp; \text{otherwise},\end{cases}\]</span> the maximum-entropy distribution with fixed means and pairwise correlations is the Ising model of Chapter 12, <span class="math display">\[P(\mathbf s) = \frac1Z\exp\Bigl(\sum_ih_is_i + \sum_{i&lt;j}J_{ij}s_is_j\Bigr),\]</span> with symmetric couplings. Symmetric couplings cannot represent the <strong>direction</strong> of regulation (<span class="math inline">\(A\)</span> activates <span class="math inline">\(B\)</span> but not vice versa) and are learned from equal-time statistics only.</p>
+</section>
+<section id="a-kinetic-ising-model-for-single-cell-data" class="level2" data-number="17.4">
+<h2 data-number="17.4" class="anchored" data-anchor-id="a-kinetic-ising-model-for-single-cell-data"><span class="header-section-number">17.4</span> A kinetic Ising model for single-cell data</h2>
+<p>Ordering single cells along pseudotime turns snapshots into an effective time series. A <strong>kinetic (asymmetric) Ising model</strong> then describes how each gene’s state depends on the previous state of the others (Glauber dynamics, as in Chapter 10): <span class="math display">\[p\bigl(s_i(t + dt) \mid \mathbf s(t)\bigr) = \frac{\gamma\,dt}{2}\Bigl[1 + s_i(t + dt)\tanh\theta_i(t)\Bigr] + (1 - \gamma\,dt)\,\delta_{s_i(t + dt),s_i(t)}, \qquad \theta_i(t) = h_i + \sum_jJ_{ij}s_j(t),\]</span> where <span class="math inline">\(\gamma\)</span> is the update rate and <span class="math inline">\(J_{ij} \neq J_{ji}\)</span> in general. The log-likelihood of the observed sequence over the update times <span class="math inline">\(\tau_i\)</span> of each gene, <span class="math display">\[\mathcal L(\{h_i\}, \{J_{ij}\}) = \sum_i\sum_{\tau_i}\bigl[s_i(\tau_i + dt)\,\theta_i(\tau_i) - \ln2\cosh\theta_i(\tau_i)\bigr],\]</span> is maximised by gradient ascent: <span class="math display">\[\delta J_{ij} \propto \frac{\partial\mathcal L}{\partial J_{ij}} = \frac{\dot C_{ij}(0)}{\gamma} + C_{ij}(0) - \bigl\langle\tanh\theta_i(t)\,s_j(t)\bigr\rangle,\]</span> with <span class="math inline">\(C_{ij}(0) = \langle s_i(t)s_j(t)\rangle\)</span> the equal-time correlation and <span class="math inline">\(\dot C_{ij}(0)\)</span> its time derivative. The derivative term carries the directional information that equal-time statistics lack.</p>
+<p>The resulting pipeline (IGNITE, Corridori et al., 2024): quality control and normalisation, pseudotime ordering, binarisation, inference of <span class="math inline">\((h, J)\)</span> with hyperparameters selected by how well networks simulated with the learned parameters reproduce the data’s correlation matrix. Applied to mouse embryonic stem cells exiting pluripotency (from a naive to a formative state, sampled at <span class="math inline">\(0\)</span>–<span class="math inline">\(48\)</span> h), it gives:</p>
+<ul>
+<li>a directed, signed, weighted gene regulatory network among key pluripotency and differentiation genes;</li>
+<li>couplings well outside a null model built from <span class="math inline">\(\sim 2500\)</span> networks inferred from shuffled data, i.e.&nbsp;statistically significant;</li>
+<li>a fraction of correctly inferred known interactions comparable to or better than other methods (about <span class="math inline">\(0.67\)</span>, similar to MaxEnt, SCODE and CellOracle);</li>
+<li>a <strong>generative</strong> model. Simulating the learned dynamics reproduces the clustering of the data and its trajectory in principal-component space, and switching genes off in silico predicts the effect of knock-outs, which can be compared with perturbation experiments.</li>
+</ul>
+</section>
+<section id="exercises" class="level2" data-number="17.5">
+<h2 data-number="17.5" class="anchored" data-anchor-id="exercises"><span class="header-section-number">17.5</span> Exercises</h2>
+<div class="exercise">
+<p><strong>(Maximum entropy with fixed mean and variance)</strong> Show that the maximum-entropy density on <span class="math inline">\(\mathbb R\)</span> with fixed mean <span class="math inline">\(\mu\)</span> and variance <span class="math inline">\(\sigma^2\)</span> is the Gaussian, and that with only the mean fixed on <span class="math inline">\([0, \infty)\)</span> it is the exponential.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Stationarity of <span class="math inline">\(-\int\rho\ln\rho - \nu(\int\rho - 1) - \psi(\int x\rho - \mu) - \lambda(\int x^2\rho - \sigma^2 - \mu^2)\)</span> gives <span class="math inline">\(-\ln\rho - 1 - \nu - \psi x - \lambda x^2 = 0\)</span>, so <span class="math inline">\(\rho \propto e^{-\psi x - \lambda x^2}\)</span>, a Gaussian whose parameters are fixed by the constraints (<span class="math inline">\(\lambda = 1/2\sigma^2\)</span>, <span class="math inline">\(\psi = -\mu/\sigma^2\)</span>). With only the mean on <span class="math inline">\([0, \infty)\)</span>, <span class="math inline">\(\rho \propto e^{-\psi x}\)</span>: the exponential with <span class="math inline">\(\psi = 1/\mu\)</span>. Maximum entropy reproduces the familiar distributions as the least informative ones given the constraints, and the Lagrange multipliers play the role of couplings.</p>
+</div>
+<div class="exercise">
+<p><strong>(Correlation versus interaction)</strong> Three genes form a chain <span class="math inline">\(A - B - C\)</span> with Gaussian interaction matrix <span class="math inline">\(M = \begin{pmatrix}1 &amp; -0.4 &amp; 0\\ -0.4 &amp; 1 &amp; -0.4\\ 0 &amp; -0.4 &amp; 1\end{pmatrix}\)</span>. Compute the correlation matrix. Would thresholding correlations at <span class="math inline">\(0.15\)</span> recover the true network?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><span class="math inline">\(C = M^{-1} = \begin{pmatrix}1.235 &amp; 0.588 &amp; 0.235\\ 0.588 &amp; 1.471 &amp; 0.588\\ 0.235 &amp; 0.588 &amp; 1.235\end{pmatrix}\)</span>, giving correlation coefficients <span class="math inline">\(\rho_{AB} = \rho_{BC} = 0.44\)</span> and <span class="math inline">\(\rho_{AC} = 0.19\)</span>. Thresholding at <span class="math inline">\(0.15\)</span> would add a spurious <span class="math inline">\(A\)</span>–<span class="math inline">\(C\)</span> link. The partial correlations <span class="math inline">\(-M_{ij}/\sqrt{M_{ii}M_{jj}}\)</span> are <span class="math inline">\(0.4\)</span> for <span class="math inline">\(A\)</span>–<span class="math inline">\(B\)</span> and <span class="math inline">\(B\)</span>–<span class="math inline">\(C\)</span> and exactly <span class="math inline">\(0\)</span> for <span class="math inline">\(A\)</span>–<span class="math inline">\(C\)</span>: inverting the covariance removes the indirect correlation mediated by <span class="math inline">\(B\)</span>.</p>
+</div>
+<div class="exercise">
+<p><strong>(Pseudo-inverse)</strong> With <span class="math inline">\(N = 1000\)</span> genes and <span class="math inline">\(T = 50\)</span> samples, how many eigenvalues of the empirical covariance matrix are non-zero? What does the pseudo-inverse do, and what is its main limitation?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>After subtracting the sample mean, the centred data matrix has rank at most <span class="math inline">\(T - 1 = 49\)</span>, so at most <span class="math inline">\(49\)</span> eigenvalues are non-zero and <span class="math inline">\(951\)</span> vanish. The pseudo-inverse inverts <span class="math inline">\(C\)</span> on the <span class="math inline">\(49\)</span>-dimensional subspace spanned by the data and sets <span class="math inline">\(M\)</span> to zero on its complement. Interactions are thus inferred only along the directions the data explore, and the smallest non-zero eigenvalues, dominated by sampling noise, are amplified by <span class="math inline">\(1/\omega_k\)</span>. Regularisation (truncating small eigenvalues, ridge or lasso penalties) controls this noise at the cost of bias.</p>
+</div>
+<div class="exercise">
+<p><strong>(Kinetic Ising learning)</strong> For a single gene <span class="math inline">\(i\)</span> driven by a single gene <span class="math inline">\(j\)</span>, <span class="math inline">\(\theta_i = h + Js_j\)</span>, show that the maximum-likelihood conditions are <span class="math inline">\(\langle s_i^{\text{next}}\rangle = \langle\tanh\theta_i\rangle\)</span> and <span class="math inline">\(\langle s_i^{\text{next}}s_j\rangle = \langle\tanh\theta_i\,s_j\rangle\)</span>. If <span class="math inline">\(s_j = \pm1\)</span> with equal probability and <span class="math inline">\(s_i^{\text{next}} = s_j\)</span> in <span class="math inline">\(90\%\)</span> of the updates, what are <span class="math inline">\(h\)</span> and <span class="math inline">\(J\)</span>?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><span class="math inline">\(\partial\mathcal L/\partial h = \sum[s_i^{\text{next}} - \tanh\theta_i]\)</span> and <span class="math inline">\(\partial\mathcal L/\partial J = \sum[s_i^{\text{next}} - \tanh\theta_i]s_j\)</span>; setting both to zero gives the conditions. By symmetry <span class="math inline">\(h = 0\)</span>. Then <span class="math inline">\(\tanh\theta_i\,s_j = \tanh(J)\)</span> for both values of <span class="math inline">\(s_j\)</span>, and <span class="math inline">\(\langle s_i^{\text{next}}s_j\rangle = 0.9 - 0.1 = 0.8\)</span>. So <span class="math inline">\(\tanh J = 0.8\)</span> and <span class="math inline">\(J = \operatorname{artanh}0.8 = 1.10\)</span>. The coupling from <span class="math inline">\(j\)</span> to <span class="math inline">\(i\)</span> is positive (activation). The reverse coupling <span class="math inline">\(J_{ji}\)</span> is learned separately from the updates of <span class="math inline">\(j\)</span>, and may be zero.</p>
+</div>
+</section>
+<section id="sources" class="level2" data-number="17.6">
+<h2 data-number="17.6" class="anchored" data-anchor-id="sources"><span class="header-section-number">17.6</span> Sources</h2>
+<p>Lecture 20 slides (S. Suweis: gene regulation networks and expression patterns, maximum entropy inference, pairwise versus triplet interactions, null models, the IGNITE pipeline, asymmetric kinetic Ising model, benchmarks and simulated gene activity) and course materials <em>Max_ent_calculations.pdf</em>, Lezon et al.&nbsp;(2006) and Corridori et al.&nbsp;(2024). T. R. Lezon, J. R. Banavar, M. Cieplak, A. Maritan, N. V. Fedoroff, <em>Using the principle of entropy maximization to infer genetic interaction networks from gene expression patterns</em>, PNAS <strong>103</strong>, 19033 (2006). E. T. Jaynes, Phys. Rev.&nbsp;<strong>106</strong>, 620 (1957). H. C. Nguyen, R. Zecchina, J. Berg, <em>Inverse statistical problems: from the inverse Ising problem to data science</em>, Adv. Phys. <strong>66</strong>, 197 (2017).</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/16-genetic-circuits.html" class="pagination-link" aria-label="Gene regulation and genetic circuits">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Gene regulation and genetic circuits</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/18-proteins-and-polymers.html" class="pagination-link" aria-label="Proteins as physical objects: polymers, folding and the tube model">
+        <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Proteins as physical objects: polymers, folding and the tube model</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Inferring gene interaction networks by maximum entropy"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Chapter 16 started from known regulatory interactions and predicted the dynamics. In practice the problem is reversed: we measure the expression of thousands of genes in many samples or single cells, and want to infer who regulates whom. This chapter treats network inference as a statistical-physics inverse problem. The **maximum-entropy principle** gives the least biased model that reproduces the measured means and correlations. For Gaussian data the inferred interaction matrix is the inverse of the covariance matrix, which separates direct interactions from indirect correlations. For binarised single-cell data, a kinetic (asymmetric) Ising model learned from time-ordered cells yields directed, signed networks able to predict the effect of perturbations.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Gene expression data</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>A typical dataset is a matrix of counts $n_{it}$: the number of mRNA reads of gene $i = 1, \dots, N$ in sample (or cell) $t = 1, \dots, T$. Before analysis, raw counts are normalised for sequencing depth ($\sum_in_{it}$) and gene length $L_i$, and log-transformed:</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>$$x_{it} = \log\frac{n_{it}}{L_i\,\sum_jn_{jt}} \quad\text{(up to constants)}.$$</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>**Bulk** RNA-seq averages millions of cells per sample. **Single-cell** RNA-seq (scRNA-seq) measures individual cells, revealing heterogeneity and transitions between states, but each cell is measured only once (it is destroyed). Dynamics must be reconstructed from snapshots, e.g. by ordering cells along a **pseudotime** of differentiation.</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>From the data we can estimate the means $\langle x_i\rangle$ and the pairwise correlations $\langle x_ix_j\rangle$. Ideally we would like the full joint distribution $p(x_1, \dots, x_N)$, but with $N \sim 10^4$ genes and $T \ll$ the number of possible states, it cannot be estimated directly. A principled proxy is needed.</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">## The maximum-entropy principle</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>Among all distributions consistent with what we know, choose the one that assumes nothing else: the one maximising the entropy $S<span class="co">[</span><span class="ot">\rho</span><span class="co">]</span> = -\sum_{\mathbf x}\rho(\mathbf x)\ln\rho(\mathbf x)$ (Jaynes, 1957). Imposing normalisation, the means and the second moments, with Lagrange multipliers $\nu$, $\psi_i$ and $\lambda_{ij}$,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>$$\mathcal S = S<span class="co">[</span><span class="ot">\rho</span><span class="co">]</span> - \nu\Bigl(\sum\rho - 1\Bigr) - \sum_i\psi_i\Bigl(\sum\rho\,x_i - \langle x_i\rangle\Bigr) - \sum_{i\leq j}\lambda_{ij}\Bigl(\sum\rho\,x_ix_j - \langle x_ix_j\rangle\Bigr).$$</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>Setting $\delta\mathcal S/\delta\rho = 0$:</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>$$\rho(\mathbf x) = \frac1Z\exp\Bigl(-\boldsymbol\psi\cdot\mathbf x - \frac12\mathbf x^\top M\mathbf x\Bigr), \qquad M_{ij} = \lambda_{ij} + \lambda_{ji}.$$</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">### Continuous expression levels</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>For continuous $x$ the maximum-entropy distribution is a **multivariate Gaussian**. Completing the square, $\mathbf y = \mathbf x + M^{-1}\boldsymbol\psi$, it is centred at $\langle\mathbf x\rangle = -M^{-1}\boldsymbol\psi$ with covariance</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>$$C_{ij} = \langle x_ix_j\rangle - \langle x_i\rangle\langle x_j\rangle = (M^{-1})_{ij} .$$</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>So the interaction matrix is the **inverse of the covariance matrix** (the precision matrix):</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>$$M = C^{-1} .$$</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>The model has $N + N(N + 1)/2$ parameters, exactly the number of constraints, and the "Hamiltonian" $H = \frac12\mathbf x^\top M\mathbf x + \boldsymbol\psi\cdot\mathbf x$ reads $M_{ij}$ as the effective **interaction** between genes $i$ and $j$.</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>::: {.callout-important}</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>Correlation is not interaction. If gene $A$ regulates $B$ and $B$ regulates $C$, then $A$ and $C$ are correlated although they do not interact directly. Biologists often build "co-expression networks" by thresholding correlations, which mixes direct and indirect effects. The inverse covariance removes the indirect contributions: $M_{ij}$ is proportional to the **partial correlation** of $i$ and $j$ given all other genes, and is zero when $i$ and $j$ are conditionally independent.</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">### The undersampled regime</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>With $T &lt; N$ samples the empirical covariance matrix has rank at most $T$ and cannot be inverted. Lezon et al. (2006) used the spectral decomposition</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>$$C = \sum_{k=1}^N\omega_k\,\mathbf v^{(k)}\mathbf v^{(k)\top},$$</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>keeping only the $T - 1$ non-zero eigenvalues and defining the **pseudo-inverse** $M = \sum_{k:\omega_k &gt; 0}\omega_k^{-1}\mathbf v^{(k)}\mathbf v^{(k)\top}$. Regularised alternatives (ridge, the graphical lasso with an $\ell_1$ penalty that favours sparse $M$) are used in practice.</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">### Are pairwise interactions enough?</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>The maximum-entropy model can be extended with three-body terms, $H \supset \sum T_{ijk}x_ix_jx_k$. Applied to time series of yeast gene expression during the metabolic cycle, the distribution of inferred pairwise couplings is broad, while that of triplet couplings is narrowly centred on zero (Lezon et al., 2006): **pairwise interactions dominate**. Significance is assessed with a **null model**: shuffling the data table independently for each gene destroys correlations while preserving single-gene statistics, and couplings within the null distribution are discarded. The inferred networks show a hub-dominated structure, with modules matching functional categories (translation, transcription, cell division, mitochondria, ribosome biogenesis).</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="fu">## Binary expression and the Ising model</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>For many purposes it is enough to know whether a gene is "on" or "off". Binarising each gene's expression relative to a threshold (e.g. half its maximum),</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>$$s_i(t) = \begin{cases}+1 &amp; x_i(t) \geq \frac12\max_tx_i<span class="sc">\\</span> -1 &amp; \text{otherwise},\end{cases}$$</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>the maximum-entropy distribution with fixed means and pairwise correlations is the Ising model of Chapter 12,</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>$$P(\mathbf s) = \frac1Z\exp\Bigl(\sum_ih_is_i + \sum_{i&lt;j}J_{ij}s_is_j\Bigr),$$</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>with symmetric couplings. Symmetric couplings cannot represent the **direction** of regulation ($A$ activates $B$ but not vice versa) and are learned from equal-time statistics only.</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## A kinetic Ising model for single-cell data</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>Ordering single cells along pseudotime turns snapshots into an effective time series. A **kinetic (asymmetric) Ising model** then describes how each gene's state depends on the previous state of the others (Glauber dynamics, as in Chapter 10):</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>$$p\bigl(s_i(t + dt) \mid \mathbf s(t)\bigr) = \frac{\gamma\,dt}{2}\Bigl<span class="co">[</span><span class="ot">1 + s_i(t + dt)\tanh\theta_i(t)\Bigr</span><span class="co">]</span> + (1 - \gamma\,dt)\,\delta_{s_i(t + dt),s_i(t)}, \qquad \theta_i(t) = h_i + \sum_jJ_{ij}s_j(t),$$</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>where $\gamma$ is the update rate and $J_{ij} \neq J_{ji}$ in general. The log-likelihood of the observed sequence over the update times $\tau_i$ of each gene,</span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>$$\mathcal L(<span class="sc">\{</span>h_i<span class="sc">\}</span>, <span class="sc">\{</span>J_{ij}<span class="sc">\}</span>) = \sum_i\sum_{\tau_i}\bigl<span class="co">[</span><span class="ot">s_i(\tau_i + dt)\,\theta_i(\tau_i) - \ln2\cosh\theta_i(\tau_i)\bigr</span><span class="co">]</span>,$$</span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>is maximised by gradient ascent:</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>$$\delta J_{ij} \propto \frac{\partial\mathcal L}{\partial J_{ij}} = \frac{\dot C_{ij}(0)}{\gamma} + C_{ij}(0) - \bigl\langle\tanh\theta_i(t)\,s_j(t)\bigr\rangle,$$</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>with $C_{ij}(0) = \langle s_i(t)s_j(t)\rangle$ the equal-time correlation and $\dot C_{ij}(0)$ its time derivative. The derivative term carries the directional information that equal-time statistics lack.</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>The resulting pipeline (IGNITE, Corridori et al., 2024): quality control and normalisation, pseudotime ordering, binarisation, inference of $(h, J)$ with hyperparameters selected by how well networks simulated with the learned parameters reproduce the data's correlation matrix. Applied to mouse embryonic stem cells exiting pluripotency (from a naive to a formative state, sampled at $0$–$48$ h), it gives:</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a directed, signed, weighted gene regulatory network among key pluripotency and differentiation genes;</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>couplings well outside a null model built from $\sim 2500$ networks inferred from shuffled data, i.e. statistically significant;</span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a fraction of correctly inferred known interactions comparable to or better than other methods (about $0.67$, similar to MaxEnt, SCODE and CellOracle);</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>a **generative** model. Simulating the learned dynamics reproduces the clustering of the data and its trajectory in principal-component space, and switching genes off in silico predicts the effect of knock-outs, which can be compared with perturbation experiments.</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>**(Maximum entropy with fixed mean and variance)** Show that the maximum-entropy density on $\mathbb R$ with fixed mean $\mu$ and variance $\sigma^2$ is the Gaussian, and that with only the mean fixed on $[0, \infty)$ it is the exponential.</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>Stationarity of $-\int\rho\ln\rho - \nu(\int\rho - 1) - \psi(\int x\rho - \mu) - \lambda(\int x^2\rho - \sigma^2 - \mu^2)$ gives $-\ln\rho - 1 - \nu - \psi x - \lambda x^2 = 0$, so $\rho \propto e^{-\psi x - \lambda x^2}$, a Gaussian whose parameters are fixed by the constraints ($\lambda = 1/2\sigma^2$, $\psi = -\mu/\sigma^2$). With only the mean on $[0, \infty)$, $\rho \propto e^{-\psi x}$: the exponential with $\psi = 1/\mu$. Maximum entropy reproduces the familiar distributions as the least informative ones given the constraints, and the Lagrange multipliers play the role of couplings.</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>**(Correlation versus interaction)** Three genes form a chain $A - B - C$ with Gaussian interaction matrix $M = \begin{pmatrix}1 &amp; -0.4 &amp; 0<span class="sc">\\</span> -0.4 &amp; 1 &amp; -0.4<span class="sc">\\</span> 0 &amp; -0.4 &amp; 1\end{pmatrix}$. Compute the correlation matrix. Would thresholding correlations at $0.15$ recover the true network?</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>$C = M^{-1} = \begin{pmatrix}1.235 &amp; 0.588 &amp; 0.235<span class="sc">\\</span> 0.588 &amp; 1.471 &amp; 0.588<span class="sc">\\</span> 0.235 &amp; 0.588 &amp; 1.235\end{pmatrix}$, giving correlation coefficients $\rho_{AB} = \rho_{BC} = 0.44$ and $\rho_{AC} = 0.19$. Thresholding at $0.15$ would add a spurious $A$–$C$ link. The partial correlations $-M_{ij}/\sqrt{M_{ii}M_{jj}}$ are $0.4$ for $A$–$B$ and $B$–$C$ and exactly $0$ for $A$–$C$: inverting the covariance removes the indirect correlation mediated by $B$.</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>**(Pseudo-inverse)** With $N = 1000$ genes and $T = 50$ samples, how many eigenvalues of the empirical covariance matrix are non-zero? What does the pseudo-inverse do, and what is its main limitation?</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>After subtracting the sample mean, the centred data matrix has rank at most $T - 1 = 49$, so at most $49$ eigenvalues are non-zero and $951$ vanish. The pseudo-inverse inverts $C$ on the $49$-dimensional subspace spanned by the data and sets $M$ to zero on its complement. Interactions are thus inferred only along the directions the data explore, and the smallest non-zero eigenvalues, dominated by sampling noise, are amplified by $1/\omega_k$. Regularisation (truncating small eigenvalues, ridge or lasso penalties) controls this noise at the cost of bias.</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>**(Kinetic Ising learning)** For a single gene $i$ driven by a single gene $j$, $\theta_i = h + Js_j$, show that the maximum-likelihood conditions are $\langle s_i^{\text{next}}\rangle = \langle\tanh\theta_i\rangle$ and $\langle s_i^{\text{next}}s_j\rangle = \langle\tanh\theta_i\,s_j\rangle$. If $s_j = \pm1$ with equal probability and $s_i^{\text{next}} = s_j$ in $90\%$ of the updates, what are $h$ and $J$?</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>$\partial\mathcal L/\partial h = \sum<span class="co">[</span><span class="ot">s_i^{\text{next}} - \tanh\theta_i</span><span class="co">]</span>$ and $\partial\mathcal L/\partial J = \sum<span class="co">[</span><span class="ot">s_i^{\text{next}} - \tanh\theta_i</span><span class="co">]</span>s_j$; setting both to zero gives the conditions. By symmetry $h = 0$. Then $\tanh\theta_i\,s_j = \tanh(J)$ for both values of $s_j$, and $\langle s_i^{\text{next}}s_j\rangle = 0.9 - 0.1 = 0.8$. So $\tanh J = 0.8$ and $J = \operatorname{artanh}0.8 = 1.10$. The coupling from $j$ to $i$ is positive (activation). The reverse coupling $J_{ji}$ is learned separately from the updates of $j$, and may be zero.</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>Lecture 20 slides (S. Suweis: gene regulation networks and expression patterns, maximum entropy inference, pairwise versus triplet interactions, null models, the IGNITE pipeline, asymmetric kinetic Ising model, benchmarks and simulated gene activity) and course materials *Max_ent_calculations.pdf*, Lezon et al. (2006) and Corridori et al. (2024). T. R. Lezon, J. R. Banavar, M. Cieplak, A. Maritan, N. V. Fedoroff, *Using the principle of entropy maximization to infer genetic interaction networks from gene expression patterns*, PNAS **103**, 19033 (2006). E. T. Jaynes, Phys. Rev. **106**, 620 (1957). H. C. Nguyen, R. Zecchina, J. Berg, *Inverse statistical problems: from the inverse Ising problem to data science*, Adv. Phys. **66**, 197 (2017).</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>

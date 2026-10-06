@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>12&nbsp; Bayesian games – Game Theory</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/13-perfect-bayesian-equilibrium-and-signaling.html" rel="next">
+<link href="../chapters/11-bargaining-and-dynamic-duopolies.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-12757e4b7af482b2d9c5bd8860d2b707.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-3fda7689cb8c4ed59160d7ff94eb8d4f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/12-bayesian-games.html">Part IV: Incomplete information</a></li><li class="breadcrumb-item"><a href="../chapters/12-bayesian-games.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian games</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Game Theory</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About these notes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part I: Rational decisions</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/01-decision-theory.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Rational decision making</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part II: Static games of complete information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/02-static-games-and-dominance.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Static games and dominance</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/03-nash-equilibrium.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Nash equilibrium</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/04-applications-of-nash-equilibrium.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Applications of Nash equilibrium</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/05-mixed-strategies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Mixed strategies and existence</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/06-zero-sum-games.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Security strategies and zero-sum games</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/07-social-choice.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Social choice and voting</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part III: Dynamic games of complete information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/08-extensive-form-games.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Extensive-form games</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/09-subgame-perfect-equilibrium.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Credibility and subgame perfection</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/10-multistage-and-repeated-games.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Multistage and repeated games</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/11-bargaining-and-dynamic-duopolies.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Bargaining and dynamic duopolies</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part IV: Incomplete information</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/12-bayesian-games.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian games</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/13-perfect-bayesian-equilibrium-and-signaling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Perfect Bayesian equilibrium and signaling</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
+ <span class="menu-text">Part V: Mechanisms and cooperation</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/14-auctions-and-mechanism-design.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Auctions and mechanism design</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/15-cooperative-games-and-bargaining.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Coalitions and axiomatic bargaining</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#types-and-the-common-prior" id="toc-types-and-the-common-prior" class="nav-link active" data-scroll-target="#types-and-the-common-prior"><span class="header-section-number">12.1</span> Types and the common prior</a></li>
+  <li><a href="#type-contingent-strategies" id="toc-type-contingent-strategies" class="nav-link" data-scroll-target="#type-contingent-strategies"><span class="header-section-number">12.2</span> Type-contingent strategies</a></li>
+  <li><a href="#static-bayesian-games" id="toc-static-bayesian-games" class="nav-link" data-scroll-target="#static-bayesian-games"><span class="header-section-number">12.3</span> Static Bayesian games</a></li>
+  <li><a href="#harsanyis-purification-of-mixed-strategies" id="toc-harsanyis-purification-of-mixed-strategies" class="nav-link" data-scroll-target="#harsanyis-purification-of-mixed-strategies"><span class="header-section-number">12.4</span> Harsanyi’s purification of mixed strategies</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples"><span class="header-section-number">12.5</span> Examples</a></li>
+  <li><a href="#two-classic-applications" id="toc-two-classic-applications" class="nav-link" data-scroll-target="#two-classic-applications"><span class="header-section-number">12.6</span> Two classic applications</a></li>
+  <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises"><span class="header-section-number">12.7</span> Exercises</a></li>
+  <li><a href="#sources" id="toc-sources" class="nav-link" data-scroll-target="#sources"><span class="header-section-number">12.8</span> Sources</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/12-bayesian-games.html">Part IV: Incomplete information</a></li><li class="breadcrumb-item"><a href="../chapters/12-bayesian-games.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian games</span></a></li></ol></nav>
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Bayesian games</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Code</button></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Until now every player knew everyone’s payoffs. In reality a firm does not know a competitor’s costs, a bidder does not know the others’ valuations, a network node does not know whether its neighbour is selfish or malicious. Harsanyi’s insight was that such <strong>incomplete information</strong> can be absorbed into the familiar framework: let Nature draw each player’s private characteristics — their <strong>type</strong> — from a commonly known distribution, and let players form beliefs about types just as they form beliefs about actions. This chapter defines static Bayesian games and Bayesian Nash equilibrium and works through the standard examples.</p>
+<section id="types-and-the-common-prior" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="types-and-the-common-prior"><span class="header-section-number">12.1</span> Types and the common prior</h2>
+<div class="definition" name="Game of incomplete information">
+<p>A game has <strong>incomplete information</strong> if some player does not know another player’s payoff function. Each possible “version” of a player is called a <strong>type</strong>.</p>
+</div>
+<p>Harsanyi (1967–68) turned incomplete into <em>imperfect</em> information by adding a preliminary move of Nature:</p>
+<ol type="1">
+<li>Nature draws a type vector <span class="math inline">\((t_1, \dots, t_n)\)</span> from a probability distribution <span class="math inline">\(\phi\)</span>;</li>
+<li>each player <span class="math inline">\(i\)</span> observes <strong>only</strong> their own type <span class="math inline">\(t_i\)</span>;</li>
+<li>players choose their actions;</li>
+<li>payoffs, which may depend on the types, are realised.</li>
+</ol>
+<p>The result is a dynamic game in which players do not observe all of Nature’s move. Types need not describe preferences only: they can capture what a player knows about the world or about other players.</p>
+<div class="example" name="Entry with a possibly crazy incumbent">
+<p>An entrant (player 1) stays <strong>O</strong>ut, getting <span class="math inline">\(0\)</span> while the incumbent gets <span class="math inline">\(2\)</span>, or <strong>E</strong>nters. After entry the incumbent (player 2) <strong>A</strong>ccepts, giving <span class="math inline">\((1,1)\)</span>, or <strong>F</strong>ights. A <em>rational</em> incumbent gets <span class="math inline">\(-1\)</span> from fighting (so does the entrant); a <em>crazy</em> incumbent enjoys fighting and gets <span class="math inline">\(2\)</span>. Nature makes the incumbent rational with probability <span class="math inline">\(p\)</span>; the entrant does not observe the type.</p>
+<p><img src="../Grafiche/_inline_cache/3344451b65f3fa54.svg" class="tikz-figure img-fluid" alt=""></p>
+<p><em>Figure: the entry game with a rational (left) or crazy (right) incumbent; the entrant’s two nodes form one information set.</em></p>
+</div>
+<p>To best-respond, the entrant needs beliefs about the incumbent’s type. We assume that players do not know the opponents’ types but know <em>how they are drawn</em>:</p>
+<div class="definition" name="Common prior assumption">
+<p>The distribution <span class="math inline">\(\phi\)</span> of type vectors is <strong>common knowledge</strong>.</p>
+</div>
+</section>
+<section id="type-contingent-strategies" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="type-contingent-strategies"><span class="header-section-number">12.2</span> Type-contingent strategies</h2>
+<p>A strategy must now say what each <em>type</em> does. In the entry game the entrant has one type and two strategies; the incumbent moves at two information sets (one per type) and has four strategies <span class="math inline">\(xy\)</span>: <span class="math inline">\(x\)</span> for the rational type, <span class="math inline">\(y\)</span> for the crazy type. Expected payoffs follow from the prior; for instance under <span class="math inline">\((E, AF)\)</span> the entrant gets <span class="math inline">\(p \cdot 1 + (1-p)(-1) = 2p - 1\)</span> and the incumbent <span class="math inline">\(p \cdot 1 + (1-p) \cdot 2 = 2 - p\)</span>:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">1 \ 2</th>
+<th style="text-align: center;">AA</th>
+<th style="text-align: center;">AF</th>
+<th style="text-align: center;">FA</th>
+<th style="text-align: center;">FF</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>O</strong></td>
+<td style="text-align: center;">0, 2</td>
+<td style="text-align: center;">0, 2</td>
+<td style="text-align: center;">0, 2</td>
+<td style="text-align: center;">0, 2</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>E</strong></td>
+<td style="text-align: center;">1, 1</td>
+<td style="text-align: center;"><span class="math inline">\(2p-1\)</span>, <span class="math inline">\(2-p\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(1-2p\)</span>, <span class="math inline">\(1-2p\)</span></td>
+<td style="text-align: center;">−1, <span class="math inline">\(2-3p\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>For <span class="math inline">\(p = \tfrac23\)</span> the entries of row <span class="math inline">\(E\)</span> are <span class="math inline">\((1,1)\)</span>, <span class="math inline">\((\tfrac13, \tfrac43)\)</span>, <span class="math inline">\((-\tfrac13, -\tfrac13)\)</span>, <span class="math inline">\((-1, 0)\)</span>, and the game has three pure Nash equilibria: <span class="math inline">\((O, FA)\)</span>, <span class="math inline">\((O, FF)\)</span> and <span class="math inline">\((E, AF)\)</span>. Only <span class="math inline">\((E, AF)\)</span> is sequentially rational: each incumbent type does what is best <em>for that type</em> once entry has occurred (a rational incumbent accepts, a crazy one fights). If <span class="math inline">\(p &lt; \tfrac12\)</span>, then <span class="math inline">\(2p - 1 &lt; 0\)</span> and the sensible outcome becomes <span class="math inline">\((O, AF)\)</span>: the incumbent always plays <span class="math inline">\(AF\)</span>, and the entrant decides on the basis of the prior.</p>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em> (Type agents). </span>The entrant averages over the incumbent’s types — natural. The incumbent, oddly, “takes expectations over its own types”: the real players (rational 2, crazy 2) are replaced by a single meta-player choosing a plan for both. This <strong>type-agent representation</strong> gives the right best responses because a plan maximises the expected payoff iff each type’s component maximises that type’s payoff (the types’ choices do not interact). The common prior is a strong assumption — it must hold for players to be able to conjecture the outcome — and its realism must be checked in every application.</p>
+</div>
+</section>
+<section id="static-bayesian-games" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="static-bayesian-games"><span class="header-section-number">12.3</span> Static Bayesian games</h2>
+<div class="definition" name="Static Bayesian game">
+<p>A static Bayesian game is <span class="math display">\[G = \{\mathcal N;\ A_1, \dots, A_n;\ T_1, \dots, T_n;\ \phi_1, \dots, \phi_n;\ u_1, \dots, u_n\},\]</span> where <span class="math inline">\(A_i\)</span> are action sets, <span class="math inline">\(T_i\)</span> type spaces, <span class="math inline">\(\phi_i(t_{-i} \mid t_i)\)</span> player <span class="math inline">\(i\)</span>’s beliefs about the others’ types, and <span class="math inline">\(u_i(a_1, \dots, a_n; t_i)\)</span> type-dependent payoffs.</p>
+</div>
+<ul>
+<li><strong>Private values</strong> means <span class="math inline">\(u_i\)</span> depends only on <span class="math inline">\(t_i\)</span>; with <strong>common (interdependent) values</strong> <span class="math inline">\(u_i\)</span> depends on the whole type vector.</li>
+<li>Types can also restrict actions: if action <span class="math inline">\(H\)</span> is available only with probability <span class="math inline">\(q\)</span>, give player <span class="math inline">\(i\)</span> two types and set all payoffs of <span class="math inline">\(H\)</span> to <span class="math inline">\(-\infty\)</span> for the second type.</li>
+<li>With a common prior <span class="math inline">\(\phi(t_1, \dots, t_n)\)</span>, beliefs are posteriors by Bayes’ rule, <span class="math inline">\(\phi_i(t_{-i} \mid t_i) = \phi(t_i, t_{-i}) / \phi(t_i)\)</span>. Types are independent if <span class="math inline">\(\phi = \prod_i \phi(t_i)\)</span>, in which case beliefs equal the marginals.</li>
+<li>In principle one should model beliefs about beliefs about beliefs…; Harsanyi showed that the common prior collapses this hierarchy to first-order beliefs.</li>
+</ul>
+<div class="definition" name="Bayesian strategy">
+<p>A pure strategy of player <span class="math inline">\(i\)</span> is a map <span class="math inline">\(s_i : T_i \to A_i\)</span>; a mixed strategy is a distribution over such maps.</p>
+</div>
+<p>Why specify what <em>every</em> type does, when only one type is real? Not for player <span class="math inline">\(i\)</span> — but for the others, who need to form beliefs about <span class="math inline">\(i\)</span>’s behaviour. (The same reason led us to specify off-path behaviour in dynamic games.) From the opponents’ viewpoint, a player using a type-dependent pure strategy with randomly drawn type is indistinguishable from one using a mixed strategy.</p>
+<div class="definition" name="Bayesian Nash equilibrium">
+<p>A profile <span class="math inline">\(s^* = (s_1^*, \dots, s_n^*)\)</span> is a <strong>Bayesian Nash equilibrium</strong> (BNE) if for every player <span class="math inline">\(i\)</span> and every type <span class="math inline">\(t_i \in T_i\)</span>, the action <span class="math inline">\(s_i^*(t_i)\)</span> maximises <span class="math inline">\(i\)</span>’s expected payoff given their beliefs: <span class="math display">\[s_i^*(t_i) \in \arg\max_{a_i \in A_i} \sum_{t_{-i}} \phi_i(t_{-i} \mid t_i)\; u_i\bigl(a_i, s_{-i}^*(t_{-i}); t_i\bigr).\]</span></p>
+</div>
+<p>Equivalently, <span class="math inline">\(\mathbb E[u_i(s_i^*(t_i), s_{-i}^*(t_{-i}); t_i) \mid t_i] \geq \mathbb E[u_i(a_i, s_{-i}^*(t_{-i}); t_i) \mid t_i]\)</span> for all <span class="math inline">\(a_i\)</span>: nobody wants to change given what they know, and what they don’t know they estimate. With continuous types the sums become integrals.</p>
+</section>
+<section id="harsanyis-purification-of-mixed-strategies" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="harsanyis-purification-of-mixed-strategies"><span class="header-section-number">12.4</span> Harsanyi’s purification of mixed strategies</h2>
+<p>Mixed strategies were interpreted as beliefs (Chapter 5). Harsanyi made this precise: a mixed equilibrium is the limit of <strong>pure</strong> equilibria of slightly perturbed games of incomplete information.</p>
+<p>Perturb the Battle of the Sexes: Ann’s payoff at <span class="math inline">\((R,R)\)</span> becomes <span class="math inline">\(2 + c\)</span> and Brian’s at <span class="math inline">\((S,S)\)</span> becomes <span class="math inline">\(2 + d\)</span>, where <span class="math inline">\(c, d\)</span> are independent, uniform on <span class="math inline">\([0, x]\)</span>, and privately known. Look for threshold strategies: Ann plays R iff <span class="math inline">\(c &gt; C\)</span>; Brian plays S iff <span class="math inline">\(d &gt; D\)</span>.</p>
+<p>Ann does not know <span class="math inline">\(d\)</span>; Brian plays R with probability <span class="math inline">\(D/x\)</span>. Her expected payoffs are <span class="math inline">\((2 + c) D/x\)</span> from R and <span class="math inline">\(1 - D/x\)</span> from S, so she plays R iff <span class="math inline">\(c \geq x/D - 3\)</span>; hence <span class="math inline">\(C = x/D - 3\)</span>. Symmetrically <span class="math inline">\(D = x/C - 3\)</span>. Thus <span class="math inline">\(C = D\)</span> and <span class="math display">\[C^2 + 3C - x = 0 \quad\Longrightarrow\quad C = \frac{-3 + \sqrt{9 + 4x}}{2}.\]</span> Ann plays R with probability <span class="math display">\[1 - \frac{C}{x} = \frac{2x + 3 - \sqrt{9 + 4x}}{2x} \xrightarrow[x \to 0]{} \frac23,\]</span> which is exactly her probability in the mixed NE. As the perturbation vanishes, players who never actually randomise generate, from each other’s viewpoint, the mixed equilibrium.</p>
+</section>
+<section id="examples" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="examples"><span class="header-section-number">12.5</span> Examples</h2>
+<div class="example" name="Chicken with strict parents">
+<p>Two youngsters drive towards each other. A <strong>C</strong>hicken (who swerves) gets <span class="math inline">\(0\)</span>; a <strong>D</strong>river gets respect <span class="math inline">\(8\)</span> against a chicken; if both drive they split the respect (<span class="math inline">\(4\)</span> each) but crash and receive a punishment <span class="math inline">\(P\)</span> from their parents: <span class="math inline">\(P = 16\)</span> for <strong>H</strong>ard parents, <span class="math inline">\(P = 0\)</span> for <strong>L</strong>enient ones, each with probability <span class="math inline">\(\tfrac12\)</span>, independently. Each youngster knows only their own parents’ type. A strategy <span class="math inline">\(xy\)</span> is the action of the L-type and of the H-type. Expected payoffs:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">CC</th>
+<th style="text-align: center;">CD</th>
+<th style="text-align: center;">DC</th>
+<th style="text-align: center;">DD</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>CC</strong></td>
+<td style="text-align: center;">0, 0</td>
+<td style="text-align: center;">0, 4</td>
+<td style="text-align: center;">0, 4</td>
+<td style="text-align: center;">0, 8</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>CD</strong></td>
+<td style="text-align: center;">4, 0</td>
+<td style="text-align: center;">−1, −1</td>
+<td style="text-align: center;">−1, 3</td>
+<td style="text-align: center;">−6, 2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><strong>DC</strong></td>
+<td style="text-align: center;">4, 0</td>
+<td style="text-align: center;">3, −1</td>
+<td style="text-align: center;">3, 3</td>
+<td style="text-align: center;">2, 2</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>DD</strong></td>
+<td style="text-align: center;">8, 0</td>
+<td style="text-align: center;">2, −6</td>
+<td style="text-align: center;">2, 2</td>
+<td style="text-align: center;">−4, −4</td>
+</tr>
+</tbody>
+</table>
+<p>The BNE is <span class="math inline">\((DC, DC)\)</span>: lenient-parent kids drive, hard-parent kids swerve. Check type by type: against <span class="math inline">\(DC\)</span> the opponent drives with probability <span class="math inline">\(\tfrac12\)</span>; an L-type gets <span class="math inline">\(\tfrac12 \cdot 4 + \tfrac12 \cdot 8 = 6 &gt; 0\)</span> by driving, an H-type gets <span class="math inline">\(\tfrac12 (4 - 16) + \tfrac12 \cdot 8 = -2 &lt; 0\)</span>.</p>
+</div>
+<div class="example" name="Committee voting">
+<p>A jury of two decides whether to <strong>A</strong>cquit or <strong>C</strong>onvict; conviction requires both votes. The defendant is guilty (G) with common prior <span class="math inline">\(q &gt; \tfrac12\)</span>. Each juror gets payoff <span class="math inline">\(1\)</span> for a correct verdict, <span class="math inline">\(0\)</span> otherwise. Without further information C is dominant.</p>
+<p>Now each juror receives a private, conditionally independent signal <span class="math inline">\(t_i \in \{t_G, t_I\}\)</span> with <span class="math inline">\(\Pr[t_G \mid G] = \Pr[t_I \mid I] = p &gt; \tfrac12\)</span> — a binary symmetric channel. A lone juror would update <span class="math display">\[\Pr[G \mid t_G] = \frac{qp}{qp + (1-q)(1-p)} &gt; q, \qquad \Pr[G \mid t_I] = \frac{q(1-p)}{q(1-p) + (1-q)p},\]</span> and the latter is below <span class="math inline">\(\tfrac12\)</span> iff <span class="math inline">\(p &gt; q\)</span>: when the signal is more informative than the prior, a lone juror follows it.</p>
+<p>With two jurors, is “follow the signal” (<span class="math inline">\(CA\)</span>: convict on <span class="math inline">\(t_G\)</span>, acquit on <span class="math inline">\(t_I\)</span>) an equilibrium? The key is <strong>pivotality</strong>: a vote matters only if the other juror votes C, i.e.&nbsp;(under <span class="math inline">\(CA\)</span>) only if the other received <span class="math inline">\(t_G\)</span>. Conditioning on that event, <span class="math display">\[\Pr[G \mid t_1 = t_I, t_2 = t_G] = \frac{q\,p(1-p)}{q\,p(1-p) + (1-q)(1-p)p} = q &gt; \tfrac12,\]</span> so a juror with an innocent signal should <em>convict</em>: <span class="math inline">\(CA\)</span> is not a best response to itself. Reasoning about the pivotal event biases jurors toward conviction, even against their own informative signal. (For <span class="math inline">\(p \leq q\)</span>, <span class="math inline">\((CC, CC)\)</span> is a BNE; for <span class="math inline">\(p &gt; q\)</span> the symmetric equilibrium has <span class="math inline">\(t_I\)</span>-jurors convicting with a probability strictly between <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>, as in Feddersen and Pesendorfer’s analysis of the unanimity rule.)</p>
+</div>
+<div class="example" name="Study group">
+<p>Two students share a project. Each either puts <strong>E</strong>ffort (cost <span class="math inline">\(c\)</span>) or <strong>S</strong>hirks. The project succeeds if at least one puts effort, giving student <span class="math inline">\(i\)</span> value <span class="math inline">\(t_i^2\)</span>, with <span class="math inline">\(t_i \sim \mathcal U[0,1]\)</span> privately known:</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">E</th>
+<th style="text-align: center;">S</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><strong>E</strong></td>
+<td style="text-align: center;"><span class="math inline">\(t_A^2 - c\)</span>, <span class="math inline">\(t_B^2 - c\)</span></td>
+<td style="text-align: center;"><span class="math inline">\(t_A^2 - c\)</span>, <span class="math inline">\(t_B^2\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><strong>S</strong></td>
+<td style="text-align: center;"><span class="math inline">\(t_A^2\)</span>, <span class="math inline">\(t_B^2 - c\)</span></td>
+<td style="text-align: center;">0, 0</td>
+</tr>
+</tbody>
+</table>
+<p>With a continuum of types there are infinitely many strategies, but best responses are of <strong>threshold</strong> form: E gives <span class="math inline">\(t_i^2 - c\)</span> regardless, S gives <span class="math inline">\(t_i^2 \Pr[s_j(t_j) = E]\)</span>, so <span class="math inline">\(i\)</span> prefers E iff <span class="math inline">\(t_i^2 \geq c / (1 - \Pr[s_j(t_j) = E])\)</span>. (A lone student would put effort iff <span class="math inline">\(t_i^2 \geq c\)</span>.) If <span class="math inline">\(j\)</span> uses threshold <span class="math inline">\(\theta_j\)</span> (effort iff <span class="math inline">\(t_j \geq \theta_j\)</span>), then <span class="math inline">\(\Pr[E_j] = 1 - \theta_j\)</span> and <span class="math inline">\(i\)</span>’s best threshold is <span class="math inline">\(\theta_i = \sqrt{c/\theta_j}\)</span>. The symmetric BNE has <span class="math inline">\(\theta^2 = c / \theta\)</span>, i.e. <span class="math display">\[\theta^* = c^{1/3} \qquad (c &lt; 1).\]</span> Since <span class="math inline">\(c^{1/3} &gt; c^{1/2}\)</span>, each student works less often than alone: free-riding on the partner.</p>
+</div>
+</section>
+<section id="two-classic-applications" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="two-classic-applications"><span class="header-section-number">12.6</span> Two classic applications</h2>
+<p><strong>Cournot with a private cost.</strong> Firm 1 has unit cost <span class="math inline">\(c\)</span>, known to all. Firm 2’s cost is <span class="math inline">\(c_H\)</span> with probability <span class="math inline">\(\theta\)</span> and <span class="math inline">\(c_L\)</span> otherwise, known only to firm 2; demand is <span class="math inline">\(a - Q\)</span>. Each type of firm 2 best-responds to <span class="math inline">\(q_1\)</span>, and firm 1 best-responds to firm 2’s <em>expected</em> output: <span class="math display">\[q_2(c_2) = \frac{a - c_2 - q_1}{2}, \qquad q_1 = \frac{a - c - \mathbb E[q_2]}{2} \quad\Longrightarrow\quad q_1^* = \frac{a - 2c + \bar c_2}{3},\qquad \bar c_2 = \theta c_H + (1-\theta)c_L,\]</span> and <span class="math inline">\(q_2^*(c_2) = \frac{2a + 2c - 3c_2 - \bar c_2}{6}\)</span>. Compared with complete information, the high-cost type produces <em>more</em> (by <span class="math inline">\((c_H - \bar c_2)/6\)</span>) and the low-cost type less. Firm 1 cannot tailor its output to the true cost, so each type of firm 2 faces an “average” rival.</p>
+<p><strong>Adverse selection: the market for lemons</strong> (Akerlof, 1970). Used cars have quality <span class="math inline">\(\theta \sim \mathcal U[0, 1]\)</span>, known to the seller, who values a car at <span class="math inline">\(\theta\)</span>; buyers value it at <span class="math inline">\(\tfrac32\theta\)</span>. Trade would be efficient for <em>every</em> car. At a price <span class="math inline">\(p\)</span> only owners with <span class="math inline">\(\theta \leq p\)</span> sell, so the average quality on offer is <span class="math inline">\(p/2\)</span> and buyers are willing to pay <span class="math inline">\(\tfrac32\cdot\tfrac p2 = \tfrac34p &lt; p\)</span>. No price clears the market, and only <span class="math inline">\(\theta = 0\)</span> trades. Private information can destroy a market completely. Warranties, inspections, reputation and signalling (Chapter 13) exist to repair it.</p>
+<div class="proof remark">
+<p><span class="proof-title"><em>Remark</em> (A taxonomy of dynamic Bayesian games). </span>When the uninformed player moves <strong>first</strong> and the informed one reacts (a <em>screening</em> or Bayesian entry game), the uninformed player can only use the prior. Backward induction on each type’s decision node gives a subgame-perfect answer, and no belief updating is needed. When the informed player moves <strong>first</strong> (a <em>signaling</em> game), the action may reveal the type, and the responder’s beliefs after each action must be specified. This is where perfect Bayesian equilibrium (Chapter 13) is required.</p>
+</div>
+</section>
+<section id="exercises" class="level2" data-number="12.7">
+<h2 data-number="12.7" class="anchored" data-anchor-id="exercises"><span class="header-section-number">12.7</span> Exercises</h2>
+<p>Problems from Badia and Marchioro (BM), Chapter 6: static Bayesian games and screening games.</p>
+<div class="exercise">
+<p><strong>(BM 6.1)</strong> Stevie is Good (G) or Naughty (N). If naughty, he gets nothing: Stevie <span class="math inline">\(0\)</span>, parents <span class="math inline">\(-10\)</span>. If good, the parents give a Sweater (<span class="math inline">\(-10\)</span> for Stevie, <span class="math inline">\(0\)</span> for them) or a Train (<span class="math inline">\(+40\)</span> for Stevie, <span class="math inline">\(+20\)</span> for them), but the train costs them <span class="math inline">\(50\)</span> unless Santa exists. Stevie believes Santa exists with probability <span class="math inline">\(p\)</span>; the parents know. Write the type-agent normal form and find the pure BNE for <span class="math inline">\(p = 0.9\)</span>. Which are subgame perfect?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>The parents’ strategies are pairs (Santa, no Santa). Row G: SS <span class="math inline">\((-10, 0)\)</span>, ST <span class="math inline">\((40 - 50p, 30p - 30)\)</span>, TS <span class="math inline">\((50p - 10, 20p)\)</span>, TT <span class="math inline">\((40, 50p - 30)\)</span>; row N: <span class="math inline">\((0, -10)\)</span> throughout. For <span class="math inline">\(p = 0.9\)</span>: G gives <span class="math inline">\((-10, 0)\)</span>, <span class="math inline">\((-5, -3)\)</span>, <span class="math inline">\((35, 18)\)</span>, <span class="math inline">\((40, 15)\)</span>. BNE: <span class="math inline">\((N, SS)\)</span>, <span class="math inline">\((N, ST)\)</span>, <span class="math inline">\((G, TS)\)</span>. Only <span class="math inline">\((G, TS)\)</span> is subgame perfect: giving a sweater when the train is free is not optimal. Stevie behaves because he believes in Santa: against TS, being good is worth <span class="math inline">\(50p - 10\)</span>, so for <span class="math inline">\(p &lt; 0.2\)</span> he would be naughty.</p>
+</div>
+<div class="exercise">
+<p><strong>(BM 6.3)</strong> An opportunistic transmitter T either Buys a licensed channel (<span class="math inline">\(-10\)</span>; the incumbent S gets <span class="math inline">\(100\)</span>) or Accesses S’s band. S then Combats it (T gets <span class="math inline">\(-20\)</span>; S gets <span class="math inline">\(90\)</span> with high power, <span class="math inline">\(50\)</span> without) or does nothing (T <span class="math inline">\(20\)</span>, S <span class="math inline">\(80\)</span>). S has high power with probability <span class="math inline">\(p = 0.7\)</span>. Find the BNE and the SPE.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>S’s strategies are (high, low). Row A: CC <span class="math inline">\((-20, 78)\)</span>, CD <span class="math inline">\((-8, 87)\)</span>, DC <span class="math inline">\((8, 71)\)</span>, DD <span class="math inline">\((20, 80)\)</span>; row B: <span class="math inline">\((-10, 100)\)</span>. BNE: <span class="math inline">\((A, CD)\)</span> and <span class="math inline">\((B, CC)\)</span>. Sequential rationality requires C when strong (<span class="math inline">\(90 &gt; 80\)</span>) and D when weak (<span class="math inline">\(80 &gt; 50\)</span>), so CD. Then T compares <span class="math inline">\(-8\)</span> (A) with <span class="math inline">\(-10\)</span> (B) and accesses. SPE <span class="math inline">\((A, CD)\)</span>. In <span class="math inline">\((B, CC)\)</span> the weak incumbent’s threat to fight is not credible. This is the Bayesian entry game in a cognitive-radio setting.</p>
+</div>
+<div class="exercise">
+<p><strong>(BM 6.4)</strong> Henchmen Franco and Gino each act Conspicuously or Inconspicuously. At least one C gives a reward of <span class="math inline">\(10\)</span> each, but both C gets them arrested (<span class="math inline">\(-30\)</span>). With probability <span class="math inline">\(p = 0.3\)</span> Franco is an undercover cop, who gets <span class="math inline">\(20\)</span> if both are arrested and <span class="math inline">\(0\)</span> otherwise. Find the BNE.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Franco’s strategies are (cop, crook). For <span class="math inline">\(p = 0.3\)</span> the payoffs (Gino, Franco) are: Gino C against CC, CI, IC, II gives <span class="math inline">\((-30, -15)\)</span>, <span class="math inline">\((-2, 13)\)</span>, <span class="math inline">\((-18, -21)\)</span>, <span class="math inline">\((10, 7)\)</span>; Gino I gives <span class="math inline">\((10, 7)\)</span>, <span class="math inline">\((3, 0)\)</span>, <span class="math inline">\((7, 7)\)</span>, <span class="math inline">\((0, 0)\)</span>. Gino’s best responses are I, I, I, C. Franco’s best response to C is CI, and to I it is CC or IC. Pure BNE: <span class="math inline">\((CC, I)\)</span> and <span class="math inline">\((IC, I)\)</span>. In general, Gino plays I, the crook plays C, and the cop is indifferent, so any mixture of the cop’s actions is part of a BNE. With a single information set for Gino, every BNE is subgame perfect. The PBE beliefs on Gino’s four nodes are <span class="math inline">\((0.3\alpha, 0.3(1-\alpha), 0.7, 0)\)</span>.</p>
+</div>
+<div class="exercise">
+<p><strong>(BM 6.5)</strong> Short-sighted John Greets or Ignores a girl who is Camilla with probability <span class="math inline">\(p = 0.3\)</span>. Ignoring gives John <span class="math inline">\(-20\)</span>, and the girl <span class="math inline">\(-50\)</span> if she is Camilla (<span class="math inline">\(0\)</span> otherwise). After a greeting she Waves (John <span class="math inline">\(10\)</span>; the girl <span class="math inline">\(30\)</span> if Camilla, <span class="math inline">\(10\)</span> otherwise) or stays Silent (John <span class="math inline">\(-50\)</span> and Camilla <span class="math inline">\(10\)</span> if she is Camilla; <span class="math inline">\(0\)</span> and <span class="math inline">\(0\)</span> otherwise). Find the BNE.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Row G against SS, SW, WS, WW: <span class="math inline">\((-15, 3)\)</span>, <span class="math inline">\((-5, 10)\)</span>, <span class="math inline">\((3, 9)\)</span>, <span class="math inline">\((10, 23)\)</span>; row I: <span class="math inline">\((-20, -15)\)</span> throughout. Waving is optimal for both types, and John’s best response to WW is G. Ignoring is never a best response (every G entry exceeds <span class="math inline">\(-20\)</span>). The unique BNE <span class="math inline">\((G, WW)\)</span> is also the SPE, and John’s belief is simply the prior.</p>
+</div>
+<div class="exercise">
+<p><strong>(BM 6.11)</strong> Emma (Aquamarine or Beige) and Frank (Azure or Brown) dress for a wedding. Matching azure gives <span class="math inline">\(3\)</span> each, matching brown <span class="math inline">\(2\)</span>, mismatch <span class="math inline">\(0\)</span>. With probability <span class="math inline">\(p = 0.8\)</span> Frank’s suits are dirty: a dirty brown suit costs both <span class="math inline">\(1\)</span>; a dirty azure suit costs Frank <span class="math inline">\(3\)</span> and Emma <span class="math inline">\(5\)</span>. Find the pure BNE.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Frank’s strategies are (dirty, clean). Emma A against AA, AB, BA, BB: <span class="math inline">\((-1, 0.6)\)</span>, <span class="math inline">\((-1.6, 0)\)</span>, <span class="math inline">\((-0.2, -0.2)\)</span>, <span class="math inline">\((-0.8, -0.8)\)</span>; Emma B: <span class="math inline">\((-4, -2.4)\)</span>, <span class="math inline">\((-3.6, -2)\)</span>, <span class="math inline">\((0.8, 0.8)\)</span>, <span class="math inline">\((1.2, 1.2)\)</span>. Against A, both of Frank’s types match with A (dirty: <span class="math inline">\(0 &gt; -1\)</span>; clean: <span class="math inline">\(3 &gt; 0\)</span>), and against AA Emma prefers A (<span class="math inline">\(-1 &gt; -4\)</span>). Against B, both types play B, and Emma prefers B. <strong>Two</strong> pure BNE: <span class="math inline">\((A, AA)\)</span> and <span class="math inline">\((B, BB)\)</span>, the second Pareto dominant. (The printed solution lists only <span class="math inline">\((B, BB)\)</span>.) Incomplete information has turned a coordination game into one where the matching colour is worse when dirty, but coordination on azure still survives.</p>
+</div>
+<div class="exercise">
+<p><strong>(BM 6.13)</strong> Alberto and Gianluca apply to Coimbra or Santander. Gianluca gets <span class="math inline">\(2\)</span> (together in C), <span class="math inline">\(1\)</span> (together in S), <span class="math inline">\(0\)</span> apart. With probability <span class="math inline">\(p\)</span> Alberto is chasing a girl in Santander: then S is dominant, giving him <span class="math inline">\(2\)</span> (C gives <span class="math inline">\(0\)</span>). Otherwise he has Gianluca’s preferences. Find the pooling BNE, and the values of <span class="math inline">\(p\)</span> for which a separating BNE exists.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Against Alberto’s pooling SS, Gianluca plays S (<span class="math inline">\(1 &gt; 0\)</span>), and S is a best response for both of Alberto’s types: <span class="math inline">\((SS, S)\)</span> is a BNE for every <span class="math inline">\(p\)</span>. If Gianluca plays C, Alberto’s best response is SC (the chaser goes to S, the other to C). Against SC Gianluca gets <span class="math inline">\(2(1 - p)\)</span> from C and <span class="math inline">\(p\)</span> from S. So <span class="math inline">\((SC, C)\)</span>, a <strong>separating</strong> BNE, exists iff <span class="math inline">\(p \leq 2/3\)</span>. With a small chance of romance, the friends can still coordinate on the better destination.</p>
+</div>
+<div class="exercise">
+<p><strong>(BM 6.14)</strong> Jane Keeps her €10 000 or buys a Car (€8000; worth €5000 after a year). Simultaneously the bank Leaves the money (5% interest) or buys Subprime bonds: a good bank (probability <span class="math inline">\(p = 0.2\)</span>) earns 15%, a bad bank loses everything. The bank’s payoff is the interest <span class="math inline">\(G\)</span> if positive, <span class="math inline">\(-G/5\)</span> otherwise. Find the BNE.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>In k€: for Jane, K–L gives <span class="math inline">\(10.5\)</span>, K–S gives <span class="math inline">\(11.5\)</span> (good bank) or <span class="math inline">\(0\)</span> (bad bank); C–L gives <span class="math inline">\(7.1\)</span>, C–S gives <span class="math inline">\(7.3\)</span> or <span class="math inline">\(5\)</span>. The bank’s payoffs are <span class="math inline">\(0.5\)</span>, <span class="math inline">\(1.5\)</span>, <span class="math inline">\(2\)</span> and <span class="math inline">\(0.1\)</span>, <span class="math inline">\(0.3\)</span>, <span class="math inline">\(0.4\)</span> respectively. For both types of bank, S is strictly better whatever Jane does, so SS is dominant. Against SS, Jane gets <span class="math inline">\(11.5p = 2.3\)</span> from K and <span class="math inline">\(5 + 2.3p = 5.46\)</span> from C. The unique BNE is <span class="math inline">\((C, SS)\)</span>: Jane spends her money because the bank would gamble it away. The incentive structure (<span class="math inline">\(-G/5\)</span> rewards losses) is what makes every type of bank reckless.</p>
+</div>
+<div class="exercise">
+<p><strong>(BM 6.17)</strong> A thief Enters or Flees; simultaneously the sheriff Patrols or Quits. The sheriff is armed with probability <span class="math inline">\(0.3\)</span>. Flee: thief <span class="math inline">\(0\)</span>, and the sheriff <span class="math inline">\(-10\)</span> if patrolling, <span class="math inline">\(0\)</span> if quitting. Enter against Quit: thief <span class="math inline">\(10\)</span>, sheriff <span class="math inline">\(0\)</span>. Enter against Patrol: if armed, thief <span class="math inline">\(-100\)</span> and sheriff <span class="math inline">\(20\)</span>; if unarmed, both <span class="math inline">\(-20\)</span>. Find the BNE.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Sheriff strategies are (armed, unarmed). Thief E against PP, PQ, QP, QQ: <span class="math inline">\((-44, -8)\)</span>, <span class="math inline">\((-23, 6)\)</span>, <span class="math inline">\((-11, -14)\)</span>, <span class="math inline">\((10, 0)\)</span>; F: <span class="math inline">\((0, -10)\)</span>, <span class="math inline">\((0, -3)\)</span>, <span class="math inline">\((0, -7)\)</span>, <span class="math inline">\((0, 0)\)</span>. An unarmed sheriff never patrols (<span class="math inline">\(-20\)</span> or <span class="math inline">\(-10 &lt; 0\)</span>), so PP and QP are out, and there is no pure BNE (QQ invites entry, PQ deters it). The armed sheriff mixes P with <span class="math inline">\(\rho\)</span>, the thief enters with <span class="math inline">\(\varepsilon\)</span>. Armed indifference: <span class="math inline">\(20\varepsilon - 10(1 - \varepsilon) = 0\)</span>, so <span class="math inline">\(\varepsilon = 1/3\)</span>. Thief indifference: <span class="math inline">\(0.3(10 - 110\rho) + 0.7\cdot10 = 0\)</span>, so <span class="math inline">\(\rho = 10/33\)</span>. The unarmed sheriff stays home; the armed one patrols with probability <span class="math inline">\(10/33\)</span>.</p>
+</div>
+<p>From the course material:</p>
+<div class="exercise">
+<p>Two interns independently choose an operating system, M or W. Each prefers M with probability <span class="math inline">\(p\)</span> and W with probability <span class="math inline">\(1-p\)</span> (independently, privately known, <span class="math inline">\(p\)</span> common knowledge). Using the favourite OS gives <span class="math inline">\(1\)</span>, the other <span class="math inline">\(0\)</span>; choosing the same OS as the partner adds <span class="math inline">\(2\)</span>. For which <span class="math inline">\(p\)</span> is “follow your type” a BNE?</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span>Suppose the partner follows their type: they choose M with probability <span class="math inline">\(p\)</span>. An M-type gets <span class="math inline">\(1 + 2p\)</span> from M and <span class="math inline">\(0 + 2(1-p)\)</span> from W; M is optimal iff <span class="math inline">\(1 + 2p \geq 2 - 2p\)</span>, i.e.&nbsp;<span class="math inline">\(p \geq \tfrac14\)</span>. A W-type gets <span class="math inline">\(1 + 2(1-p)\)</span> from W and <span class="math inline">\(2p\)</span> from M; W is optimal iff <span class="math inline">\(3 - 2p \geq 2p\)</span>, i.e.&nbsp;<span class="math inline">\(p \leq \tfrac34\)</span>. “Follow your type” is a BNE iff <span class="math inline">\(\tfrac14 \leq p \leq \tfrac34\)</span>; outside this range the minority type conforms to the likely choice of the majority.</p>
+</div>
+<div class="exercise">
+<p>In the study-group game with <span class="math inline">\(c = 0.125\)</span>, compute the equilibrium probability that the project fails.</p>
+</div>
+<div class="proof solution">
+<p><span class="proof-title"><em>Solution</em>. </span><span class="math inline">\(\theta^* = 0.125^{1/3} = 0.5\)</span>. Each student shirks with probability <span class="math inline">\(0.5\)</span>; the project fails iff both shirk: probability <span class="math inline">\(0.25\)</span>. (A single student working alone would shirk only if <span class="math inline">\(t &lt; \sqrt{0.125} \approx 0.354\)</span>.)</p>
+</div>
+</section>
+<section id="sources" class="level2" data-number="12.8">
+<h2 data-number="12.8" class="anchored" data-anchor-id="sources"><span class="header-section-number">12.8</span> Sources</h2>
+<p>Prof.&nbsp;Badia, <em>Game Theory</em> slides, decks <code>Gth2014</code> (Bayesian games, types, common prior, BNE, purification) and <code>Gth2015</code> (Chicken, committee voting) and the study-group example from <code>Gth2017</code>; exercise sheet <code>gt20b</code>. Tadelis, <em>Game Theory: An Introduction</em>, Chapter 12. Original references: J. Harsanyi, <em>Games with incomplete information played by “Bayesian” players</em>, Management Sci. <strong>14</strong> (1967–68); J. Harsanyi, Int. J. Game Theory <strong>2</strong>, 1 (1973); T. Feddersen and W. Pesendorfer, Am. Polit. Sci. Rev.&nbsp;<strong>92</strong>, 23 (1998). Exercises: L. Badia and T. Marchioro, <em>Game Theory: A Handbook of Problems and Exercises</em>, Esculapio (2022), Chapter 6. G. Akerlof, <em>The market for “lemons”</em>, Q. J. Econ. <strong>84</strong>, 488 (1970).</p>
+
+
+<!-- -->
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+    const viewSource = window.document.getElementById('quarto-view-source') ||
+                       window.document.getElementById('quarto-code-tools-source');
+    if (viewSource) {
+      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+      viewSource.addEventListener("click", function(e) {
+        if (sourceUrl) {
+          // rstudio viewer pane
+          if (/\bcapabilities=\b/.test(window.location)) {
+            window.open(sourceUrl);
+          } else {
+            window.location.href = sourceUrl;
+          }
+        } else {
+          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+          modal.show();
+        }
+        return false;
+      });
+    }
+    function toggleCodeHandler(show) {
+      return function(e) {
+        const cellDetails = window.document.querySelectorAll(".cell details.code-fold");
+        for (let i=0; i<cellDetails.length; i++) {
+          const details = cellDetails[i];
+          if (show) {
+            details.open = true;
+          } else {
+            details.removeAttribute("open");
+          }
+        }
+        const cellCodeDivs = window.document.querySelectorAll(".cell div.sourceCode.cell-code");
+        const fromCls = show ? "hidden" : "unhidden";
+        const toCls = show ? "unhidden" : "hidden";
+        for (let i=0; i<cellCodeDivs.length; i++) {
+          const codeDiv = cellCodeDivs[i];
+          if (codeDiv.classList.contains(fromCls)) {
+            codeDiv.classList.remove(fromCls);
+            codeDiv.classList.add(toCls);
+          } 
+        }
+        return false;
+      }
+    }
+    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+    if (hideAllCode) {
+      hideAllCode.addEventListener("click", toggleCodeHandler(false));
+    }
+    const showAllCode = window.document.getElementById("quarto-show-all-code");
+    if (showAllCode) {
+      showAllCode.addEventListener("click", toggleCodeHandler(true));
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            // default icon
+            link.classList.add("external");
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation column-body">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/11-bargaining-and-dynamic-duopolies.html" class="pagination-link" aria-label="Bargaining and dynamic duopolies">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Bargaining and dynamic duopolies</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/13-perfect-bayesian-equilibrium-and-signaling.html" class="pagination-link" aria-label="Perfect Bayesian equilibrium and signaling">
+        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Perfect Bayesian equilibrium and signaling</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Bayesian games"</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Until now every player knew everyone's payoffs. In reality a firm does not know a competitor's costs, a bidder does not know the others' valuations, a network node does not know whether its neighbour is selfish or malicious. Harsanyi's insight was that such **incomplete information** can be absorbed into the familiar framework: let Nature draw each player's private characteristics — their **type** — from a commonly known distribution, and let players form beliefs about types just as they form beliefs about actions. This chapter defines static Bayesian games and Bayesian Nash equilibrium and works through the standard examples.</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## Types and the common prior</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Game of incomplete information"}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>A game has **incomplete information** if some player does not know another player's payoff function. Each possible "version" of a player is called a **type**.</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>Harsanyi (1967–68) turned incomplete into *imperfect* information by adding a preliminary move of Nature:</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Nature draws a type vector $(t_1, \dots, t_n)$ from a probability distribution $\phi$;</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>each player $i$ observes **only** their own type $t_i$;</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>players choose their actions;</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>payoffs, which may depend on the types, are realised.</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>The result is a dynamic game in which players do not observe all of Nature's move. Types need not describe preferences only: they can capture what a player knows about the world or about other players.</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>::: {.example name="Entry with a possibly crazy incumbent"}</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>An entrant (player 1) stays **O**ut, getting $0$ while the incumbent gets $2$, or **E**nters. After entry the incumbent (player 2) **A**ccepts, giving $(1,1)$, or **F**ights. A *rational* incumbent gets $-1$ from fighting (so does the entrant); a *crazy* incumbent enjoys fighting and gets $2$. Nature makes the incumbent rational with probability $p$; the entrant does not observe the type.</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="in">```{=latex}</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="in">\begin{center}</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="in">\begin{tikzpicture}[font=\small, line width=0.4pt, x=1cm, y=1cm]</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (0,0) -- node[above left] {$p$} (-2.2,-1.1);</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (0,0) -- node[above right] {$1-p$} (2.2,-1.1);</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw[fill=white] (0,0) circle (2.2pt) node[above=2pt] {N};</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="in">  \fill (-2.2,-1.1) circle (1.6pt);</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a><span class="in">  \fill (2.2,-1.1) circle (1.6pt);</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw[dashed] (-2.2,-1.1) -- node[below] {1} (2.2,-1.1);</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (-2.2,-1.1) -- node[left] {$O$} (-3.2,-2.2) node[below, align=center] {$0$\\$2$};</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (-2.2,-1.1) -- node[right] {$E$} (-1.4,-2.2);</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="in">  \fill (-1.4,-2.2) circle (1.6pt) node[right] {2};</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (-1.4,-2.2) -- node[left] {$F$} (-2.0,-3.3) node[below, align=center] {$-1$\\$-1$};</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (-1.4,-2.2) -- node[right] {$A$} (-0.8,-3.3) node[below, align=center] {$1$\\$1$};</span></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (2.2,-1.1) -- node[right] {$O$} (3.2,-2.2) node[below, align=center] {$0$\\$2$};</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (2.2,-1.1) -- node[left] {$E$} (1.4,-2.2);</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="in">  \fill (1.4,-2.2) circle (1.6pt) node[left] {2};</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (1.4,-2.2) -- node[left] {$F$} (0.8,-3.3) node[below, align=center] {$-1$\\$2$};</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="in">  \draw (1.4,-2.2) -- node[right] {$A$} (2.0,-3.3) node[below, align=center] {$1$\\$1$};</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="in">\end{tikzpicture}</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="in">\end{center}</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>*Figure: the entry game with a rational (left) or crazy (right) incumbent; the entrant's two nodes form one information set.*</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>To best-respond, the entrant needs beliefs about the incumbent's type. We assume that players do not know the opponents' types but know *how they are drawn*:</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Common prior assumption"}</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>The distribution $\phi$ of type vectors is **common knowledge**.</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a><span class="fu">## Type-contingent strategies</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>A strategy must now say what each *type* does. In the entry game the entrant has one type and two strategies; the incumbent moves at two information sets (one per type) and has four strategies $xy$: $x$ for the rational type, $y$ for the crazy type. Expected payoffs follow from the prior; for instance under $(E, AF)$ the entrant gets $p \cdot 1 + (1-p)(-1) = 2p - 1$ and the incumbent $p \cdot 1 + (1-p) \cdot 2 = 2 - p$:</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> 1 <span class="sc">\\</span> 2 <span class="pp">|</span> AA <span class="pp">|</span> AF <span class="pp">|</span> FA <span class="pp">|</span> FF <span class="pp">|</span></span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **O** <span class="pp">|</span> 0, 2 <span class="pp">|</span> 0, 2 <span class="pp">|</span> 0, 2 <span class="pp">|</span> 0, 2 <span class="pp">|</span></span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **E** <span class="pp">|</span> 1, 1 <span class="pp">|</span> $2p-1$, $2-p$ <span class="pp">|</span> $1-2p$, $1-2p$ <span class="pp">|</span> −1, $2-3p$ <span class="pp">|</span></span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>For $p = \tfrac23$ the entries of row $E$ are $(1,1)$, $(\tfrac13, \tfrac43)$, $(-\tfrac13, -\tfrac13)$, $(-1, 0)$, and the game has three pure Nash equilibria: $(O, FA)$, $(O, FF)$ and $(E, AF)$. Only $(E, AF)$ is sequentially rational: each incumbent type does what is best *for that type* once entry has occurred (a rational incumbent accepts, a crazy one fights). If $p &lt; \tfrac12$, then $2p - 1 &lt; 0$ and the sensible outcome becomes $(O, AF)$: the incumbent always plays $AF$, and the entrant decides on the basis of the prior.</span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>::: {.remark name="Type agents"}</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>The entrant averages over the incumbent's types — natural. The incumbent, oddly, "takes expectations over its own types": the real players (rational 2, crazy 2) are replaced by a single meta-player choosing a plan for both. This **type-agent representation** gives the right best responses because a plan maximises the expected payoff iff each type's component maximises that type's payoff (the types' choices do not interact). The common prior is a strong assumption — it must hold for players to be able to conjecture the outcome — and its realism must be checked in every application.</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a><span class="fu">## Static Bayesian games</span></span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Static Bayesian game"}</span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>A static Bayesian game is</span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>$$G = <span class="sc">\{</span>\mathcal N;\ A_1, \dots, A_n;\ T_1, \dots, T_n;\ \phi_1, \dots, \phi_n;\ u_1, \dots, u_n<span class="sc">\}</span>,$$</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>where $A_i$ are action sets, $T_i$ type spaces, $\phi_i(t_{-i} \mid t_i)$ player $i$'s beliefs about the others' types, and $u_i(a_1, \dots, a_n; t_i)$ type-dependent payoffs.</span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Private values** means $u_i$ depends only on $t_i$; with **common (interdependent) values** $u_i$ depends on the whole type vector.</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Types can also restrict actions: if action $H$ is available only with probability $q$, give player $i$ two types and set all payoffs of $H$ to $-\infty$ for the second type.</span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>With a common prior $\phi(t_1, \dots, t_n)$, beliefs are posteriors by Bayes' rule, $\phi_i(t_{-i} \mid t_i) = \phi(t_i, t_{-i}) / \phi(t_i)$. Types are independent if $\phi = \prod_i \phi(t_i)$, in which case beliefs equal the marginals.</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>In principle one should model beliefs about beliefs about beliefs…; Harsanyi showed that the common prior collapses this hierarchy to first-order beliefs.</span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Bayesian strategy"}</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>A pure strategy of player $i$ is a map $s_i : T_i \to A_i$; a mixed strategy is a distribution over such maps.</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>Why specify what *every* type does, when only one type is real? Not for player $i$ — but for the others, who need to form beliefs about $i$'s behaviour. (The same reason led us to specify off-path behaviour in dynamic games.) From the opponents' viewpoint, a player using a type-dependent pure strategy with randomly drawn type is indistinguishable from one using a mixed strategy.</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>::: {.definition name="Bayesian Nash equilibrium"}</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>A profile $s^* = (s_1^*, \dots, s_n^*)$ is a **Bayesian Nash equilibrium** (BNE) if for every player $i$ and every type $t_i \in T_i$, the action $s_i^*(t_i)$ maximises $i$'s expected payoff given their beliefs:</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>$$s_i^*(t_i) \in \arg\max_{a_i \in A_i} \sum_{t_{-i}} \phi_i(t_{-i} \mid t_i)\; u_i\bigl(a_i, s_{-i}^*(t_{-i}); t_i\bigr).$$</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>Equivalently, $\mathbb E<span class="co">[</span><span class="ot">u_i(s_i^*(t_i), s_{-i}^*(t_{-i}); t_i) \mid t_i</span><span class="co">]</span> \geq \mathbb E<span class="co">[</span><span class="ot">u_i(a_i, s_{-i}^*(t_{-i}); t_i) \mid t_i</span><span class="co">]</span>$ for all $a_i$: nobody wants to change given what they know, and what they don't know they estimate. With continuous types the sums become integrals.</span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a><span class="fu">## Harsanyi's purification of mixed strategies</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>Mixed strategies were interpreted as beliefs (Chapter 5). Harsanyi made this precise: a mixed equilibrium is the limit of **pure** equilibria of slightly perturbed games of incomplete information.</span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>Perturb the Battle of the Sexes: Ann's payoff at $(R,R)$ becomes $2 + c$ and Brian's at $(S,S)$ becomes $2 + d$, where $c, d$ are independent, uniform on $<span class="co">[</span><span class="ot">0, x</span><span class="co">]</span>$, and privately known. Look for threshold strategies: Ann plays R iff $c &gt; C$; Brian plays S iff $d &gt; D$.</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>Ann does not know $d$; Brian plays R with probability $D/x$. Her expected payoffs are $(2 + c) D/x$ from R and $1 - D/x$ from S, so she plays R iff $c \geq x/D - 3$; hence $C = x/D - 3$. Symmetrically $D = x/C - 3$. Thus $C = D$ and</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>$$C^2 + 3C - x = 0 \quad\Longrightarrow\quad C = \frac{-3 + \sqrt{9 + 4x}}{2}.$$</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>Ann plays R with probability</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>$$1 - \frac{C}{x} = \frac{2x + 3 - \sqrt{9 + 4x}}{2x} \xrightarrow<span class="co">[</span><span class="ot">x \to 0</span><span class="co">]</span>{} \frac23,$$</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>which is exactly her probability in the mixed NE. As the perturbation vanishes, players who never actually randomise generate, from each other's viewpoint, the mixed equilibrium.</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a><span class="fu">## Examples</span></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>::: {.example name="Chicken with strict parents"}</span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>Two youngsters drive towards each other. A **C**hicken (who swerves) gets $0$; a **D**river gets respect $8$ against a chicken; if both drive they split the respect ($4$ each) but crash and receive a punishment $P$ from their parents: $P = 16$ for **H**ard parents, $P = 0$ for **L**enient ones, each with probability $\tfrac12$, independently. Each youngster knows only their own parents' type. A strategy $xy$ is the action of the L-type and of the H-type. Expected payoffs:</span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> CC <span class="pp">|</span> CD <span class="pp">|</span> DC <span class="pp">|</span> DD <span class="pp">|</span></span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **CC** <span class="pp">|</span> 0, 0 <span class="pp">|</span> 0, 4 <span class="pp">|</span> 0, 4 <span class="pp">|</span> 0, 8 <span class="pp">|</span></span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **CD** <span class="pp">|</span> 4, 0 <span class="pp">|</span> −1, −1 <span class="pp">|</span> −1, 3 <span class="pp">|</span> −6, 2 <span class="pp">|</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **DC** <span class="pp">|</span> 4, 0 <span class="pp">|</span> 3, −1 <span class="pp">|</span> 3, 3 <span class="pp">|</span> 2, 2 <span class="pp">|</span></span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **DD** <span class="pp">|</span> 8, 0 <span class="pp">|</span> 2, −6 <span class="pp">|</span> 2, 2 <span class="pp">|</span> −4, −4 <span class="pp">|</span></span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>The BNE is $(DC, DC)$: lenient-parent kids drive, hard-parent kids swerve. Check type by type: against $DC$ the opponent drives with probability $\tfrac12$; an L-type gets $\tfrac12 \cdot 4 + \tfrac12 \cdot 8 = 6 &gt; 0$ by driving, an H-type gets $\tfrac12 (4 - 16) + \tfrac12 \cdot 8 = -2 &lt; 0$.</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>::: {.example name="Committee voting"}</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>A jury of two decides whether to **A**cquit or **C**onvict; conviction requires both votes. The defendant is guilty (G) with common prior $q &gt; \tfrac12$. Each juror gets payoff $1$ for a correct verdict, $0$ otherwise. Without further information C is dominant.</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>Now each juror receives a private, conditionally independent signal $t_i \in <span class="sc">\{</span>t_G, t_I<span class="sc">\}</span>$ with $\Pr<span class="co">[</span><span class="ot">t_G \mid G</span><span class="co">]</span> = \Pr<span class="co">[</span><span class="ot">t_I \mid I</span><span class="co">]</span> = p &gt; \tfrac12$ — a binary symmetric channel. A lone juror would update</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>$$\Pr<span class="co">[</span><span class="ot">G \mid t_G</span><span class="co">]</span> = \frac{qp}{qp + (1-q)(1-p)} &gt; q, \qquad \Pr<span class="co">[</span><span class="ot">G \mid t_I</span><span class="co">]</span> = \frac{q(1-p)}{q(1-p) + (1-q)p},$$</span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>and the latter is below $\tfrac12$ iff $p &gt; q$: when the signal is more informative than the prior, a lone juror follows it.</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>With two jurors, is "follow the signal" ($CA$: convict on $t_G$, acquit on $t_I$) an equilibrium? The key is **pivotality**: a vote matters only if the other juror votes C, i.e. (under $CA$) only if the other received $t_G$. Conditioning on that event,</span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>$$\Pr<span class="co">[</span><span class="ot">G \mid t_1 = t_I, t_2 = t_G</span><span class="co">]</span> = \frac{q\,p(1-p)}{q\,p(1-p) + (1-q)(1-p)p} = q &gt; \tfrac12,$$</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>so a juror with an innocent signal should *convict*: $CA$ is not a best response to itself. Reasoning about the pivotal event biases jurors toward conviction, even against their own informative signal. (For $p \leq q$, $(CC, CC)$ is a BNE; for $p &gt; q$ the symmetric equilibrium has $t_I$-jurors convicting with a probability strictly between $0$ and $1$, as in Feddersen and Pesendorfer's analysis of the unanimity rule.)</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>::: {.example name="Study group"}</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>Two students share a project. Each either puts **E**ffort (cost $c$) or **S**hirks. The project succeeds if at least one puts effort, giving student $i$ value $t_i^2$, with $t_i \sim \mathcal U<span class="co">[</span><span class="ot">0,1</span><span class="co">]</span>$ privately known:</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> <span class="pp">|</span> E <span class="pp">|</span> S <span class="pp">|</span></span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span>:--:<span class="pp">|</span></span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **E** <span class="pp">|</span> $t_A^2 - c$, $t_B^2 - c$ <span class="pp">|</span> $t_A^2 - c$, $t_B^2$ <span class="pp">|</span></span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> **S** <span class="pp">|</span> $t_A^2$, $t_B^2 - c$ <span class="pp">|</span> 0, 0 <span class="pp">|</span></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>With a continuum of types there are infinitely many strategies, but best responses are of **threshold** form: E gives $t_i^2 - c$ regardless, S gives $t_i^2 \Pr<span class="co">[</span><span class="ot">s_j(t_j) = E</span><span class="co">]</span>$, so $i$ prefers E iff $t_i^2 \geq c / (1 - \Pr<span class="co">[</span><span class="ot">s_j(t_j) = E</span><span class="co">]</span>)$. (A lone student would put effort iff $t_i^2 \geq c$.) If $j$ uses threshold $\theta_j$ (effort iff $t_j \geq \theta_j$), then $\Pr<span class="co">[</span><span class="ot">E_j</span><span class="co">]</span> = 1 - \theta_j$ and $i$'s best threshold is $\theta_i = \sqrt{c/\theta_j}$. The symmetric BNE has $\theta^2 = c / \theta$, i.e.</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>$$\theta^* = c^{1/3} \qquad (c &lt; 1).$$</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>Since $c^{1/3} &gt; c^{1/2}$, each student works less often than alone: free-riding on the partner.</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a><span class="fu">## Two classic applications</span></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>**Cournot with a private cost.** Firm 1 has unit cost $c$, known to all. Firm 2's cost is $c_H$ with probability $\theta$ and $c_L$ otherwise, known only to firm 2; demand is $a - Q$. Each type of firm 2 best-responds to $q_1$, and firm 1 best-responds to firm 2's *expected* output:</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>$$q_2(c_2) = \frac{a - c_2 - q_1}{2}, \qquad q_1 = \frac{a - c - \mathbb E<span class="co">[</span><span class="ot">q_2</span><span class="co">]</span>}{2} \quad\Longrightarrow\quad q_1^* = \frac{a - 2c + \bar c_2}{3},\qquad \bar c_2 = \theta c_H + (1-\theta)c_L,$$</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>and $q_2^*(c_2) = \frac{2a + 2c - 3c_2 - \bar c_2}{6}$. Compared with complete information, the high-cost type produces *more* (by $(c_H - \bar c_2)/6$) and the low-cost type less. Firm 1 cannot tailor its output to the true cost, so each type of firm 2 faces an "average" rival.</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>**Adverse selection: the market for lemons** (Akerlof, 1970). Used cars have quality $\theta \sim \mathcal U<span class="co">[</span><span class="ot">0, 1</span><span class="co">]</span>$, known to the seller, who values a car at $\theta$; buyers value it at $\tfrac32\theta$. Trade would be efficient for *every* car. At a price $p$ only owners with $\theta \leq p$ sell, so the average quality on offer is $p/2$ and buyers are willing to pay $\tfrac32\cdot\tfrac p2 = \tfrac34p &lt; p$. No price clears the market, and only $\theta = 0$ trades. Private information can destroy a market completely. Warranties, inspections, reputation and signalling (Chapter 13) exist to repair it.</span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>::: {.remark name="A taxonomy of dynamic Bayesian games"}</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>When the uninformed player moves **first** and the informed one reacts (a *screening* or Bayesian entry game), the uninformed player can only use the prior. Backward induction on each type's decision node gives a subgame-perfect answer, and no belief updating is needed. When the informed player moves **first** (a *signaling* game), the action may reveal the type, and the responder's beliefs after each action must be specified. This is where perfect Bayesian equilibrium (Chapter 13) is required.</span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exercises</span></span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>Problems from Badia and Marchioro (BM), Chapter 6: static Bayesian games and screening games.</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>**(BM 6.1)** Stevie is Good (G) or Naughty (N). If naughty, he gets nothing: Stevie $0$, parents $-10$. If good, the parents give a Sweater ($-10$ for Stevie, $0$ for them) or a Train ($+40$ for Stevie, $+20$ for them), but the train costs them $50$ unless Santa exists. Stevie believes Santa exists with probability $p$; the parents know. Write the type-agent normal form and find the pure BNE for $p = 0.9$. Which are subgame perfect?</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>The parents' strategies are pairs (Santa, no Santa). Row G: SS $(-10, 0)$, ST $(40 - 50p, 30p - 30)$, TS $(50p - 10, 20p)$, TT $(40, 50p - 30)$; row N: $(0, -10)$ throughout. For $p = 0.9$: G gives $(-10, 0)$, $(-5, -3)$, $(35, 18)$, $(40, 15)$. BNE: $(N, SS)$, $(N, ST)$, $(G, TS)$. Only $(G, TS)$ is subgame perfect: giving a sweater when the train is free is not optimal. Stevie behaves because he believes in Santa: against TS, being good is worth $50p - 10$, so for $p &lt; 0.2$ he would be naughty.</span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>**(BM 6.3)** An opportunistic transmitter T either Buys a licensed channel ($-10$; the incumbent S gets $100$) or Accesses S's band. S then Combats it (T gets $-20$; S gets $90$ with high power, $50$ without) or does nothing (T $20$, S $80$). S has high power with probability $p = 0.7$. Find the BNE and the SPE.</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>S's strategies are (high, low). Row A: CC $(-20, 78)$, CD $(-8, 87)$, DC $(8, 71)$, DD $(20, 80)$; row B: $(-10, 100)$. BNE: $(A, CD)$ and $(B, CC)$. Sequential rationality requires C when strong ($90 &gt; 80$) and D when weak ($80 &gt; 50$), so CD. Then T compares $-8$ (A) with $-10$ (B) and accesses. SPE $(A, CD)$. In $(B, CC)$ the weak incumbent's threat to fight is not credible. This is the Bayesian entry game in a cognitive-radio setting.</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>**(BM 6.4)** Henchmen Franco and Gino each act Conspicuously or Inconspicuously. At least one C gives a reward of $10$ each, but both C gets them arrested ($-30$). With probability $p = 0.3$ Franco is an undercover cop, who gets $20$ if both are arrested and $0$ otherwise. Find the BNE.</span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>Franco's strategies are (cop, crook). For $p = 0.3$ the payoffs (Gino, Franco) are: Gino C against CC, CI, IC, II gives $(-30, -15)$, $(-2, 13)$, $(-18, -21)$, $(10, 7)$; Gino I gives $(10, 7)$, $(3, 0)$, $(7, 7)$, $(0, 0)$. Gino's best responses are I, I, I, C. Franco's best response to C is CI, and to I it is CC or IC. Pure BNE: $(CC, I)$ and $(IC, I)$. In general, Gino plays I, the crook plays C, and the cop is indifferent, so any mixture of the cop's actions is part of a BNE. With a single information set for Gino, every BNE is subgame perfect. The PBE beliefs on Gino's four nodes are $(0.3\alpha, 0.3(1-\alpha), 0.7, 0)$.</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>**(BM 6.5)** Short-sighted John Greets or Ignores a girl who is Camilla with probability $p = 0.3$. Ignoring gives John $-20$, and the girl $-50$ if she is Camilla ($0$ otherwise). After a greeting she Waves (John $10$; the girl $30$ if Camilla, $10$ otherwise) or stays Silent (John $-50$ and Camilla $10$ if she is Camilla; $0$ and $0$ otherwise). Find the BNE.</span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>Row G against SS, SW, WS, WW: $(-15, 3)$, $(-5, 10)$, $(3, 9)$, $(10, 23)$; row I: $(-20, -15)$ throughout. Waving is optimal for both types, and John's best response to WW is G. Ignoring is never a best response (every G entry exceeds $-20$). The unique BNE $(G, WW)$ is also the SPE, and John's belief is simply the prior.</span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a>**(BM 6.11)** Emma (Aquamarine or Beige) and Frank (Azure or Brown) dress for a wedding. Matching azure gives $3$ each, matching brown $2$, mismatch $0$. With probability $p = 0.8$ Frank's suits are dirty: a dirty brown suit costs both $1$; a dirty azure suit costs Frank $3$ and Emma $5$. Find the pure BNE.</span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>Frank's strategies are (dirty, clean). Emma A against AA, AB, BA, BB: $(-1, 0.6)$, $(-1.6, 0)$, $(-0.2, -0.2)$, $(-0.8, -0.8)$; Emma B: $(-4, -2.4)$, $(-3.6, -2)$, $(0.8, 0.8)$, $(1.2, 1.2)$. Against A, both of Frank's types match with A (dirty: $0 &gt; -1$; clean: $3 &gt; 0$), and against AA Emma prefers A ($-1 &gt; -4$). Against B, both types play B, and Emma prefers B. **Two** pure BNE: $(A, AA)$ and $(B, BB)$, the second Pareto dominant. (The printed solution lists only $(B, BB)$.) Incomplete information has turned a coordination game into one where the matching colour is worse when dirty, but coordination on azure still survives.</span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>**(BM 6.13)** Alberto and Gianluca apply to Coimbra or Santander. Gianluca gets $2$ (together in C), $1$ (together in S), $0$ apart. With probability $p$ Alberto is chasing a girl in Santander: then S is dominant, giving him $2$ (C gives $0$). Otherwise he has Gianluca's preferences. Find the pooling BNE, and the values of $p$ for which a separating BNE exists.</span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a>Against Alberto's pooling SS, Gianluca plays S ($1 &gt; 0$), and S is a best response for both of Alberto's types: $(SS, S)$ is a BNE for every $p$. If Gianluca plays C, Alberto's best response is SC (the chaser goes to S, the other to C). Against SC Gianluca gets $2(1 - p)$ from C and $p$ from S. So $(SC, C)$, a **separating** BNE, exists iff $p \leq 2/3$. With a small chance of romance, the friends can still coordinate on the better destination.</span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>**(BM 6.14)** Jane Keeps her €10 000 or buys a Car (€8000; worth €5000 after a year). Simultaneously the bank Leaves the money (5% interest) or buys Subprime bonds: a good bank (probability $p = 0.2$) earns 15%, a bad bank loses everything. The bank's payoff is the interest $G$ if positive, $-G/5$ otherwise. Find the BNE.</span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a>In k€: for Jane, K–L gives $10.5$, K–S gives $11.5$ (good bank) or $0$ (bad bank); C–L gives $7.1$, C–S gives $7.3$ or $5$. The bank's payoffs are $0.5$, $1.5$, $2$ and $0.1$, $0.3$, $0.4$ respectively. For both types of bank, S is strictly better whatever Jane does, so SS is dominant. Against SS, Jane gets $11.5p = 2.3$ from K and $5 + 2.3p = 5.46$ from C. The unique BNE is $(C, SS)$: Jane spends her money because the bank would gamble it away. The incentive structure ($-G/5$ rewards losses) is what makes every type of bank reckless.</span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>**(BM 6.17)** A thief Enters or Flees; simultaneously the sheriff Patrols or Quits. The sheriff is armed with probability $0.3$. Flee: thief $0$, and the sheriff $-10$ if patrolling, $0$ if quitting. Enter against Quit: thief $10$, sheriff $0$. Enter against Patrol: if armed, thief $-100$ and sheriff $20$; if unarmed, both $-20$. Find the BNE.</span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>Sheriff strategies are (armed, unarmed). Thief E against PP, PQ, QP, QQ: $(-44, -8)$, $(-23, 6)$, $(-11, -14)$, $(10, 0)$; F: $(0, -10)$, $(0, -3)$, $(0, -7)$, $(0, 0)$. An unarmed sheriff never patrols ($-20$ or $-10 &lt; 0$), so PP and QP are out, and there is no pure BNE (QQ invites entry, PQ deters it). The armed sheriff mixes P with $\rho$, the thief enters with $\varepsilon$. Armed indifference: $20\varepsilon - 10(1 - \varepsilon) = 0$, so $\varepsilon = 1/3$. Thief indifference: $0.3(10 - 110\rho) + 0.7\cdot10 = 0$, so $\rho = 10/33$. The unarmed sheriff stays home; the armed one patrols with probability $10/33$.</span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>From the course material:</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>Two interns independently choose an operating system, M or W. Each prefers M with probability $p$ and W with probability $1-p$ (independently, privately known, $p$ common knowledge). Using the favourite OS gives $1$, the other $0$; choosing the same OS as the partner adds $2$. For which $p$ is "follow your type" a BNE?</span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a>Suppose the partner follows their type: they choose M with probability $p$. An M-type gets $1 + 2p$ from M and $0 + 2(1-p)$ from W; M is optimal iff $1 + 2p \geq 2 - 2p$, i.e. $p \geq \tfrac14$. A W-type gets $1 + 2(1-p)$ from W and $2p$ from M; W is optimal iff $3 - 2p \geq 2p$, i.e. $p \leq \tfrac34$. "Follow your type" is a BNE iff $\tfrac14 \leq p \leq \tfrac34$; outside this range the minority type conforms to the likely choice of the majority.</span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a>::: {.exercise}</span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>In the study-group game with $c = 0.125$, compute the equilibrium probability that the project fails.</span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>::: {.solution}</span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a>$\theta^* = 0.125^{1/3} = 0.5$. Each student shirks with probability $0.5$; the project fails iff both shirk: probability $0.25$. (A single student working alone would shirk only if $t &lt; \sqrt{0.125} \approx 0.354$.)</span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
+<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>Prof. Badia, *Game Theory* slides, decks `Gth2014` (Bayesian games, types, common prior, BNE, purification) and `Gth2015` (Chicken, committee voting) and the study-group example from `Gth2017`; exercise sheet `gt20b`. Tadelis, *Game Theory: An Introduction*, Chapter 12. Original references: J. Harsanyi, *Games with incomplete information played by "Bayesian" players*, Management Sci. **14** (1967–68); J. Harsanyi, Int. J. Game Theory **2**, 1 (1973); T. Feddersen and W. Pesendorfer, Am. Polit. Sci. Rev. **92**, 23 (1998). Exercises: L. Badia and T. Marchioro, *Game Theory: A Handbook of Problems and Exercises*, Esculapio (2022), Chapter 6. G. Akerlof, *The market for “lemons”*, Q. J. Econ. **84**, 488 (1970).</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+<style>
+  body, p, li, h1, h2, h3, h4, h5, h6, .quarto-title-block,
+  .sidebar, .toc-active, .nav-link, table, th, td, blockquote,
+  figcaption, .callout, .callout-body, .quarto-figure {
+    user-select: none; -webkit-user-select: none;
+    -moz-user-select: none; -ms-user-select: none;
+  }
+  img, svg, .figure-img, .quarto-figure img {
+    pointer-events: none; user-select: none;
+    -webkit-user-drag: none; -webkit-touch-callout: none;
+  }
+  pre, pre code, code, .sourceCode, .sourceCode * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+  }
+</style>
+<script>
+  document.addEventListener('contextmenu', function(e) {
+    if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', function(e) {
+    if (e.target.tagName === 'IMG' || e.target.tagName === 'SVG') e.preventDefault();
+  });
+  document.addEventListener('copy', function(e) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    var el = node.nodeType === 1 ? node : node.parentElement;
+    if (el && el.closest('pre, code, .sourceCode')) return;
+    e.preventDefault();
+  });
+  document.addEventListener('keydown', function(e) {
+    var k = e.key.toLowerCase();
+    if ((e.ctrlKey || e.metaKey) && (k === 's' || k === 'u' || k === 'p')) {
+      if (!e.target.closest('pre, code, .sourceCode')) e.preventDefault();
+    }
+  });
+</script>
+<style>
+  details.solution-collapsible {
+    border-left: 3px solid #b8123e;
+    padding: 0.4em 0.75em;
+    margin: 1em 0;
+    background: #fbf3f5;
+    border-radius: 0 4px 4px 0;
+  }
+  details.solution-collapsible > summary {
+    cursor: pointer; font-weight: 600; color: #b8123e;
+    list-style: none; user-select: none;
+  }
+  details.solution-collapsible > summary::-webkit-details-marker {
+    display: none;
+  }
+  details.solution-collapsible > summary::before {
+    content: '\25B6';
+    display: inline-block; margin-right: 0.5em;
+    transition: transform 0.15s ease;
+  }
+  details.solution-collapsible[open] > summary::before {
+    transform: rotate(90deg);
+  }
+  details.solution-collapsible > div.solution {
+    margin-top: 0.5em; border-left: none; padding-left: 0;
+  }
+</style>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('div.solution').forEach(function(el) {
+      if (el.closest('details.solution-collapsible')) return;
+      var d = document.createElement('details');
+      d.className = 'solution-collapsible';
+      var s = document.createElement('summary');
+      s.textContent = 'Solution';
+      d.appendChild(s);
+      el.parentNode.insertBefore(d, el);
+      d.appendChild(el);
+    });
+  });
+</script>
+
+
+
+
+</body></html>
