@@ -1,9 +1,8 @@
 -- =====================================================================
 -- Notes filter — three jobs:
 --
---  1. (PDF only) Wrap Quarto code-output cells (cell-output*) in the
---     LaTeX env `codeoutput` (defined in preamble.tex). Visual: thin
---     grey rule on the left, mono, small.
+--  1. Code output is no longer handled here: phu-look.lua (HTML and
+--     PDF) typesets it.
 --
 --  2. (PDF only) Convert theorem-like Divs (.theorem, .proposition,
 --     .lemma, .corollary, .definition, .example, .exercise, .solution,
@@ -23,13 +22,6 @@
 -- HTML / docx pass through pass 1 and pass 2's logic. Pass 3 runs in
 -- both formats.
 -- =====================================================================
-
-local OUTPUT_CLASSES = {
-  ["cell-output"]         = true,
-  ["cell-output-stdout"]  = true,
-  ["cell-output-stderr"]  = true,
-  ["cell-output-display"] = true,
-}
 
 local THEOREM_ENVS = {
   theorem     = true,
@@ -53,13 +45,6 @@ local function which_theorem(classes)
     if THEOREM_ENVS[c] then return c end
   end
   return nil
-end
-
-local function is_output(div)
-  for _, c in ipairs(div.classes) do
-    if OUTPUT_CLASSES[c] then return true end
-  end
-  return false
 end
 
 -- ── PASS 1 ───────────────────────────────────────────────────────────
@@ -143,7 +128,7 @@ local pass_margins = {
 }
 
 -- ── PASS 2 ───────────────────────────────────────────────────────────
--- LaTeX-only div-to-env conversions (theorem-style envs + code output).
+-- LaTeX-only div-to-env conversions (theorem-style envs).
 
 local pass_pdf = {
   Div = function(el)
@@ -162,14 +147,6 @@ local pass_pdf = {
       return out
     end
 
-    -- Code output cells.
-    if is_output(el) then
-      return {
-        pandoc.RawBlock("latex", "\\begin{codeoutput}"),
-        el,
-        pandoc.RawBlock("latex", "\\end{codeoutput}"),
-      }
-    end
   end,
 }
 

@@ -1,18 +1,18 @@
 % =====================================================================
 %  Notes PDF preamble — shared by every Quarto book in this repository.
 %
-%  Aesthetic: clean, minimalist, low-chrome. A single accent colour and a
-%  thin left rule are the only ornamental elements. No boxes, no shading,
-%  no headers/footers louder than the body.
-%
-%  Provides:
-%   * Geometry, fonts, microtypography.
-%   * Theorem-like environments (theorem, proposition, lemma, corollary,
-%     definition, example, exercise, solution, remark, note) with a
-%     unified left-rule style via thmtools + mdframed.
-%   * `codeoutput` environment for runtime output (left rule, small mono).
-%   * Math display tweaks for matrices / vectors / aligned blocks
-%     (cleaner spacing — material for the next iteration).
+%  The look (2026-10-08, vendored from doc-kit's phunotes.sty so this
+%  repository builds on its own): EB Garamond + IBM Plex Mono, one rust
+%  accent, white page.
+%   * theorem / proposition / lemma / corollary / definition: drafting
+%     corner marks, small-caps label, upright text
+%   * exercise / example / solution: a sheet with a title-block header
+%     row ("exercise 3.4 · Q9 — 2 pts │ § 3.2")
+%   * remark / note: small and faint; callouts: label hung in the margin
+%   * code: no fill, rule above, language tag; output tagged "out";
+%     arrays and tables printed by code are typeset (Notes/pdf/phu-output.lua)
+%  The Lua filter Notes/pdf/code-output.lua turns ::: {.exercise name=...}
+%  divs into these environments.
 % =====================================================================
 
 % --- packages ---------------------------------------------------------
@@ -121,197 +121,318 @@
 \usepackage{enumitem}
 \setlist{itemsep=2pt, topsep=4pt, parsep=0pt}
 
-% --- colour palette (matches the website's UniPD accent) --------------
-\definecolor{unipdRed} {HTML}{9b0014}
-\definecolor{ink}      {HTML}{1a1a1a}
-\definecolor{inkSoft}  {HTML}{3d3d3d}
-\definecolor{inkFaint} {HTML}{6b6b6b}
-\definecolor{rule}     {HTML}{c8c8c8}
-\definecolor{surface}  {HTML}{f5f5f5}
+% --- the look (from doc-kit phunotes.sty) ------------------------------
+\usepackage{caption}
+\makeatletter
+\newif\ifphu@fonts \phu@fontstrue
+% --- fonts ------------------------------------------------------------
+\RequirePackage{iftex}
+\ifphu@fonts
+  \ifPDFTeX
+    \RequirePackage[lining,semibold]{ebgaramond}
+    \let\Bbbk\relax % amssymb (loaded first by Quarto) vs newtxmath
+    \RequirePackage[cmintegrals,cmbraces]{newtxmath}
+    % ebgaramond-maths turns these into errors (no glyph in EB Garamond);
+    % keep the definitions they had (newtxmath's, or the macros' \vec)
+    \def\phu@keep{leftharpoonup,leftharpoondown,rightharpoonup,rightharpoondown,%
+      triangleright,triangleleft,star,partial,flat,natural,sharp,smile,frown,vec,t}
+    \@for\phu@s:=\phu@keep\do{\expandafter\let\csname phu@k@\phu@s\expandafter\endcsname
+      \csname\phu@s\endcsname}
+    \RequirePackage{ebgaramond-maths}
+    \@for\phu@s:=\phu@keep\do{\expandafter\let\csname\phu@s\expandafter\endcsname
+      \csname phu@k@\phu@s\endcsname}
+    \RequirePackage[scale=0.85]{plex-mono}
+  \else % LuaLaTeX / XeLaTeX (Quarto's plain pdf format): fontspec
+    \RequirePackage{fontspec}
+    \setmainfont{EBGaramond}[Extension=.otf, UprightFont=*-Regular,
+      ItalicFont=*-Italic, BoldFont=*-SemiBold, BoldItalicFont=*-SemiBoldItalic,
+      Numbers=Lining]
+    \setmonofont{IBMPlexMono}[Extension=.otf, UprightFont=*-Regular,
+      ItalicFont=*-Italic, BoldFont=*-SemiBold, Scale=0.85]
+    \@ifpackageloaded{unicode-math}{\setmathfont{Garamond-Math.otf}[StylisticSet={7,9}]}{}
+  \fi
+\fi
+\RequirePackage{microtype} % after the fonts; \textls for the labels
 
+% --- colours ----------------------------------------------------------
+\definecolor{accent}  {HTML}{b4442b} % atlas rust
+\definecolor{ink}     {HTML}{1f1d1a}
+\definecolor{inkSoft} {HTML}{4b463e}
+\definecolor{inkFaint}{HTML}{6f6a61}
+\definecolor{rule}    {HTML}{c9c0ad}
+\definecolor{codeBg}  {HTML}{f4f2ee}
 \color{ink}
 
-% --- KOMA heading typography (slim, restrained) -----------------------
-\addtokomafont{disposition}{\normalfont}
-\setkomafont{section}      {\normalfont\Large\bfseries}
-\setkomafont{subsection}   {\normalfont\large\bfseries}
-\setkomafont{subsubsection}{\normalfont\normalsize\bfseries}
-\setkomafont{paragraph}    {\normalfont\normalsize\itshape}
-
-% --- mdframed styles (the only "decoration") --------------------------
-% Left rule, no box. Two tints: accent (theorems) and ink (definitions).
-\mdfdefinestyle{leftRuleAccent}{
-  linewidth=1.2pt, linecolor=unipdRed,
-  topline=false, bottomline=false, rightline=false,
-  innertopmargin=2pt, innerbottommargin=4pt,
-  innerleftmargin=12pt, innerrightmargin=0pt,
-  skipabove=8pt, skipbelow=8pt,
-  backgroundcolor=white,
-}
-\mdfdefinestyle{leftRuleInk}{
-  style=leftRuleAccent, linecolor=ink,
-}
-\mdfdefinestyle{leftRuleFaint}{
-  style=leftRuleAccent, linecolor=rule, linewidth=0.9pt,
-}
-
-% --- theorem environments --------------------------------------------
-% The companion Lua filter (Notes/pdf/code-output.lua) converts every
-% Div with one of these classes (.theorem, .proposition, .lemma,
-% .corollary, .definition, .example, .exercise, .solution, .remark,
-% .note) into raw  \begin{<env>}[<optional name>] ... \end{<env>}
-% blocks AND strips the class so Pandoc no longer auto-defines anything.
-% So this preamble owns the env definitions outright.
+% Small-caps label: "Theorem 3.2" -> letter-spaced small caps.
+\DeclareRobustCommand*{\phulabel}[1]{{\scshape\textls[70]{\MakeLowercase{#1}}}}
 
 \makeatletter
-\@ifundefined{c@chapter}{%
-  \newcommand{\notesNumberWithin}{section}%
-}{%
-  \newcommand{\notesNumberWithin}{chapter}%
+% --- headings (KOMA classes only: scrbook, scrreprt, scrartcl) --------
+\AtBeginDocument{\let\phu@doctitle\@title}
+\ifdefined\addtokomafont
+  \setkomafont{disposition}{\normalfont}
+  \setkomafont{section}      {\normalfont\Large\bfseries}
+  \setkomafont{subsection}   {\normalfont\large\bfseries}
+  \setkomafont{subsubsection}{\normalfont\normalsize\bfseries}
+  \setkomafont{paragraph}    {\normalfont\normalsize\itshape}
+  \newcommand*\phu@secnum[1]{{\mdseries\small\color{accent}#1}\hspace{.75em}}
+  \renewcommand*\sectionformat      {\phu@secnum{\thesection}}
+  \renewcommand*\subsectionformat   {\phu@secnum{\thesubsection}}
+  \renewcommand*\subsubsectionformat{\phu@secnum{\thesubsubsection}}
+  \ifdefined\chapterformat
+    \setkomafont{chapter}{\normalfont\fontsize{26}{30}\selectfont}
+    \RedeclareSectionCommand[beforeskip=1.5\baselineskip,
+      afterskip=2.2\baselineskip]{chapter}
+    % numbered: "chapter 03 ........ book title" over a rule, then the title
+    \renewcommand*\chapterformat{%
+      \phulabel{\chapapp}~{\color{accent}\ifnum\value{chapter}<10 0\fi\thechapter}}
+    \renewcommand*\chapterlinesformat[3]{%
+      \Ifstr{#1}{chapter}{%
+        \Ifstr{#2}{}{}{%
+          {\normalfont\normalsize\color{inkFaint}%
+           \hbox to\linewidth{#2\hfill\phulabel{\phu@doctitle}}%
+           \vskip3pt{\color{ink}\hrule height .5pt}\vskip .6\baselineskip}}%
+        \raggedright #3}%
+      {\@hangfrom{#2}{#3}}}
+  \fi
+\fi
+
+% --- theorem-like environments ----------------------------------------
+% Quarto creates them with \theoremstyle{plain|definition|remark}; a hook
+% swaps those styles for ours inside each environment, and an mdframed
+% around it draws the frame.
+\newcommand*\phu@headcolor{accent}
+\newcommand*\phu@framecolor{accent}
+\newcommand*\phu@lastexr{}
+\newcommand*\phu@sheetright{}
+
+% results and definitions: label line, upright body
+\newtheoremstyle{phuCorner}{0pt}{0pt}{\upshape}{0pt}{}{}{\newline}
+  {\textcolor{\phu@headcolor}{\phulabel{\thmname{#1}\thmnumber{~#2}}}%
+   \thmnote{\enspace\textcolor{inkFaint}{\textperiodcentered}\enspace
+     \textcolor{inkSoft}{\itshape #3}}}
+% exercises, examples, solutions: header row with a hairline under it
+\newtheoremstyle{phuSheet}{0pt}{0pt}{\upshape}{0pt}{}{}{\newline}
+  {\vbox{\hbox to\linewidth{%
+      \phulabel{\thmname{#1}}\thmnumber{~\textcolor{accent}{\phulabel{#2}}}%
+      \thmnote{\enspace\textcolor{inkFaint}{\textperiodcentered}\enspace
+        \textcolor{inkSoft}{\itshape #3}}%
+      \hfill\phu@sheetright}%
+    \nointerlineskip\kern3pt\hbox{\color{rule}\vrule width\linewidth height .4pt}}}
+% remarks: run-in, small, faint
+\newtheoremstyle{phuQuiet}{4pt}{4pt}{\small\color{inkSoft}}{0pt}{\itshape}{.}{.5em}{}
+
+\newcommand*\phu@style[1]{%
+  \expandafter\let\csname th@plain\expandafter\endcsname\csname th@#1\endcsname
+  \expandafter\let\csname th@definition\expandafter\endcsname\csname th@#1\endcsname
+  \expandafter\let\csname th@remark\expandafter\endcsname\csname th@#1\endcsname}
+
+% corner marks: top left and bottom right of the box
+\newcommand*\phu@corner[3]{%
+  \draw[\phu@framecolor, line width=.5pt]
+    ($#1+(#2*9pt,0)$) -- #1 -- ($#1+(0,#3*9pt)$);}
+\mdfdefinestyle{phuCorners}{
+  hidealllines=true,
+  innertopmargin=5pt, innerbottommargin=2pt,
+  innerleftmargin=10pt, innerrightmargin=10pt,
+  skipabove=10pt, skipbelow=10pt,
+  singleextra={\phu@corner{(O|-P)}{1}{-1}\phu@corner{(P|-O)}{-1}{1}},
+  firstextra={\phu@corner{(O|-P)}{1}{-1}},
+  secondextra={\phu@corner{(P|-O)}{-1}{1}},
 }
-\makeatother
-
-% amsthm styles: plain (italic body, bold head), definition (upright body,
-% bold head), remark (upright body, italic head) — the standard look.
-
-\theoremstyle{plain}
-\newtheorem{theorem}{Theorem}[\notesNumberWithin]
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{corollary}[theorem]{Corollary}
-
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}[\notesNumberWithin]
-% example, exercise, solution are tcolorbox-based — defined further below.
-% `solution` and `remark` are auto-defined by Pandoc's LaTeX template
-% (always emitted, regardless of usage); we override `solution` via
-% \AtBeginDocument so our tcolorbox version wins.
-% `note` is not auto-defined — keep ours.
-\theoremstyle{remark}
-\newtheorem*{note}{Note}
-
-% ── tcolorbox-based exercise / example / solution ────────────────────
-% Common look: small coloured title bar attached at top-left ("Exercise
-% N.M" or "Exercise N.M (optional name)"), thin matching border, white
-% body, breakable across pages. Different colour tones distinguish them:
-%   * exercise → accent (UniPD red)   — for problems to solve
-%   * example  → ink (near-black)     — for worked illustrations
-%   * solution → faint (light grey)   — for solutions to exercises
-
-\newcommand{\notesTcbTitle}[3]{%
-  % #1 = label ("Exercise"), #2 = counter text, #3 = optional name
-  #1~#2\if\relax\detokenize{#3}\relax\else\ \normalfont\itshape(#3)\fi%
-}
-
-\newtcolorbox[auto counter, number within=\notesNumberWithin]{exercise}[1][]{%
-  enhanced, breakable,
-  colback=white,
-  colframe=unipdRed,
-  boxrule=0.5pt, arc=2pt, outer arc=2pt,
-  fonttitle=\bfseries, coltitle=white,
-  attach boxed title to top left={xshift=10pt, yshift=-8pt},
-  boxed title style={
-    colback=unipdRed, colframe=unipdRed,
-    boxrule=0pt, arc=2pt,
-    boxsep=3pt, left=8pt, right=8pt,
-  },
-  title={\notesTcbTitle{Exercise}{\thetcbcounter}{#1}},
-  top=12pt, bottom=8pt, left=12pt, right=10pt,
-  before skip=10pt, after skip=10pt,
-}
-
-\newtcolorbox[auto counter, number within=\notesNumberWithin]{example}[1][]{%
-  enhanced, breakable,
-  colback=white,
-  colframe=ink,
-  boxrule=0.5pt, arc=2pt, outer arc=2pt,
-  fonttitle=\bfseries, coltitle=white,
-  attach boxed title to top left={xshift=10pt, yshift=-8pt},
-  boxed title style={
-    colback=ink, colframe=ink,
-    boxrule=0pt, arc=2pt,
-    boxsep=3pt, left=8pt, right=8pt,
-  },
-  title={\notesTcbTitle{Example}{\thetcbcounter}{#1}},
-  top=12pt, bottom=8pt, left=12pt, right=10pt,
-  before skip=10pt, after skip=10pt,
-}
-
-% Pandoc auto-emits `\newtheorem*{solution}`. We replace it after the
-% fact with our tcolorbox version so it carries the same visual identity.
-\AtBeginDocument{%
-  \let\solution\relax\let\endsolution\relax%
-  \newtcolorbox{solution}[1][]{%
-    enhanced, breakable,
-    colback=surface,
-    colframe=rule,
-    boxrule=0.4pt, arc=2pt, outer arc=2pt,
-    fonttitle=\bfseries, coltitle=ink,
-    attach boxed title to top left={xshift=10pt, yshift=-8pt},
-    boxed title style={
-      colback=surface, colframe=rule,
-      boxrule=0.4pt, arc=2pt,
-      boxsep=3pt, left=8pt, right=8pt,
-    },
-    title={Solution\if\relax\detokenize{#1}\relax\else\ \normalfont\itshape(#1)\fi},
-    top=10pt, bottom=6pt, left=10pt, right=10pt,
-    before skip=8pt, after skip=10pt,
-  }%
+\mdfdefinestyle{phuSheet}{
+  linecolor=ink, linewidth=.6pt,
+  leftline=false, rightline=false,
+  innertopmargin=4pt, innerbottommargin=2pt,
+  innerleftmargin=0pt, innerrightmargin=0pt,
+  skipabove=10pt, skipbelow=10pt,
 }
 
-% Wrap each env with the left-rule mdframed style.
-\newcommand{\notesWrapAccent}[1]{%
-  \BeforeBeginEnvironment{#1}{\begin{mdframed}[style=leftRuleAccent]}%
+\newcommand*\phuCornerEnv[2]{% #1 environment, #2 colour (accent | ink)
+  \BeforeBeginEnvironment{#1}{\def\phu@framecolor{#2}\begin{mdframed}[style=phuCorners]}%
+  \AtBeginEnvironment{#1}{\phu@style{phuCorner}\def\phu@headcolor{#2}}%
   \AfterEndEnvironment{#1}{\end{mdframed}}}
-
-\newcommand{\notesWrapInk}[1]{%
-  \BeforeBeginEnvironment{#1}{\begin{mdframed}[style=leftRuleInk]}%
+\newcommand*\phuSheetEnv[2]{% #1 environment, #2 right header cell
+  \BeforeBeginEnvironment{#1}{\begin{mdframed}[style=phuSheet]}%
+  \AtBeginEnvironment{#1}{\phu@style{phuSheet}\def\phu@sheetright{#2}}%
   \AfterEndEnvironment{#1}{\end{mdframed}}}
+\newcommand*\phuQuietEnv[1]{\AtBeginEnvironment{#1}{\phu@style{phuQuiet}}}
 
-\newcommand{\notesWrapFaint}[1]{%
-  \BeforeBeginEnvironment{#1}{\begin{mdframed}[style=leftRuleFaint]}%
-  \AfterEndEnvironment{#1}{\end{mdframed}}}
+\newcommand*\phu@where{% "§ 3.2" once inside a section
+  \ifnum\value{section}>0 \textcolor{inkFaint}{\vrule\enspace\S\,\thesection}\fi}
+\newcommand*\phu@forexr{% "ex. 3.4" after an exercise
+  \ifx\phu@lastexr\@empty\else
+    \textcolor{inkFaint}{\vrule\enspace\phulabel{Ex.}~\phu@lastexr}\fi}
 
-\notesWrapAccent{theorem}
-\notesWrapAccent{proposition}
-\notesWrapAccent{lemma}
-\notesWrapAccent{corollary}
+\phuCornerEnv{theorem}{accent}
+\phuCornerEnv{proposition}{accent}
+\phuCornerEnv{lemma}{accent}
+\phuCornerEnv{corollary}{accent}
+\phuCornerEnv{conjecture}{accent}
+\phuCornerEnv{definition}{ink}
+\phuSheetEnv{exercise}{\phu@where}
+\phuSheetEnv{example}{\phu@where}
+\phuSheetEnv{solution}{\phu@forexr}
+\phuSheetEnv{refsolution}{\phu@forexr}
+\phuQuietEnv{remark}
+\phuQuietEnv{refremark}
+\AfterEndEnvironment{exercise}{\xdef\phu@lastexr{\theexercise}}
+\renewcommand{\qedsymbol}{\textcolor{inkFaint}{$\square$}}
 
-\notesWrapInk{definition}
-% example, exercise and solution are tcolorbox-based — no mdframed wrap.
+% Plain LaTeX: define what Quarto would have defined.
+\AtEndPreamble{%
+  \@ifundefined{c@chapter}{\def\phu@within{section}}{\def\phu@within{chapter}}%
+  \theoremstyle{plain}%
+  \@ifundefined{theorem}{\newtheorem{theorem}{Theorem}[\phu@within]}{}%
+  \@ifundefined{proposition}{\newtheorem{proposition}[theorem]{Proposition}}{}%
+  \@ifundefined{lemma}{\newtheorem{lemma}[theorem]{Lemma}}{}%
+  \@ifundefined{corollary}{\newtheorem{corollary}[theorem]{Corollary}}{}%
+  \@ifundefined{conjecture}{\newtheorem{conjecture}[theorem]{Conjecture}}{}%
+  \theoremstyle{definition}%
+  \@ifundefined{definition}{\newtheorem{definition}{Definition}[\phu@within]}{}%
+  \@ifundefined{example}{\newtheorem{example}{Example}[\phu@within]}{}%
+  \@ifundefined{exercise}{\newtheorem{exercise}{Exercise}[\phu@within]}{}%
+  \theoremstyle{remark}%
+  \@ifundefined{remark}{\newtheorem*{remark}{Remark}}{}%
+  \@ifundefined{solution}{\newtheorem*{solution}{Solution}}{}%
+}
 
-\notesWrapFaint{remark}
-\notesWrapFaint{note}
-
-% --- proof environment: italic header, square QED ---------------------
-\renewcommand{\qedsymbol}{$\square$}
-
-% --- code OUTPUT environment ------------------------------------------
-% Used by the code-output.lua filter to wrap each `cell-output-*` Div.
-% Visual: thin grey left rule, no box, 90% body size, slim mono font.
-\definecolor{codeBg}{HTML}{f3f3f3}
-
-\mdfdefinestyle{codeOutput}{
-  linewidth=1.4pt, linecolor=inkFaint,
+% --- callouts (phu.lua turns Quarto callouts into phucallout) ---------
+% \begin{phucallout}{note}{title or empty}: the label hangs left of a
+% thin rule; warning, important and caution take the accent.
+\newcommand*\phu@calloutline{rule}
+\newcommand*\phu@calloutlabel{inkFaint}
+\newcommand*\phu@calloutkind{}
+\newcommand*\phu@calloutlabeltag{%
+  \node[anchor=north east, inner sep=0pt, xshift=-10pt, yshift=-2.5pt,
+        text=\phu@calloutlabel, font=\footnotesize] at (O|-P)
+    {\phulabel{\phu@calloutkind}};}
+\mdfdefinestyle{phuCallout}{
   topline=false, bottomline=false, rightline=false,
-  innertopmargin=2pt, innerbottommargin=4pt,
+  linewidth=.6pt, leftmargin=5.2em,
+  innertopmargin=1pt, innerbottommargin=2pt,
   innerleftmargin=10pt, innerrightmargin=0pt,
-  skipabove=2pt, skipbelow=8pt,
-  backgroundcolor=codeBg,
+  skipabove=8pt, skipbelow=8pt,
+  singleextra={\phu@calloutlabeltag}, firstextra={\phu@calloutlabeltag},
 }
-\newenvironment{codeoutput}
-  {\begin{mdframed}[style=codeOutput]\footnotesize\ttfamily\linespread{1.05}\selectfont}
+\newcommand*\phu@alarm{warning,important,caution}
+\newenvironment{phucallout}[2]{%
+  \def\phu@calloutline{rule}\def\phu@calloutlabel{inkFaint}\def\phu@calloutkind{#1}%
+  \@for\phu@k:=\phu@alarm\do{\expandafter\ifstrequal\expandafter{\phu@k}{#1}%
+    {\def\phu@calloutline{accent}\def\phu@calloutlabel{accent}}{}}%
+  \begin{mdframed}[style=phuCallout, linecolor=\phu@calloutline]%
+  \ifstrempty{#2}{}{\textit{#2}\par}}
   {\end{mdframed}}
 
-% Auto-wrap long lines so code and output never overflow the right
-% margin. fvextra is loaded above so the keys are defined now.
-\fvset{
-  breaklines=true,
-  breakanywhere=true,
-  breakautoindent=true,
-  breaksymbolleft={\hbox{\scriptsize\textcolor{inkFaint}{\ensuremath{\hookrightarrow}}\,}},
-  breaksymbolsepleft=2pt,
+% --- code and code output ---------------------------------------------
+% phu.lua puts \phucodelang{python} before each code cell and wraps text
+% output in phuout.
+\newcommand*\phu@lang{}
+\newcommand*\phucodelang[1]{\gdef\phu@lang{#1}}
+\newcommand*\phu@langtag{%
+  \ifx\phu@lang\@empty\else
+    \node[anchor=east, fill=white, inner xsep=4pt, inner ysep=1pt,
+          text=inkFaint, font=\footnotesize] at (P) {\phulabel{\phu@lang}};\fi}
+\mdfdefinestyle{phuCode}{
+  hidealllines=true,
+  innertopmargin=7pt, innerbottommargin=5pt,
+  innerleftmargin=0pt, innerrightmargin=0pt,
+  skipabove=8pt, skipbelow=4pt,
+  singleextra={\draw[ink, line width=.5pt] (O|-P) -- (P);
+               \draw[rule, line width=.4pt] (O) -- (P|-O); \phu@langtag},
+  firstextra={\draw[ink, line width=.5pt] (O|-P) -- (P); \phu@langtag},
+  secondextra={\draw[rule, line width=.4pt] (O) -- (P|-O);},
 }
+\AtEndPreamble{%
+  \ifdefined\Shaded
+    \renewenvironment{Shaded}
+      {\begin{mdframed}[style=phuCode]}
+      {\end{mdframed}\gdef\phu@lang{}}%
+  \fi}
+\newenvironment{phuout}[1][out]
+  {\begin{list}{}{\leftmargin=2.8em \labelwidth=2.2em \labelsep=.6em
+                  \topsep=2pt \partopsep=0pt \itemsep=0pt}%
+   \ifstrequal{#1}{out}{\def\phu@outcolor{accent}}{\def\phu@outcolor{inkFaint}}%
+   \item[\textcolor{\phu@outcolor}{\footnotesize\phulabel{#1}}]}
+  {\end{list}}
+\fvset{fontsize=\small, breaklines=true, breakanywhere=true, breakautoindent=true}
+\newenvironment{codeoutput}{\begin{phuout}\small\ttfamily}{\end{phuout}}
+
+% --- arrays from code (phu.lua, fed by the phu display helpers) -------
+% (pdflatex) characters the helpers print
+\ifdefined\DeclareUnicodeCharacter
+  \DeclareUnicodeCharacter{2212}{\ensuremath{-}}
+  \DeclareUnicodeCharacter{22EE}{\ensuremath{\vdots}}
+  \DeclareUnicodeCharacter{22EF}{\ensuremath{\cdots}}
+  \DeclareUnicodeCharacter{22F1}{\ensuremath{\ddots}}
+\fi
+\newcommand*\phuix[1]{\text{\color{inkFaint}\scriptsize\ttfamily #1}}
+\newcommand*\phuneg[1]{\textcolor{accent}{#1}}
+
+% --- two-column documents ---------------------------------------------
+% longtable (every pandoc table) refuses two-column mode. There, a
+% longtable becomes a column-wide table float: caption kept, the repeated
+% page head dropped, shrunk to the column when too wide.
+\newsavebox\phu@tbox
+\long\def\phu@ltcap\caption#1\tabularnewline{\gdef\phu@cap{\caption#1}\phu@ltstart}
+\newcommand*\phu@ltspec{}
+\newcommand*\phu@begtab[1]{\begin{tabular}{#1}}
+\newcommand*\phu@ltstart{\begin{lrbox}{\phu@tbox}\expandafter\phu@begtab\expandafter{\phu@ltspec}}
+\AtBeginDocument{%
+  \if@twocolumn
+    \renewenvironment{longtable}[2][]{%
+      \def\phu@ltspec{#2}\gdef\phu@cap{}%
+      \long\def\endfirsthead##1\endlastfoot{}%
+      \long\def\endhead##1\endlastfoot{}%
+      \small\@ifnextchar\caption{\phu@ltcap}{\phu@ltstart}}
+      {\bottomrule\end{tabular}\end{lrbox}%
+       \def\phu@fit{\ifdim\wd\phu@tbox>\linewidth
+         \resizebox{\linewidth}{!}{\usebox\phu@tbox}\else\usebox\phu@tbox\fi}%
+       \ifx\phu@cap\@empty % code output and plain tables stay in place
+         \par\begin{center}\phu@fit\end{center}%
+       \else
+         \begin{table}[tbp]\centering\phu@cap\par\phu@fit\end{table}%
+       \fi}%
+  \fi}
+
+% --- captions ---------------------------------------------------------
+\DeclareCaptionLabelFormat{phu}{\textcolor{accent}{\phulabel{#1~#2}}}
+\DeclareCaptionFormat{phuFig}{{\color{ink}\hrule height .5pt}\vskip4pt#1#2#3}
+\captionsetup{labelformat=phu, labelsep=quad, font=small,
+  justification=raggedright, singlelinecheck=false}
+\captionsetup[figure]{format=phuFig, name=Fig.}
+\makeatother
+
+\makeatother
+
+% --- this repository's environments ------------------------------------
+% code-output.lua emits \begin{<env>}[<name>] for ::: {.<env> name="..."}.
+% Quarto defines some of these itself (remark and solution always, the
+% others when a chapter uses #thm-/#exr- ids), after this preamble; so
+% ours come at the end of the preamble, only where Quarto left a gap.
+\makeatletter
+\AtEndPreamble{%
+  \@ifundefined{c@chapter}{\def\notesNumberWithin{section}}{\def\notesNumberWithin{chapter}}%
+  \theoremstyle{plain}%
+  \@ifundefined{theorem}{\newtheorem{theorem}{Theorem}[\notesNumberWithin]}{}%
+  \@ifundefined{proposition}{\newtheorem{proposition}[theorem]{Proposition}}{}%
+  \@ifundefined{lemma}{\newtheorem{lemma}[theorem]{Lemma}}{}%
+  \@ifundefined{corollary}{\newtheorem{corollary}[theorem]{Corollary}}{}%
+  \theoremstyle{definition}%
+  \@ifundefined{definition}{\newtheorem{definition}{Definition}[\notesNumberWithin]}{}%
+  \@ifundefined{example}{\newtheorem{example}{Example}[\notesNumberWithin]}{}%
+  \@ifundefined{exercise}{\newtheorem{exercise}{Exercise}[\notesNumberWithin]}{}%
+  \theoremstyle{remark}%
+  \@ifundefined{solution}{\newtheorem*{solution}{Solution}}{}%
+  \@ifundefined{remark}{\newtheorem*{remark}{Remark}}{}%
+  \@ifundefined{note}{\newtheorem*{note}{Note}}{}%
+}
+\makeatother
+\phuQuietEnv{note}
+\colorlet{unipdRed}{accent} % the old accent's name, still used by links
+
+\fvset{breaksymbolleft={\hbox{\scriptsize\textcolor{inkFaint}{\ensuremath{\hookrightarrow}}\,}},
+       breaksymbolsepleft=2pt}
 
 % --- math display: tighter matrix / vector spacing --------------------
 % A future iteration will hook these into the lua filter for ASCII →
@@ -328,14 +449,14 @@
 % linkcolor, urlcolor, citecolor). No extra \hypersetup needed here.
 
 % --- baked-in watermark for downloadable PDFs -------------------------
-% draftwatermark stamps a diagonal "site copy" string onto every page as
+% draftwatermark stamps a diagonal "PhyAMR" string onto every page as
 % part of the page content (not as a separate annotation), so removal
 % requires re-rendering from source rather than a tooling pass. The
 % NOTES_NO_WATERMARK environment variable lets the user temporarily
 % disable it during local previews:  NOTES_NO_WATERMARK=1 quarto render
 \IfFileExists{draftwatermark.sty}{%
   \usepackage{draftwatermark}%
-  \SetWatermarkText{\textcopyright\ alvaromendezrt@gmail.com -- site copy}%
+  \SetWatermarkText{PhyAMR}%
   \SetWatermarkScale{0.55}%
   \SetWatermarkLightness{0.88}%
   \SetWatermarkAngle{45}%

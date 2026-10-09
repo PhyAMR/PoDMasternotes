@@ -620,30 +620,31 @@ def generate_site_structure() -> None:
         # browser handles open / closed state natively.
         "<style>\n"
         "  details.solution-collapsible {\n"
-        "    border-left: 3px solid #b8123e;\n"
-        "    padding: 0.4em 0.75em;\n"
-        "    margin: 1em 0;\n"
-        "    background: #fbf3f5;\n"
-        "    border-radius: 0 4px 4px 0;\n"
+        "    border-top: 1px solid #1f1d1a; border-bottom: 1px solid #1f1d1a;\n"
+        "    padding: 0.2em 0 0.3em; margin: 1.3em 0;\n"
         "  }\n"
         "  details.solution-collapsible > summary {\n"
-        "    cursor: pointer; font-weight: 600; color: #b8123e;\n"
-        "    list-style: none; user-select: none;\n"
+        "    cursor: pointer; font-variant: small-caps; letter-spacing: 0.07em;\n"
+        "    color: #4b463e; list-style: none; user-select: none;\n"
+        "  }\n"
+        "  details.solution-collapsible[open] > summary {\n"
+        "    border-bottom: 1px solid #c9c0ad; margin-bottom: 0.4em;\n"
         "  }\n"
         "  details.solution-collapsible > summary::-webkit-details-marker {\n"
         "    display: none;\n"
         "  }\n"
         "  details.solution-collapsible > summary::before {\n"
-        "    content: '\\25B6';\n"
-        "    display: inline-block; margin-right: 0.5em;\n"
+        "    content: '\\25B8';\n"
+        "    display: inline-block; margin-right: 0.5em; color: #b4442b;\n"
         "    transition: transform 0.15s ease;\n"
         "  }\n"
         "  details.solution-collapsible[open] > summary::before {\n"
         "    transform: rotate(90deg);\n"
         "  }\n"
         "  details.solution-collapsible > div.solution {\n"
-        "    margin-top: 0.5em; border-left: none; padding-left: 0;\n"
+        "    margin: 0; border: 0; padding: 0;\n"
         "  }\n"
+        "  details.solution-collapsible > div.solution::before { display: none; }\n"
         "</style>\n"
         "<script>\n"
         "  document.addEventListener('DOMContentLoaded', function() {\n"
@@ -665,8 +666,13 @@ def generate_site_structure() -> None:
     pdf_preamble = "../../../Notes/pdf/preamble.tex"
     pdf_filter   = "../../../Notes/pdf/code-output.lua"
     html_filter  = "../../../Notes/pdf/tex-to-svg.lua"
+    # the notes look for code output and callouts, both formats
+    look_filter  = "../../../Notes/pdf/phu-look.lua"
+    phu_theme    = "../../../Notes/pdf/phu.theme"
 
     shared_metadata = {
+        # kernels (Python/R plot style) and filters check this flag
+        "phu-look": True,
         "website": {
             "title":  "University Course Portal",
             "navbar": {"left": navbar_left, "right": navbar_right},
@@ -681,17 +687,15 @@ def generate_site_structure() -> None:
                                       "bottom=2.6cm", "footskip=1.1cm"],
                 "colorlinks":        True,
                 "linkcolor":         "ink",
-                "urlcolor":          "unipdRed",
-                "citecolor":         "unipdRed",
+                "urlcolor":          "accent",
+                "citecolor":         "accent",
                 "number-sections":   True,
                 "toc-depth":         3,
                 "include-in-header": [pdf_preamble],
-                "filters":           [pdf_filter],
-                "highlight-style":   "tango",
-                # Subtle gray fill so code blocks read as a distinct chip
-                # against the white body. Pair with the left border.
-                "code-block-bg":     "#f3f3f3",
-                "code-block-border-left": True,
+                "filters":           [pdf_filter, look_filter],
+                # monochrome highlighting; no fill (preamble.tex draws the rules)
+                "highlight-style":   phu_theme,
+                "code-block-bg":     False,
                 # Wrap long code lines instead of letting them overflow.
                 "code-overflow":     "wrap",
             },
@@ -704,7 +708,7 @@ def generate_site_structure() -> None:
                 "code-fold":               True,
                 "code-tools":              True,
                 "code-summary":            "Show code",
-                "highlight-style":         "tango",
+                "highlight-style":         phu_theme,
                 # Force chunk-generated figures to PNG in the HTML build.
                 # Without this, knitr falls back to whatever device was
                 # selected for the PDF target (often the .pdf device),
@@ -723,7 +727,7 @@ def generate_site_structure() -> None:
                 # Swap `\input{X.tex}` and inline TikZ blocks for the
                 # SVGs pre-rendered by Notes/pdf/build-tex-svg.py. The
                 # filter is a no-op for non-HTML output.
-                "filters":                 [html_filter],
+                "filters":                 [html_filter, look_filter],
                 "include-after-body":      {"text": image_protect},
             }
         },
