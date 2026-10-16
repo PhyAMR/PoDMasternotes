@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -377,6 +396,12 @@ window.Quarto = {
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -446,7 +471,7 @@ window.Quarto = {
 </section>
 <section id="import-all-the-necessary-python-libraries" class="level2" data-number="22.2">
 <h2 data-number="22.2" class="anchored" data-anchor-id="import-all-the-necessary-python-libraries"><span class="header-section-number">22.2</span> Import all the necessary Python libraries</h2>
-<div id="18891166" class="cell" data-execution_count="1">
+<div id="f889fe56" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -466,12 +491,29 @@ window.Quarto = {
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the dataset</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> load_dataset(<span class="st">'data/virus_popper.csv'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[1]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      1</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span> numpy <span style="font-weight:bold;color:rgb(0,135,0)">as</span> np
+<span class="ansi-green-fg">      2</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span> pandas <span style="font-weight:bold;color:rgb(0,135,0)">as</span> pd
+<span class="ansi-green-fg">      3</span> <span style="font-weight:bold;color:rgb(0,135,0)">import</span> random <span style="font-weight:bold;color:rgb(0,135,0)">as</span> rnd
+<span class="ansi-green-fg">      4</span> <span style="font-weight:bold;color:rgb(0,135,0)">from</span> matplotlib <span style="font-weight:bold;color:rgb(0,135,0)">import</span> pyplot <span style="font-weight:bold;color:rgb(0,135,0)">as</span> plt
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> <span style="font-weight:bold;color:rgb(0,135,0)">from</span> sklearn <span style="font-weight:bold;color:rgb(0,135,0)">import</span> linear_model, preprocessing
+<span class="ansi-green-fg">      6</span> <span style="font-weight:bold;color:rgb(0,135,0)">from</span> sklearn.model_selection <span style="font-weight:bold;color:rgb(0,135,0)">import</span> train_test_split
+<span class="ansi-green-fg">      7</span> 
+<span class="ansi-green-fg">      8</span> np.random.seed(<span class="ansi-green-fg">1</span>)
+
+<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named 'sklearn'</pre>
+</div>
+</div>
 </div>
 </section>
 <section id="prepare-the-data-and-create-training-and-test-sets" class="level2" data-number="22.3">
 <h2 data-number="22.3" class="anchored" data-anchor-id="prepare-the-data-and-create-training-and-test-sets"><span class="header-section-number">22.3</span> Prepare the data and create training and test sets</h2>
 <p>In this case, we are learning a time series: let us consider a memory of 2 samples, i.e., use X[n-1] and X[n-2] to predict X[n].</p>
-<div id="24b0180c" class="cell" data-execution_count="2">
+<div id="8041d3b7" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalize the dataset</span></span>
@@ -494,6 +536,20 @@ window.Quarto = {
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.shape(X_training), np.shape(Y_training), np.shape(X_test), np.shape(Y_test))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[2]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Normalize the dataset</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> avg_size = np.mean(data)
+<span class="ansi-green-fg">      3</span> norm_data = np.asarray(data) / avg_size
+<span class="ansi-green-fg">      4</span> 
+<span class="ansi-green-fg">      5</span> <span style="font-style:italic;color:rgb(95,135,135)"># Compute the splits and prepare the columns</span>
+
+<span class="ansi-red-fg">NameError</span>: name 'data' is not defined</pre>
+</div>
+</div>
 </div>
 </section>
 <section id="least-squares-linear-regression" class="level2" data-number="22.4">
@@ -504,7 +560,7 @@ window.Quarto = {
 </div>
 <div class="proof solution">
 <p><span class="proof-title"><em>Solution</em> (solution). </span></p>
-<div id="a08e71d4" class="cell" data-execution_count="3">
+<div id="98343220" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Least squares solution</span></span>
@@ -527,7 +583,7 @@ window.Quarto = {
 </div>
 <div class="proof solution">
 <p><span class="proof-title"><em>Solution</em> (vectorized solution). </span></p>
-<div id="e09947af" class="cell" data-execution_count="4">
+<div id="3957b2bd" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vectorised normal-equations solver.</span></span>
@@ -551,7 +607,7 @@ window.Quarto = {
 </details>
 </div>
 </div>
-<div id="4cbb4ec7" class="cell" data-execution_count="5">
+<div id="5bb9dea2" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the LS training and test it on the test data</span></span>
@@ -560,6 +616,20 @@ window.Quarto = {
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Model coefficients:'</span>, trained_model)</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Root MSE:'</span>, np.sqrt(mse) <span class="op">*</span> avg_size)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[5]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Run the LS training and test it on the test data</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> trained_model = least_squares(X_training, Y_training)
+<span class="ansi-green-fg">      3</span> mse = evaluate_model(X_test, Y_test, trained_model)
+<span class="ansi-green-fg">      4</span> print(<span class="ansi-yellow-fg">'Model coefficients:'</span>, trained_model)
+<span class="ansi-green-fg">      5</span> print(<span class="ansi-yellow-fg">'Root MSE:'</span>, np.sqrt(mse) * avg_size)
+
+<span class="ansi-red-fg">NameError</span>: name 'X_training' is not defined</pre>
+</div>
+</div>
 </div>
 <hr>
 </section>
@@ -571,7 +641,7 @@ window.Quarto = {
 </div>
 <div class="proof solution">
 <p><span class="proof-title"><em>Solution</em> (solution). </span></p>
-<div id="2fdf1481" class="cell" data-execution_count="6">
+<div id="ec03e4c9" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Least squares solution</span></span>
@@ -616,7 +686,7 @@ window.Quarto = {
 </div>
 <div class="proof solution">
 <p><span class="proof-title"><em>Solution</em> (vectorized solution). </span></p>
-<div id="02c37758" class="cell" data-execution_count="7">
+<div id="18c4ff5c" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vectorised ridge regression.</span></span>
@@ -674,7 +744,7 @@ window.Quarto = {
 </details>
 </div>
 </div>
-<div id="82e8cee6" class="cell" data-execution_count="8">
+<div id="6ea00983" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the training with K-fold cross-validation and plot the score</span></span>
@@ -688,8 +758,25 @@ window.Quarto = {
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'RMSE'</span>)</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[8]</span><span class="ansi-green-fg">, line 5</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Run the training with K-fold cross-validation and plot the score</span>
+<span class="ansi-green-fg">      2</span> K = <span class="ansi-green-fg">5</span>
+<span class="ansi-green-fg">      3</span> lambda_par = range(<span class="ansi-green-fg">21</span>)
+<span class="ansi-green-fg">      4</span> 
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">5</span> best_model, best_perf, models, results = K_fold(X_training, Y_training, lambda_par, K)
+<span class="ansi-green-fg">      6</span> print(best_model, results)
+<span class="ansi-green-fg">      7</span> plt.plot(lambda_par, np.sqrt(results) * avg_size)
+<span class="ansi-green-fg">      8</span> plt.xlabel(<span class="ansi-yellow-fg">'$\lambda$'</span>)
+
+<span class="ansi-red-fg">NameError</span>: name 'X_training' is not defined</pre>
 </div>
-<div id="ae18d8fe" class="cell" data-execution_count="9">
+</div>
+</div>
+<div id="57fdc8e0" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Show code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the results for the regularized models on the test set</span></span>
@@ -703,20 +790,45 @@ window.Quarto = {
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'RMSE'</span>)</span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
+<div class="cell-output cell-output-error">
+<div class="ansi-escaped-output">
+<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
+<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[9]</span><span class="ansi-green-fg">, line 2</span>
+<span class="ansi-green-fg">      1</span> <span style="font-style:italic;color:rgb(95,135,135)"># Plot the results for the regularized models on the test set</span>
+<span class="ansi-green-fg">----&gt; </span><span class="ansi-green-fg">2</span> test_scores = np.zeros(len(models))
+<span class="ansi-green-fg">      3</span> 
+<span class="ansi-green-fg">      4</span> <span style="font-weight:bold;color:rgb(0,135,0)">for</span> i <span style="font-weight:bold;color:rgb(0,135,0)">in</span> range(len(models)):
+<span class="ansi-green-fg">      5</span>     test_scores[i] = evaluate_model(X_test, Y_test, models[i])
+
+<span class="ansi-red-fg">NameError</span>: name 'models' is not defined</pre>
+</div>
+</div>
 </div>
 </section>
 <section id="sources" class="level2" data-number="22.6">
 <h2 data-number="22.6" class="anchored" data-anchor-id="sources"><span class="header-section-number">22.6</span> Sources</h2>
 <ul>
-<li>Lab handout: <code>1sem/ML/code/lab_2/2B Regression/02b_regression.ipynb</code></li>
-<li>Reference solution: <code>1sem/ML/code/Solutions/02b_regression_solution.ipynb</code></li>
-<li>Lecci, Mattia, <em>et al.</em> “An open framework for analyzing and modeling XR network traffic.” <em>IEEE Access</em> 9 (2021): 129782-129795.</li>
-<li>Chiariotti, Federico, <em>et al.</em> “Temporal characterization and prediction of vr traffic: A network slicing use case.” <em>IEEE Transactions on Mobile Computing</em> 23.5 (2023): 3890-3908.</li>
+<li>Lab handout: <code>1sem/ML/code/lab_2/2B Regression/02b_regression.ipynb</code> <span class="citation" data-cites="chiariotti2025labs">(<a href="#ref-chiariotti2025labs" role="doc-biblioref">Chiariotti 2025</a>)</span>.</li>
+<li>Reference solution: <code>1sem/ML/code/Solutions/02b_regression_solution.ipynb</code>.</li>
+<li><span class="citation" data-cites="lecci2021open">Lecci et al. (<a href="#ref-lecci2021open" role="doc-biblioref">2021</a>)</span></li>
+<li><span class="citation" data-cites="chiariotti2024temporal">Chiariotti et al. (<a href="#ref-chiariotti2024temporal" role="doc-biblioref">2024</a>)</span></li>
 </ul>
 
 
 <!-- -->
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-chiariotti2025labs" class="csl-entry" role="listitem">
+Chiariotti, Federico. 2025. <em>Machine Learning: Lab Handouts and Reference Solutions</em>. Jupyter notebooks.
+</div>
+<div id="ref-chiariotti2024temporal" class="csl-entry" role="listitem">
+Chiariotti, Federico, Matteo Drago, Paolo Testolina, Mattia Lecci, Andrea Zanella, and Michele Zorzi. 2024. <span>“Temporal Characterization and Prediction of VR Traffic: A Network Slicing Use Case.”</span> <em>IEEE Transactions on Mobile Computing</em> 23 (5): 3890–908. <a href="https://doi.org/10.1109/tmc.2023.3282689">https://doi.org/10.1109/tmc.2023.3282689</a>.
+</div>
+<div id="ref-lecci2021open" class="csl-entry" role="listitem">
+Lecci, Mattia, Matteo Drago, Andrea Zanella, and Michele Zorzi. 2021. <span>“An Open Framework for Analyzing and Modeling XR Network Traffic.”</span> <em>IEEE Access</em> 9: 129782–95. <a href="https://doi.org/10.1109/access.2021.3113162">https://doi.org/10.1109/access.2021.3113162</a>.
+</div>
+</div>
 </section>
 </section>
 
@@ -1472,10 +1584,10 @@ window.Quarto = {
 <span id="cb11-297"><a href="#cb11-297" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-298"><a href="#cb11-298" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
 <span id="cb11-299"><a href="#cb11-299" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-300"><a href="#cb11-300" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lab handout: <span class="in">`1sem/ML/code/lab_2/2B Regression/02b_regression.ipynb`</span></span>
-<span id="cb11-301"><a href="#cb11-301" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reference solution: <span class="in">`1sem/ML/code/Solutions/02b_regression_solution.ipynb`</span></span>
-<span id="cb11-302"><a href="#cb11-302" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lecci, Mattia, *et al.* "An open framework for analyzing and modeling XR network traffic." *IEEE Access* 9 (2021): 129782-129795.</span>
-<span id="cb11-303"><a href="#cb11-303" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Chiariotti, Federico, *et al.* "Temporal characterization and prediction of vr traffic: A network slicing use case." *IEEE Transactions on Mobile Computing* 23.5 (2023): 3890-3908.</span>
+<span id="cb11-300"><a href="#cb11-300" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lab handout: <span class="in">`1sem/ML/code/lab_2/2B Regression/02b_regression.ipynb`</span> <span class="co">[</span><span class="ot">@chiariotti2025labs</span><span class="co">]</span>.</span>
+<span id="cb11-301"><a href="#cb11-301" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Reference solution: <span class="in">`1sem/ML/code/Solutions/02b_regression_solution.ipynb`</span>.</span>
+<span id="cb11-302"><a href="#cb11-302" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@lecci2021open</span>
+<span id="cb11-303"><a href="#cb11-303" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@chiariotti2024temporal</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

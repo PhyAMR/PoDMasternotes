@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -294,6 +313,12 @@ window.Quarto = {
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -472,14 +497,14 @@ p_i'' &amp;= p_i(t + \tfrac\epsilon2) + \tfrac\epsilon2\partial_{x_i}U(\mathbf x
 <p>Take <span class="math inline">\(\Sigma = \operatorname{diag}(0.01^2, 0.02^2, \ldots, 1.00^2)\)</span>: 100 independent coordinates with widths from <span class="math inline">\(0.01\)</span> to <span class="math inline">\(1\)</span>. Both step sizes must be of the order of the smallest width: HMC uses <span class="math inline">\(\epsilon \sim \mathcal U[0.0104, 0.0156]\)</span> with <span class="math inline">\(L = 150\)</span> leapfrog steps and <span class="math inline">\(1000\)</span> iterations; Metropolis uses jumps <span class="math inline">\(\sim\mathcal U[0.0176, 0.0264]\)</span> and <span class="math inline">\(150{,}000\)</span> steps — the same number of gradient/likelihood evaluations. (Randomising <span class="math inline">\(\epsilon\)</span> avoids accidental periodicities in which a trajectory returns exactly to its start.) HMC estimates the means and standard deviations of <em>all</em> coordinates well, including the widest ones; Metropolis gets the narrow coordinates right but grossly underestimates the spread of the wide ones, which it has barely explored.</p>
 </div>
 <div class="proposition" name="Dimension scaling">
-<p>For targets with <span class="math inline">\(d\)</span> roughly independent components, keeping the acceptance rate fixed requires a step size <span class="math inline">\(\epsilon \propto d^{-1/2}\)</span> for random-walk Metropolis but only <span class="math inline">\(\epsilon \propto d^{-1/4}\)</span> for HMC. Reaching an effectively independent point (moving a distance of order the target’s width) therefore takes <span class="math inline">\(O(d)\)</span> Metropolis steps but only <span class="math inline">\(O(d^{1/4})\)</span> leapfrog steps. If each density or gradient evaluation costs <span class="math inline">\(O(d)\)</span>, the total cost per independent sample is <span class="math inline">\(O(d^2)\)</span> for Metropolis versus <span class="math inline">\(O(d^{5/4})\)</span> for HMC (Neal 2011, §5.4.4). The optimal HMC acceptance rate in this limit is about <span class="math inline">\(0.65\)</span>.</p>
+<p>For targets with <span class="math inline">\(d\)</span> roughly independent components, keeping the acceptance rate fixed requires a step size <span class="math inline">\(\epsilon \propto d^{-1/2}\)</span> for random-walk Metropolis but only <span class="math inline">\(\epsilon \propto d^{-1/4}\)</span> for HMC. Reaching an effectively independent point (moving a distance of order the target’s width) therefore takes <span class="math inline">\(O(d)\)</span> Metropolis steps but only <span class="math inline">\(O(d^{1/4})\)</span> leapfrog steps. If each density or gradient evaluation costs <span class="math inline">\(O(d)\)</span>, the total cost per independent sample is <span class="math inline">\(O(d^2)\)</span> for Metropolis versus <span class="math inline">\(O(d^{5/4})\)</span> for HMC <span class="citation" data-cites="neal2011mcmc">(<a href="../references.html#ref-neal2011mcmc" role="doc-biblioref">Neal 2011, sec. 5.4.4</a>)</span>. The optimal HMC acceptance rate in this limit is about <span class="math inline">\(0.65\)</span>.</p>
 </div>
 </section>
 <section id="practical-considerations" class="level2" data-number="12.5">
 <h2 data-number="12.5" class="anchored" data-anchor-id="practical-considerations"><span class="header-section-number">12.5</span> Practical considerations</h2>
 <ul>
 <li><strong>Step size.</strong> Too large: leapfrog becomes unstable and acceptance collapses (“divergent transitions”). Too small: wasted gradient evaluations. Modern implementations tune <span class="math inline">\(\epsilon\)</span> during warm-up to reach a target acceptance (<span class="math inline">\(\approx 0.65\)</span>–<span class="math inline">\(0.8\)</span>).</li>
-<li><strong>Trajectory length.</strong> Too short: HMC degenerates into a random walk. Too long: trajectories loop back (for a Gaussian, after half a period). The <strong>No-U-Turn Sampler</strong> (NUTS, Hoffman &amp; Gelman 2014) chooses <span class="math inline">\(L\)</span> adaptively, stopping when the trajectory starts to turn back; it underlies Stan and PyMC.</li>
+<li><strong>Trajectory length.</strong> Too short: HMC degenerates into a random walk. Too long: trajectories loop back (for a Gaussian, after half a period). The <strong>No-U-Turn Sampler</strong> <span class="citation" data-cites="hoffman2014nouturn">(NUTS, <a href="../references.html#ref-hoffman2014nouturn" role="doc-biblioref">Hoffman and Gelman 2014</a>)</span> chooses <span class="math inline">\(L\)</span> adaptively, stopping when the trajectory starts to turn back; it underlies Stan and PyMC.</li>
 <li><strong>Mass matrix.</strong> Using <span class="math inline">\(\mathbf p \sim \mathcal N(0, M)\)</span> with <span class="math inline">\(M \approx \Sigma_\pi^{-1}\)</span> (estimated during warm-up) makes all directions equally “stiff”: it is equivalent to rescaling the target to unit covariance, which removes the <span class="math inline">\(\sigma_{\max}/\sigma_{\min}\)</span> penalty seen in the examples.</li>
 <li><strong>Limitations.</strong> HMC requires a differentiable log-density on a continuous space: discrete parameters need Gibbs steps (or marginalisation). Multimodality remains hard. Each step costs a gradient, which can be expensive (automatic differentiation helps).</li>
 </ul>
@@ -546,11 +571,31 @@ p_i'' &amp;= p_i(t + \tfrac\epsilon2) + \tfrac\epsilon2\partial_{x_i}U(\mathbf x
 </section>
 <section id="sources" class="level2" data-number="12.8">
 <h2 data-number="12.8" class="anchored" data-anchor-id="sources"><span class="header-section-number">12.8</span> Sources</h2>
-<p>Prof.&nbsp;Allegra, <em>Notes on Information Theory and Inference</em>, Chapter 13. Neal, <em>MCMC using Hamiltonian dynamics</em>, Ch. 5 of Brooks et al., <em>Handbook of MCMC</em> (2011): §5.2.1–5.2.3 (Hamiltonian dynamics, properties, leapfrog), §5.3.1–5.3.3 (HMC algorithm, advantages), §5.4.4 (scaling). MacKay, §30.1. Hoffman &amp; Gelman, <em>The No-U-Turn sampler</em>, JMLR <strong>15</strong>, 1593 (2014). Betancourt, <em>A conceptual introduction to HMC</em>, arXiv:1701.02434.</p>
+<p>Prof.&nbsp;Allegra’s notes <span class="citation" data-cites="allegra2025notes">(<a href="../references.html#ref-allegra2025notes" role="doc-biblioref">Allegra 2025, chap. 13</a>)</span>. <span class="citation" data-cites="neal2011mcmc">Neal (<a href="../references.html#ref-neal2011mcmc" role="doc-biblioref">2011</a>)</span>, Chapter 5 of <span class="citation" data-cites="brooks2011handbook">Brooks et al. (<a href="../references.html#ref-brooks2011handbook" role="doc-biblioref">2011</a>)</span>: §5.2.1–5.2.3 (Hamiltonian dynamics, properties, leapfrog), §5.3.1–5.3.3 (HMC algorithm, advantages), §5.4.4 (scaling). <span class="citation" data-cites="mackay2003information">MacKay (<a href="../references.html#ref-mackay2003information" role="doc-biblioref">2003</a>)</span>, §30.1. <span class="citation" data-cites="hoffman2014nouturn">Hoffman and Gelman (<a href="../references.html#ref-hoffman2014nouturn" role="doc-biblioref">2014</a>)</span>; <span class="citation" data-cites="betancourt2017conceptual">Betancourt (<a href="../references.html#ref-betancourt2017conceptual" role="doc-biblioref">2017</a>)</span>.</p>
 
 
 <!-- -->
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="ref-allegra2025notes" class="csl-entry" role="listitem">
+Allegra, Michele. 2025. <em>Notes on Information Theory and Inference</em>.
+</div>
+<div id="ref-betancourt2017conceptual" class="csl-entry" role="listitem">
+Betancourt, Michael. 2017. <em>A Conceptual Introduction to <span>Hamiltonian</span> <span>Monte Carlo</span></em>. arXiv:1701.02434.
+</div>
+<div id="ref-brooks2011handbook" class="csl-entry" role="listitem">
+Brooks, Steve, Andrew Gelman, Galin Jones, and Xiao-Li Meng, eds. 2011. <em>Handbook of Markov Chain Monte Carlo</em>. Chapman; Hall/CRC. <a href="https://doi.org/10.1201/b10905">https://doi.org/10.1201/b10905</a>.
+</div>
+<div id="ref-hoffman2014nouturn" class="csl-entry" role="listitem">
+Hoffman, Matthew D., and Andrew Gelman. 2014. <span>“The <span>No-U-Turn</span> Sampler: Adaptively Setting Path Lengths in <span>Hamiltonian</span> <span>Monte Carlo</span>.”</span> <em>Journal of Machine Learning Research</em> 15: 1593–623.
+</div>
+<div id="ref-mackay2003information" class="csl-entry" role="listitem">
+MacKay, David J. C. 2003. <em>Information Theory, Inference, and Learning Algorithms</em>. Cambridge University Press.
+</div>
+<div id="ref-neal2011mcmc" class="csl-entry" role="listitem">
+Neal, Radford M. 2011. <span>“MCMC Using Hamiltonian Dynamics.”</span> In <em>Handbook of Markov Chain Monte Carlo</em>. Chapman; Hall/CRC. <a href="https://doi.org/10.1201/b10905-6">https://doi.org/10.1201/b10905-6</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -1194,13 +1239,13 @@ p_i'' &amp;= p_i(t + \tfrac\epsilon2) + \tfrac\epsilon2\partial_{x_i}U(\mathbf x
 <span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>::: {.proposition name="Dimension scaling"}</span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>For targets with $d$ roughly independent components, keeping the acceptance rate fixed requires a step size $\epsilon \propto d^{-1/2}$ for random-walk Metropolis but only $\epsilon \propto d^{-1/4}$ for HMC. Reaching an effectively independent point (moving a distance of order the target's width) therefore takes $O(d)$ Metropolis steps but only $O(d^{1/4})$ leapfrog steps. If each density or gradient evaluation costs $O(d)$, the total cost per independent sample is $O(d^2)$ for Metropolis versus $O(d^{5/4})$ for HMC (Neal 2011, §5.4.4). The optimal HMC acceptance rate in this limit is about $0.65$.</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>For targets with $d$ roughly independent components, keeping the acceptance rate fixed requires a step size $\epsilon \propto d^{-1/2}$ for random-walk Metropolis but only $\epsilon \propto d^{-1/4}$ for HMC. Reaching an effectively independent point (moving a distance of order the target's width) therefore takes $O(d)$ Metropolis steps but only $O(d^{1/4})$ leapfrog steps. If each density or gradient evaluation costs $O(d)$, the total cost per independent sample is $O(d^2)$ for Metropolis versus $O(d^{5/4})$ for HMC <span class="co">[</span><span class="ot">@neal2011mcmc, §5.4.4</span><span class="co">]</span>. The optimal HMC acceptance rate in this limit is about $0.65$.</span>
 <span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a><span class="fu">## Practical considerations</span></span>
 <span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Step size.** Too large: leapfrog becomes unstable and acceptance collapses ("divergent transitions"). Too small: wasted gradient evaluations. Modern implementations tune $\epsilon$ during warm-up to reach a target acceptance ($\approx 0.65$–$0.8$).</span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Trajectory length.** Too short: HMC degenerates into a random walk. Too long: trajectories loop back (for a Gaussian, after half a period). The **No-U-Turn Sampler** (NUTS, Hoffman &amp; Gelman 2014) chooses $L$ adaptively, stopping when the trajectory starts to turn back; it underlies Stan and PyMC.</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Trajectory length.** Too short: HMC degenerates into a random walk. Too long: trajectories loop back (for a Gaussian, after half a period). The **No-U-Turn Sampler** <span class="co">[</span><span class="ot">NUTS, @hoffman2014nouturn</span><span class="co">]</span> chooses $L$ adaptively, stopping when the trajectory starts to turn back; it underlies Stan and PyMC.</span>
 <span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Mass matrix.** Using $\mathbf p \sim \mathcal N(0, M)$ with $M \approx \Sigma_\pi^{-1}$ (estimated during warm-up) makes all directions equally "stiff": it is equivalent to rescaling the target to unit covariance, which removes the $\sigma_{\max}/\sigma_{\min}$ penalty seen in the examples.</span>
 <span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Limitations.** HMC requires a differentiable log-density on a continuous space: discrete parameters need Gibbs steps (or marginalisation). Multimodality remains hard. Each step costs a gradient, which can be expensive (automatic differentiation helps).</span>
 <span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a></span>
@@ -1254,7 +1299,7 @@ p_i'' &amp;= p_i(t + \tfrac\epsilon2) + \tfrac\epsilon2\partial_{x_i}U(\mathbf x
 <span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
 <span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>Prof. Allegra, *Notes on Information Theory and Inference*, Chapter 13. Neal, *MCMC using Hamiltonian dynamics*, Ch. 5 of Brooks et al., *Handbook of MCMC* (2011): §5.2.1–5.2.3 (Hamiltonian dynamics, properties, leapfrog), §5.3.1–5.3.3 (HMC algorithm, advantages), §5.4.4 (scaling). MacKay, §30.1. Hoffman &amp; Gelman, *The No-U-Turn sampler*, JMLR **15**, 1593 (2014). Betancourt, *A conceptual introduction to HMC*, arXiv:1701.02434.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>Prof. Allegra's notes <span class="co">[</span><span class="ot">@allegra2025notes, chap. 13</span><span class="co">]</span>. @neal2011mcmc, Chapter 5 of @brooks2011handbook: §5.2.1–5.2.3 (Hamiltonian dynamics, properties, leapfrog), §5.3.1–5.3.3 (HMC algorithm, advantages), §5.4.4 (scaling). @mackay2003information, §30.1. @hoffman2014nouturn; @betancourt2017conceptual.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <style>

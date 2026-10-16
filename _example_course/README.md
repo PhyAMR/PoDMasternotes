@@ -11,6 +11,8 @@ Notes/
     ├── notes/                          ← the Quarto book sources
     │   ├── _quarto.yml                 ← book config (paths assume depth 3)
     │   ├── index.qmd                   ← preface
+    │   ├── references.bib              ← bibliography (BibTeX)
+    │   ├── references.qmd              ← the References chapter
     │   └── chapters/
     │       ├── 01-introduction.qmd     ← typical first chapter
     │       ├── 02-callout-tour.qmd     ← every callout type used in the project
@@ -64,6 +66,11 @@ may not exist yet on a fresh checkout — the steps below create it.
    solutions, remarks, and notes — the preamble in `Notes/pdf/preamble.tex`
    already styles them for PDF and HTML.
 
+   End each chapter with a `## Sources` section that **cites** its
+   lectures, books and papers (`@key`, entries in `notes/references.bib`)
+   instead of listing them as prose; see *Citations and code in the PDF*
+   below.
+
 5. **(Optional) add a course repo link** to `Notes/_projects_github.yml`
    so the Projects landing page links to GitHub.
 
@@ -76,6 +83,38 @@ may not exist yet on a fresh checkout — the steps below create it.
    The course shows up automatically — `generate_listing.py` scans the
    semester folders and registers any course with a `notes/_quarto.yml`
    or a non-empty `projects/`.
+
+## Citations and code in the PDF
+
+**Bibliography.** Put every source in `notes/references.bib` and cite it
+with Pandoc's syntax: `@feller1968introduction` in running text,
+`[@shannon1948mathematical, sec. 2]` in parentheses, `[-@key]` for the
+year alone. `references.qmd` (last in the `chapters:` list) prints the full
+bibliography; in HTML each chapter page also ends with the works it cites.
+Take article metadata from the publisher or Crossref
+(`https://api.crossref.org/works?query.bibliographic=...`) rather than
+typing it by hand. Course material (slides, lecture notes, homework) goes
+in as `@misc` entries.
+
+**Code appendix.** With `code-appendix: true` in `notes/_quarto.yml` (set
+in this template), the PDF moves the code of every executed chunk to a
+*Code* appendix at the end of the book; the text keeps a linked
+reference (*code 2.1 · p. 14*) where the code was, and each block in the
+appendix names the figure it draws and links back to its page. Outputs
+and plain fenced code (` ```python ` without braces) stay in place; add
+`#| classes: keep-code` to a chunk to keep its code in the text. The HTML
+build is unchanged: there the code stays folded in place. The filter is
+`Notes/pdf/code-appendix.lua`; books without the setting are not affected.
+
+## Math macros
+
+Shared macros (`\abs`, `\norm`, `\sprod`, `\argmin`, `\red`, …) live in
+`Notes/pdf/preamble.tex`. The HTML build reads them from there too
+(`Notes/pdf/mathjax-macros.lua` hands them to MathJax), so a new macro
+works in both outputs as long as it is defined on **one line** with
+`\providecommand`, `\newcommand` or `\DeclareMathOperator`. Colour
+arguments may use xcolor names and mixes such as `green!60!black`; the
+filter converts them for the browser.
 
 ## Contributing
 

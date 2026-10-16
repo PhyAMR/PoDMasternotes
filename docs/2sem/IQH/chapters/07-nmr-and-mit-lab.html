@@ -61,7 +61,26 @@ div.sourceCode
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -71,6 +90,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
+<link href="../references.html" rel="next">
 <link href="../chapters/06-cavity-to-circuit-qed.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -246,6 +266,12 @@ window.Quarto = {
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -307,12 +333,12 @@ window.Quarto = {
 
 <section id="from-superconducting-qubits-to-nuclear-spins" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="from-superconducting-qubits-to-nuclear-spins"><span class="header-section-number">8.1</span> From superconducting qubits to nuclear spins</h2>
-<p>Chapters 5–6 built a two-level quantum system on a chip: a transmon qubit dispersively coupled to a microwave resonator, driven and read out with GHz pulses. Nothing in that construction is <em>specific</em> to superconducting circuits. The <strong>nuclear spin-1/2</strong> — a proton in a magnetic field — is the original two-level quantum system, first manipulated coherently by Rabi (1938), Bloch (1946) and Purcell (1946), and it obeys the <em>same</em> Bloch-equation phenomenology that today describes a transmon on the Bloch sphere. Almost every quantitative concept we used in Ch. 5–6 was born in a nuclear-magnetic-resonance (NMR) laboratory:</p>
+<p>Chapters 5–6 built a two-level quantum system on a chip: a transmon qubit dispersively coupled to a microwave resonator, driven and read out with GHz pulses. Nothing in that construction is <em>specific</em> to superconducting circuits. The <strong>nuclear spin-1/2</strong> — a proton in a magnetic field — is the original two-level quantum system, first manipulated coherently by Rabi (1938), <span class="citation" data-cites="bloch1946nuclear">Bloch (<a href="#ref-bloch1946nuclear" role="doc-biblioref">1946</a>)</span> and <span class="citation" data-cites="purcell1946resonance">Purcell et al. (<a href="#ref-purcell1946resonance" role="doc-biblioref">1946</a>)</span>, and it obeys the <em>same</em> Bloch-equation phenomenology that today describes a transmon on the Bloch sphere. Almost every quantitative concept we used in Ch. 5–6 was born in a nuclear-magnetic-resonance (NMR) laboratory:</p>
 <ul>
 <li><strong>Rabi flopping</strong> on resonance <span class="math inline">\(\leftrightarrow\)</span> transmon rotations driven by a microwave tone;</li>
 <li><strong><span class="math inline">\(T_1\)</span> (energy relaxation) and <span class="math inline">\(T_2\)</span> (dephasing)</strong> <span class="math inline">\(\leftrightarrow\)</span> the same two decay channels that limit any qubit;</li>
 <li><strong>Chemical shift + FID spectrum</strong> <span class="math inline">\(\leftrightarrow\)</span> dispersive photon-number-resolved spectroscopy;</li>
-<li><strong>Spin echo (Hahn 1950)</strong> <span class="math inline">\(\leftrightarrow\)</span> dynamical decoupling of a transmon against low-frequency flux noise;</li>
+<li><strong>Spin echo</strong> <span class="citation" data-cites="hahn1950spin">(<a href="#ref-hahn1950spin" role="doc-biblioref">Hahn 1950</a>)</span> <span class="math inline">\(\leftrightarrow\)</span> dynamical decoupling of a transmon against low-frequency flux noise;</li>
 <li><strong>Dilution refrigerator with a <em>mixing chamber</em></strong> <span class="math inline">\(\leftrightarrow\)</span> the very same cryostats used to cool superconducting qubit chips.</li>
 </ul>
 <p>The purpose of this chapter is therefore twofold. First, we develop pulsed NMR in its own right, starting from Zeeman splitting and Larmor precession and ending with the standard sequences (Hahn echo, CPMG, inversion recovery) used to measure <span class="math inline">\(T_1\)</span> and <span class="math inline">\(T_2\)</span>. Second, we walk through the concrete apparatus of the <strong>MIT Junior-Lab pulsed-NMR experiment</strong> — permanent magnet, tuned LC probe, T/R switch, quadrature phase detector, digital pulse programmer — so that the abstract sequences map onto real signals visible on an oscilloscope. The chapter closes with a direct comparison table between nuclear-spin NMR and circuit QED.</p>
@@ -413,7 +439,7 @@ x}'\)</span> at the <strong>Rabi frequency</strong> <span class="math display">\
 </section>
 <section id="the-bloch-equations" class="level2" data-number="8.4">
 <h2 data-number="8.4" class="anchored" data-anchor-id="the-bloch-equations"><span class="header-section-number">8.4</span> The Bloch equations</h2>
-<p>Once the RF pulse is turned off, the spins are no longer isolated: they exchange energy with the surrounding “lattice” (any degrees of freedom other than the spin subsystem itself — molecular motion, phonons, other spins) and they interact weakly with each other. Bloch (1946) parametrised these two effects phenomenologically by two decay times: the <strong>longitudinal</strong> or spin-lattice time <span class="math inline">\(T_1\)</span>, and the <strong>transverse</strong> or spin-spin time <span class="math inline">\(T_2\)</span>. The resulting equations of motion for the magnetisation vector <span class="math inline">\(\mathbf M(t)\)</span> read</p>
+<p>Once the RF pulse is turned off, the spins are no longer isolated: they exchange energy with the surrounding “lattice” (any degrees of freedom other than the spin subsystem itself — molecular motion, phonons, other spins) and they interact weakly with each other. <span class="citation" data-cites="bloch1946nuclear">Bloch (<a href="#ref-bloch1946nuclear" role="doc-biblioref">1946</a>)</span> parametrised these two effects phenomenologically by two decay times: the <strong>longitudinal</strong> or spin-lattice time <span class="math inline">\(T_1\)</span>, and the <strong>transverse</strong> or spin-spin time <span class="math inline">\(T_2\)</span>. The resulting equations of motion for the magnetisation vector <span class="math inline">\(\mathbf M(t)\)</span> read</p>
 <p><span class="math display">\[
 \boxed{\;
 \begin{aligned}
@@ -423,7 +449,7 @@ x}'\)</span> at the <strong>Rabi frequency</strong> <span class="math display">\
 \end{aligned}\;}
 \tag{7.6}
 \]</span></p>
-<p>The first term is the classical torque equation <span class="citation" data-cites="eq:torque">@eq:torque</span>; the additional relaxation terms drive the longitudinal component back to its equilibrium value <span class="math inline">\(M_0\)</span> and the transverse components to zero.</p>
+<p>The first term is the classical torque equation (7.3); the additional relaxation terms drive the longitudinal component back to its equilibrium value <span class="math inline">\(M_0\)</span> and the transverse components to zero.</p>
 <div class="callout callout-style-simple callout-note no-icon callout-titled" title="Definition --- $T_1$ and $T_2$">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -465,7 +491,7 @@ S(\omega) \;=\; \frac{V_0\,T_2^*}{1 + (\omega-\omega_0)^2 (T_2^*)^2}.
 <div class="callout-body-container callout-body">
 <p>Chemically inequivalent protons in a molecule experience <em>slightly</em> different local magnetic fields because the surrounding electron cloud partially shields <span class="math inline">\(B_0\)</span>. Each chemical environment therefore precesses at a slightly displaced Larmor frequency <span class="math display">\[
 \omega_0^{(i)} \;=\; \gamma B_0\,(1 - \sigma_i),
-\]</span> with <span class="math inline">\(\sigma_i \sim 10^{-6}\)</span>–<span class="math inline">\(10^{-5}\)</span> the <strong>chemical-shift tensor</strong>. The FID of a real molecule is therefore a <em>sum</em> of Lorentzians, one per chemically inequivalent site — this is what NMR spectroscopists actually stare at all day, and it is exactly the same physics as photon-number-resolved dispersive spectroscopy in Ch. 6 (Schuster 2007): different environments produce different frequency pulls on the same qubit / spin transition.</p>
+\]</span> with <span class="math inline">\(\sigma_i \sim 10^{-6}\)</span>–<span class="math inline">\(10^{-5}\)</span> the <strong>chemical-shift tensor</strong>. The FID of a real molecule is therefore a <em>sum</em> of Lorentzians, one per chemically inequivalent site — this is what NMR spectroscopists actually stare at all day, and it is exactly the same physics as photon-number-resolved dispersive spectroscopy in Ch. 6 <span class="citation" data-cites="schuster2007resolving">(<a href="#ref-schuster2007resolving" role="doc-biblioref">Schuster et al. 2007</a>)</span>: different environments produce different frequency pulls on the same qubit / spin transition.</p>
 </div>
 </div>
 </section>
@@ -489,7 +515,7 @@ S(\omega) \;=\; \frac{V_0\,T_2^*}{1 + (\omega-\omega_0)^2 (T_2^*)^2}.
 \sim\)</span> tens of <span class="math inline">\(\mu\)</span>s while the intrinsic <span class="math inline">\(T_2\)</span> of the same sample (glycerin, mineral oil) can exceed several milliseconds. The gap is enormous.</p>
 </div>
 </div>
-<p><strong>Hahn’s insight (1950).</strong> The reversible part of the dephasing can be <em>undone</em> by applying a <span class="math inline">\(\pi\)</span> pulse a time <span class="math inline">\(\tau\)</span> after the initial <span class="math inline">\(\pi/2\)</span> pulse. Consider two isochromats precessing at <span class="math inline">\(\omega_0 \pm \delta\omega\)</span>: at time <span class="math inline">\(\tau\)</span> they have accumulated phase difference <span class="math inline">\(\pm\delta\omega\,\tau\)</span> about <span class="math inline">\(\hat{\mathbf z}\)</span>. A <span class="math inline">\(\pi\)</span> pulse about <span class="math inline">\(\hat{\mathbf x}'\)</span> reflects both phases: <span class="math inline">\(+\delta\omega\,\tau \to -\delta\omega\,\tau\)</span>. Because the isochromats continue to precess in the <em>same</em> direction after the pulse, a further time <span class="math inline">\(\tau\)</span> later they have again accumulated <span class="math inline">\(\pm\delta\omega\,\tau\)</span> — which now exactly cancels the reflected phase, and the isochromats refocus. The transverse magnetisation reappears at <span class="math inline">\(t = 2\tau\)</span>: this is the <strong>Hahn spin echo</strong>.</p>
+<p><strong>Hahn’s insight</strong> <span class="citation" data-cites="hahn1950spin">(<a href="#ref-hahn1950spin" role="doc-biblioref">1950</a>)</span>. The reversible part of the dephasing can be <em>undone</em> by applying a <span class="math inline">\(\pi\)</span> pulse a time <span class="math inline">\(\tau\)</span> after the initial <span class="math inline">\(\pi/2\)</span> pulse. Consider two isochromats precessing at <span class="math inline">\(\omega_0 \pm \delta\omega\)</span>: at time <span class="math inline">\(\tau\)</span> they have accumulated phase difference <span class="math inline">\(\pm\delta\omega\,\tau\)</span> about <span class="math inline">\(\hat{\mathbf z}\)</span>. A <span class="math inline">\(\pi\)</span> pulse about <span class="math inline">\(\hat{\mathbf x}'\)</span> reflects both phases: <span class="math inline">\(+\delta\omega\,\tau \to -\delta\omega\,\tau\)</span>. Because the isochromats continue to precess in the <em>same</em> direction after the pulse, a further time <span class="math inline">\(\tau\)</span> later they have again accumulated <span class="math inline">\(\pm\delta\omega\,\tau\)</span> — which now exactly cancels the reflected phase, and the isochromats refocus. The transverse magnetisation reappears at <span class="math inline">\(t = 2\tau\)</span>: this is the <strong>Hahn spin echo</strong>.</p>
 <p>The echo amplitude is reduced compared to the initial FID only by the <em>intrinsic</em>, irreversible dephasing <span class="math inline">\(T_2\)</span> (plus, at large <span class="math inline">\(\tau\)</span>, by diffusion effects; see below): <span class="math display">\[
 M_\perp(2\tau) \;=\; M_0\, e^{-2\tau/T_2}.
 \tag{7.10}
@@ -516,7 +542,7 @@ M_\perp(2\tau) \;=\; M_0\, e^{-2\tau/T_2}.
 E(2\tau) \;=\; E_0\,\exp\!\Bigl(-\frac{2\tau}{T_2}
                               -\tfrac{2}{3}\gamma^2 G^2 D\,\tau^3\Bigr).
 \tag{7.11}
-\]</span> Carr and Purcell (1954) — later refined by Meiboom and Gill (1958), giving CPMG — replace the single <span class="math inline">\(\pi\)</span> pulse with a <em>train</em>: <span class="math display">\[
+\]</span> <span class="citation" data-cites="carr1954effects">Carr and Purcell (<a href="#ref-carr1954effects" role="doc-biblioref">1954</a>)</span> — later refined by <span class="citation" data-cites="meiboom1958modified">Meiboom and Gill (<a href="#ref-meiboom1958modified" role="doc-biblioref">1958</a>)</span>, giving CPMG — replace the single <span class="math inline">\(\pi\)</span> pulse with a <em>train</em>: <span class="math display">\[
 (\pi/2)_x \;-\; \tau \;-\;
 \bigl[(\pi)_y \;-\; 2\tau \;-\; \text{echo}\bigr]_{\text{repeat}\;N\text{ times}}.
 \]</span> Because <span class="math inline">\(\tau\)</span> can be made small (short inter-echo interval), the diffusion term <span class="math inline">\(\gamma^2 G^2 D\,\tau^3\)</span> is suppressed. The Meiboom–Gill trick — rotating the successive <span class="math inline">\(\pi\)</span> pulses by 90° about <span class="math inline">\(\hat{\mathbf y}'\)</span> instead of <span class="math inline">\(\hat{\mathbf x}'\)</span> — additionally cancels the accumulation of small errors in the <span class="math inline">\(\pi\)</span>-pulse calibration, so that hundreds or thousands of echoes can be recorded from a single initialisation. <strong>This is exactly the same trick used in modern superconducting-qubit experiments as <em>dynamical decoupling</em> to extend <span class="math inline">\(T_2^{\text{echo}}\)</span> (Carr–Purcell), <span class="math inline">\(T_2^{\text{CPMG}}\)</span>, and their higher-order XY-<span class="math inline">\(n\)</span> cousins.</strong></p>
@@ -583,7 +609,7 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <li><strong>Glycerin–water mixtures.</strong> Increasing glycerin concentration increases the viscosity and enhances spin–spin dephasing. <span class="math inline">\(T_2\)</span> is a strong function of glycerin fraction — the classic Bloembergen–Purcell–Pound curve.</li>
 <li><strong>Paramagnetic ion (Fe<span class="math inline">\(^{3+}\)</span>) solutions.</strong> Unpaired electron spins provide extra relaxation channels; <span class="math inline">\(T_1\)</span> drops dramatically with ion concentration.</li>
 <li><strong>Fluorine samples</strong> (trifluoroacetic acid, hexafluorobenzene) to measure the fluorine magnetic moment via <span class="math inline">\(\omega_0^{(19\text{F})} = \gamma_{19\text{F}} B_0\)</span>.</li>
-<li><strong>Distilled and tap water.</strong> Long $T_1 $ several seconds; dissolved paramagnetic <span class="math inline">\(\text{O}_2\)</span> shortens <span class="math inline">\(T_1\)</span> significantly compared with degassed water — the famous <span class="math inline">\(50\%\)</span> correction to Bloembergen’s original 1948 measurement.</li>
+<li><strong>Distilled and tap water.</strong> Long $T_1 $ several seconds; dissolved paramagnetic <span class="math inline">\(\text{O}_2\)</span> shortens <span class="math inline">\(T_1\)</span> significantly compared with degassed water — the famous <span class="math inline">\(50\%\)</span> correction to Bloembergen’s original 1948 measurement <span class="citation" data-cites="bloembergen1948relaxation">(<a href="#ref-bloembergen1948relaxation" role="doc-biblioref">Bloembergen et al. 1948</a>)</span>.</li>
 </ul>
 </section>
 </section>
@@ -651,7 +677,7 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 </tr>
 <tr class="even">
 <td>FID <span class="math inline">\(\to\)</span> chemical-shift spectrum</td>
-<td>Dispersive spectrum <span class="math inline">\(\to\)</span> photon-number peaks (Schuster 2007)</td>
+<td>Dispersive spectrum <span class="math inline">\(\to\)</span> photon-number peaks <span class="citation" data-cites="schuster2007resolving">(<a href="#ref-schuster2007resolving" role="doc-biblioref">Schuster et al. 2007</a>)</span></td>
 </tr>
 <tr class="odd">
 <td>Hahn echo, CPMG</td>
@@ -693,22 +719,55 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <section id="sources" class="level2" data-number="8.11">
 <h2 data-number="8.11" class="anchored" data-anchor-id="sources"><span class="header-section-number">8.11</span> Sources</h2>
 <ul>
-<li>Lecturer’s hand-written class notes, “Pulsed Nuclear Magnetic Resonance”, Braggio 2026, 16 pp.&nbsp;(primary source for the theory sections).</li>
-<li>MIT Department of Physics, <em>Pulsed Nuclear Magnetic Resonance: Spin Echoes</em> — Junior Lab guide, <code>12.nmr.tex</code> v. 1.117 (2014), 15 pp. (primary source for the apparatus and measurement sections).</li>
-<li>Bloch, F. <em>Nuclear induction</em>. Phys. Rev.&nbsp;<strong>70</strong>, 460 (1946).</li>
-<li>Purcell, E. M., Torrey, H. C. &amp; Pound, R. V. <em>Resonance absorption by nuclear magnetic moments in a solid</em>. Phys. Rev.&nbsp;<strong>69</strong>, 37 (1946).</li>
-<li>Hahn, E. L. <em>Spin echoes</em>. Phys. Rev.&nbsp;<strong>80</strong>, 580 (1950).</li>
-<li>Carr, H. Y. &amp; Purcell, E. M. <em>Effects of diffusion on free precession in nuclear magnetic resonance experiments</em>. Phys. Rev.&nbsp;<strong>94</strong>, 630 (1954).</li>
-<li>Meiboom, S. &amp; Gill, D. <em>Modified spin-echo method for measuring nuclear relaxation times</em>. Rev.&nbsp;Sci. Instrum. <strong>29</strong>, 688 (1958).</li>
-<li>Bloembergen, N., Purcell, E. M. &amp; Pound, R. V. <em>Relaxation effects in nuclear magnetic resonance absorption</em>. Phys. Rev.&nbsp;<strong>73</strong>, 679 (1948).</li>
-<li>Abragam, A. <em>Principles of Nuclear Magnetism</em>. Oxford U.P. (1961) — canonical theory reference.</li>
-<li>Levitt, M. H. <em>Spin Dynamics: Basics of Nuclear Magnetic Resonance</em>. Wiley (2008) — modern textbook.</li>
-<li>Ernst, R. &amp; Anderson, W. <em>Application of Fourier transform spectroscopy to magnetic resonance</em>. Rev.&nbsp;Sci. Instrum. <strong>37</strong>, 93 (1966) — foundational paper on Fourier-transform NMR and probe design.</li>
+<li>Lecturer’s hand-written class notes, “Pulsed Nuclear Magnetic Resonance” <span class="citation" data-cites="braggio2026nmr">(<a href="#ref-braggio2026nmr" role="doc-biblioref">Braggio 2026</a>)</span>: primary source for the theory sections.</li>
+<li>MIT Junior Lab guide, <em>Pulsed Nuclear Magnetic Resonance: Spin Echoes</em> <span class="citation" data-cites="mit2014nmr">(<a href="#ref-mit2014nmr" role="doc-biblioref">MIT Department of Physics 2014</a>)</span>: primary source for the apparatus and measurement sections.</li>
+<li><span class="citation" data-cites="bloch1946nuclear">Bloch (<a href="#ref-bloch1946nuclear" role="doc-biblioref">1946</a>)</span>; <span class="citation" data-cites="purcell1946resonance">Purcell et al. (<a href="#ref-purcell1946resonance" role="doc-biblioref">1946</a>)</span>; <span class="citation" data-cites="hahn1950spin">Hahn (<a href="#ref-hahn1950spin" role="doc-biblioref">1950</a>)</span>; <span class="citation" data-cites="carr1954effects">Carr and Purcell (<a href="#ref-carr1954effects" role="doc-biblioref">1954</a>)</span>; <span class="citation" data-cites="meiboom1958modified">Meiboom and Gill (<a href="#ref-meiboom1958modified" role="doc-biblioref">1958</a>)</span>; <span class="citation" data-cites="bloembergen1948relaxation">Bloembergen et al. (<a href="#ref-bloembergen1948relaxation" role="doc-biblioref">1948</a>)</span>.</li>
+<li><span class="citation" data-cites="abragam1961principles">Abragam (<a href="#ref-abragam1961principles" role="doc-biblioref">1961</a>)</span>, the canonical theory reference.</li>
+<li><span class="citation" data-cites="levitt2008spin">Levitt (<a href="#ref-levitt2008spin" role="doc-biblioref">2008</a>)</span>, a modern textbook.</li>
+<li><span class="citation" data-cites="ernst1966application">Ernst and Anderson (<a href="#ref-ernst1966application" role="doc-biblioref">1966</a>)</span>, the foundational paper on Fourier-transform NMR and probe design.</li>
 </ul>
 
 
 <!-- -->
 
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-abragam1961principles" class="csl-entry" role="listitem">
+Abragam, Anatole. 1961. <em>The Principles of Nuclear Magnetism</em>. Oxford University Press.
+</div>
+<div id="ref-bloch1946nuclear" class="csl-entry" role="listitem">
+Bloch, F. 1946. <span>“Nuclear Induction.”</span> <em>Physical Review</em> 70 (7-8): 460–74. <a href="https://doi.org/10.1103/physrev.70.460">https://doi.org/10.1103/physrev.70.460</a>.
+</div>
+<div id="ref-bloembergen1948relaxation" class="csl-entry" role="listitem">
+Bloembergen, N., E. M. Purcell, and R. V. Pound. 1948. <span>“Relaxation Effects in Nuclear Magnetic Resonance Absorption.”</span> <em>Physical Review</em> 73 (7): 679–712. <a href="https://doi.org/10.1103/physrev.73.679">https://doi.org/10.1103/physrev.73.679</a>.
+</div>
+<div id="ref-braggio2026nmr" class="csl-entry" role="listitem">
+Braggio, Caterina. 2026. <em>Pulsed Nuclear Magnetic Resonance</em>. Hand-written class notes, 16 pp.
+</div>
+<div id="ref-carr1954effects" class="csl-entry" role="listitem">
+Carr, H. Y., and E. M. Purcell. 1954. <span>“Effects of Diffusion on Free Precession in Nuclear Magnetic Resonance Experiments.”</span> <em>Physical Review</em> 94 (3): 630–38. <a href="https://doi.org/10.1103/physrev.94.630">https://doi.org/10.1103/physrev.94.630</a>.
+</div>
+<div id="ref-ernst1966application" class="csl-entry" role="listitem">
+Ernst, R. R., and W. A. Anderson. 1966. <span>“Application of Fourier Transform Spectroscopy to Magnetic Resonance.”</span> <em>Review of Scientific Instruments</em> 37 (1): 93–102. <a href="https://doi.org/10.1063/1.1719961">https://doi.org/10.1063/1.1719961</a>.
+</div>
+<div id="ref-hahn1950spin" class="csl-entry" role="listitem">
+Hahn, E. L. 1950. <span>“Spin Echoes.”</span> <em>Physical Review</em> 80 (4): 580–94. <a href="https://doi.org/10.1103/physrev.80.580">https://doi.org/10.1103/physrev.80.580</a>.
+</div>
+<div id="ref-levitt2008spin" class="csl-entry" role="listitem">
+Levitt, Malcolm H. 2008. <em>Spin Dynamics: Basics of Nuclear Magnetic Resonance</em>. 2nd ed. Wiley.
+</div>
+<div id="ref-meiboom1958modified" class="csl-entry" role="listitem">
+Meiboom, S., and D. Gill. 1958. <span>“Modified Spin-Echo Method for Measuring Nuclear Relaxation Times.”</span> <em>Review of Scientific Instruments</em> 29 (8): 688–91. <a href="https://doi.org/10.1063/1.1716296">https://doi.org/10.1063/1.1716296</a>.
+</div>
+<div id="ref-mit2014nmr" class="csl-entry" role="listitem">
+MIT Department of Physics. 2014. <em>Pulsed Nuclear Magnetic Resonance: Spin Echoes</em>. Junior Lab experiment guide, <code>12.nmr.tex</code> v.&nbsp;1.117, 15 pp.
+</div>
+<div id="ref-purcell1946resonance" class="csl-entry" role="listitem">
+Purcell, E. M., H. C. Torrey, and R. V. Pound. 1946. <span>“Resonance Absorption by Nuclear Magnetic Moments in a Solid.”</span> <em>Physical Review</em> 69 (1-2): 37–38. <a href="https://doi.org/10.1103/physrev.69.37">https://doi.org/10.1103/physrev.69.37</a>.
+</div>
+<div id="ref-schuster2007resolving" class="csl-entry" role="listitem">
+Schuster, D. I., A. A. Houck, J. A. Schreier, et al. 2007. <span>“Resolving Photon Number States in a Superconducting Circuit.”</span> <em>Nature</em> 445 (7127): 515–18. <a href="https://doi.org/10.1038/nature05461">https://doi.org/10.1038/nature05461</a>.
+</div>
+</div>
 </section>
 
 </main> <!-- /main -->
@@ -1177,6 +1236,9 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
       </a>          
   </div>
   <div class="nav-page nav-page-next">
+      <a href="../references.html" class="pagination-link" aria-label="References">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
@@ -1194,8 +1256,8 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>dispersively coupled to a microwave resonator, driven and read out with GHz</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>pulses. Nothing in that construction is *specific* to superconducting circuits.</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>The **nuclear spin-1/2** — a proton in a magnetic field — is the original</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>two-level quantum system, first manipulated coherently by Rabi (1938), Bloch</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>(1946) and Purcell (1946), and it obeys the *same* Bloch-equation phenomenology</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>two-level quantum system, first manipulated coherently by Rabi (1938), @bloch1946nuclear</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>and @purcell1946resonance, and it obeys the *same* Bloch-equation phenomenology</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>that today describes a transmon on the Bloch sphere. Almost every quantitative</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>concept we used in Ch. 5–6 was born in a nuclear-magnetic-resonance (NMR)</span>
 <span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>laboratory:</span>
@@ -1206,7 +1268,7 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  two decay channels that limit any qubit;</span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Chemical shift + FID spectrum** $\leftrightarrow$ dispersive</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  photon-number-resolved spectroscopy;</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Spin echo (Hahn 1950)** $\leftrightarrow$ dynamical decoupling of a</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Spin echo** <span class="co">[</span><span class="ot">@hahn1950spin</span><span class="co">]</span> $\leftrightarrow$ dynamical decoupling of a</span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  transmon against low-frequency flux noise;</span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Dilution refrigerator with a *mixing chamber*** $\leftrightarrow$ the very</span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  same cryostats used to cool superconducting qubit chips.</span>
@@ -1413,7 +1475,7 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>Once the RF pulse is turned off, the spins are no longer isolated: they</span>
 <span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>exchange energy with the surrounding "lattice" (any degrees of freedom other</span>
 <span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>than the spin subsystem itself — molecular motion, phonons, other spins) and</span>
-<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a>they interact weakly with each other. Bloch (1946) parametrised these two</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a>they interact weakly with each other. @bloch1946nuclear parametrised these two</span>
 <span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>effects phenomenologically by two decay times: the **longitudinal** or</span>
 <span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a>spin-lattice time $T_1$, and the **transverse** or spin-spin time $T_2$. The</span>
 <span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>resulting equations of motion for the magnetisation vector $\mathbf M(t)$ read</span>
@@ -1428,7 +1490,7 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a>\tag{7.6}</span>
 <span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>The first term is the classical torque equation @eq:torque; the additional</span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>The first term is the classical torque equation (7.3); the additional</span>
 <span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a>relaxation terms drive the longitudinal component back to its equilibrium</span>
 <span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>value $M_0$ and the transverse components to zero.</span>
 <span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a></span>
@@ -1478,7 +1540,7 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <span id="cb1-297"><a href="#cb1-297" aria-hidden="true" tabindex="-1"></a>of a real molecule is therefore a *sum* of Lorentzians, one per chemically</span>
 <span id="cb1-298"><a href="#cb1-298" aria-hidden="true" tabindex="-1"></a>inequivalent site — this is what NMR spectroscopists actually stare at all</span>
 <span id="cb1-299"><a href="#cb1-299" aria-hidden="true" tabindex="-1"></a>day, and it is exactly the same physics as photon-number-resolved dispersive</span>
-<span id="cb1-300"><a href="#cb1-300" aria-hidden="true" tabindex="-1"></a>spectroscopy in Ch. 6 (Schuster 2007): different environments produce</span>
+<span id="cb1-300"><a href="#cb1-300" aria-hidden="true" tabindex="-1"></a>spectroscopy in Ch. 6 <span class="co">[</span><span class="ot">@schuster2007resolving</span><span class="co">]</span>: different environments produce</span>
 <span id="cb1-301"><a href="#cb1-301" aria-hidden="true" tabindex="-1"></a>different frequency pulls on the same qubit / spin transition.</span>
 <span id="cb1-302"><a href="#cb1-302" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-303"><a href="#cb1-303" aria-hidden="true" tabindex="-1"></a></span>
@@ -1506,7 +1568,7 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <span id="cb1-325"><a href="#cb1-325" aria-hidden="true" tabindex="-1"></a>mineral oil) can exceed several milliseconds. The gap is enormous.</span>
 <span id="cb1-326"><a href="#cb1-326" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb1-327"><a href="#cb1-327" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-328"><a href="#cb1-328" aria-hidden="true" tabindex="-1"></a>**Hahn's insight (1950).** The reversible part of the dephasing can be</span>
+<span id="cb1-328"><a href="#cb1-328" aria-hidden="true" tabindex="-1"></a>**Hahn's insight** <span class="co">[</span><span class="ot">-@hahn1950spin</span><span class="co">]</span>. The reversible part of the dephasing can be</span>
 <span id="cb1-329"><a href="#cb1-329" aria-hidden="true" tabindex="-1"></a>*undone* by applying a $\pi$ pulse a time $\tau$ after the initial $\pi/2$</span>
 <span id="cb1-330"><a href="#cb1-330" aria-hidden="true" tabindex="-1"></a>pulse. Consider two isochromats precessing at $\omega_0 \pm \delta\omega$: at</span>
 <span id="cb1-331"><a href="#cb1-331" aria-hidden="true" tabindex="-1"></a>time $\tau$ they have accumulated phase difference $\pm\delta\omega\,\tau$</span>
@@ -1611,7 +1673,7 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <span id="cb1-430"><a href="#cb1-430" aria-hidden="true" tabindex="-1"></a>                              -\tfrac{2}{3}\gamma^2 G^2 D\,\tau^3\Bigr).</span>
 <span id="cb1-431"><a href="#cb1-431" aria-hidden="true" tabindex="-1"></a>\tag{7.11}</span>
 <span id="cb1-432"><a href="#cb1-432" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb1-433"><a href="#cb1-433" aria-hidden="true" tabindex="-1"></a>Carr and Purcell (1954) — later refined by Meiboom and Gill (1958), giving</span>
+<span id="cb1-433"><a href="#cb1-433" aria-hidden="true" tabindex="-1"></a>@carr1954effects — later refined by @meiboom1958modified, giving</span>
 <span id="cb1-434"><a href="#cb1-434" aria-hidden="true" tabindex="-1"></a>CPMG — replace the single $\pi$ pulse with a *train*:</span>
 <span id="cb1-435"><a href="#cb1-435" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb1-436"><a href="#cb1-436" aria-hidden="true" tabindex="-1"></a>(\pi/2)_x \;-\; \tau \;-\;</span>
@@ -1881,7 +1943,7 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <span id="cb1-700"><a href="#cb1-700" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**Distilled and tap water.** Long $T_1 \sim $ several seconds; dissolved</span>
 <span id="cb1-701"><a href="#cb1-701" aria-hidden="true" tabindex="-1"></a>  paramagnetic $\text{O}_2$ shortens $T_1$ significantly compared with</span>
 <span id="cb1-702"><a href="#cb1-702" aria-hidden="true" tabindex="-1"></a>  degassed water — the famous $50\%$ correction to Bloembergen's original 1948</span>
-<span id="cb1-703"><a href="#cb1-703" aria-hidden="true" tabindex="-1"></a>  measurement.</span>
+<span id="cb1-703"><a href="#cb1-703" aria-hidden="true" tabindex="-1"></a>  measurement <span class="co">[</span><span class="ot">@bloembergen1948relaxation</span><span class="co">]</span>.</span>
 <span id="cb1-704"><a href="#cb1-704" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-705"><a href="#cb1-705" aria-hidden="true" tabindex="-1"></a><span class="fu">## Measuring $T_1$ and $T_2$ in practice</span></span>
 <span id="cb1-706"><a href="#cb1-706" aria-hidden="true" tabindex="-1"></a></span>
@@ -1931,7 +1993,7 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <span id="cb1-750"><a href="#cb1-750" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Rotating frame at $\omega$ <span class="pp">|</span> Interaction picture at $\omega_d$ <span class="pp">|</span></span>
 <span id="cb1-751"><a href="#cb1-751" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Rotating-wave approximation <span class="pp">|</span> Same RWA as in the JC Hamiltonian (Ch. 6) <span class="pp">|</span></span>
 <span id="cb1-752"><a href="#cb1-752" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Free-induction decay $\propto e^{-t/T_2^*}$ | Ramsey fringes $\propto e^{-t/T_2^*}$ <span class="pp">|</span></span>
-<span id="cb1-753"><a href="#cb1-753" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> FID $\to$ chemical-shift spectrum <span class="pp">|</span> Dispersive spectrum $\to$ photon-number peaks (Schuster 2007) <span class="pp">|</span></span>
+<span id="cb1-753"><a href="#cb1-753" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> FID $\to$ chemical-shift spectrum <span class="pp">|</span> Dispersive spectrum $\to$ photon-number peaks <span class="co">[</span><span class="ot">@schuster2007resolving</span><span class="co">]</span> <span class="pp">|</span></span>
 <span id="cb1-754"><a href="#cb1-754" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Hahn echo, CPMG <span class="pp">|</span> Dynamical decoupling: XY-8, CPMG on qubits <span class="pp">|</span></span>
 <span id="cb1-755"><a href="#cb1-755" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> $T_1$ inversion recovery <span class="pp">|</span> Qubit $T_1$ from $<span class="pp">|</span>e\rangle$ decay <span class="pp">|</span></span>
 <span id="cb1-756"><a href="#cb1-756" aria-hidden="true" tabindex="-1"></a><span class="pp">|</span> Inhomogeneous $\Delta B_0$ across sample <span class="pp">|</span> $1/f$ flux/charge noise across a chip <span class="pp">|</span></span>
@@ -1960,28 +2022,12 @@ t_{180} \approx 48\,\mu\text{s}\)</span>, <span class="math inline">\(\tau \appr
 <span id="cb1-779"><a href="#cb1-779" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-780"><a href="#cb1-780" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sources</span></span>
 <span id="cb1-781"><a href="#cb1-781" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-782"><a href="#cb1-782" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lecturer's hand-written class notes, "Pulsed Nuclear Magnetic Resonance",</span>
-<span id="cb1-783"><a href="#cb1-783" aria-hidden="true" tabindex="-1"></a>  Braggio 2026, 16 pp. (primary source for the theory sections).</span>
-<span id="cb1-784"><a href="#cb1-784" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>MIT Department of Physics, *Pulsed Nuclear Magnetic Resonance: Spin</span>
-<span id="cb1-785"><a href="#cb1-785" aria-hidden="true" tabindex="-1"></a>  Echoes* — Junior Lab guide, <span class="in">`12.nmr.tex`</span> v. 1.117 (2014), 15 pp.</span>
-<span id="cb1-786"><a href="#cb1-786" aria-hidden="true" tabindex="-1"></a>  (primary source for the apparatus and measurement sections).</span>
-<span id="cb1-787"><a href="#cb1-787" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Bloch, F. *Nuclear induction*. Phys. Rev. **70**, 460 (1946).</span>
-<span id="cb1-788"><a href="#cb1-788" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Purcell, E. M., Torrey, H. C. &amp; Pound, R. V. *Resonance absorption by</span>
-<span id="cb1-789"><a href="#cb1-789" aria-hidden="true" tabindex="-1"></a>  nuclear magnetic moments in a solid*. Phys. Rev. **69**, 37 (1946).</span>
-<span id="cb1-790"><a href="#cb1-790" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Hahn, E. L. *Spin echoes*. Phys. Rev. **80**, 580 (1950).</span>
-<span id="cb1-791"><a href="#cb1-791" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Carr, H. Y. &amp; Purcell, E. M. *Effects of diffusion on free precession in</span>
-<span id="cb1-792"><a href="#cb1-792" aria-hidden="true" tabindex="-1"></a>  nuclear magnetic resonance experiments*. Phys. Rev. **94**, 630 (1954).</span>
-<span id="cb1-793"><a href="#cb1-793" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Meiboom, S. &amp; Gill, D. *Modified spin-echo method for measuring nuclear</span>
-<span id="cb1-794"><a href="#cb1-794" aria-hidden="true" tabindex="-1"></a>  relaxation times*. Rev. Sci. Instrum. **29**, 688 (1958).</span>
-<span id="cb1-795"><a href="#cb1-795" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Bloembergen, N., Purcell, E. M. &amp; Pound, R. V. *Relaxation effects in</span>
-<span id="cb1-796"><a href="#cb1-796" aria-hidden="true" tabindex="-1"></a>  nuclear magnetic resonance absorption*. Phys. Rev. **73**, 679 (1948).</span>
-<span id="cb1-797"><a href="#cb1-797" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Abragam, A. *Principles of Nuclear Magnetism*. Oxford U.P. (1961) —</span>
-<span id="cb1-798"><a href="#cb1-798" aria-hidden="true" tabindex="-1"></a>  canonical theory reference.</span>
-<span id="cb1-799"><a href="#cb1-799" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Levitt, M. H. *Spin Dynamics: Basics of Nuclear Magnetic Resonance*.</span>
-<span id="cb1-800"><a href="#cb1-800" aria-hidden="true" tabindex="-1"></a>  Wiley (2008) — modern textbook.</span>
-<span id="cb1-801"><a href="#cb1-801" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Ernst, R. &amp; Anderson, W. *Application of Fourier transform spectroscopy</span>
-<span id="cb1-802"><a href="#cb1-802" aria-hidden="true" tabindex="-1"></a>  to magnetic resonance*. Rev. Sci. Instrum. **37**, 93 (1966) — foundational</span>
-<span id="cb1-803"><a href="#cb1-803" aria-hidden="true" tabindex="-1"></a>  paper on Fourier-transform NMR and probe design.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-782"><a href="#cb1-782" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Lecturer's hand-written class notes, "Pulsed Nuclear Magnetic Resonance" <span class="co">[</span><span class="ot">@braggio2026nmr</span><span class="co">]</span>: primary source for the theory sections.</span>
+<span id="cb1-783"><a href="#cb1-783" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>MIT Junior Lab guide, *Pulsed Nuclear Magnetic Resonance: Spin Echoes* <span class="co">[</span><span class="ot">@mit2014nmr</span><span class="co">]</span>: primary source for the apparatus and measurement sections.</span>
+<span id="cb1-784"><a href="#cb1-784" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@bloch1946nuclear; @purcell1946resonance; @hahn1950spin; @carr1954effects; @meiboom1958modified; @bloembergen1948relaxation.</span>
+<span id="cb1-785"><a href="#cb1-785" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@abragam1961principles, the canonical theory reference.</span>
+<span id="cb1-786"><a href="#cb1-786" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@levitt2008spin, a modern textbook.</span>
+<span id="cb1-787"><a href="#cb1-787" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>@ernst1966application, the foundational paper on Fourier-transform NMR and probe design.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <style>

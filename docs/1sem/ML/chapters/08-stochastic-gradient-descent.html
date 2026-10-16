@@ -377,6 +377,12 @@ window.Quarto = {
 </li>
       </ul>
   </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
     </ul>
     </div>
 </nav>
@@ -439,15 +445,15 @@ window.Quarto = {
 <p>By multiplying this gradient by a learning rate <span class="math inline">\(\eta\)</span>, we can control the size of the step that occurs at each iteration.</p>
 <p>The algorithm, ultimately, is as follows:</p>
 <p>Another motivation for choosing the gradient as a tool for finding the minimum is given by the Taylor series expansion of the function <span class="math inline">\(f(\boldsymbol{w})\)</span>. For a convex function, in fact, it is shown that</p>
-<p><span class="math display">\[
+<p><span id="eq-stochastic-gradient-descent-gradient-descent-minorazione"><span class="math display">\[
     f(\boldsymbol{w})\geqslant f\left(\boldsymbol{w_0}\right)+\left\langle\boldsymbol{w}-\boldsymbol{w_0},\nabla f\left(\boldsymbol{w_0}\right)\right\rangle
-\]</span></p>
+  \tag{9.1}\]</span></span></p>
 <p>whatever the points <span class="math inline">\(\boldsymbol{w_0}\)</span> and <span class="math inline">\(\boldsymbol{w}\)</span> of the domain are.</p>
 <p>Since the goal is to minimize <span class="math inline">\(f\left(\boldsymbol{w_0}\right)\)</span>, we want to get as close as possible to the case of equality:</p>
 <p><span class="math display">\[
     f(\boldsymbol{w})\simeq f\left(\boldsymbol{w_0}\right)+\left\langle\boldsymbol{w}-\boldsymbol{w_0},\nabla f\left(\boldsymbol{w_0}\right)\right\rangle
 \]</span></p>
-<p>This approximation, as we know, is valid only when <span class="math inline">\(\boldsymbol{w}\)</span> is close enough to <span class="math inline">\(\boldsymbol{w_0}\)</span>. At the same time, we want to find the absolute minimum of the function, so ultimately we will have to simultaneously minimize both the distance between <span class="math inline">\(\boldsymbol{w}\)</span> and <span class="math inline">\(\boldsymbol{w_0}\)</span> and the second member of <span class="citation" data-cites="eq:stochastic-gradient-descent-gradient">(<a href="#ref-eq:stochastic-gradient-descent-gradient" role="doc-biblioref"><strong>eq:stochastic-gradient-descent-gradient?</strong></a>)</span> descent minorazione:</p>
+<p>This approximation, as we know, is valid only when <span class="math inline">\(\boldsymbol{w}\)</span> is close enough to <span class="math inline">\(\boldsymbol{w_0}\)</span>. At the same time, we want to find the absolute minimum of the function, so ultimately we will have to simultaneously minimize both the distance between <span class="math inline">\(\boldsymbol{w}\)</span> and <span class="math inline">\(\boldsymbol{w_0}\)</span> and the second member of (<a href="#eq-stochastic-gradient-descent-gradient-descent-minorazione" class="quarto-xref"><span class="quarto-unresolved-ref ref-noprefix">eq-stochastic-gradient-descent-gradient-descent-minorazione</span></a>):</p>
 <p><span class="math display">\[
     \argmin_{\boldsymbol{w}}\left(\frac{1}{2}\norm{\boldsymbol{w}-\boldsymbol{w_0}}^2+\eta\left(f\left(\boldsymbol{w_0}\right)+\left\langle\boldsymbol{w}-\boldsymbol{w_0},\nabla f\left(\boldsymbol{w_0}\right)\right\rangle\right)\right)
 \]</span></p>
@@ -498,7 +504,16 @@ window.Quarto = {
 <h2 data-number="9.2" class="anchored" data-anchor-id="stochastic-variant"><span class="header-section-number">9.2</span> Stochastic variant</h2>
 <p>The exact calculation of the gradient requires the use of all the points in the training set <em>for each iteration</em>. This approach can be computationally expensive, so an alternative is often adopted that sacrifices some accuracy in favor of greater computational efficiency: the gradient is calculated using <em>only one point</em> for each iteration; this process converges to the minimum as long as the value chosen for the calculation of the gradient is drawn from a distribution that, on average, points in the direction of the gradient, so even if at each step the direction is not exactly directed towards the minimum, it will still be reached after a sufficiently high number of iterations.</p>
 <p>The process just described is what gives the chapter its name: it is the <strong>Stochastic Gradient Descent</strong> (<strong>SGD</strong>), so called precisely because of its <em>stochastic</em> nature starting from the basis of Gradient Descent.</p>
-<p><img src="../../../../Grafiche/_inline_cache/32dcd0d04943908b.svg" class="tikz-figure img-fluid" alt=""></p>
+<div id="fig-stochastic-gradient-descent-confronto-con-gd" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-stochastic-gradient-descent-confronto-con-gd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../Grafiche/Immagini/stochastic-gradient-descent-confronto-con-gd.png" class="img-fluid figure-img" style="width:85.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-stochastic-gradient-descent-confronto-con-gd-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9.1: Comparison between Gradient Descent (left) and Stochastic Gradient Descent (right) considering the same function: <span class="math inline">\(1.25(x+6)^2+(y-8)^2\)</span>
+</figcaption>
+</figure>
+</div>
 <p>Let <span class="math inline">\(\boldsymbol{z}\)</span> be the point drawn at the <span class="math inline">\(t\)</span>-th iteration, what we want is that</p>
 <p><span class="math display">\[
     \mathbb{E}\left(\boldsymbol{z}|\boldsymbol{w}^{(t)}\right)=\nabla f\left(\boldsymbol{w}^{(t)}\right)
@@ -507,7 +522,7 @@ window.Quarto = {
 <section id="comparison-between-the-two-versions-of-the-algorithm" class="level3" data-number="9.2.1">
 <h3 data-number="9.2.1" class="anchored" data-anchor-id="comparison-between-the-two-versions-of-the-algorithm"><span class="header-section-number">9.2.1</span> Comparison between the two versions of the algorithm</h3>
 <p>We have already explained the substantial difference: it is a saving of calculations on the one hand, and a lower overall accuracy on the other; as is easy to guess, this choice becomes all the more sensible the larger the training set becomes.</p>
-<p>By choosing the stochastic version we would therefore have to deal with much less stable trajectories, as we have had the opportunity to observe in figure <span class="citation" data-cites="fig:stochastic-gradient-descent-confronto-con-gd">(<a href="#ref-fig:stochastic-gradient-descent-confronto-con-gd" role="doc-biblioref"><strong>fig:stochastic-gradient-descent-confronto-con-gd?</strong></a>)</span>. This is not a general problem in reality, since it also brings with it a positive aspect: that of escaping any <strong>local minima</strong>, which could lead the system to converge to a non-optimal solution.</p>
+<p>By choosing the stochastic version we would therefore have to deal with much less stable trajectories, as we have had the opportunity to observe in <a href="#fig-stochastic-gradient-descent-confronto-con-gd" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-stochastic-gradient-descent-confronto-con-gd</span></a>. This is not a general problem in reality, since it also brings with it a positive aspect: that of escaping any <strong>local minima</strong>, which could lead the system to converge to a non-optimal solution.</p>
 <p>In any case, we know some strategies that can help stabilize the trajectory in case it is excessively “noisy”:</p>
 <ul>
 <li>Use of <strong>momentum</strong>, which we will discuss in more detail later.</li>
@@ -543,7 +558,7 @@ window.Quarto = {
 \]</span></p>
 <p>where <span class="math inline">\(B\)</span> is such that <span class="math inline">\(\norm{\boldsymbol{w}}\leqslant B \ \forall\boldsymbol{w}\)</span>.</p>
 </div>
-<p>In essence, we can therefore state that SGD is - on average - an agnostic PAC learner, according to what we know from section <span class="citation" data-cites="sec:quando-lerm-e-un-agnostic-pac-learner">(<a href="#ref-sec:quando-lerm-e-un-agnostic-pac-learner" role="doc-biblioref"><strong>sec:quando-lerm-e-un-agnostic-pac-learner?</strong></a>)</span>.</p>
+<p>In essence, we can therefore state that SGD is - on average - an agnostic PAC learner, according to what we know from <a href="#sec-quando-lerm-e-un-agnostic-pac-learner" class="quarto-xref"><span class="quarto-unresolved-ref">sec-quando-lerm-e-un-agnostic-pac-learner</span></a>.</p>
 </section>
 <section id="sgd-applied-to-rlm" class="level3" data-number="9.3.2">
 <h3 data-number="9.3.2" class="anchored" data-anchor-id="sgd-applied-to-rlm"><span class="header-section-number">9.3.2</span> SGD applied to RLM</h3>
@@ -1107,7 +1122,7 @@ window.Quarto = {
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a> $$</span>
 <span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    f(\boldsymbol{w})\geqslant f\left(\boldsymbol{w_0}\right)+\left\langle\boldsymbol{w}-\boldsymbol{w_0},\nabla f\left(\boldsymbol{w_0}\right)\right\rangle</span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a> $$ {#eq-stochastic-gradient-descent-gradient-descent-minorazione}</span>
 <span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>whatever the points $\boldsymbol{w_0}$ and $\boldsymbol{w}$ of the domain are.</span>
 <span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a></span>
@@ -1117,7 +1132,7 @@ window.Quarto = {
 <span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    f(\boldsymbol{w})\simeq f\left(\boldsymbol{w_0}\right)+\left\langle\boldsymbol{w}-\boldsymbol{w_0},\nabla f\left(\boldsymbol{w_0}\right)\right\rangle</span>
 <span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a> $$</span>
 <span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>This approximation, as we know, is valid only when $\boldsymbol{w}$ is close enough to $\boldsymbol{w_0}$. At the same time, we want to find the absolute minimum of the function, so ultimately we will have to simultaneously minimize both the distance between $\boldsymbol{w}$ and $\boldsymbol{w_0}$ and the second member of @eq:stochastic-gradient-descent-gradient descent minorazione:</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>This approximation, as we know, is valid only when $\boldsymbol{w}$ is close enough to $\boldsymbol{w_0}$. At the same time, we want to find the absolute minimum of the function, so ultimately we will have to simultaneously minimize both the distance between $\boldsymbol{w}$ and $\boldsymbol{w_0}$ and the second member of (<span class="co">[</span><span class="ot">-@eq-stochastic-gradient-descent-gradient-descent-minorazione</span><span class="co">]</span>):</span>
 <span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a> $$</span>
 <span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    \argmin_{\boldsymbol{w}}\left(\frac{1}{2}\norm{\boldsymbol{w}-\boldsymbol{w_0}}^2+\eta\left(f\left(\boldsymbol{w_0}\right)+\left\langle\boldsymbol{w}-\boldsymbol{w_0},\nabla f\left(\boldsymbol{w_0}\right)\right\rangle\right)\right)</span>
@@ -1191,160 +1206,155 @@ window.Quarto = {
 <span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>The process just described is what gives the chapter its name: it is the **Stochastic Gradient Descent** (**SGD**), so called precisely because of its *stochastic* nature starting from the basis of Gradient Descent.</span>
 <span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>\begin{figure}<span class="co">[</span><span class="ot">H</span><span class="co">]</span></span>
-<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>    \centering</span>
-<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>    \includegraphics<span class="co">[</span><span class="ot">width=0.85\textwidth</span><span class="co">]</span>{Grafiche/Immagini/stochastic-gradient-descent-confronto-con-gd.png}</span>
-<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>    \caption{Comparison between Gradient Descent (left) and Stochastic Gradient Descent (right) considering the same function: $1.25(x+6)^2+(y-8)^2$}</span>
-<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>\end{figure}</span>
-<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>Let $\boldsymbol{z}$ be the point drawn at the $t$-th iteration, what we want is that</span>
-<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}\left(\boldsymbol{z}|\boldsymbol{w}^{(t)}\right)=\nabla f\left(\boldsymbol{w}^{(t)}\right)</span>
-<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>We will show later how it is possible to simply choose a random point from the learning set which is reshuffled at each iteration.</span>
-<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a><span class="fu">### Comparison between the two versions of the algorithm</span></span>
-<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>We have already explained the substantial difference: it is a saving of calculations on the one hand, and a lower overall accuracy on the other; as is easy to guess, this choice becomes all the more sensible the larger the training set becomes.</span>
-<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>By choosing the stochastic version we would therefore have to deal with much less stable trajectories, as we have had the opportunity to observe in figure @fig:stochastic-gradient-descent-confronto-con-gd. This is not a general problem in reality, since it also brings with it a positive aspect: that of escaping any **local minima**, which could lead the system to converge to a non-optimal solution.</span>
-<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>In any case, we know some strategies that can help stabilize the trajectory in case it is excessively "noisy":</span>
-<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use of **momentum**, which we will discuss in more detail later.</span>
-<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Calculation of the output as the *average* of the points calculated at the various steps. It is possible to consider all the points obtained from the algorithm, but it is not recommended as the first vectors are usually very far from the minimum and would unbalance the final result too much; for this reason, the average is normally performed only on the last vectors, which are reasonably close to the optimal solution.</span>
-<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Choice of an **adaptive learning rate**, which increases and decreases the learning rate at each step based on a predetermined scheme that is a function of the slope of the gradient, the update frequency and other parameters.</span>
-<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mini-batch variant</span></span>
-<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>A further variant of Gradient Descent is the one that is configured as a middle ground between the two we have seen and which makes use of *mini-batches*, that is, sets of points chosen randomly from the training set.</span>
-<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>Assuming the size of the mini-batch is $k$, at each iteration of the algorithm the gradient is calculated through these $k$ elements. It is clear, therefore, that the overall trajectory will be less stable than pure Gradient Descent but still less noisy than the stochastic variant. We thus find a compromise between accuracy and speed of calculation which is parameterized by $k$, which is usually chosen by cross-validation. Precisely because of its role as a "middle ground", this is the most used variant, especially in the training of very large neural networks.</span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a><span class="fu">## Applications in optimization methods</span></span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a><span class="fu">### SGD applied to ERM</span></span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>What we are looking for is a way to obtain a random point $\boldsymbol{z}$ such that the expected value conditioned by $\boldsymbol{w}^{(t)}$ related to it is</span>
-<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}\left(\boldsymbol{z}|\boldsymbol{w}^{(t)}\right)=\nabla L_{\mathcal{D}}\left(\boldsymbol{w}^{(t)}\right)</span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>being the risk function the quantity to be minimized.</span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>We note that this equality is valid when we set the random vector equal to the gradient of the loss function calculated in $\left(\boldsymbol{w^{(t)}},\boldsymbol{z}\right)$:</span>
-<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}\left(\boldsymbol{z}|\boldsymbol{w}^{(t)}\right)=\mathbb{E}_{\boldsymbol{z}\sim\mathcal{D}}\left(\nabla\ell\left(\boldsymbol{w}^{(t)},\boldsymbol{z}\right)\right)=\nabla \mathbb{E}_{\boldsymbol{z}\sim\mathcal{D}}\left(\ell\left(\boldsymbol{w}^{(t)},\boldsymbol{z}\right)\right)=\nabla L_{\mathcal{D}}\left(\boldsymbol{w}^{(t)}\right)</span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>This quantity is also called **estimator**, or even *unbiased estimator* since the points are extracted directly from the set in our possession (training set) which is assumed to follow the same distribution $\mathcal{D}$ of the data generation model.</span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a><span class="al">![Comparison between Gradient Descent (left) and Stochastic Gradient Descent (right) considering the same function: $1.25(x+6)^2+(y-8)^2$](../Grafiche/Immagini/stochastic-gradient-descent-confronto-con-gd.png)</span>{#fig-stochastic-gradient-descent-confronto-con-gd width=85%}</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>Let $\boldsymbol{z}$ be the point drawn at the $t$-th iteration, what we want is that</span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}\left(\boldsymbol{z}|\boldsymbol{w}^{(t)}\right)=\nabla f\left(\boldsymbol{w}^{(t)}\right)</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>We will show later how it is possible to simply choose a random point from the learning set which is reshuffled at each iteration.</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a><span class="fu">### Comparison between the two versions of the algorithm</span></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>We have already explained the substantial difference: it is a saving of calculations on the one hand, and a lower overall accuracy on the other; as is easy to guess, this choice becomes all the more sensible the larger the training set becomes.</span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>By choosing the stochastic version we would therefore have to deal with much less stable trajectories, as we have had the opportunity to observe in @fig-stochastic-gradient-descent-confronto-con-gd. This is not a general problem in reality, since it also brings with it a positive aspect: that of escaping any **local minima**, which could lead the system to converge to a non-optimal solution.</span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>In any case, we know some strategies that can help stabilize the trajectory in case it is excessively "noisy":</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Use of **momentum**, which we will discuss in more detail later.</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Calculation of the output as the *average* of the points calculated at the various steps. It is possible to consider all the points obtained from the algorithm, but it is not recommended as the first vectors are usually very far from the minimum and would unbalance the final result too much; for this reason, the average is normally performed only on the last vectors, which are reasonably close to the optimal solution.</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Choice of an **adaptive learning rate**, which increases and decreases the learning rate at each step based on a predetermined scheme that is a function of the slope of the gradient, the update frequency and other parameters.</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a><span class="fu">### Mini-batch variant</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>A further variant of Gradient Descent is the one that is configured as a middle ground between the two we have seen and which makes use of *mini-batches*, that is, sets of points chosen randomly from the training set.</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>Assuming the size of the mini-batch is $k$, at each iteration of the algorithm the gradient is calculated through these $k$ elements. It is clear, therefore, that the overall trajectory will be less stable than pure Gradient Descent but still less noisy than the stochastic variant. We thus find a compromise between accuracy and speed of calculation which is parameterized by $k$, which is usually chosen by cross-validation. Precisely because of its role as a "middle ground", this is the most used variant, especially in the training of very large neural networks.</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a><span class="fu">## Applications in optimization methods</span></span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a><span class="fu">### SGD applied to ERM</span></span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>What we are looking for is a way to obtain a random point $\boldsymbol{z}$ such that the expected value conditioned by $\boldsymbol{w}^{(t)}$ related to it is</span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}\left(\boldsymbol{z}|\boldsymbol{w}^{(t)}\right)=\nabla L_{\mathcal{D}}\left(\boldsymbol{w}^{(t)}\right)</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>being the risk function the quantity to be minimized.</span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>We note that this equality is valid when we set the random vector equal to the gradient of the loss function calculated in $\left(\boldsymbol{w^{(t)}},\boldsymbol{z}\right)$:</span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}\left(\boldsymbol{z}|\boldsymbol{w}^{(t)}\right)=\mathbb{E}_{\boldsymbol{z}\sim\mathcal{D}}\left(\nabla\ell\left(\boldsymbol{w}^{(t)},\boldsymbol{z}\right)\right)=\nabla \mathbb{E}_{\boldsymbol{z}\sim\mathcal{D}}\left(\ell\left(\boldsymbol{w}^{(t)},\boldsymbol{z}\right)\right)=\nabla L_{\mathcal{D}}\left(\boldsymbol{w}^{(t)}\right)</span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>This quantity is also called **estimator**, or even *unbiased estimator* since the points are extracted directly from the set in our possession (training set) which is assumed to follow the same distribution $\mathcal{D}$ of the data generation model.</span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>There is also a theorem - related to the previous ones we have seen - which guarantees us an upper bound on the expected value of the loss function calculated in the output. We will not see the proof of this one either, as for the others.</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Theorem on the expected value of the true error"}</span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>Considering a *convex* and $\rho$*-Lipschitz* learning problem, iterating the Stochastic Gradient Descent method for $T\geqslant\frac{B^2\rho^2}{\epsilon^2}$ times with a learning rate $\eta=\sqrt{\frac{B^2}{\rho^2T}}$ we will obtain an output $\boldsymbol{\bar{w}}$ such as to satisfy</span>
 <span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>There is also a theorem - related to the previous ones we have seen - which guarantees us an upper bound on the expected value of the loss function calculated in the output. We will not see the proof of this one either, as for the others.</span>
-<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>::: {.theorem name="Theorem on the expected value of the true error"}</span>
-<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>Considering a *convex* and $\rho$*-Lipschitz* learning problem, iterating the Stochastic Gradient Descent method for $T\geqslant\frac{B^2\rho^2}{\epsilon^2}$ times with a learning rate $\eta=\sqrt{\frac{B^2}{\rho^2T}}$ we will obtain an output $\boldsymbol{\bar{w}}$ such as to satisfy</span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}\left(L_{\mathcal{D}}\left(\boldsymbol{\bar{w}}\right)\right)\leqslant\min_{\boldsymbol{w}\in\mathcal{H}}L_{\mathcal{D}}(\boldsymbol{w})+\epsilon \hspace{0.65cm} \forall\epsilon</span>
-<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}\left(L_{\mathcal{D}}\left(\boldsymbol{\bar{w}}\right)\right)\leqslant\min_{\boldsymbol{w}\in\mathcal{H}}L_{\mathcal{D}}(\boldsymbol{w})+\epsilon \hspace{0.65cm} \forall\epsilon</span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>where $B$ is such that $\norm{\boldsymbol{w}}\leqslant B \ \forall\boldsymbol{w}$.</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>In essence, we can therefore state that SGD is - on average - an agnostic PAC learner, according to what we know from @sec-quando-lerm-e-un-agnostic-pac-learner.</span>
 <span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>where $B$ is such that $\norm{\boldsymbol{w}}\leqslant B \ \forall\boldsymbol{w}$.</span>
-<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>In essence, we can therefore state that SGD is - on average - an agnostic PAC learner, according to what we know from section @sec:quando-lerm-e-un-agnostic-pac-learner.</span>
-<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a><span class="fu">### SGD applied to RLM</span></span>
-<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a>Applying the same reasoning as before to the regularized loss function, the regularization term will be added, whose gradient is\footnote{The factor $\frac{1}{2}$ is inserted - as is evident - for calculation reasons, just as mentioned in the note in paragraph @sec:regressione-di-ridge.}</span>
-<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a>    \nabla\left(\frac{\lambda}{2}\norm{\boldsymbol{w}}^2\right)=\lambda\boldsymbol{w}</span>
-<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a>At the $t$-th iteration the output will be:</span>
-<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a>    \boldsymbol{w^{(t+1)}}\to\boldsymbol{w^{(t)}}-\eta\left(\boldsymbol{z^{(t)}}+\lambda\boldsymbol{w^{(t)}}\right)</span>
-<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a>It can be shown that this iteration can also be written as</span>
-<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a>    \boxed{\boldsymbol{w^{(t+1)}}\to-\eta\sum_{i=1}^t\boldsymbol{z^{(i)}}}</span>
-<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a>Another thing that can be shown is that the regularized loss function is a $\lambda$*-strongly convex* function, *(As anticipated, although convexity plays a key role in this whole discussion, it has not been introduced and explored properly, so this information is simply given without further explanation. We can say that, intuitively, it is a function that grows at least like a quadratic function and whose growth is parameterized by $\lambda$.)*, and for a function of this type it is convenient to choose a learning rate inversely proportional to the step of the iteration $t$; to be precise:</span>
-<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a>    \eta=\frac{1}{\lambda t} \ \Longrightarrow \ \boldsymbol{w^{(t+1)}}\to-\frac{1}{\lambda t}\sum_{i=1}^t\boldsymbol{z^{(i)}}</span>
-<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a>Finally, if the loss $f$ is $\rho$-Lipschitz, the difference between the expected value relative to the final output and the true error is bounded by a known quantity:</span>
-<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}\left(f\left(\boldsymbol{\bar{w}}\right)\right)-f\left(\boldsymbol{w^*}\right)\leqslant\frac{4\rho^2}{\lambda T}(1+\log T)</span>
-<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a><span class="fu">### SGD applied to soft SVM</span></span>
-<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a>We know that the loss function for soft SVM is the hinge loss:</span>
-<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a>    \ell^{hinge}((\boldsymbol{w},b),(\boldsymbol{x},y))=\max(0,1-y(\sprod{x}{w}+b))</span>
-<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>This function, in principle, is not differentiable; nevertheless, we can still calculate the **sub-gradients**:</span>
-<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a>    \nabla\ell^{hinge}((\boldsymbol{w},b),(\boldsymbol{x},y))=</span>
-<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
-<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>        0 \ \text{if} \ 1-y(\sprod{x}{w}+b)\leqslant0<span class="sc">\\</span></span>
-<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a>        -y\boldsymbol{x} \ \text{if} \ 1-y(\sprod{x}{w}+b)&gt;0</span>
-<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
-<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a>Based on this, we can write the algorithm that produces the final output.</span>
-<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>\begin{algorithm}<span class="co">[</span><span class="ot">H</span><span class="co">]</span></span>
-<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>    \caption*{**Stochastic Gradients Descent applied to soft SVM** (pseudocode)}</span>
-<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a>    \begin{algorithmic}<span class="co">[</span><span class="ot">1</span><span class="co">]</span></span>
-<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>        \State $\boldsymbol{z}\gets(0,0,\dots,0)$</span>
-<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a>        \State</span>
-<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>        \For{$t=1$ to $T$}</span>
-<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a>            \State</span>
-<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>            \State $\boldsymbol{w},b\gets\boldsymbol{z} / (\lambda*t)$</span>
-<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a>            \State</span>
-<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>            \State $i\gets UniformExtraction(1,m)$\Comment{Random extraction from the training set}</span>
-<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a>            \State $\boldsymbol{x},y\gets FromTrainingSet(i)$</span>
-<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>            \State $class\gets1-y*(ScalarProduct( oldsymbol{x}, oldsymbol{w})+b)$</span>
-<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a>            \State</span>
-<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>            \If{$class&gt;0$}</span>
-<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a>                \State $\boldsymbol{z}\gets\boldsymbol{z}+y*\boldsymbol{x}$</span>
-<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>            \EndIf</span>
-<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a>            \State</span>
-<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>        \EndFor</span>
-<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a>        \State</span>
-<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>        \State</span>
-<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a>        \Return{$\boldsymbol{w},b$}</span>
-<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a>    \end{algorithmic}</span>
-<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a>\end{algorithm}</span>
-<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a><span class="fu">## Momentum</span></span>
-<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a>The main problem related to the Stochastic Gradient Descent process is that of converging to local minima that do not represent the optimal solutions for the problem. One way to regulate this is to play with the learning rate parameter, increasing or decreasing it based on how large we want the "jumps" performed by the algorithm to be; we have also mentioned that these "jumps" do not have to be constant but can vary during the iterations, and how it is often convenient that $\eta\propto\frac{1}{t}$.</span>
-<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a>There is another method to facilitate the convergence of the algorithm to the global minimum, which is the use of **momentum**. We can think of the process, in fact, in analogy to a ball rolling on a surface full of curves: in the vicinity of a local minimum, if the ball has a sufficiently high impulse given by inertia, it will be able to overcome this valley and proceed further. In a completely analogous way, we can think of considering not only the gradient of the function, which indicates the privileged direction of optimization, but also the inertia itself given by the direction indicated at the previous step. We will therefore define a parameter $\gamma$ such that</span>
-<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-271"><a href="#cb1-271" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-272"><a href="#cb1-272" aria-hidden="true" tabindex="-1"></a>    \boldsymbol{z}^{(t)}=\gamma\boldsymbol{z}^{(t-1)}+(1-\gamma)\nabla L_{\mathcal{D}}\left(\boldsymbol{w}^{(t)}\right)</span>
-<span id="cb1-273"><a href="#cb1-273" aria-hidden="true" tabindex="-1"></a> $$</span>
-<span id="cb1-274"><a href="#cb1-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-275"><a href="#cb1-275" aria-hidden="true" tabindex="-1"></a>When $\gamma=0$ the algorithm is a pure SGD, as the weight of the inertia is zero. The closer $\gamma$ gets to $1$, however, the more the inertia will count at the expense of the direction indicated by the gradient.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a><span class="fu">### SGD applied to RLM</span></span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>Applying the same reasoning as before to the regularized loss function, the regularization term will be added, whose gradient is\footnote{The factor $\frac{1}{2}$ is inserted - as is evident - for calculation reasons, just as mentioned in the note in @sec-regressione-di-ridge.}</span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>    \nabla\left(\frac{\lambda}{2}\norm{\boldsymbol{w}}^2\right)=\lambda\boldsymbol{w}</span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-191"><a href="#cb1-191" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-192"><a href="#cb1-192" aria-hidden="true" tabindex="-1"></a>At the $t$-th iteration the output will be:</span>
+<span id="cb1-193"><a href="#cb1-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-194"><a href="#cb1-194" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-195"><a href="#cb1-195" aria-hidden="true" tabindex="-1"></a>    \boldsymbol{w^{(t+1)}}\to\boldsymbol{w^{(t)}}-\eta\left(\boldsymbol{z^{(t)}}+\lambda\boldsymbol{w^{(t)}}\right)</span>
+<span id="cb1-196"><a href="#cb1-196" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-197"><a href="#cb1-197" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-198"><a href="#cb1-198" aria-hidden="true" tabindex="-1"></a>It can be shown that this iteration can also be written as</span>
+<span id="cb1-199"><a href="#cb1-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-200"><a href="#cb1-200" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-201"><a href="#cb1-201" aria-hidden="true" tabindex="-1"></a>    \boxed{\boldsymbol{w^{(t+1)}}\to-\eta\sum_{i=1}^t\boldsymbol{z^{(i)}}}</span>
+<span id="cb1-202"><a href="#cb1-202" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-203"><a href="#cb1-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-204"><a href="#cb1-204" aria-hidden="true" tabindex="-1"></a>Another thing that can be shown is that the regularized loss function is a $\lambda$*-strongly convex* function, *(As anticipated, although convexity plays a key role in this whole discussion, it has not been introduced and explored properly, so this information is simply given without further explanation. We can say that, intuitively, it is a function that grows at least like a quadratic function and whose growth is parameterized by $\lambda$.)*, and for a function of this type it is convenient to choose a learning rate inversely proportional to the step of the iteration $t$; to be precise:</span>
+<span id="cb1-205"><a href="#cb1-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-206"><a href="#cb1-206" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-207"><a href="#cb1-207" aria-hidden="true" tabindex="-1"></a>    \eta=\frac{1}{\lambda t} \ \Longrightarrow \ \boldsymbol{w^{(t+1)}}\to-\frac{1}{\lambda t}\sum_{i=1}^t\boldsymbol{z^{(i)}}</span>
+<span id="cb1-208"><a href="#cb1-208" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-209"><a href="#cb1-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-210"><a href="#cb1-210" aria-hidden="true" tabindex="-1"></a>Finally, if the loss $f$ is $\rho$-Lipschitz, the difference between the expected value relative to the final output and the true error is bounded by a known quantity:</span>
+<span id="cb1-211"><a href="#cb1-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-212"><a href="#cb1-212" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-213"><a href="#cb1-213" aria-hidden="true" tabindex="-1"></a>    \mathbb{E}\left(f\left(\boldsymbol{\bar{w}}\right)\right)-f\left(\boldsymbol{w^*}\right)\leqslant\frac{4\rho^2}{\lambda T}(1+\log T)</span>
+<span id="cb1-214"><a href="#cb1-214" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-215"><a href="#cb1-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-216"><a href="#cb1-216" aria-hidden="true" tabindex="-1"></a><span class="fu">### SGD applied to soft SVM</span></span>
+<span id="cb1-217"><a href="#cb1-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-218"><a href="#cb1-218" aria-hidden="true" tabindex="-1"></a>We know that the loss function for soft SVM is the hinge loss:</span>
+<span id="cb1-219"><a href="#cb1-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-220"><a href="#cb1-220" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-221"><a href="#cb1-221" aria-hidden="true" tabindex="-1"></a>    \ell^{hinge}((\boldsymbol{w},b),(\boldsymbol{x},y))=\max(0,1-y(\sprod{x}{w}+b))</span>
+<span id="cb1-222"><a href="#cb1-222" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-223"><a href="#cb1-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-224"><a href="#cb1-224" aria-hidden="true" tabindex="-1"></a>This function, in principle, is not differentiable; nevertheless, we can still calculate the **sub-gradients**:</span>
+<span id="cb1-225"><a href="#cb1-225" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-226"><a href="#cb1-226" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-227"><a href="#cb1-227" aria-hidden="true" tabindex="-1"></a>    \nabla\ell^{hinge}((\boldsymbol{w},b),(\boldsymbol{x},y))=</span>
+<span id="cb1-228"><a href="#cb1-228" aria-hidden="true" tabindex="-1"></a>    \begin{cases}</span>
+<span id="cb1-229"><a href="#cb1-229" aria-hidden="true" tabindex="-1"></a>        0 \ \text{if} \ 1-y(\sprod{x}{w}+b)\leqslant0<span class="sc">\\</span></span>
+<span id="cb1-230"><a href="#cb1-230" aria-hidden="true" tabindex="-1"></a>        -y\boldsymbol{x} \ \text{if} \ 1-y(\sprod{x}{w}+b)&gt;0</span>
+<span id="cb1-231"><a href="#cb1-231" aria-hidden="true" tabindex="-1"></a>    \end{cases}</span>
+<span id="cb1-232"><a href="#cb1-232" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-233"><a href="#cb1-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-234"><a href="#cb1-234" aria-hidden="true" tabindex="-1"></a>Based on this, we can write the algorithm that produces the final output.</span>
+<span id="cb1-235"><a href="#cb1-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-236"><a href="#cb1-236" aria-hidden="true" tabindex="-1"></a>\begin{algorithm}<span class="co">[</span><span class="ot">H</span><span class="co">]</span></span>
+<span id="cb1-237"><a href="#cb1-237" aria-hidden="true" tabindex="-1"></a>    \caption*{**Stochastic Gradients Descent applied to soft SVM** (pseudocode)}</span>
+<span id="cb1-238"><a href="#cb1-238" aria-hidden="true" tabindex="-1"></a>    \begin{algorithmic}<span class="co">[</span><span class="ot">1</span><span class="co">]</span></span>
+<span id="cb1-239"><a href="#cb1-239" aria-hidden="true" tabindex="-1"></a>        \State $\boldsymbol{z}\gets(0,0,\dots,0)$</span>
+<span id="cb1-240"><a href="#cb1-240" aria-hidden="true" tabindex="-1"></a>        \State</span>
+<span id="cb1-241"><a href="#cb1-241" aria-hidden="true" tabindex="-1"></a>        \For{$t=1$ to $T$}</span>
+<span id="cb1-242"><a href="#cb1-242" aria-hidden="true" tabindex="-1"></a>            \State</span>
+<span id="cb1-243"><a href="#cb1-243" aria-hidden="true" tabindex="-1"></a>            \State $\boldsymbol{w},b\gets\boldsymbol{z} / (\lambda*t)$</span>
+<span id="cb1-244"><a href="#cb1-244" aria-hidden="true" tabindex="-1"></a>            \State</span>
+<span id="cb1-245"><a href="#cb1-245" aria-hidden="true" tabindex="-1"></a>            \State $i\gets UniformExtraction(1,m)$\Comment{Random extraction from the training set}</span>
+<span id="cb1-246"><a href="#cb1-246" aria-hidden="true" tabindex="-1"></a>            \State $\boldsymbol{x},y\gets FromTrainingSet(i)$</span>
+<span id="cb1-247"><a href="#cb1-247" aria-hidden="true" tabindex="-1"></a>            \State $class\gets1-y*(ScalarProduct( oldsymbol{x}, oldsymbol{w})+b)$</span>
+<span id="cb1-248"><a href="#cb1-248" aria-hidden="true" tabindex="-1"></a>            \State</span>
+<span id="cb1-249"><a href="#cb1-249" aria-hidden="true" tabindex="-1"></a>            \If{$class&gt;0$}</span>
+<span id="cb1-250"><a href="#cb1-250" aria-hidden="true" tabindex="-1"></a>                \State $\boldsymbol{z}\gets\boldsymbol{z}+y*\boldsymbol{x}$</span>
+<span id="cb1-251"><a href="#cb1-251" aria-hidden="true" tabindex="-1"></a>            \EndIf</span>
+<span id="cb1-252"><a href="#cb1-252" aria-hidden="true" tabindex="-1"></a>            \State</span>
+<span id="cb1-253"><a href="#cb1-253" aria-hidden="true" tabindex="-1"></a>        \EndFor</span>
+<span id="cb1-254"><a href="#cb1-254" aria-hidden="true" tabindex="-1"></a>        \State</span>
+<span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a>        \State</span>
+<span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>        \Return{$\boldsymbol{w},b$}</span>
+<span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a>    \end{algorithmic}</span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>\end{algorithm}</span>
+<span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a><span class="fu">## Momentum</span></span>
+<span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-262"><a href="#cb1-262" aria-hidden="true" tabindex="-1"></a>The main problem related to the Stochastic Gradient Descent process is that of converging to local minima that do not represent the optimal solutions for the problem. One way to regulate this is to play with the learning rate parameter, increasing or decreasing it based on how large we want the "jumps" performed by the algorithm to be; we have also mentioned that these "jumps" do not have to be constant but can vary during the iterations, and how it is often convenient that $\eta\propto\frac{1}{t}$.</span>
+<span id="cb1-263"><a href="#cb1-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-264"><a href="#cb1-264" aria-hidden="true" tabindex="-1"></a>There is another method to facilitate the convergence of the algorithm to the global minimum, which is the use of **momentum**. We can think of the process, in fact, in analogy to a ball rolling on a surface full of curves: in the vicinity of a local minimum, if the ball has a sufficiently high impulse given by inertia, it will be able to overcome this valley and proceed further. In a completely analogous way, we can think of considering not only the gradient of the function, which indicates the privileged direction of optimization, but also the inertia itself given by the direction indicated at the previous step. We will therefore define a parameter $\gamma$ such that</span>
+<span id="cb1-265"><a href="#cb1-265" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-266"><a href="#cb1-266" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-267"><a href="#cb1-267" aria-hidden="true" tabindex="-1"></a>    \boldsymbol{z}^{(t)}=\gamma\boldsymbol{z}^{(t-1)}+(1-\gamma)\nabla L_{\mathcal{D}}\left(\boldsymbol{w}^{(t)}\right)</span>
+<span id="cb1-268"><a href="#cb1-268" aria-hidden="true" tabindex="-1"></a> $$</span>
+<span id="cb1-269"><a href="#cb1-269" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-270"><a href="#cb1-270" aria-hidden="true" tabindex="-1"></a>When $\gamma=0$ the algorithm is a pure SGD, as the weight of the inertia is zero. The closer $\gamma$ gets to $1$, however, the more the inertia will count at the expense of the direction indicated by the gradient.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <style>
